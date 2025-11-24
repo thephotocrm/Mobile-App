@@ -105,8 +105,8 @@ export default function ThreadDetailScreen() {
         const dbMessages = await MessageRepository.getByConversation(conversationId);
         const displayMessages: DisplayMessage[] = dbMessages.map((msg) => ({
           id: msg.id.toString(),
-          text: msg.text,
-          isSent: msg.is_sent,
+          text: msg.text || '',
+          isSent: Boolean(msg.is_sent),
           timestamp: formatTimestamp(msg.created_at),
           createdAt: msg.created_at,
         }));
@@ -200,14 +200,14 @@ export default function ThreadDetailScreen() {
                         >
                           {msg.timestamp}
                         </ThemedText>
-                        {msg.isSent && (
+                        {msg.isSent ? (
                           <Feather 
                             name="check" 
                             size={12} 
                             color="rgba(255,255,255,0.7)" 
                             style={styles.checkIcon}
                           />
-                        )}
+                        ) : null}
                       </View>
                     </View>
                   </View>
