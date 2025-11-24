@@ -82,6 +82,7 @@ export default function MainTabNavigator() {
                 {
                   backgroundColor: theme.primary,
                   shadowColor: theme.primary,
+                  borderColor: theme.border,
                 },
               ]}
             >
@@ -123,6 +124,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: -20,
+    borderWidth: 1,
+    borderTopWidth: 1,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
