@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Pressable, Alert, Platform, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Pressable, Alert, Platform, ActivityIndicator, KeyboardAvoidingView, ScrollView } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { ThemedText } from '@/components/ThemedText';
 import { Input } from '@/components/Input';
-import { ScreenKeyboardAwareScrollView } from '@/components/ScreenKeyboardAwareScrollView';
 import { useTheme } from '@/hooks/useTheme';
 import { Spacing } from '@/constants/theme';
 import { InboxStackParamList } from '@/navigation/InboxStackNavigator';
@@ -96,13 +95,20 @@ export default function ThreadDetailScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.backgroundRoot }}>
+    <KeyboardAvoidingView 
+      style={{ flex: 1, backgroundColor: theme.backgroundRoot }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+    >
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.primary} />
         </View>
       ) : (
-        <ScreenKeyboardAwareScrollView contentContainerStyle={styles.messagesContainer}>
+        <ScrollView 
+          contentContainerStyle={styles.messagesContainer}
+          keyboardShouldPersistTaps="handled"
+        >
           {messages.length === 0 ? (
             <View style={styles.emptyContainer}>
               <ThemedText style={styles.emptyText}>No messages yet</ThemedText>
@@ -137,7 +143,7 @@ export default function ThreadDetailScreen() {
               </View>
             ))
           )}
-        </ScreenKeyboardAwareScrollView>
+        </ScrollView>
       )}
 
       <View style={[
@@ -145,7 +151,7 @@ export default function ThreadDetailScreen() {
         { 
           backgroundColor: theme.backgroundRoot, 
           borderTopColor: theme.border,
-          paddingBottom: tabBarHeight + Spacing.sm,
+          paddingBottom: insets.bottom + Spacing.sm,
         }
       ]}>
         <Input
@@ -166,7 +172,7 @@ export default function ThreadDetailScreen() {
           <Feather name="send" size={20} color="#FFFFFF" />
         </Pressable>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
