@@ -8,7 +8,7 @@ import { useTheme } from '@/hooks/useTheme';
 
 export type InboxStackParamList = {
   InboxList: undefined;
-  ThreadDetail: { contactId: string; contactName: string };
+  ThreadDetail: { conversationId: number; contactName: string };
 };
 
 const Stack = createNativeStackNavigator<InboxStackParamList>();

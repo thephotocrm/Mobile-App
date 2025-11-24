@@ -1,22 +1,88 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Pressable, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Pressable, Alert, Platform, ActivityIndicator } from 'react-native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { Input } from '@/components/Input';
 import { ScreenKeyboardAwareScrollView } from '@/components/ScreenKeyboardAwareScrollView';
 import { useTheme } from '@/hooks/useTheme';
 import { Spacing } from '@/constants/theme';
+import { InboxStackParamList } from '@/navigation/InboxStackNavigator';
+import { MessageRepository, Message } from '@/database/repositories/ConversationRepository';
 
-const MOCK_MESSAGES = [
+type ThreadDetailRouteProp = RouteProp<InboxStackParamList, 'ThreadDetail'>;
+
+interface DisplayMessage {
+  id: string;
+  text: string;
+  isSent: boolean;
+  timestamp: string;
+}
+
+const MOCK_MESSAGES: DisplayMessage[] = [
   { id: '1', text: 'Hi! I wanted to check on the timeline for receiving our wedding album.', isSent: false, timestamp: '5h ago' },
   { id: '2', text: 'Hi Emily! Your album is currently being designed. You should receive it within 2-3 weeks.', isSent: true, timestamp: '4h ago' },
   { id: '3', text: 'That sounds great! Also, can we schedule a time to go over the final photo selections?', isSent: false, timestamp: '3h ago' },
   { id: '4', text: 'Absolutely! How does next Tuesday at 2 PM work for you?', isSent: true, timestamp: '2h ago' },
 ];
 
+const formatTimestamp = (timestamp: number): string => {
+  const now = Math.floor(Date.now() / 1000);
+  const diff = now - timestamp;
+  
+  if (diff < 3600) {
+    const minutes = Math.floor(diff / 60);
+    return `${minutes}m ago`;
+  } else if (diff < 86400) {
+    const hours = Math.floor(diff / 3600);
+    return `${hours}h ago`;
+  } else if (diff < 604800) {
+    const days = Math.floor(diff / 86400);
+    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+  } else {
+    const date = new Date(timestamp * 1000);
+    const month = date.toLocaleDateString('en-US', { month: 'short' });
+    const day = date.getDate();
+    return `${month} ${day}`;
+  }
+};
+
 export default function ThreadDetailScreen() {
   const { theme } = useTheme();
+  const route = useRoute<ThreadDetailRouteProp>();
+  const { conversationId } = route.params;
+  
   const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState<DisplayMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadMessages = async () => {
+    try {
+      setLoading(true);
+      
+      if (Platform.OS === 'web') {
+        setMessages(MOCK_MESSAGES);
+      } else {
+        const dbMessages = await MessageRepository.getByConversation(conversationId);
+        const displayMessages: DisplayMessage[] = dbMessages.map((msg) => ({
+          id: msg.id.toString(),
+          text: msg.text,
+          isSent: msg.is_sent,
+          timestamp: formatTimestamp(msg.created_at),
+        }));
+        setMessages(displayMessages);
+      }
+    } catch (error) {
+      console.error('Error loading messages:', error);
+      setMessages([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadMessages();
+  }, [conversationId]);
 
   const handleSend = () => {
     if (message.trim()) {
@@ -27,36 +93,48 @@ export default function ThreadDetailScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.backgroundRoot }}>
-      <ScreenKeyboardAwareScrollView contentContainerStyle={styles.messagesContainer}>
-        {MOCK_MESSAGES.map((msg) => (
-          <View
-            key={msg.id}
-            style={[
-              styles.messageBubble,
-              msg.isSent
-                ? { ...styles.sentMessage, backgroundColor: theme.primary }
-                : { ...styles.receivedMessage, backgroundColor: theme.backgroundSecondary },
-            ]}
-          >
-            <ThemedText
-              style={[
-                styles.messageText,
-                msg.isSent && { color: '#FFFFFF' },
-              ]}
-            >
-              {msg.text}
-            </ThemedText>
-            <ThemedText
-              style={[
-                styles.timestamp,
-                msg.isSent ? { color: 'rgba(255,255,255,0.7)' } : { color: theme.textSecondary },
-              ]}
-            >
-              {msg.timestamp}
-            </ThemedText>
-          </View>
-        ))}
-      </ScreenKeyboardAwareScrollView>
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.primary} />
+        </View>
+      ) : (
+        <ScreenKeyboardAwareScrollView contentContainerStyle={styles.messagesContainer}>
+          {messages.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <ThemedText style={styles.emptyText}>No messages yet</ThemedText>
+            </View>
+          ) : (
+            messages.map((msg) => (
+              <View
+                key={msg.id}
+                style={[
+                  styles.messageBubble,
+                  msg.isSent
+                    ? { ...styles.sentMessage, backgroundColor: theme.primary }
+                    : { ...styles.receivedMessage, backgroundColor: theme.backgroundSecondary },
+                ]}
+              >
+                <ThemedText
+                  style={[
+                    styles.messageText,
+                    msg.isSent && { color: '#FFFFFF' },
+                  ]}
+                >
+                  {msg.text}
+                </ThemedText>
+                <ThemedText
+                  style={[
+                    styles.timestamp,
+                    msg.isSent ? { color: 'rgba(255,255,255,0.7)' } : { color: theme.textSecondary },
+                  ]}
+                >
+                  {msg.timestamp}
+                </ThemedText>
+              </View>
+            ))
+          )}
+        </ScreenKeyboardAwareScrollView>
+      )}
 
       <View style={[styles.inputContainer, { backgroundColor: theme.backgroundRoot, borderTopColor: theme.border }]}>
         <Input
@@ -107,6 +185,21 @@ const styles = StyleSheet.create({
   timestamp: {
     fontSize: 11,
     marginTop: Spacing.xs,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: Spacing.xxl,
+  },
+  emptyText: {
+    fontSize: 16,
+    textAlign: 'center',
   },
   inputContainer: {
     flexDirection: 'row',
