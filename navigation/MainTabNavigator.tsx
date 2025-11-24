@@ -89,7 +89,6 @@ export default function MainTabNavigator() {
               <Feather name="message-square" size={24} color="#FFFFFF" />
             </View>
           ),
-          tabBarLabel: () => null,
         }}
       />
       <Tab.Screen
