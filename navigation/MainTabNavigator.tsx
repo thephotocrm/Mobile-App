@@ -2,7 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import { Platform, StyleSheet } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { HomeStackNavigator } from "@/navigation/HomeStackNavigator";
 import ProjectsStackNavigator from "@/navigation/ProjectsStackNavigator";
 import InboxStackNavigator from "@/navigation/InboxStackNavigator";
@@ -35,7 +35,8 @@ export default function MainTabNavigator() {
             ios: "transparent",
             android: theme.backgroundRoot,
           }),
-          borderTopWidth: 0,
+          borderTopWidth: 1,
+          borderTopColor: theme.border,
           elevation: 0,
         },
         tabBarBackground: () =>
@@ -74,9 +75,20 @@ export default function MainTabNavigator() {
         component={InboxStackNavigator}
         options={{
           title: "Inbox",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="message-square" size={size} color={color} />
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={[
+                styles.inboxButton,
+                {
+                  backgroundColor: theme.primary,
+                  shadowColor: theme.primary,
+                },
+              ]}
+            >
+              <Feather name="message-square" size={24} color="#FFFFFF" />
+            </View>
           ),
+          tabBarLabel: () => null,
         }}
       />
       <Tab.Screen
@@ -102,3 +114,18 @@ export default function MainTabNavigator() {
     </Tab.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  inboxButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -20,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+});
