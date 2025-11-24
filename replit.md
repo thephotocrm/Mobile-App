@@ -8,6 +8,8 @@ The application uses a tab-based navigation system with stack navigators for eac
 
 Preferred communication style: Simple, everyday language.
 
+Design preference: 10px horizontal edge-to-edge padding for maximum content width on mobile screens.
+
 # System Architecture
 
 ## Frontend Architecture
@@ -71,21 +73,41 @@ Preferred communication style: Simple, everyday language.
 
 ## Data Architecture
 
-**Current Data Layer:**
-- Mock data arrays embedded in screen components
-- No API integration or data fetching logic implemented yet
-- No local database (SQLite, WatermelonDB, etc.) currently used
+**Offline-First SQLite Database:**
+- Implemented local SQLite database using expo-sqlite for iOS/Android
+- Web platform (Platform.OS === 'web') uses mock data for preview
+- Database initialized on app startup with WAL mode and foreign key constraints
+- Automatic database seeding with sample data for development/testing
 
-**Data Models (from mock data):**
-- Projects: title, clientName, stageName, stageColor, eventDate
-- Conversations: contactName, lastMessage, timestamp, unreadCount
-- Bookings: eventTitle, clientName, eventDate, startTime, endTime, borderColor
-- Notifications: type, title, message, time, read status
+**Database Schema:**
+- **users** table: id, email, name, created_at, updated_at
+- **clients** table: id, user_id, name, email, phone, created_at, updated_at
+- **projects** table: id, user_id, client_id, title, description, event_date, stage (lead/booked/active/completed), created_at, updated_at
+- **conversations** table: id, user_id, client_id, last_message_at, unread_count, created_at, updated_at
+- **messages** table: id, conversation_id, sender_type (client/photographer), text, created_at
+- **bookings** table: id, user_id, client_id, event_title, event_date, start_time, end_time, location, notes, created_at, updated_at
+- **notifications** table: id, user_id, type, title, message, read, created_at
 
-**Expected Backend Integration:**
-- REST API calls will be added to fetch real data
-- API documentation references endpoints like projects, messages, bookings
-- Will likely use fetch or axios for HTTP requests
+**Repository Pattern:**
+- Clean data access abstraction with repository classes
+- ProjectRepository: getAll(), getAllByStage(), search(), getById()
+- ClientRepository: getAll(), getById(), create()
+- ConversationRepository: getAllWithLastMessage(), searchWithLastMessage(), getById()
+  - Optimized with SQL JOIN to fetch last message in single query (eliminates N+1 queries)
+- MessageRepository: getByConversation(), create()
+- BookingRepository: getAll(), search(), getById()
+
+**Data Fetching Pattern:**
+- All list screens use useFocusEffect for automatic refetch when screen gains focus
+- Dependencies (searchQuery, selectedStage) included in useFocusEffect callback
+- Single fetch per trigger (no duplicate queries)
+- Proper loading states during database operations
+
+**Future Backend Integration:**
+- Repository pattern designed for future backend sync capability
+- Planned SyncService layer to sync local SQLite data with backend API
+- REST API endpoints will complement local storage for cloud backup/sync
+- Authentication will enable multi-device data synchronization
 
 # External Dependencies
 
@@ -128,6 +150,7 @@ Preferred communication style: Simple, everyday language.
 - `expo-symbols` (v1.0.7) - SF Symbols (iOS)
 - `expo-system-ui` (v6.0.8) - System UI control
 - `expo-web-browser` (v15.0.9) - In-app browser (for OAuth)
+- `expo-sqlite` (v15.0.9) - Local SQLite database for offline storage
 
 ## Development Tools
 
