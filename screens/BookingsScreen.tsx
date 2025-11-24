@@ -57,7 +57,8 @@ export default function BookingsScreen() {
 const styles = StyleSheet.create({
   calendarPlaceholder: {
     height: 280,
-    margin: Spacing.md,
+    marginHorizontal: 10,
+    marginVertical: Spacing.md,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
@@ -73,7 +74,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   section: {
-    padding: Spacing.md,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.md,
   },
   sectionTitle: {
     marginBottom: Spacing.md,

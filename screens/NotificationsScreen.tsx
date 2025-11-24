@@ -131,7 +131,7 @@ export function NotificationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 10,
   },
   notificationCard: {
     flexDirection: "row",

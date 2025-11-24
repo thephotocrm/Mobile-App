@@ -138,7 +138,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   section: {
-    padding: Spacing.md,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.md,
   },
   sectionTitle: {
     fontSize: 12,
@@ -178,7 +179,8 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   logoutContainer: {
-    padding: Spacing.md,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.md,
     marginTop: Spacing.lg,
   },
 });

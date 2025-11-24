@@ -45,6 +45,7 @@ export default function InboxScreen() {
 
 const styles = StyleSheet.create({
   list: {
-    padding: Spacing.md,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.md,
   },
 });

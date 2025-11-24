@@ -105,7 +105,7 @@ export default function ProjectsListScreen() {
 
 const styles = StyleSheet.create({
   searchContainer: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 10,
     paddingTop: Spacing.md,
   },
   searchWrapper: {
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
   },
   stageContent: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 10,
     gap: Spacing.sm,
   },
   stageChip: {
@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   projectList: {
-    padding: Spacing.md,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.md,
   },
 });

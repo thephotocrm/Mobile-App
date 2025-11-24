@@ -116,7 +116,7 @@ export function ToolsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 10,
   },
   toolsGrid: {
     flexDirection: "row",

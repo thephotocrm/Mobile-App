@@ -159,7 +159,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   section: {
-    padding: Spacing.md,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.md,
   },
   sectionTitle: {
     marginBottom: Spacing.md,

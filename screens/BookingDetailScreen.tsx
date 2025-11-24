@@ -113,7 +113,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   section: {
-    padding: Spacing.md,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.md,
     gap: Spacing.lg,
   },
   infoRow: {
@@ -137,7 +138,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   actions: {
-    padding: Spacing.md,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.md,
     gap: Spacing.md,
   },
 });

@@ -83,7 +83,8 @@ export default function ThreadDetailScreen() {
 
 const styles = StyleSheet.create({
   messagesContainer: {
-    padding: Spacing.md,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.md,
     gap: Spacing.md,
   },
   messageBubble: {
@@ -109,7 +110,8 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: 'row',
-    padding: Spacing.md,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.md,
     gap: Spacing.sm,
     borderTopWidth: 1,
     alignItems: 'flex-end',
