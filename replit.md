@@ -54,9 +54,26 @@ Design preference: 10px horizontal edge-to-edge padding for maximum content widt
 - Payments tab displays payment summary (total/paid/pending) and payment schedule with status badges
 - Files tab provides empty state placeholder for future file uploads
 - Details tab shows structured project information (event date, location, package, client contact)
+  - Contacts section displays project contacts with avatars, roles, primary badge, and contact information (email/phone)
 - Tab bar with animated bottom indicator on active tab
 - Quick action buttons: Call, Text, Email, Send Magic Link
 - All tabs use mock data; ready for backend integration via repository pattern
+
+**Contacts Management (Tools Section):**
+- ContactsScreen lists all photographer's contacts with search functionality
+  - Shows avatar, name, project count, and last contact date for each contact
+  - Real-time search filtering by name or email
+  - Uses ScreenKeyboardAwareScrollView for proper keyboard avoidance with search input
+  - Displays result count ("8 contacts" or "1 contact")
+- ContactDetailScreen shows comprehensive contact information
+  - Hero section with large avatar (80px), name, role, and company (if applicable)
+  - Quick action buttons for Call, Text, and Email (opens native phone/messaging apps)
+  - Contact information card with email, phone, company, and role
+  - Notes section for contact-specific notes
+  - Associated projects list showing project title, stage badge, and event date
+  - Correctly resolves contact data from navigation parameter (contactId)
+- Navigation flow: Tools → Contacts → Contact Details
+- All screens use mock data; ready for backend integration via repository pattern
 
 **Component Architecture:**
 - Screen components handle routing and data fetching
