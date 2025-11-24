@@ -38,6 +38,16 @@ Design preference: 10px horizontal edge-to-edge padding for maximum content widt
 - Gesture support via react-native-gesture-handler
 - Smooth animations using react-native-reanimated
 
+**Conversation View Enhancements (ThreadDetailScreen):**
+- Client avatars (32px) displayed next to received messages
+- Date separators between message groups (Today, Yesterday, or specific dates)
+- Enhanced message bubbles with subtle shadows for depth (shadowOpacity: 0.1, elevation: 2)
+- Delivery status indicators (check icon) on sent messages
+- Redesigned input area with integrated send button in rounded pill container
+- Message bubbles use 18px border radius with 4px tail corners
+- Improved spacing and professional polish throughout conversation UI
+- Special raised circular Inbox button in tab bar with matching border styling
+
 **Component Architecture:**
 - Screen components handle routing and data fetching
 - Reusable UI components in `/components` directory
