@@ -245,7 +245,7 @@ export default function ProjectDetailScreen() {
   };
 
   return (
-    <ScreenScrollView>
+    <ScreenScrollView contentContainerStyle={{ paddingTop: Spacing.md }}>
       <View style={[styles.hero, { backgroundColor: theme.backgroundSecondary }]}>
         <Avatar name={MOCK_PROJECT.clientName} size={64} />
         <ThemedText style={[styles.heroTitle, { fontSize: Typography.h2.fontSize, fontWeight: Typography.h2.fontWeight }]}>
