@@ -167,7 +167,7 @@ export function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.md,
   },
   greetingSection: {
     marginBottom: Spacing.xl,
