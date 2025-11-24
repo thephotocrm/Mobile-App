@@ -3,17 +3,19 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Platform, StyleSheet } from "react-native";
+import { HomeStackNavigator } from "@/navigation/HomeStackNavigator";
 import ProjectsStackNavigator from "@/navigation/ProjectsStackNavigator";
 import InboxStackNavigator from "@/navigation/InboxStackNavigator";
-import BookingsStackNavigator from "@/navigation/BookingsStackNavigator";
-import MoreStackNavigator from "@/navigation/MoreStackNavigator";
+import { NotificationsStackNavigator } from "@/navigation/NotificationsStackNavigator";
+import { ToolsStackNavigator } from "@/navigation/ToolsStackNavigator";
 import { useTheme } from "@/hooks/useTheme";
 
 export type MainTabParamList = {
+  HomeTab: undefined;
   ProjectsTab: undefined;
   InboxTab: undefined;
-  BookingsTab: undefined;
-  MoreTab: undefined;
+  NotificationsTab: undefined;
+  ToolsTab: undefined;
 };
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -23,7 +25,7 @@ export default function MainTabNavigator() {
 
   return (
     <Tab.Navigator
-      initialRouteName="ProjectsTab"
+      initialRouteName="HomeTab"
       screenOptions={{
         tabBarActiveTintColor: theme.tabIconSelected,
         tabBarInactiveTintColor: theme.tabIconDefault,
@@ -48,6 +50,16 @@ export default function MainTabNavigator() {
       }}
     >
       <Tab.Screen
+        name="HomeTab"
+        component={HomeStackNavigator}
+        options={{
+          title: "Home",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="home" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
         name="ProjectsTab"
         component={ProjectsStackNavigator}
         options={{
@@ -68,22 +80,22 @@ export default function MainTabNavigator() {
         }}
       />
       <Tab.Screen
-        name="BookingsTab"
-        component={BookingsStackNavigator}
+        name="NotificationsTab"
+        component={NotificationsStackNavigator}
         options={{
-          title: "Bookings",
+          title: "Notifications",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="calendar" size={size} color={color} />
+            <Feather name="bell" size={size} color={color} />
           ),
         }}
       />
       <Tab.Screen
-        name="MoreTab"
-        component={MoreStackNavigator}
+        name="ToolsTab"
+        component={ToolsStackNavigator}
         options={{
-          title: "More",
+          title: "Tools",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="menu" size={size} color={color} />
+            <Feather name="grid" size={size} color={color} />
           ),
         }}
       />

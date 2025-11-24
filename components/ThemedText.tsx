@@ -47,9 +47,9 @@ export function ThemedText({
       case "body":
         return Typography.body;
       case "small":
-        return Typography.small;
+        return Typography.bodySmall;
       case "link":
-        return Typography.link;
+        return Typography.body;
       default:
         return Typography.body;
     }
