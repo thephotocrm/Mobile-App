@@ -35,6 +35,9 @@ export default function InboxStackNavigator() {
         options={({ route }) => ({
           headerTitle: route.params.contactName,
           headerTransparent: false,
+          headerStyle: {
+            backgroundColor: theme.backgroundRoot,
+          },
         })}
       />
     </Stack.Navigator>

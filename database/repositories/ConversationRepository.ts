@@ -65,10 +65,12 @@ export class ConversationRepository {
         SELECT m1.*
         FROM messages m1
         INNER JOIN (
-          SELECT conversation_id, MAX(created_at) as max_created_at
+          SELECT conversation_id, MAX(created_at) as max_created_at, MAX(id) as max_id
           FROM messages
           GROUP BY conversation_id
-        ) m2 ON m1.conversation_id = m2.conversation_id AND m1.created_at = m2.max_created_at
+        ) m2 ON m1.conversation_id = m2.conversation_id 
+            AND m1.created_at = m2.max_created_at
+            AND m1.id = m2.max_id
       ) m ON c.id = m.conversation_id
       ORDER BY c.last_message_at DESC
     `);
@@ -171,10 +173,12 @@ export class ConversationRepository {
         SELECT m1.*
         FROM messages m1
         INNER JOIN (
-          SELECT conversation_id, MAX(created_at) as max_created_at
+          SELECT conversation_id, MAX(created_at) as max_created_at, MAX(id) as max_id
           FROM messages
           GROUP BY conversation_id
-        ) m2 ON m1.conversation_id = m2.conversation_id AND m1.created_at = m2.max_created_at
+        ) m2 ON m1.conversation_id = m2.conversation_id 
+            AND m1.created_at = m2.max_created_at
+            AND m1.id = m2.max_id
       ) m ON c.id = m.conversation_id
       WHERE cl.name LIKE ? OR cl.email LIKE ?
       ORDER BY c.last_message_at DESC
