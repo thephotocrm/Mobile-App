@@ -115,7 +115,7 @@ export async function resetDatabase(): Promise<void> {
   const database = getDatabase();
   await database.execAsync(`
     DROP TABLE IF EXISTS notifications;
-    DROP TABLE IF NOT EXISTS messages;
+    DROP TABLE IF EXISTS messages;
     DROP TABLE IF EXISTS conversations;
     DROP TABLE IF EXISTS bookings;
     DROP TABLE IF EXISTS project_notes;

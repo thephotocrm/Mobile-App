@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, ActivityIndicator, Platform } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Feather } from '@expo/vector-icons';
@@ -47,6 +47,64 @@ const capitalizeStage = (stage: ProjectStage): string => {
   return stage.charAt(0).toUpperCase() + stage.slice(1);
 };
 
+const MOCK_PROJECTS: ProjectWithClient[] = [
+  {
+    id: 1,
+    client_id: 1,
+    client_name: 'Sarah Johnson',
+    client_email: 'sarah.johnson@example.com',
+    title: 'Sarah & Mike Wedding',
+    stage: 'booked',
+    event_date: Math.floor(new Date('2025-06-15').getTime() / 1000),
+    created_at: Math.floor(Date.now() / 1000),
+    updated_at: Math.floor(Date.now() / 1000),
+  },
+  {
+    id: 2,
+    client_id: 2,
+    client_name: 'Emily Davis',
+    client_email: 'emily.davis@example.com',
+    title: 'Emily & James Engagement',
+    stage: 'active',
+    event_date: Math.floor(new Date('2025-03-22').getTime() / 1000),
+    created_at: Math.floor(Date.now() / 1000),
+    updated_at: Math.floor(Date.now() / 1000),
+  },
+  {
+    id: 3,
+    client_id: 3,
+    client_name: 'Rachel Martinez',
+    client_email: 'rachel.martinez@example.com',
+    title: 'Rachel & Tom Wedding',
+    stage: 'lead',
+    event_date: Math.floor(new Date('2025-08-10').getTime() / 1000),
+    created_at: Math.floor(Date.now() / 1000),
+    updated_at: Math.floor(Date.now() / 1000),
+  },
+  {
+    id: 4,
+    client_id: 4,
+    client_name: 'Jessica Wilson',
+    client_email: 'jessica.wilson@example.com',
+    title: 'Jessica & David Ceremony',
+    stage: 'booked',
+    event_date: Math.floor(new Date('2025-05-05').getTime() / 1000),
+    created_at: Math.floor(Date.now() / 1000),
+    updated_at: Math.floor(Date.now() / 1000),
+  },
+  {
+    id: 5,
+    client_id: 5,
+    client_name: 'Amanda Brown',
+    client_email: 'amanda.brown@example.com',
+    title: 'Amanda & Chris Wedding',
+    stage: 'completed',
+    event_date: Math.floor(new Date('2024-11-12').getTime() / 1000),
+    created_at: Math.floor(Date.now() / 1000),
+    updated_at: Math.floor(Date.now() / 1000),
+  },
+];
+
 export default function ProjectsListScreen() {
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
@@ -60,16 +118,32 @@ export default function ProjectsListScreen() {
       setLoading(true);
       let result: ProjectWithClient[];
 
-      if (searchQuery.trim()) {
-        result = await ProjectRepository.search(searchQuery.trim());
-      } else if (selectedStage !== 'all') {
-        result = await ProjectRepository.getByStage(selectedStage as ProjectStage);
+      if (Platform.OS === 'web') {
+        result = MOCK_PROJECTS;
+        
+        if (searchQuery.trim()) {
+          const query = searchQuery.trim().toLowerCase();
+          result = result.filter(project => 
+            project.title.toLowerCase().includes(query) ||
+            project.client_name.toLowerCase().includes(query)
+          );
+        }
+        
+        if (selectedStage !== 'all') {
+          result = result.filter(project => project.stage === selectedStage);
+        }
       } else {
-        result = await ProjectRepository.getAll();
-      }
+        if (searchQuery.trim()) {
+          result = await ProjectRepository.search(searchQuery.trim());
+        } else if (selectedStage !== 'all') {
+          result = await ProjectRepository.getByStage(selectedStage as ProjectStage);
+        } else {
+          result = await ProjectRepository.getAll();
+        }
 
-      if (searchQuery.trim() && selectedStage !== 'all') {
-        result = result.filter(project => project.stage === selectedStage);
+        if (searchQuery.trim() && selectedStage !== 'all') {
+          result = result.filter(project => project.stage === selectedStage);
+        }
       }
 
       setProjects(result);

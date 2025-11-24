@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -12,16 +12,22 @@ import { initializeDatabase } from "@/database";
 import { seedDatabase } from "@/database/seed";
 
 export default function App() {
-  const [isDbReady, setIsDbReady] = useState(false);
+  const [isDbReady, setIsDbReady] = useState(Platform.OS === 'web');
 
   useEffect(() => {
     async function setupDatabase() {
+      if (Platform.OS === 'web') {
+        setIsDbReady(true);
+        return;
+      }
+      
       try {
         await initializeDatabase();
         await seedDatabase();
         setIsDbReady(true);
       } catch (error) {
         console.error('Failed to initialize database:', error);
+        setIsDbReady(true);
       }
     }
     setupDatabase();
