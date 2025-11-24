@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Pressable, Alert, Platform, ActivityIndicator } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { ThemedText } from '@/components/ThemedText';
 import { Input } from '@/components/Input';
 import { ScreenKeyboardAwareScrollView } from '@/components/ScreenKeyboardAwareScrollView';
@@ -51,6 +53,8 @@ export default function ThreadDetailScreen() {
   const { theme } = useTheme();
   const route = useRoute<ThreadDetailRouteProp>();
   const { conversationId } = route.params;
+  const insets = useSafeAreaInsets();
+  const tabBarHeight = useBottomTabBarHeight();
   
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<DisplayMessage[]>([]);
@@ -136,7 +140,14 @@ export default function ThreadDetailScreen() {
         </ScreenKeyboardAwareScrollView>
       )}
 
-      <View style={[styles.inputContainer, { backgroundColor: theme.backgroundRoot, borderTopColor: theme.border }]}>
+      <View style={[
+        styles.inputContainer, 
+        { 
+          backgroundColor: theme.backgroundRoot, 
+          borderTopColor: theme.border,
+          paddingBottom: tabBarHeight + Spacing.sm,
+        }
+      ]}>
         <Input
           placeholder="Type a message..."
           value={message}
