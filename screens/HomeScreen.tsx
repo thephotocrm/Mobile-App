@@ -5,7 +5,7 @@ import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { Avatar } from "@/components/Avatar";
 import { StatCard } from "@/components/StatCard";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { Feather } from "@expo/vector-icons";
 
@@ -48,13 +48,10 @@ export function HomeScreen() {
     <ScreenScrollView>
       <View style={styles.container}>
         <View style={[styles.greetingCard, { backgroundColor: theme.backgroundRoot }]}>
-          <View style={[styles.iconContainer, { backgroundColor: theme.primaryLight }]}>
-            <Feather name="camera" size={40} color={theme.primary} />
-          </View>
-          <ThemedText style={styles.greeting}>
+          <ThemedText style={[Typography.h2, styles.greeting]}>
             {greeting}, Photographer
           </ThemedText>
-          <ThemedText style={styles.tagline}>
+          <ThemedText style={[Typography.bodySmall, styles.tagline]}>            
             Turning sparks into flames, just another day in the life of a
             one-person powerhouse.
           </ThemedText>
@@ -79,17 +76,17 @@ export function HomeScreen() {
           </View>
 
           <View style={[styles.paymentsCard, { backgroundColor: theme.backgroundDefault }]}>
-            <ThemedText style={[styles.paymentsValue, { color: theme.text }]}>
+            <ThemedText style={[Typography.h2, { color: theme.text }]}>
               {MOCK_STATS.monthlyPayments}
             </ThemedText>
-            <ThemedText style={[styles.paymentsLabel, { color: theme.textSecondary }]}>
+            <ThemedText style={[Typography.bodySmall, { color: theme.textSecondary }]}>
               {MOCK_STATS.monthName} gross payments
             </ThemedText>
           </View>
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+          <ThemedText style={[Typography.caption, styles.sectionTitle, { color: theme.textSecondary }]}>
             RECENT CLIENTS ({MOCK_RECENT_CLIENTS.length})
           </ThemedText>
 
@@ -97,10 +94,10 @@ export function HomeScreen() {
             <View key={client.id} style={[styles.clientCard, { backgroundColor: theme.backgroundRoot }]}>
               <Avatar name={client.name} size={48} />
               <View style={styles.clientInfo}>
-                <ThemedText style={[styles.clientName, { color: theme.text }]}>
+                <ThemedText style={[Typography.body, { color: theme.text, fontWeight: "600" }]}>
                   {client.name}
                 </ThemedText>
-                <ThemedText style={[styles.clientEmail, { color: theme.textSecondary }]}>
+                <ThemedText style={[Typography.bodySmall, { color: theme.textSecondary }]}>
                   {client.email}
                 </ThemedText>
               </View>
@@ -114,7 +111,7 @@ export function HomeScreen() {
                   console.log("View client:", client.name);
                 }}
               >
-                <ThemedText style={[styles.viewButtonText, { color: theme.text }]}>
+                <ThemedText style={[Typography.bodySmall, { color: theme.text, fontWeight: "600" }]}>
                   View client
                 </ThemedText>
               </Pressable>
@@ -123,7 +120,7 @@ export function HomeScreen() {
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+          <ThemedText style={[Typography.caption, styles.sectionTitle, { color: theme.textSecondary }]}>
             TODAY (0) • {new Date().toLocaleDateString("en-US", {
               weekday: "short",
               month: "short",
@@ -131,7 +128,7 @@ export function HomeScreen() {
               year: "numeric",
             })}
           </ThemedText>
-          <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>No events today</ThemedText>
+          <ThemedText style={[Typography.bodySmall, styles.emptyText, { color: theme.textSecondary }]}>No events today</ThemedText>
         </View>
       </View>
     </ScreenScrollView>
@@ -149,21 +146,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
     alignItems: "center",
   },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: Spacing.lg,
-  },
   greeting: {
-    fontSize: 24,
-    fontWeight: "700",
     marginBottom: Spacing.xs,
   },
   tagline: {
-    fontSize: 14,
     textAlign: "center",
     lineHeight: 20,
     marginBottom: Spacing.xl,
@@ -180,19 +166,10 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     width: "100%",
   },
-  paymentsValue: {
-    fontSize: 28,
-    fontWeight: "700",
-    marginBottom: Spacing.xs,
-  },
-  paymentsLabel: {
-    fontSize: 14,
-  },
   section: {
     marginBottom: Spacing.xl,
   },
   sectionTitle: {
-    fontSize: 12,
     fontWeight: "600",
     marginBottom: Spacing.lg,
     letterSpacing: 0.5,
@@ -208,14 +185,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: Spacing.md,
   },
-  clientName: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 2,
-  },
-  clientEmail: {
-    fontSize: 14,
-  },
   viewButton: {
     borderWidth: 1,
     borderRadius: BorderRadius.md,
@@ -225,12 +194,7 @@ const styles = StyleSheet.create({
   viewButtonPressed: {
     opacity: 0.6,
   },
-  viewButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
   emptyText: {
-    fontSize: 14,
     textAlign: "center",
     paddingVertical: Spacing.xl,
   },

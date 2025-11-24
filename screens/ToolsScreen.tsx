@@ -2,7 +2,8 @@ import React from "react";
 import { View, StyleSheet, Pressable, Alert } from "react-native";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { ThemedText } from "@/components/ThemedText";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { Card } from "@/components/Card";
+import { Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { Feather } from "@expo/vector-icons";
 
@@ -83,31 +84,27 @@ export function ToolsScreen() {
   return (
     <ScreenScrollView>
       <View style={styles.container}>
-        <ThemedText style={[styles.headerTitle, { color: theme.text }]}>Tools</ThemedText>
-        <ThemedText style={[styles.headerSubtitle, { color: theme.textSecondary }]}>
-          Powerful tools to manage your photography business
-        </ThemedText>
-
         <View style={styles.toolsGrid}>
           {TOOLS.map((tool) => (
             <Pressable
               key={tool.id}
               style={({ pressed }) => [
-                styles.toolCard,
-                { backgroundColor: theme.backgroundRoot },
+                styles.toolCardWrapper,
                 pressed && styles.toolCardPressed,
               ]}
               onPress={() => handleToolPress(tool)}
             >
-              <View
-                style={[styles.iconContainer, { backgroundColor: tool.color }]}
-              >
-                <Feather name={tool.icon} size={24} color="#FFFFFF" />
-              </View>
-              <ThemedText style={[styles.toolTitle, { color: theme.text }]}>{tool.title}</ThemedText>
-              <ThemedText style={[styles.toolDescription, { color: theme.textSecondary }]}>
-                {tool.description}
-              </ThemedText>
+              <Card style={styles.toolCard} elevation={1}>
+                <View
+                  style={[styles.iconContainer, { backgroundColor: tool.color }]}
+                >
+                  <Feather name={tool.icon} size={24} color="#FFFFFF" />
+                </View>
+                <ThemedText style={[Typography.body, { color: theme.text, fontWeight: "600", textAlign: "center" }]}>{tool.title}</ThemedText>
+                <ThemedText style={[Typography.caption, { color: theme.textSecondary, textAlign: "center", lineHeight: 16 }]}>
+                  {tool.description}
+                </ThemedText>
+              </Card>
             </Pressable>
           ))}
         </View>
@@ -121,25 +118,16 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: Spacing.lg,
   },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: "700",
-    marginBottom: Spacing.xs,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    marginBottom: Spacing.xl,
-  },
   toolsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
-  toolCard: {
+  toolCardWrapper: {
     width: "48%",
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
     marginBottom: Spacing.md,
+  },
+  toolCard: {
     alignItems: "center",
   },
   toolCardPressed: {
@@ -152,16 +140,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: Spacing.md,
-  },
-  toolTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: Spacing.xs,
-    textAlign: "center",
-  },
-  toolDescription: {
-    fontSize: 12,
-    textAlign: "center",
-    lineHeight: 16,
   },
 });

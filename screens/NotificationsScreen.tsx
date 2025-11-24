@@ -4,7 +4,8 @@ import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { Avatar } from "@/components/Avatar";
 import { Badge } from "@/components/Badge";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { Card } from "@/components/Card";
+import { Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { Feather } from "@expo/vector-icons";
 
@@ -18,7 +19,7 @@ interface Notification {
   clientName?: string;
 }
 
-const MOCK_NOTIFICATIONS: Notification[] = [
+export const MOCK_NOTIFICATIONS: Notification[] = [
   {
     id: "1",
     type: "message",
@@ -77,52 +78,51 @@ export function NotificationsScreen() {
   const renderNotification = ({ item }: { item: Notification }) => (
     <Pressable
       style={({ pressed }) => [
-        styles.notificationCard,
-        { backgroundColor: theme.backgroundRoot },
-        !item.read && [styles.unreadCard, { backgroundColor: theme.primaryLight }],
         pressed && styles.cardPressed,
       ]}
       onPress={() => console.log("Notification tapped:", item.id)}
     >
-      <View style={[styles.iconContainer, { backgroundColor: theme.backgroundDefault }]}>
-        <Feather
-          name={getIconName(item.type)}
-          size={20}
-          color={item.read ? theme.textSecondary : theme.primary}
-        />
-      </View>
-      <View style={styles.notificationContent}>
-        <View style={styles.notificationHeader}>
-          <ThemedText
-            style={[styles.notificationTitle, { color: theme.text }, !item.read && styles.unreadText]}
-          >
-            {item.title}
-          </ThemedText>
-          {!item.read && <View style={[styles.unreadDot, { backgroundColor: theme.primary }]} />}
+      <Card 
+        style={[
+          styles.notificationCard,
+          !item.read && styles.unreadCard,
+        ]}
+        elevation={!item.read ? 2 : 1}
+      >
+        <View style={[styles.iconContainer, { backgroundColor: theme.backgroundDefault }]}>
+          <Feather
+            name={getIconName(item.type)}
+            size={20}
+            color={item.read ? theme.textSecondary : theme.primary}
+          />
         </View>
-        <ThemedText style={[styles.notificationMessage, { color: theme.textSecondary }]}>
-          {item.message}
-        </ThemedText>
-        <ThemedText style={[styles.notificationTime, { color: theme.textSecondary }]}>{item.time}</ThemedText>
-      </View>
+        <View style={styles.notificationContent}>
+          <View style={styles.notificationHeader}>
+            <ThemedText
+              style={[Typography.body, { color: theme.text }, !item.read && { fontWeight: "700" }]}
+            >
+              {item.title}
+            </ThemedText>
+            {!item.read && <View style={[styles.unreadDot, { backgroundColor: theme.primary }]} />}
+          </View>
+          <ThemedText style={[Typography.bodySmall, { color: theme.textSecondary, lineHeight: 20 }]}>
+            {item.message}
+          </ThemedText>
+          <ThemedText style={[Typography.caption, { color: theme.textSecondary }]}>{item.time}</ThemedText>
+        </View>
+      </Card>
     </Pressable>
   );
 
   return (
     <ScreenScrollView>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <ThemedText style={[styles.headerTitle, { color: theme.text }]}>Notifications</ThemedText>
-          {unreadCount > 0 && (
-            <Badge label={unreadCount.toString()} />
-          )}
-        </View>
-
-        {MOCK_NOTIFICATIONS.map((notification) => (
-          <View key={notification.id}>
-            {renderNotification({ item: notification })}
-          </View>
-        ))}
+        <FlatList
+          data={MOCK_NOTIFICATIONS}
+          renderItem={renderNotification}
+          keyExtractor={(item) => item.id}
+          scrollEnabled={false}
+        />
       </View>
     </ScreenScrollView>
   );
@@ -133,20 +133,8 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: Spacing.lg,
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: Spacing.xl,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: "700",
-  },
   notificationCard: {
     flexDirection: "row",
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
     marginBottom: Spacing.md,
   },
   unreadCard: {},
@@ -169,26 +157,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: Spacing.xs,
   },
-  notificationTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    flex: 1,
-  },
-  unreadText: {
-    fontWeight: "700",
-  },
   unreadDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
     marginLeft: Spacing.sm,
-  },
-  notificationMessage: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: Spacing.xs,
-  },
-  notificationTime: {
-    fontSize: 12,
   },
 });
