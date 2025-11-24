@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Pressable, Alert, Platform, ActivityIndicator, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { View, StyleSheet, Pressable, Alert, Platform, ActivityIndicator, KeyboardAvoidingView, ScrollView, TextInput } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { ThemedText } from '@/components/ThemedText';
-import { Input } from '@/components/Input';
+import { Avatar } from '@/components/Avatar';
 import { useTheme } from '@/hooks/useTheme';
 import { Spacing } from '@/constants/theme';
 import { InboxStackParamList } from '@/navigation/InboxStackNavigator';
@@ -18,14 +18,50 @@ interface DisplayMessage {
   text: string;
   isSent: boolean;
   timestamp: string;
+  createdAt?: number;
 }
 
 const MOCK_MESSAGES: DisplayMessage[] = [
-  { id: '1', text: 'Hi! I wanted to check on the timeline for receiving our wedding album.', isSent: false, timestamp: '5h ago' },
-  { id: '2', text: 'Hi Emily! Your album is currently being designed. You should receive it within 2-3 weeks.', isSent: true, timestamp: '4h ago' },
-  { id: '3', text: 'That sounds great! Also, can we schedule a time to go over the final photo selections?', isSent: false, timestamp: '3h ago' },
-  { id: '4', text: 'Absolutely! How does next Tuesday at 2 PM work for you?', isSent: true, timestamp: '2h ago' },
+  { id: '1', text: 'Hi! I wanted to check on the timeline for receiving our wedding album.', isSent: false, timestamp: '5h ago', createdAt: Date.now() / 1000 - 18000 },
+  { id: '2', text: 'Hi Emily! Your album is currently being designed. You should receive it within 2-3 weeks.', isSent: true, timestamp: '4h ago', createdAt: Date.now() / 1000 - 14400 },
+  { id: '3', text: 'That sounds great! Also, can we schedule a time to go over the final photo selections?', isSent: false, timestamp: '3h ago', createdAt: Date.now() / 1000 - 10800 },
+  { id: '4', text: 'Absolutely! How does next Tuesday at 2 PM work for you?', isSent: true, timestamp: '2h ago', createdAt: Date.now() / 1000 - 7200 },
 ];
+
+const getDateSeparator = (timestamp: number): string => {
+  const messageDate = new Date(timestamp * 1000);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  messageDate.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+  yesterday.setHours(0, 0, 0, 0);
+  
+  if (messageDate.getTime() === today.getTime()) {
+    return 'Today';
+  } else if (messageDate.getTime() === yesterday.getTime()) {
+    return 'Yesterday';
+  } else {
+    return messageDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+};
+
+const shouldShowDateSeparator = (currentMsg: DisplayMessage, prevMsg: DisplayMessage | null): boolean => {
+  if (!currentMsg.createdAt) return false;
+  
+  if (!prevMsg) return true;
+  
+  if (!prevMsg.createdAt) return true;
+  
+  const currentDate = new Date(currentMsg.createdAt * 1000);
+  const prevDate = new Date(prevMsg.createdAt * 1000);
+  
+  currentDate.setHours(0, 0, 0, 0);
+  prevDate.setHours(0, 0, 0, 0);
+  
+  return currentDate.getTime() !== prevDate.getTime();
+};
 
 const formatTimestamp = (timestamp: number): string => {
   const now = Math.floor(Date.now() / 1000);
@@ -72,6 +108,7 @@ export default function ThreadDetailScreen() {
           text: msg.text,
           isSent: msg.is_sent,
           timestamp: formatTimestamp(msg.created_at),
+          createdAt: msg.created_at,
         }));
         setMessages(displayMessages);
       }
@@ -114,34 +151,69 @@ export default function ThreadDetailScreen() {
               <ThemedText style={styles.emptyText}>No messages yet</ThemedText>
             </View>
           ) : (
-            messages.map((msg) => (
-              <View
-                key={msg.id}
-                style={[
-                  styles.messageBubble,
-                  msg.isSent
-                    ? { ...styles.sentMessage, backgroundColor: theme.primary }
-                    : { ...styles.receivedMessage, backgroundColor: theme.backgroundSecondary },
-                ]}
-              >
-                <ThemedText
-                  style={[
-                    styles.messageText,
-                    msg.isSent && { color: '#FFFFFF' },
-                  ]}
-                >
-                  {msg.text}
-                </ThemedText>
-                <ThemedText
-                  style={[
-                    styles.timestamp,
-                    msg.isSent ? { color: 'rgba(255,255,255,0.7)' } : { color: theme.textSecondary },
-                  ]}
-                >
-                  {msg.timestamp}
-                </ThemedText>
-              </View>
-            ))
+            messages.map((msg, index) => {
+              const prevMsg = index > 0 ? messages[index - 1] : null;
+              const showDateSeparator = shouldShowDateSeparator(msg, prevMsg);
+              
+              return (
+                <React.Fragment key={msg.id}>
+                  {showDateSeparator && msg.createdAt && (
+                    <View style={styles.dateSeparatorContainer}>
+                      <View style={[styles.dateSeparatorLine, { backgroundColor: theme.border }]} />
+                      <ThemedText style={[styles.dateSeparatorText, { color: theme.textSecondary }]}>
+                        {getDateSeparator(msg.createdAt)}
+                      </ThemedText>
+                      <View style={[styles.dateSeparatorLine, { backgroundColor: theme.border }]} />
+                    </View>
+                  )}
+                  
+                  <View style={[styles.messageRow, msg.isSent && styles.messageRowSent]}>
+                    {!msg.isSent && (
+                      <View style={styles.avatar}>
+                        <Avatar name={route.params.contactName} size={32} />
+                      </View>
+                    )}
+                    
+                    <View
+                      style={[
+                        styles.messageBubble,
+                        msg.isSent
+                          ? { backgroundColor: theme.primary }
+                          : { backgroundColor: theme.backgroundSecondary },
+                        msg.isSent ? styles.sentMessage : styles.receivedMessage,
+                      ]}
+                    >
+                      <ThemedText
+                        style={[
+                          styles.messageText,
+                          msg.isSent && { color: '#FFFFFF' },
+                        ]}
+                      >
+                        {msg.text}
+                      </ThemedText>
+                      <View style={styles.messageFooter}>
+                        <ThemedText
+                          style={[
+                            styles.timestamp,
+                            msg.isSent ? { color: 'rgba(255,255,255,0.7)' } : { color: theme.textSecondary },
+                          ]}
+                        >
+                          {msg.timestamp}
+                        </ThemedText>
+                        {msg.isSent && (
+                          <Feather 
+                            name="check" 
+                            size={12} 
+                            color="rgba(255,255,255,0.7)" 
+                            style={styles.checkIcon}
+                          />
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                </React.Fragment>
+              );
+            })
           )}
         </ScrollView>
       )}
@@ -149,28 +221,32 @@ export default function ThreadDetailScreen() {
       <View style={[
         styles.inputContainer, 
         { 
-          backgroundColor: theme.backgroundRoot, 
+          backgroundColor: theme.backgroundDefault, 
           borderTopColor: theme.border,
           paddingBottom: tabBarHeight + Spacing.sm,
         }
       ]}>
-        <Input
-          placeholder="Type a message..."
-          value={message}
-          onChangeText={setMessage}
-          style={styles.input}
-          multiline
-        />
-        <Pressable
-          onPress={handleSend}
-          style={({ pressed }) => [
-            styles.sendButton,
-            { backgroundColor: theme.primary },
-            pressed && { opacity: 0.7 },
-          ]}
-        >
-          <Feather name="send" size={20} color="#FFFFFF" />
-        </Pressable>
+        <View style={[styles.inputWrapper, { backgroundColor: theme.backgroundRoot, borderColor: theme.border }]}>
+          <TextInput
+            placeholder="Type a message..."
+            placeholderTextColor={theme.textSecondary}
+            value={message}
+            onChangeText={setMessage}
+            style={[styles.textInput, { color: theme.text }]}
+            multiline
+            maxLength={1000}
+          />
+          <Pressable
+            onPress={handleSend}
+            style={({ pressed }) => [
+              styles.sendButton,
+              { backgroundColor: theme.primary },
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <Feather name="send" size={18} color="#FFFFFF" />
+          </Pressable>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -180,28 +256,66 @@ const styles = StyleSheet.create({
   messagesContainer: {
     paddingHorizontal: 10,
     paddingVertical: Spacing.md,
-    gap: Spacing.md,
+    gap: Spacing.sm,
+  },
+  messageRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    marginBottom: Spacing.sm,
+    gap: Spacing.sm,
+  },
+  messageRowSent: {
+    justifyContent: 'flex-end',
+  },
+  avatar: {
+    marginBottom: 2,
   },
   messageBubble: {
     maxWidth: '75%',
-    padding: Spacing.md,
-    borderRadius: 16,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md - 2,
+    borderRadius: 18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   sentMessage: {
-    alignSelf: 'flex-end',
     borderBottomRightRadius: 4,
   },
   receivedMessage: {
-    alignSelf: 'flex-start',
     borderBottomLeftRadius: 4,
   },
   messageText: {
     fontSize: 15,
-    lineHeight: 20,
+    lineHeight: 21,
+  },
+  messageFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: Spacing.xs,
+    gap: 4,
   },
   timestamp: {
     fontSize: 11,
-    marginTop: Spacing.xs,
+  },
+  checkIcon: {
+    marginTop: 1,
+  },
+  dateSeparatorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: Spacing.md,
+    gap: Spacing.sm,
+  },
+  dateSeparatorLine: {
+    flex: 1,
+    height: 1,
+  },
+  dateSeparatorText: {
+    fontSize: 12,
+    fontWeight: '500',
   },
   loadingContainer: {
     flex: 1,
@@ -219,21 +333,33 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   inputContainer: {
-    flexDirection: 'row',
     paddingHorizontal: 10,
-    paddingVertical: Spacing.md,
-    gap: Spacing.sm,
+    paddingTop: Spacing.md,
     borderTopWidth: 1,
-    alignItems: 'flex-end',
   },
-  input: {
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    borderRadius: 24,
+    borderWidth: 1,
+    paddingLeft: Spacing.md,
+    paddingRight: 4,
+    paddingVertical: 4,
+    gap: Spacing.sm,
+    minHeight: 48,
+  },
+  textInput: {
     flex: 1,
+    fontSize: 15,
+    lineHeight: 20,
     maxHeight: 100,
+    paddingVertical: Spacing.sm,
+    textAlignVertical: 'center',
   },
   sendButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
