@@ -1,11 +1,14 @@
 import React from "react";
 import { View, StyleSheet, Pressable, Alert } from "react-native";
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { Feather } from "@expo/vector-icons";
+import { ToolsStackParamList } from '@/navigation/ToolsStackNavigator';
 
 interface ToolItem {
   id: string;
@@ -16,6 +19,13 @@ interface ToolItem {
 }
 
 const TOOLS: ToolItem[] = [
+  {
+    id: "contacts",
+    title: "Contacts",
+    description: "Manage all your client contacts",
+    icon: "users",
+    color: "#8B4565",
+  },
   {
     id: "1",
     title: "Email Templates",
@@ -74,11 +84,18 @@ const TOOLS: ToolItem[] = [
   },
 ];
 
+type ToolsScreenNavigationProp = NativeStackNavigationProp<ToolsStackParamList, 'Tools'>;
+
 export function ToolsScreen() {
   const { theme } = useTheme();
+  const navigation = useNavigation<ToolsScreenNavigationProp>();
   
   const handleToolPress = (tool: ToolItem) => {
-    Alert.alert(tool.title, `Open ${tool.title.toLowerCase()} tool`);
+    if (tool.id === 'contacts') {
+      navigation.navigate('Contacts');
+    } else {
+      Alert.alert(tool.title, `Open ${tool.title.toLowerCase()} tool`);
+    }
   };
 
   return (

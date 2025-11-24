@@ -29,6 +29,12 @@ const MOCK_PROJECT = {
     { id: '2', amount: 1500, date: 'Jan 15, 2025', description: 'Second installment', status: 'Pending' },
     { id: '3', amount: 1500, date: 'May 15, 2025', description: 'Final payment', status: 'Pending' },
   ],
+  contacts: [
+    { id: '1', name: 'Sarah Johnson', role: 'Bride', email: 'sarah.johnson@example.com', phone: '+1 (555) 123-4567', isPrimary: true },
+    { id: '2', name: 'Mike Chen', role: 'Groom', email: 'mike.chen@example.com', phone: '+1 (555) 234-5678', isPrimary: false },
+    { id: '3', name: 'Jennifer Mills', role: 'Wedding Planner', email: 'jennifer@weddingmagic.com', phone: '+1 (555) 345-6789', isPrimary: false },
+    { id: '4', name: 'Robert Johnson', role: 'Father of Bride', email: 'robert.j@example.com', phone: '+1 (555) 456-7890', isPrimary: false },
+  ],
 };
 
 type TabType = 'activity' | 'payments' | 'files' | 'details';
@@ -181,20 +187,55 @@ export default function ProjectDetailScreen() {
                 </View>
               </View>
 
-              <View style={[styles.detailRow, styles.detailRowBorder, { borderTopColor: theme.border }]}>
-                <Feather name="user" size={18} color={theme.primary} />
-                <View style={styles.detailContent}>
-                  <ThemedText style={[styles.detailLabel, { color: theme.textSecondary }]}>Client</ThemedText>
-                  <ThemedText style={styles.detailValue}>{MOCK_PROJECT.clientName}</ThemedText>
-                  <ThemedText style={[styles.detailSubvalue, { color: theme.textSecondary }]}>
-                    {MOCK_PROJECT.clientEmail}
-                  </ThemedText>
-                  <ThemedText style={[styles.detailSubvalue, { color: theme.textSecondary }]}>
-                    {MOCK_PROJECT.clientPhone}
-                  </ThemedText>
+            </View>
+
+            <ThemedText style={[styles.sectionTitle, { fontSize: Typography.h3.fontSize, fontWeight: Typography.h3.fontWeight, marginTop: Spacing.lg }]}>
+              Contacts
+            </ThemedText>
+            
+            {MOCK_PROJECT.contacts.map((contact, index) => (
+              <View 
+                key={contact.id} 
+                style={[
+                  styles.contactCard, 
+                  { backgroundColor: theme.backgroundSecondary },
+                  index === 0 && { marginTop: 0 }
+                ]}
+              >
+                <View style={styles.contactHeader}>
+                  <Avatar name={contact.name} size={40} />
+                  <View style={styles.contactInfo}>
+                    <View style={styles.contactNameRow}>
+                      <ThemedText style={styles.contactName}>{contact.name}</ThemedText>
+                      {contact.isPrimary ? (
+                        <Badge label="Primary" backgroundColor={theme.primary} color="#FFFFFF" />
+                      ) : null}
+                    </View>
+                    <ThemedText style={[styles.contactRole, { color: theme.textSecondary }]}>
+                      {contact.role}
+                    </ThemedText>
+                  </View>
+                </View>
+                <View style={styles.contactDetails}>
+                  {contact.email ? (
+                    <View style={styles.contactDetailRow}>
+                      <Feather name="mail" size={14} color={theme.textSecondary} />
+                      <ThemedText style={[styles.contactDetailText, { color: theme.textSecondary }]}>
+                        {contact.email}
+                      </ThemedText>
+                    </View>
+                  ) : null}
+                  {contact.phone ? (
+                    <View style={styles.contactDetailRow}>
+                      <Feather name="phone" size={14} color={theme.textSecondary} />
+                      <ThemedText style={[styles.contactDetailText, { color: theme.textSecondary }]}>
+                        {contact.phone}
+                      </ThemedText>
+                    </View>
+                  ) : null}
                 </View>
               </View>
-            </View>
+            ))}
           </View>
         );
 
@@ -494,5 +535,43 @@ const styles = StyleSheet.create({
   detailSubvalue: {
     fontSize: 14,
     marginTop: 2,
+  },
+  contactCard: {
+    padding: Spacing.md,
+    borderRadius: 8,
+    marginTop: Spacing.md,
+  },
+  contactHeader: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+    marginBottom: Spacing.sm,
+  },
+  contactInfo: {
+    flex: 1,
+  },
+  contactNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
+  contactName: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  contactRole: {
+    fontSize: 12,
+  },
+  contactDetails: {
+    gap: Spacing.xs,
+    paddingLeft: 52,
+  },
+  contactDetailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  contactDetailText: {
+    fontSize: 12,
   },
 });
