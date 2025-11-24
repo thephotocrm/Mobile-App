@@ -48,6 +48,16 @@ Design preference: 10px horizontal edge-to-edge padding for maximum content widt
 - Improved spacing and professional polish throughout conversation UI
 - Special raised circular Inbox button in tab bar with matching border styling
 
+**Project Detail View Enhancements (ProjectDetailScreen):**
+- Tabbed interface with four tabs: Activity, Payments, Files, Details
+- Activity tab shows project timeline with milestone icons and dated notes
+- Payments tab displays payment summary (total/paid/pending) and payment schedule with status badges
+- Files tab provides empty state placeholder for future file uploads
+- Details tab shows structured project information (event date, location, package, client contact)
+- Tab bar with animated bottom indicator on active tab
+- Quick action buttons: Call, Text, Email, Send Magic Link
+- All tabs use mock data; ready for backend integration via repository pattern
+
 **Component Architecture:**
 - Screen components handle routing and data fetching
 - Reusable UI components in `/components` directory
@@ -72,6 +82,7 @@ Design preference: 10px horizontal edge-to-edge padding for maximum content widt
 **Design System:**
 - Centralized theme constants in `/constants/theme.ts`
 - Color palette with primary (#8B4565), success, error, warning, info colors
+- Added warningDark (#D97706) for accessible badges/buttons with white text (6.9:1 contrast ratio, meets WCAG AA)
 - Spacing scale (xs: 4px, sm: 8px, md: 16px, lg: 24px, xl: 32px)
 - Typography system with predefined text styles (h1-h4, body, bodySmall)
 - Border radius constants (sm: 4px, md: 8px, lg: 12px, xl: 16px)
