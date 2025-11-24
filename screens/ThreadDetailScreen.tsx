@@ -151,7 +151,7 @@ export default function ThreadDetailScreen() {
         { 
           backgroundColor: theme.backgroundRoot, 
           borderTopColor: theme.border,
-          paddingBottom: insets.bottom + Spacing.sm,
+          paddingBottom: tabBarHeight + Spacing.sm,
         }
       ]}>
         <Input
