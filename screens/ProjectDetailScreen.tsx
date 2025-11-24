@@ -114,7 +114,7 @@ export default function ProjectDetailScreen() {
                   <ThemedText style={styles.paymentDescription}>{payment.description}</ThemedText>
                   <Badge 
                     label={payment.status} 
-                    backgroundColor={payment.status === 'Paid' ? theme.success : '#B45309'}
+                    backgroundColor={payment.status === 'Paid' ? theme.success : theme.warningDark}
                     color='#FFFFFF'
                   />
                 </View>

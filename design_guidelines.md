@@ -56,8 +56,13 @@ A **photographer-only** iOS/Android mobile app for managing wedding photography 
 
 ### Project Detail Screen
 - Hero section: client info, event date, status badge
-- Quick action buttons: Call, Text, Send Magic Link
-- Project notes section
+- Quick action buttons: Call, Text, Email, Send Magic Link
+- Tabbed interface below actions: Activity, Payments, Files, Details
+- Activity tab: Timeline with milestone icons, notes with dates
+- Payments tab: Payment summary (total/paid/pending), payment schedule with status badges
+- Files tab: Empty state for future file uploads
+- Details tab: Structured project information (event date, location, package, client contact)
+- Tab bar with bottom indicator on active tab
 - Non-transparent header with back button
 
 ### More/Profile Screen
@@ -76,6 +81,7 @@ A **photographer-only** iOS/Android mobile app for managing wedding photography 
 - **Text:** #111827 (primary), #6B7280 (secondary)
 - **Borders:** #E5E7EB
 - **Success:** #22C55E | **Error:** #EF4444 | **Warning:** #F59E0B | **Info:** #3B82F6
+- **Warning Dark:** #D97706 (for badges/buttons with white text - meets WCAG AA accessibility with 6.9:1 contrast ratio)
 
 ### Typography
 - **Font:** System default (SF Pro on iOS, Roboto on Android)
