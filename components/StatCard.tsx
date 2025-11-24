@@ -1,39 +1,45 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { ThemedText } from "./ThemedText";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { Card } from "./Card";
+import { Spacing, Typography } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
+import { Feather } from "@expo/vector-icons";
 
 interface StatCardProps {
   value: string;
   label: string;
+  icon: keyof typeof Feather.glyphMap;
+  color: string;
 }
 
-export function StatCard({ value, label }: StatCardProps) {
+export function StatCard({ value, label, icon, color }: StatCardProps) {
   const { theme } = useTheme();
   
   return (
-    <View style={[styles.container, { backgroundColor: theme.backgroundRoot }]}>
-      <ThemedText style={[styles.value, { color: theme.text }]}>{value}</ThemedText>
-      <ThemedText style={[styles.label, { color: theme.textSecondary }]}>{label}</ThemedText>
-    </View>
+    <Card elevation={1} style={styles.card}>
+      <View style={[styles.iconCircle, { backgroundColor: color }]}>
+        <Feather name={icon} size={20} color="#FFFFFF" />
+      </View>
+      <ThemedText style={[Typography.h3, { color: theme.text, marginTop: Spacing.md }]}>
+        {value}
+      </ThemedText>
+      <ThemedText style={[Typography.bodySmall, { color: theme.textSecondary, marginTop: Spacing.xs }]}>
+        {label}
+      </ThemedText>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
-    minWidth: "47%",
-    marginBottom: Spacing.md,
+  card: {
+    alignItems: "flex-start",
   },
-  value: {
-    fontSize: 28,
-    fontWeight: "700",
-    marginBottom: Spacing.xs,
-  },
-  label: {
-    fontSize: 14,
-    lineHeight: 20,
+  iconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
