@@ -35,6 +35,9 @@ export default function ProjectsStackNavigator() {
         options={{
           headerTitle: 'Project Details',
           headerTransparent: false,
+          headerStyle: {
+            backgroundColor: theme.backgroundRoot,
+          },
         }}
       />
     </Stack.Navigator>
