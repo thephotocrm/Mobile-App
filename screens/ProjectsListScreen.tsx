@@ -270,7 +270,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   projectList: {
-    paddingHorizontal: 10,
     paddingVertical: Spacing.md,
   },
   loadingContainer: {

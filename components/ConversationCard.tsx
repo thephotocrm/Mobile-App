@@ -53,7 +53,8 @@ export function ConversationCard({
 
 const styles = StyleSheet.create({
   card: {
-    padding: Spacing.md,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.md,
     borderRadius: 12,
     marginBottom: Spacing.md,
     shadowColor: '#000',

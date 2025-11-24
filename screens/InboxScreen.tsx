@@ -174,7 +174,6 @@ const styles = StyleSheet.create({
     paddingLeft: Spacing.xl + Spacing.md,
   },
   list: {
-    paddingHorizontal: 10,
     paddingVertical: Spacing.md,
   },
   loadingContainer: {

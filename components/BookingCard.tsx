@@ -55,7 +55,8 @@ export function BookingCard({
 
 const styles = StyleSheet.create({
   card: {
-    padding: Spacing.md,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.md,
     borderRadius: 12,
     marginBottom: Spacing.md,
     borderLeftWidth: 4,

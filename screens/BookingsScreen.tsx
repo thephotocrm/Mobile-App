@@ -220,7 +220,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   section: {
-    paddingHorizontal: 10,
     paddingVertical: Spacing.md,
   },
   sectionTitle: {
