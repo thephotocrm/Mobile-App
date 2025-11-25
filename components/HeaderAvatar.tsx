@@ -23,6 +23,7 @@ export function HeaderAvatar({ onPress }: HeaderAvatarProps) {
 const styles = StyleSheet.create({
   container: {
     marginRight: 10,
+    backgroundColor: "transparent",
   },
   avatarContainer: {
     width: 32,

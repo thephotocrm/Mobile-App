@@ -21,6 +21,8 @@ interface TabIconProps {
 }
 
 function TabIcon({ name, label, size, focused, inactiveColor }: TabIconProps) {
+  const focusedColor = "#9333EA";
+  
   if (!focused) {
     return (
       <View style={styles.tabItem}>
@@ -31,15 +33,10 @@ function TabIcon({ name, label, size, focused, inactiveColor }: TabIconProps) {
   }
   
   return (
-    <LinearGradient
-      colors={GradientColors.primary as [string, string, ...string[]]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.activeTabItem}
-    >
-      <Feather name={name} size={size} color="#FFFFFF" />
-      <Text style={[styles.tabLabel, { color: '#FFFFFF' }]}>{label}</Text>
-    </LinearGradient>
+    <View style={styles.tabItem}>
+      <Feather name={name} size={size} color={focusedColor} />
+      <Text style={[styles.tabLabel, { color: focusedColor }]}>{label}</Text>
+    </View>
   );
 }
 
@@ -139,14 +136,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.sm,
-    gap: 2,
-  },
-  activeTabItem: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.xs,
-    paddingHorizontal: Spacing.sm,
-    borderRadius: 8,
     gap: 2,
   },
   tabLabel: {

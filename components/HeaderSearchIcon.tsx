@@ -20,5 +20,6 @@ export function HeaderSearchIcon({ onPress }: HeaderSearchIconProps) {
 const styles = StyleSheet.create({
   container: {
     marginLeft: 10,
+    backgroundColor: "transparent",
   },
 });
