@@ -31,7 +31,7 @@ export function ProjectCard({
       onPress={onPress}
       style={({ pressed }) => [
         styles.card,
-        { backgroundColor: theme.backgroundRoot },
+        { backgroundColor: theme.backgroundCard },
         pressed && { opacity: 0.7 },
       ]}
     >

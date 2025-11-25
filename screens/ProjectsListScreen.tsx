@@ -271,6 +271,7 @@ const styles = StyleSheet.create({
   },
   projectList: {
     paddingVertical: Spacing.md,
+    paddingHorizontal: 10,
   },
   loadingContainer: {
     flex: 1,

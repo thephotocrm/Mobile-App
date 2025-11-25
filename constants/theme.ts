@@ -32,6 +32,7 @@ export const Colors = {
     backgroundDefault: "#FAF8F5",
     backgroundSecondary: "#F0EBE3",
     backgroundTertiary: "#E5E0D8",
+    backgroundCard: "#FFFFFF",
     border: "#E0DBD3",
   },
   dark: {
@@ -53,6 +54,7 @@ export const Colors = {
     backgroundDefault: "#2A2C2E",
     backgroundSecondary: "#353739",
     backgroundTertiary: "#404244",
+    backgroundCard: "#323436",
     border: "#374151",
   },
 };

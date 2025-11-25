@@ -71,7 +71,7 @@ export default function ProjectDetailScreen() {
               Activity Timeline
             </ThemedText>
             {MOCK_PROJECT.notes.map((note) => (
-              <View key={note.id} style={[styles.activityCard, { backgroundColor: theme.backgroundSecondary }]}>
+              <View key={note.id} style={[styles.activityCard, { backgroundColor: theme.backgroundCard }]}>
                 <View style={styles.activityHeader}>
                   <View style={[styles.activityIcon, { backgroundColor: note.type === 'milestone' ? theme.primary : theme.border }]}>
                     <Feather 
@@ -99,7 +99,7 @@ export default function ProjectDetailScreen() {
               Payment Schedule
             </ThemedText>
             
-            <View style={[styles.paymentSummary, { backgroundColor: theme.backgroundSecondary }]}>
+            <View style={[styles.paymentSummary, { backgroundColor: theme.backgroundCard }]}>
               <View style={styles.paymentSummaryRow}>
                 <ThemedText style={[styles.paymentSummaryLabel, { color: theme.textSecondary }]}>Total Contract</ThemedText>
                 <ThemedText style={styles.paymentSummaryValue}>${MOCK_PROJECT.totalAmount.toLocaleString()}</ThemedText>
@@ -115,7 +115,7 @@ export default function ProjectDetailScreen() {
             </View>
 
             {MOCK_PROJECT.payments.map((payment) => (
-              <View key={payment.id} style={[styles.paymentCard, { backgroundColor: theme.backgroundSecondary }]}>
+              <View key={payment.id} style={[styles.paymentCard, { backgroundColor: theme.backgroundCard }]}>
                 <View style={styles.paymentHeader}>
                   <ThemedText style={styles.paymentDescription}>{payment.description}</ThemedText>
                   <Badge 
@@ -143,7 +143,7 @@ export default function ProjectDetailScreen() {
             <ThemedText style={[styles.sectionTitle, { fontSize: Typography.h3.fontSize, fontWeight: Typography.h3.fontWeight }]}>
               Files
             </ThemedText>
-            <View style={[styles.emptyState, { backgroundColor: theme.backgroundSecondary }]}>
+            <View style={[styles.emptyState, { backgroundColor: theme.backgroundCard }]}>
               <Feather name="folder" size={48} color={theme.textSecondary} />
               <ThemedText style={[styles.emptyStateText, { color: theme.textSecondary }]}>
                 No files uploaded yet
@@ -162,7 +162,7 @@ export default function ProjectDetailScreen() {
               Project Details
             </ThemedText>
             
-            <View style={[styles.detailCard, { backgroundColor: theme.backgroundSecondary }]}>
+            <View style={[styles.detailCard, { backgroundColor: theme.backgroundCard }]}>
               <View style={styles.detailRow}>
                 <Feather name="calendar" size={18} color={theme.primary} />
                 <View style={styles.detailContent}>
@@ -198,7 +198,7 @@ export default function ProjectDetailScreen() {
                 key={contact.id} 
                 style={[
                   styles.contactCard, 
-                  { backgroundColor: theme.backgroundSecondary },
+                  { backgroundColor: theme.backgroundCard },
                   index === 0 && { marginTop: 0 }
                 ]}
               >
@@ -246,7 +246,7 @@ export default function ProjectDetailScreen() {
 
   return (
     <ScreenScrollView contentContainerStyle={{ paddingTop: Spacing.md }}>
-      <View style={[styles.hero, { backgroundColor: theme.backgroundSecondary }]}>
+      <View style={[styles.hero, { backgroundColor: theme.backgroundCard }]}>
         <Avatar name={MOCK_PROJECT.clientName} size={64} />
         <ThemedText style={[styles.heroTitle, { fontSize: Typography.h2.fontSize, fontWeight: Typography.h2.fontWeight }]}>
           {MOCK_PROJECT.title}
@@ -267,7 +267,7 @@ export default function ProjectDetailScreen() {
           onPress={handleCall}
           style={({ pressed }) => [styles.actionButton, pressed && { opacity: 0.7 }]}
         >
-          <View style={[styles.actionIcon, { backgroundColor: theme.backgroundSecondary }]}>
+          <View style={[styles.actionIcon, { backgroundColor: theme.backgroundCard, borderColor: theme.border }]}>
             <Feather name="phone" size={24} color={theme.primary} />
           </View>
           <ThemedText style={styles.actionLabel}>Call</ThemedText>
@@ -277,7 +277,7 @@ export default function ProjectDetailScreen() {
           onPress={handleText}
           style={({ pressed }) => [styles.actionButton, pressed && { opacity: 0.7 }]}
         >
-          <View style={[styles.actionIcon, { backgroundColor: theme.backgroundSecondary }]}>
+          <View style={[styles.actionIcon, { backgroundColor: theme.backgroundCard, borderColor: theme.border }]}>
             <Feather name="message-square" size={24} color={theme.primary} />
           </View>
           <ThemedText style={styles.actionLabel}>Text</ThemedText>
@@ -287,7 +287,7 @@ export default function ProjectDetailScreen() {
           onPress={handleEmail}
           style={({ pressed }) => [styles.actionButton, pressed && { opacity: 0.7 }]}
         >
-          <View style={[styles.actionIcon, { backgroundColor: theme.backgroundSecondary }]}>
+          <View style={[styles.actionIcon, { backgroundColor: theme.backgroundCard, borderColor: theme.border }]}>
             <Feather name="mail" size={24} color={theme.primary} />
           </View>
           <ThemedText style={styles.actionLabel}>Email</ThemedText>
@@ -297,7 +297,7 @@ export default function ProjectDetailScreen() {
           onPress={handleSendLink}
           style={({ pressed }) => [styles.actionButton, pressed && { opacity: 0.7 }]}
         >
-          <View style={[styles.actionIcon, { backgroundColor: theme.backgroundSecondary }]}>
+          <View style={[styles.actionIcon, { backgroundColor: theme.backgroundCard, borderColor: theme.border }]}>
             <Feather name="link" size={24} color={theme.primary} />
           </View>
           <ThemedText style={styles.actionLabel}>Send Link</ThemedText>
@@ -355,6 +355,13 @@ const styles = StyleSheet.create({
   hero: {
     padding: Spacing.xl,
     alignItems: 'center',
+    marginHorizontal: 10,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
   },
   heroTitle: {
     marginTop: Spacing.md,
@@ -386,6 +393,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
   },
   actionLabel: {
     fontSize: 12,
@@ -426,6 +434,11 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderRadius: 8,
     marginBottom: Spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
   },
   activityHeader: {
     flexDirection: 'row',
@@ -453,6 +466,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: Spacing.lg,
     gap: Spacing.sm,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
   },
   paymentSummaryRow: {
     flexDirection: 'row',
@@ -471,6 +489,11 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderRadius: 8,
     marginBottom: Spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
   },
   paymentHeader: {
     flexDirection: 'row',
@@ -500,6 +523,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     gap: Spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
   },
   emptyStateText: {
     fontSize: 16,
@@ -512,6 +540,11 @@ const styles = StyleSheet.create({
   detailCard: {
     borderRadius: 8,
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
   },
   detailRow: {
     flexDirection: 'row',
@@ -540,6 +573,11 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderRadius: 8,
     marginTop: Spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
   },
   contactHeader: {
     flexDirection: 'row',
