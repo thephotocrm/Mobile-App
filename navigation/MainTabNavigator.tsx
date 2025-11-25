@@ -3,43 +3,42 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { Platform, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View, Text } from "react-native";
 import { HomeStackNavigator } from "@/navigation/HomeStackNavigator";
 import ProjectsStackNavigator from "@/navigation/ProjectsStackNavigator";
 import InboxStackNavigator from "@/navigation/InboxStackNavigator";
 import { NotificationsStackNavigator } from "@/navigation/NotificationsStackNavigator";
 import { ToolsStackNavigator } from "@/navigation/ToolsStackNavigator";
 import { useTheme } from "@/hooks/useTheme";
-import { GradientColors } from "@/constants/theme";
+import { GradientColors, Spacing } from "@/constants/theme";
 
-interface GradientIconProps {
+interface TabIconProps {
   name: keyof typeof Feather.glyphMap;
+  label: string;
   size: number;
   focused: boolean;
   inactiveColor: string;
 }
 
-function GradientIcon({ name, size, focused, inactiveColor }: GradientIconProps) {
+function TabIcon({ name, label, size, focused, inactiveColor }: TabIconProps) {
   if (!focused) {
-    return <Feather name={name} size={size} color={inactiveColor} />;
+    return (
+      <View style={styles.tabItem}>
+        <Feather name={name} size={size} color={inactiveColor} />
+        <Text style={[styles.tabLabel, { color: inactiveColor }]}>{label}</Text>
+      </View>
+    );
   }
-  
-  const containerSize = size + 16;
   
   return (
     <LinearGradient
       colors={GradientColors.primary as [string, string, ...string[]]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={{ 
-        width: containerSize, 
-        height: containerSize, 
-        borderRadius: 8,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
+      style={styles.activeTabItem}
     >
       <Feather name={name} size={size} color="#FFFFFF" />
+      <Text style={[styles.tabLabel, { color: '#FFFFFF' }]}>{label}</Text>
     </LinearGradient>
   );
 }
@@ -61,8 +60,7 @@ export default function MainTabNavigator() {
     <Tab.Navigator
       initialRouteName="HomeTab"
       screenOptions={{
-        tabBarActiveTintColor: theme.tabIconSelected,
-        tabBarInactiveTintColor: theme.tabIconDefault,
+        tabBarShowLabel: false,
         tabBarStyle: {
           position: "absolute",
           backgroundColor: Platform.select({
@@ -72,6 +70,8 @@ export default function MainTabNavigator() {
           borderTopWidth: 1,
           borderTopColor: theme.border,
           elevation: 0,
+          height: Platform.OS === 'ios' ? 88 : 64,
+          paddingTop: Spacing.xs,
         },
         tabBarBackground: () =>
           Platform.OS === "ios" ? (
@@ -88,9 +88,8 @@ export default function MainTabNavigator() {
         name="HomeTab"
         component={HomeStackNavigator}
         options={{
-          title: "Home",
           tabBarIcon: ({ focused, size }) => (
-            <GradientIcon name="home" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
+            <TabIcon name="home" label="Home" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
           ),
         }}
       />
@@ -98,9 +97,8 @@ export default function MainTabNavigator() {
         name="ProjectsTab"
         component={ProjectsStackNavigator}
         options={{
-          title: "Projects",
           tabBarIcon: ({ focused, size }) => (
-            <GradientIcon name="folder" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
+            <TabIcon name="folder" label="Projects" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
           ),
         }}
       />
@@ -108,9 +106,8 @@ export default function MainTabNavigator() {
         name="InboxTab"
         component={InboxStackNavigator}
         options={{
-          title: "Inbox",
           tabBarIcon: ({ focused, size }) => (
-            <GradientIcon name="message-square" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
+            <TabIcon name="message-square" label="Inbox" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
           ),
         }}
       />
@@ -118,9 +115,8 @@ export default function MainTabNavigator() {
         name="NotificationsTab"
         component={NotificationsStackNavigator}
         options={{
-          title: "Notifications",
           tabBarIcon: ({ focused, size }) => (
-            <GradientIcon name="bell" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
+            <TabIcon name="bell" label="Alerts" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
           ),
         }}
       />
@@ -128,9 +124,8 @@ export default function MainTabNavigator() {
         name="ToolsTab"
         component={ToolsStackNavigator}
         options={{
-          title: "Tools",
           tabBarIcon: ({ focused, size }) => (
-            <GradientIcon name="grid" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
+            <TabIcon name="grid" label="Tools" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
           ),
         }}
       />
@@ -138,4 +133,24 @@ export default function MainTabNavigator() {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  tabItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.sm,
+    gap: 2,
+  },
+  activeTabItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: 8,
+    gap: 2,
+  },
+  tabLabel: {
+    fontSize: 10,
+    fontWeight: '500',
+  },
+});
