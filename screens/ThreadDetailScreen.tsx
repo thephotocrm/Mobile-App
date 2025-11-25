@@ -179,7 +179,7 @@ export default function ThreadDetailScreen() {
                         styles.messageBubble,
                         msg.isSent
                           ? { backgroundColor: theme.primary }
-                          : { backgroundColor: theme.backgroundSecondary },
+                          : { backgroundColor: theme.backgroundCard },
                         msg.isSent ? styles.sentMessage : styles.receivedMessage,
                       ]}
                     >
