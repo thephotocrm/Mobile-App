@@ -5,6 +5,7 @@ import {
   Pressable,
   Platform,
   Linking,
+  ScrollView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
@@ -14,7 +15,6 @@ import { Image } from "expo-image";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
 
@@ -104,10 +104,10 @@ export function SettingsScreen() {
         </View>
       )}
 
-      <ScreenScrollView 
+      <ScrollView 
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingTop: insets.top + 60 }
+          { paddingTop: insets.top + 60, paddingBottom: Spacing.xl }
         ]}
       >
         <View style={[styles.notificationBanner, { backgroundColor: "#EDE9FE", borderLeftColor: "#8B45FF" }]}>
@@ -241,7 +241,7 @@ export function SettingsScreen() {
 
           <ThemedText style={[styles.version, { color: theme.textSecondary }]}>v 1.0.0 (1), rev 1</ThemedText>
         </View>
-      </ScreenScrollView>
+      </ScrollView>
     </ThemedView>
   );
 }
