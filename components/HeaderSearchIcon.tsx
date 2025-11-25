@@ -11,7 +11,12 @@ export function HeaderSearchIcon({ onPress }: HeaderSearchIconProps) {
   const { theme } = useTheme();
 
   return (
-    <Pressable onPress={onPress} style={styles.container}>
+    <Pressable 
+      onPress={onPress} 
+      style={styles.container}
+      android_ripple={{ color: "transparent" }}
+      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+    >
       <Feather name="search" size={22} color={theme.text} />
     </Pressable>
   );

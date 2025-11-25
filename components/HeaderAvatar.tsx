@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet, Pressable, Platform } from "react-native";
 import { Image } from "expo-image";
 
 interface HeaderAvatarProps {
@@ -8,7 +8,12 @@ interface HeaderAvatarProps {
 
 export function HeaderAvatar({ onPress }: HeaderAvatarProps) {
   return (
-    <Pressable onPress={onPress} style={styles.container}>
+    <Pressable 
+      onPress={onPress} 
+      style={styles.container}
+      android_ripple={{ color: "transparent" }}
+      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+    >
       <View style={styles.avatarContainer}>
         <Image
           source={{ uri: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" }}

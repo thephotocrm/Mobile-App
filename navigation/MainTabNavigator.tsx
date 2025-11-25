@@ -67,8 +67,6 @@ export default function MainTabNavigator() {
           borderTopWidth: 1,
           borderTopColor: theme.border,
           elevation: 0,
-          height: Platform.OS === 'ios' ? 88 : 64,
-          paddingTop: Spacing.xs,
         },
         tabBarBackground: () =>
           Platform.OS === "ios" ? (
