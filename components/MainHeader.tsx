@@ -1,22 +1,29 @@
 import React from "react";
 import { View, StyleSheet, Pressable, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BlurView } from "expo-blur";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { ThemedText } from "./ThemedText";
 import { useTheme } from "@/hooks/useTheme";
 import { Typography, Spacing } from "@/constants/theme";
+import { RootStackParamList } from "@/navigation/RootNavigator";
 
 interface MainHeaderProps {
   title: string;
   onSearchPress?: () => void;
-  onAvatarPress?: () => void;
 }
 
-export function MainHeader({ title, onSearchPress, onAvatarPress }: MainHeaderProps) {
+export function MainHeader({ title, onSearchPress }: MainHeaderProps) {
   const { theme, isDark } = useTheme();
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  const handleAvatarPress = () => {
+    navigation.navigate("Settings");
+  };
 
   const headerContent = (
     <View style={[styles.headerContent, { paddingTop: insets.top }]}>
@@ -33,7 +40,7 @@ export function MainHeader({ title, onSearchPress, onAvatarPress }: MainHeaderPr
       </ThemedText>
 
       <Pressable
-        onPress={onAvatarPress}
+        onPress={handleAvatarPress}
         style={styles.iconButton}
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
       >

@@ -45,7 +45,6 @@ interface MainScreenOptionsParams {
   isDark: boolean;
   title: string;
   onSearchPress?: () => void;
-  onAvatarPress?: () => void;
 }
 
 export const getMainScreenOptions = ({
@@ -53,7 +52,6 @@ export const getMainScreenOptions = ({
   isDark,
   title,
   onSearchPress,
-  onAvatarPress,
 }: MainScreenOptionsParams): NativeStackNavigationOptions => ({
   headerTransparent: true,
   headerShadowVisible: false,
@@ -68,7 +66,6 @@ export const getMainScreenOptions = ({
       <MainHeader
         title={title}
         onSearchPress={onSearchPress}
-        onAvatarPress={onAvatarPress}
       />
     );
   },
