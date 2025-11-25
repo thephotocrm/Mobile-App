@@ -104,7 +104,7 @@ export default function MainTabNavigator() {
         component={ProjectsStackNavigator}
         options={{
           tabBarIcon: ({ focused, size }) => (
-            <TabIcon name="folder" label="Projects" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
+            <TabIcon name="folder" label="Proj" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
           ),
         }}
       />
