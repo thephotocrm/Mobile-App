@@ -1,10 +1,9 @@
-import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import InboxScreen from '@/screens/InboxScreen';
-import ThreadDetailScreen from '@/screens/ThreadDetailScreen';
-import { getCommonScreenOptions } from './screenOptions';
-import { HeaderTitle } from '@/components/HeaderTitle';
-import { useTheme } from '@/hooks/useTheme';
+import React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import InboxScreen from "@/screens/InboxScreen";
+import ThreadDetailScreen from "@/screens/ThreadDetailScreen";
+import { getMainScreenOptions, getCommonScreenOptions } from "@/navigation/screenOptions";
+import { useTheme } from "@/hooks/useTheme";
 
 export type InboxStackParamList = {
   InboxList: undefined;
@@ -25,9 +24,11 @@ export default function InboxStackNavigator() {
       <Stack.Screen
         name="InboxList"
         component={InboxScreen}
-        options={{
-          headerTitle: () => <HeaderTitle title="thePhotoCrm" />,
-        }}
+        options={getMainScreenOptions({
+          theme,
+          isDark,
+          title: "Inbox",
+        })}
       />
       <Stack.Screen
         name="ThreadDetail"

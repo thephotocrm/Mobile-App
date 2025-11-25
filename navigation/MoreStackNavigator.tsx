@@ -1,8 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MoreScreen from '@/screens/MoreScreen';
-import { getCommonScreenOptions } from './screenOptions';
-import { HeaderTitle } from '@/components/HeaderTitle';
+import { getMainScreenOptions, getCommonScreenOptions } from '@/navigation/screenOptions';
 import { useTheme } from '@/hooks/useTheme';
 
 export type MoreStackParamList = {
@@ -23,9 +22,11 @@ export default function MoreStackNavigator() {
       <Stack.Screen
         name="MoreList"
         component={MoreScreen}
-        options={{
-          headerTitle: () => <HeaderTitle title="thePhotoCrm" />,
-        }}
+        options={getMainScreenOptions({
+          theme,
+          isDark,
+          title: "More",
+        })}
       />
     </Stack.Navigator>
   );

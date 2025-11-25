@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View } from "react-native";
 import { NotificationsScreen, MOCK_NOTIFICATIONS } from "@/screens/NotificationsScreen";
-import { getCommonScreenOptions } from "@/navigation/screenOptions";
+import { getMainScreenOptions, getCommonScreenOptions } from "@/navigation/screenOptions";
 import { useTheme } from "@/hooks/useTheme";
 import { ThemedText } from "@/components/ThemedText";
 import { Badge } from "@/components/Badge";
@@ -14,7 +14,7 @@ export type NotificationsStackParamList = {
 
 const Stack = createNativeStackNavigator<NotificationsStackParamList>();
 
-function NotificationsHeader({ unreadCount }: { unreadCount: number }) {
+function NotificationsHeaderTitle({ unreadCount }: { unreadCount: number }) {
   const { theme } = useTheme();
   
   return (
@@ -22,28 +22,34 @@ function NotificationsHeader({ unreadCount }: { unreadCount: number }) {
       <ThemedText style={[Typography.h4, { color: theme.text }]}>
         Notifications
       </ThemedText>
-      {unreadCount > 0 && <Badge label={unreadCount.toString()} />}
+      {unreadCount > 0 ? <Badge label={unreadCount.toString()} /> : null}
     </View>
   );
 }
 
 export function NotificationsStackNavigator() {
   const { theme, isDark } = useTheme();
-  const screenOptions = getCommonScreenOptions({ theme, isDark });
   
   const unreadCount = useMemo(() => {
     return MOCK_NOTIFICATIONS.filter((n) => !n.read).length;
   }, []);
 
+  const mainOptions = getMainScreenOptions({
+    theme,
+    isDark,
+    title: "Notifications",
+  });
+
   return (
     <Stack.Navigator
-      screenOptions={screenOptions}
+      screenOptions={getCommonScreenOptions({ theme, isDark })}
     >
       <Stack.Screen 
         name="Notifications" 
         component={NotificationsScreen}
         options={{
-          headerTitle: () => <NotificationsHeader unreadCount={unreadCount} />,
+          ...mainOptions,
+          headerTitle: () => <NotificationsHeaderTitle unreadCount={unreadCount} />,
         }}
       />
     </Stack.Navigator>

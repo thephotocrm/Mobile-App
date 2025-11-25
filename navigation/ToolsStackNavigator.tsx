@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ToolsScreen } from "@/screens/ToolsScreen";
 import ContactsScreen from "@/screens/ContactsScreen";
 import ContactDetailScreen from "@/screens/ContactDetailScreen";
-import { getCommonScreenOptions } from "@/navigation/screenOptions";
+import { getMainScreenOptions, getCommonScreenOptions } from "@/navigation/screenOptions";
 import { useTheme } from "@/hooks/useTheme";
 
 export type ToolsStackParamList = {
@@ -16,18 +16,19 @@ const Stack = createNativeStackNavigator<ToolsStackParamList>();
 
 export function ToolsStackNavigator() {
   const { theme, isDark } = useTheme();
-  const screenOptions = getCommonScreenOptions({ theme, isDark });
 
   return (
     <Stack.Navigator
-      screenOptions={screenOptions}
+      screenOptions={getCommonScreenOptions({ theme, isDark })}
     >
       <Stack.Screen 
         name="Tools" 
         component={ToolsScreen}
-        options={{
+        options={getMainScreenOptions({
+          theme,
+          isDark,
           title: "Tools",
-        }}
+        })}
       />
       <Stack.Screen 
         name="Contacts" 
