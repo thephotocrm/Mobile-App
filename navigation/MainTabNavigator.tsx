@@ -12,6 +12,39 @@ import { ToolsStackNavigator } from "@/navigation/ToolsStackNavigator";
 import { useTheme } from "@/hooks/useTheme";
 import { GradientColors } from "@/constants/theme";
 
+interface GradientIconProps {
+  name: keyof typeof Feather.glyphMap;
+  size: number;
+  focused: boolean;
+  inactiveColor: string;
+}
+
+function GradientIcon({ name, size, focused, inactiveColor }: GradientIconProps) {
+  if (!focused) {
+    return <Feather name={name} size={size} color={inactiveColor} />;
+  }
+  
+  return (
+    <View style={{ position: 'relative', width: size, height: size }}>
+      <LinearGradient
+        colors={GradientColors.journey as [string, string, ...string[]]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ 
+          position: 'absolute', 
+          width: size, 
+          height: size, 
+          borderRadius: size / 2,
+          opacity: 0.15,
+        }}
+      />
+      <View style={{ position: 'absolute', width: size, height: size, justifyContent: 'center', alignItems: 'center' }}>
+        <Feather name={name} size={size} color={GradientColors.journey[1]} />
+      </View>
+    </View>
+  );
+}
+
 export type MainTabParamList = {
   HomeTab: undefined;
   ProjectsTab: undefined;
@@ -57,8 +90,8 @@ export default function MainTabNavigator() {
         component={HomeStackNavigator}
         options={{
           title: "Home",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="home" size={size} color={color} />
+          tabBarIcon: ({ focused, size }) => (
+            <GradientIcon name="home" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
           ),
         }}
       />
@@ -67,8 +100,8 @@ export default function MainTabNavigator() {
         component={ProjectsStackNavigator}
         options={{
           title: "Projects",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="folder" size={size} color={color} />
+          tabBarIcon: ({ focused, size }) => (
+            <GradientIcon name="folder" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
           ),
         }}
       />
@@ -100,8 +133,8 @@ export default function MainTabNavigator() {
         component={NotificationsStackNavigator}
         options={{
           title: "Notifications",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="bell" size={size} color={color} />
+          tabBarIcon: ({ focused, size }) => (
+            <GradientIcon name="bell" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
           ),
         }}
       />
@@ -110,8 +143,8 @@ export default function MainTabNavigator() {
         component={ToolsStackNavigator}
         options={{
           title: "Tools",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="grid" size={size} color={color} />
+          tabBarIcon: ({ focused, size }) => (
+            <GradientIcon name="grid" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
           ),
         }}
       />
