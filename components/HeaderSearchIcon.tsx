@@ -19,7 +19,6 @@ export function HeaderSearchIcon({ onPress }: HeaderSearchIconProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginLeft: 8,
-    padding: 4,
+    marginLeft: 10,
   },
 });

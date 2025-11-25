@@ -25,6 +25,7 @@ export const getCommonScreenOptions = ({
   headerTransparent: transparent,
   headerBlurEffect: isDark ? "dark" : "light",
   headerTintColor: theme.text,
+  headerShadowVisible: false,
   headerStyle: {
     backgroundColor: Platform.select({
       ios: undefined,
