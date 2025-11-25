@@ -67,6 +67,17 @@ export default function MainTabNavigator() {
           borderTopWidth: 1,
           borderTopColor: theme.border,
           elevation: 0,
+          height: Platform.select({
+            ios: 88,
+            android: 70,
+          }),
+          paddingBottom: Platform.select({
+            ios: 28,
+            android: 8,
+          }),
+        },
+        tabBarItemStyle: {
+          paddingTop: 8,
         },
         tabBarBackground: () =>
           Platform.OS === "ios" ? (
@@ -132,9 +143,9 @@ const styles = StyleSheet.create({
   tabItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: Spacing.xs,
-    paddingHorizontal: Spacing.sm,
-    gap: 2,
+    gap: 4,
+    minHeight: 44,
+    overflow: 'visible',
   },
   tabLabel: {
     fontSize: 10,
