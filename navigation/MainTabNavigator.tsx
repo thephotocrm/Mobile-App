@@ -24,24 +24,23 @@ function GradientIcon({ name, size, focused, inactiveColor }: GradientIconProps)
     return <Feather name={name} size={size} color={inactiveColor} />;
   }
   
+  const containerSize = size + 16;
+  
   return (
-    <View style={{ position: 'relative', width: size, height: size }}>
-      <LinearGradient
-        colors={GradientColors.journey as [string, string, ...string[]]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{ 
-          position: 'absolute', 
-          width: size, 
-          height: size, 
-          borderRadius: size / 2,
-          opacity: 0.15,
-        }}
-      />
-      <View style={{ position: 'absolute', width: size, height: size, justifyContent: 'center', alignItems: 'center' }}>
-        <Feather name={name} size={size} color={GradientColors.journey[1]} />
-      </View>
-    </View>
+    <LinearGradient
+      colors={GradientColors.primary as [string, string, ...string[]]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={{ 
+        width: containerSize, 
+        height: containerSize, 
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Feather name={name} size={size} color="#FFFFFF" />
+    </LinearGradient>
   );
 }
 
@@ -110,15 +109,8 @@ export default function MainTabNavigator() {
         component={InboxStackNavigator}
         options={{
           title: "Inbox",
-          tabBarIcon: ({ focused }) => (
-            <LinearGradient
-              colors={GradientColors.primary as [string, string, ...string[]]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.inboxButton}
-            >
-              <Feather name="message-square" size={20} color="#FFFFFF" />
-            </LinearGradient>
+          tabBarIcon: ({ focused, size }) => (
+            <GradientIcon name="message-square" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
           ),
         }}
       />
@@ -146,12 +138,4 @@ export default function MainTabNavigator() {
   );
 }
 
-const styles = StyleSheet.create({
-  inboxButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+const styles = StyleSheet.create({});
