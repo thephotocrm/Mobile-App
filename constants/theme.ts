@@ -4,6 +4,13 @@ const primaryColor = "#8B4565";
 const primaryLightColor = "#A65678";
 const primaryDarkColor = "#6D3650";
 
+export const GradientColors = {
+  primary: ["#5B3E7A", "#8B4565", "#A65678"],
+  primaryReverse: ["#A65678", "#8B4565", "#5B3E7A"],
+  accent: ["#6B4D82", "#8B4565"],
+  subtle: ["#4A3566", "#6B4D82"],
+};
+
 export const Colors = {
   light: {
     primary: primaryColor,

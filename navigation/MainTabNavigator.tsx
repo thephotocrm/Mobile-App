@@ -2,6 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
 import { Platform, StyleSheet, View } from "react-native";
 import { HomeStackNavigator } from "@/navigation/HomeStackNavigator";
 import ProjectsStackNavigator from "@/navigation/ProjectsStackNavigator";
@@ -9,6 +10,7 @@ import InboxStackNavigator from "@/navigation/InboxStackNavigator";
 import { NotificationsStackNavigator } from "@/navigation/NotificationsStackNavigator";
 import { ToolsStackNavigator } from "@/navigation/ToolsStackNavigator";
 import { useTheme } from "@/hooks/useTheme";
+import { GradientColors } from "@/constants/theme";
 
 export type MainTabParamList = {
   HomeTab: undefined;
@@ -76,18 +78,20 @@ export default function MainTabNavigator() {
         options={{
           title: "Inbox",
           tabBarIcon: ({ focused }) => (
-            <View
+            <LinearGradient
+              colors={GradientColors.primary as [string, string, ...string[]]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
               style={[
                 styles.inboxButton,
                 {
-                  backgroundColor: theme.primary,
                   shadowColor: theme.primary,
                   borderColor: theme.border,
                 },
               ]}
             >
               <Feather name="message-square" size={24} color="#FFFFFF" />
-            </View>
+            </LinearGradient>
           ),
         }}
       />

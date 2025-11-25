@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
-import { StyleSheet, Pressable, ViewStyle, StyleProp } from "react-native";
+import { StyleSheet, Pressable, ViewStyle, StyleProp, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -9,13 +10,14 @@ import Animated, {
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
-import { BorderRadius, Spacing } from "@/constants/theme";
+import { BorderRadius, Spacing, GradientColors } from "@/constants/theme";
 
 interface ButtonProps {
   onPress?: () => void;
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
   disabled?: boolean;
+  useGradient?: boolean;
 }
 
 const springConfig: WithSpringConfig = {
@@ -33,6 +35,7 @@ export function Button({
   children,
   style,
   disabled = false,
+  useGradient = false,
 }: ButtonProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
@@ -53,6 +56,36 @@ export function Button({
     }
   };
 
+  const buttonContent = (
+    <ThemedText
+      type="body"
+      style={[styles.buttonText, { color: theme.buttonText }]}
+    >
+      {children}
+    </ThemedText>
+  );
+
+  if (useGradient) {
+    return (
+      <AnimatedPressable
+        onPress={disabled ? undefined : onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        disabled={disabled}
+        style={[{ opacity: disabled ? 0.5 : 1 }, animatedStyle]}
+      >
+        <LinearGradient
+          colors={GradientColors.primary as [string, string, ...string[]]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[styles.button, style]}
+        >
+          {buttonContent}
+        </LinearGradient>
+      </AnimatedPressable>
+    );
+  }
+
   return (
     <AnimatedPressable
       onPress={disabled ? undefined : onPress}
@@ -69,12 +102,7 @@ export function Button({
         animatedStyle,
       ]}
     >
-      <ThemedText
-        type="body"
-        style={[styles.buttonText, { color: theme.buttonText }]}
-      >
-        {children}
-      </ThemedText>
+      {buttonContent}
     </AnimatedPressable>
   );
 }

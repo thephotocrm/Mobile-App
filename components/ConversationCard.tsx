@@ -1,9 +1,10 @@
 import React from 'react';
 import { Pressable, View, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Avatar } from './Avatar';
 import { ThemedText } from './ThemedText';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing } from '@/constants/theme';
+import { Spacing, GradientColors } from '@/constants/theme';
 
 interface ConversationCardProps {
   contactName: string;
@@ -34,7 +35,12 @@ export function ConversationCard({
     >
       <View style={styles.row}>
         {hasUnread ? (
-          <View style={[styles.unreadIndicator, { backgroundColor: theme.primary }]} />
+          <LinearGradient
+            colors={GradientColors.primary as [string, string, ...string[]]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.unreadIndicator}
+          />
         ) : (
           <View style={styles.unreadIndicatorPlaceholder} />
         )}
