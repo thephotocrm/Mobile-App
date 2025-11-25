@@ -177,12 +177,9 @@ const styles = StyleSheet.create({
     paddingLeft: Spacing.xl + Spacing.md,
   },
   list: {
-    paddingVertical: Spacing.md,
-    paddingHorizontal: 10,
+    paddingTop: Spacing.md,
   },
   listContainer: {
-    borderRadius: 12,
-    overflow: 'hidden',
   },
   loadingContainer: {
     flex: 1,
