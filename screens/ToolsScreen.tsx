@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Pressable, Alert } from "react-native";
+import { View, StyleSheet, Pressable, Alert, Switch } from "react-native";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenScrollView } from "@/components/ScreenScrollView";
@@ -87,7 +87,7 @@ const TOOLS: ToolItem[] = [
 type ToolsScreenNavigationProp = NativeStackNavigationProp<ToolsStackParamList, 'Tools'>;
 
 export function ToolsScreen() {
-  const { theme } = useTheme();
+  const { theme, isDark, setMode } = useTheme();
   const navigation = useNavigation<ToolsScreenNavigationProp>();
   
   const handleToolPress = (tool: ToolItem) => {
@@ -96,6 +96,10 @@ export function ToolsScreen() {
     } else {
       Alert.alert(tool.title, `Open ${tool.title.toLowerCase()} tool`);
     }
+  };
+
+  const handleThemeToggle = (value: boolean) => {
+    setMode(value ? 'dark' : 'light');
   };
 
   return (
@@ -124,6 +128,33 @@ export function ToolsScreen() {
               </Card>
             </Pressable>
           ))}
+        </View>
+
+        <View style={styles.settingsSection}>
+          <ThemedText style={[Typography.h4, { color: theme.text, marginBottom: Spacing.md }]}>
+            Settings
+          </ThemedText>
+          <View style={[styles.settingRow, { backgroundColor: theme.backgroundSecondary }]}>
+            <View style={styles.settingLeft}>
+              <View style={[styles.settingIcon, { backgroundColor: theme.backgroundTertiary }]}>
+                <Feather name={isDark ? "moon" : "sun"} size={20} color={theme.primary} />
+              </View>
+              <View>
+                <ThemedText style={[Typography.body, { color: theme.text, fontWeight: "500" }]}>
+                  Dark Mode
+                </ThemedText>
+                <ThemedText style={[Typography.caption, { color: theme.textSecondary }]}>
+                  {isDark ? "Currently using dark theme" : "Currently using light theme"}
+                </ThemedText>
+              </View>
+            </View>
+            <Switch
+              value={isDark}
+              onValueChange={handleThemeToggle}
+              trackColor={{ false: theme.border, true: theme.primary }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
         </View>
       </View>
     </ScreenScrollView>
@@ -157,5 +188,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: Spacing.md,
+  },
+  settingsSection: {
+    marginTop: Spacing.lg,
+    paddingTop: Spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.1)',
+  },
+  settingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: Spacing.md,
+    borderRadius: BorderRadius.sm,
+  },
+  settingLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  settingIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
