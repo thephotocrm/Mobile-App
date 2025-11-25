@@ -115,15 +115,9 @@ export default function MainTabNavigator() {
               colors={GradientColors.primary as [string, string, ...string[]]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
-              style={[
-                styles.inboxButton,
-                {
-                  shadowColor: theme.primary,
-                  borderColor: theme.border,
-                },
-              ]}
+              style={styles.inboxButton}
             >
-              <Feather name="message-square" size={24} color="#FFFFFF" />
+              <Feather name="message-square" size={20} color="#FFFFFF" />
             </LinearGradient>
           ),
         }}
@@ -154,17 +148,10 @@ export default function MainTabNavigator() {
 
 const styles = StyleSheet.create({
   inboxButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: -20,
-    borderWidth: 1,
-    borderTopWidth: 1,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
   },
 });

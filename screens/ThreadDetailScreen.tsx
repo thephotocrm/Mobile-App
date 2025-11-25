@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Pressable, Alert, Platform, ActivityIndicator, KeyboardAvoidingView, ScrollView, TextInput } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { ThemedText } from '@/components/ThemedText';
 import { Avatar } from '@/components/Avatar';
 import { useTheme } from '@/hooks/useTheme';
-import { Spacing } from '@/constants/theme';
+import { Spacing, GradientColors } from '@/constants/theme';
 import { InboxStackParamList } from '@/navigation/InboxStackNavigator';
 import { MessageRepository, Message } from '@/database/repositories/ConversationRepository';
 
@@ -239,12 +240,17 @@ export default function ThreadDetailScreen() {
           <Pressable
             onPress={handleSend}
             style={({ pressed }) => [
-              styles.sendButton,
-              { backgroundColor: theme.primary },
               pressed && { opacity: 0.7 },
             ]}
           >
-            <Feather name="send" size={18} color="#FFFFFF" />
+            <LinearGradient
+              colors={GradientColors.primary as [string, string, ...string[]]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.sendButton}
+            >
+              <Feather name="send" size={18} color="#FFFFFF" />
+            </LinearGradient>
           </Pressable>
         </View>
       </View>
