@@ -65,5 +65,11 @@ export const getMainScreenOptions = ({
     </ThemedText>
   ),
   headerLeft: () => <HeaderSearchIcon onPress={onSearchPress} />,
+  headerLeftContainerStyle: {
+    backgroundColor: "transparent",
+  },
   headerRight: () => <HeaderAvatar onPress={onAvatarPress} />,
+  headerRightContainerStyle: {
+    backgroundColor: "transparent",
+  },
 });
