@@ -5,10 +5,11 @@ const primaryLightColor = "#A65678";
 const primaryDarkColor = "#6D3650";
 
 export const GradientColors = {
-  primary: ["#5B3E7A", "#8B4565", "#A65678"],
-  primaryReverse: ["#A65678", "#8B4565", "#5B3E7A"],
-  accent: ["#6B4D82", "#8B4565"],
-  subtle: ["#4A3566", "#6B4D82"],
+  journey: ["#2563EB", "#9333EA", "#DB2777"],
+  journeyReverse: ["#DB2777", "#9333EA", "#2563EB"],
+  accent: ["#A855F7", "#EC4899", "#F97316"],
+  accentSubtle: ["rgba(168,85,247,0.1)", "rgba(236,72,153,0.1)", "rgba(249,115,22,0.1)"],
+  primary: ["#2563EB", "#9333EA", "#DB2777"],
 };
 
 export const Colors = {
