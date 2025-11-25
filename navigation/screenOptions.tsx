@@ -2,10 +2,7 @@ import React from "react";
 import { Platform } from "react-native";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
-import { HeaderAvatar } from "@/components/HeaderAvatar";
-import { HeaderSearchIcon } from "@/components/HeaderSearchIcon";
-import { ThemedText } from "@/components/ThemedText";
-import { Typography } from "@/constants/theme";
+import { MainHeader } from "@/components/MainHeader";
 
 interface ScreenOptionsParams {
   theme: {
@@ -58,18 +55,21 @@ export const getMainScreenOptions = ({
   onSearchPress,
   onAvatarPress,
 }: MainScreenOptionsParams): NativeStackNavigationOptions => ({
-  ...getCommonScreenOptions({ theme, isDark }),
-  headerTitle: () => (
-    <ThemedText style={[Typography.h4, { color: theme.text }]}>
-      {title}
-    </ThemedText>
-  ),
-  headerLeft: () => <HeaderSearchIcon onPress={onSearchPress} />,
-  headerLeftContainerStyle: {
-    backgroundColor: "transparent",
+  headerTransparent: true,
+  headerShadowVisible: false,
+  gestureEnabled: true,
+  gestureDirection: "horizontal",
+  fullScreenGestureEnabled: isLiquidGlassAvailable() ? false : true,
+  contentStyle: {
+    backgroundColor: theme.backgroundRoot,
   },
-  headerRight: () => <HeaderAvatar onPress={onAvatarPress} />,
-  headerRightContainerStyle: {
-    backgroundColor: "transparent",
+  header: function CustomHeader() {
+    return (
+      <MainHeader
+        title={title}
+        onSearchPress={onSearchPress}
+        onAvatarPress={onAvatarPress}
+      />
+    );
   },
 });
