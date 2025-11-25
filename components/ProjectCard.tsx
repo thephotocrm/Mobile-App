@@ -1,7 +1,6 @@
 import React from 'react';
 import { Pressable, View, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { Avatar } from './Avatar';
 import { Badge } from './Badge';
 import { ThemedText } from './ThemedText';
 import { useTheme } from '@/hooks/useTheme';
@@ -36,7 +35,6 @@ export function ProjectCard({
       ]}
     >
       <View style={styles.row}>
-        <Avatar name={clientName} size={48} />
         <View style={styles.content}>
           <ThemedText style={styles.title}>{projectTitle}</ThemedText>
           <ThemedText style={styles.subtitle}>{clientName}</ThemedText>
@@ -69,7 +67,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    marginLeft: Spacing.md,
     gap: Spacing.xs,
   },
   title: {

@@ -133,7 +133,7 @@ export default function InboxScreen() {
               <ThemedText style={styles.emptyText}>No conversations found</ThemedText>
             </View>
           ) : (
-            <View style={[styles.listContainer, { backgroundColor: theme.backgroundCard }]}>
+            <View style={[styles.listContainer, { backgroundColor: theme.backgroundRoot }]}>
               {conversations.map((conversation, index) => (
                 <ConversationCard
                   key={conversation.id}
