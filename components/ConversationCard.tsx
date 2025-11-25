@@ -12,6 +12,7 @@ interface ConversationCardProps {
   timestamp: string;
   unreadCount?: number;
   onPress: () => void;
+  isLast?: boolean;
 }
 
 export function ConversationCard({
@@ -20,6 +21,7 @@ export function ConversationCard({
   timestamp,
   unreadCount,
   onPress,
+  isLast = false,
 }: ConversationCardProps) {
   const { theme } = useTheme();
   const hasUnread = unreadCount !== null && unreadCount !== undefined && unreadCount > 0;
@@ -29,8 +31,8 @@ export function ConversationCard({
       onPress={onPress}
       style={({ pressed }) => [
         styles.card,
-        { backgroundColor: theme.backgroundRoot },
-        pressed && { opacity: 0.7 },
+        !isLast && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: theme.border },
+        pressed && { backgroundColor: theme.backgroundSecondary },
       ]}
     >
       <View style={styles.row}>
@@ -63,13 +65,6 @@ const styles = StyleSheet.create({
   card: {
     paddingHorizontal: 10,
     paddingVertical: Spacing.md,
-    borderRadius: 12,
-    marginBottom: Spacing.md,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
   },
   row: {
     flexDirection: 'row',

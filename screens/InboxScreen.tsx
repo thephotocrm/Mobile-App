@@ -133,21 +133,24 @@ export default function InboxScreen() {
               <ThemedText style={styles.emptyText}>No conversations found</ThemedText>
             </View>
           ) : (
-            conversations.map((conversation) => (
-              <ConversationCard
-                key={conversation.id}
-                contactName={conversation.contactName}
-                lastMessage={conversation.lastMessage}
-                timestamp={conversation.timestamp}
-                unreadCount={conversation.unreadCount}
-                onPress={() =>
-                  navigation.navigate('ThreadDetail', {
-                    conversationId: parseInt(conversation.id, 10),
-                    contactName: conversation.contactName,
-                  })
-                }
-              />
-            ))
+            <View style={[styles.listContainer, { backgroundColor: theme.backgroundCard }]}>
+              {conversations.map((conversation, index) => (
+                <ConversationCard
+                  key={conversation.id}
+                  contactName={conversation.contactName}
+                  lastMessage={conversation.lastMessage}
+                  timestamp={conversation.timestamp}
+                  unreadCount={conversation.unreadCount}
+                  isLast={index === conversations.length - 1}
+                  onPress={() =>
+                    navigation.navigate('ThreadDetail', {
+                      conversationId: parseInt(conversation.id, 10),
+                      contactName: conversation.contactName,
+                    })
+                  }
+                />
+              ))}
+            </View>
           )}
         </View>
       )}
@@ -175,6 +178,11 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingVertical: Spacing.md,
+    paddingHorizontal: 10,
+  },
+  listContainer: {
+    borderRadius: 12,
+    overflow: 'hidden',
   },
   loadingContainer: {
     flex: 1,
