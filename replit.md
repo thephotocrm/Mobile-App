@@ -83,16 +83,20 @@ Design preference: 10px horizontal edge-to-edge padding for maximum content widt
 
 ## Authentication & Security
 
-**Planned Authentication Flow:**
-- Email/password authentication
-- Google OAuth SSO integration (using expo-web-browser)
-- Biometric authentication (Face ID/Touch ID) for quick re-login
-- Secure token storage (will use SecureStore when implemented)
-- Auto-login with saved tokens
+**Implemented Authentication Flow:**
+- Email/password authentication with JWT tokens
+- Secure token storage using expo-secure-store (mobile) and localStorage (web)
+- Auto-login on app start with saved tokens
+- Logout functionality in Settings screen
 
-**Current State:**
-- Mock LoginScreen component exists but auth is not yet implemented
-- No backend API integration present in codebase
+**Key Files:**
+- `contexts/AuthContext.tsx` - Authentication context and hooks
+- `services/api.ts` - API client with JWT auth headers
+- `screens/LoginScreen.tsx` - Login form with validation
+- `navigation/RootNavigator.tsx` - Conditional navigation based on auth state
+
+**Backend Requirement:**
+The backend at https://app.thephotocrm.com must return the JWT token in the login response body (POST /api/auth/login). Currently it only sets an httpOnly cookie which mobile apps cannot access. The response should include: `{ user: {...}, token: "jwt_token_here" }`
 
 ## Styling & Theming
 
@@ -141,11 +145,17 @@ Design preference: 10px horizontal edge-to-edge padding for maximum content widt
 - Single fetch per trigger (no duplicate queries)
 - Proper loading states during database operations
 
-**Future Backend Integration:**
-- Repository pattern designed for future backend sync capability
-- Planned SyncService layer to sync local SQLite data with backend API
-- REST API endpoints will complement local storage for cloud backup/sync
-- Authentication will enable multi-device data synchronization
+**Backend API Integration (Implemented):**
+- API client in `services/api.ts` connects to https://app.thephotocrm.com
+- JWT Bearer token authentication on all API requests
+- Connected screens: Projects, Inbox, Contacts, Bookings
+- API methods: projectsApi, contactsApi, conversationsApi, messagesApi, bookingsApi
+
+**API Data Flow:**
+- Token retrieved from AuthContext via useAuth() hook
+- Each screen checks for token before making API calls
+- useFocusEffect triggers data refresh when screen gains focus
+- Error handling displays user-friendly messages
 
 # External Dependencies
 
@@ -197,16 +207,23 @@ Design preference: 10px horizontal edge-to-edge padding for maximum content widt
 - `prettier` (v3.6.2) - Code formatting
 - `babel-plugin-module-resolver` (v5.0.2) - Path aliasing (@/ imports)
 
-## Future Backend Integration
+## Backend API Integration
 
-**Expected API Backend:**
-- REST API referenced in attached documentation (MOBILE_API_DOCUMENTATION_1763586587047.md)
-- Endpoints for projects, messages, bookings, notifications
-- Authentication endpoints for email/password and OAuth
-- No database or API client currently implemented in codebase
+**Connected API Backend:**
+- REST API at https://app.thephotocrm.com
+- API client in `services/api.ts` using native fetch
+- JWT authentication via Authorization header
+- Endpoints: /api/auth/login, /api/projects, /api/contacts, /api/conversations, /api/bookings
 
-**Potential Additions:**
-- HTTP client (fetch or axios)
-- State management (Redux Toolkit, Zustand, or React Query)
-- Local storage (AsyncStorage or SecureStore for tokens)
-- Real-time messaging (WebSockets or Firebase)
+**Implemented Features:**
+- Login/logout with token persistence
+- Projects list with stage filtering and search
+- Inbox conversations with last message preview
+- Contacts list with search
+- Bookings calendar view
+
+**Future Additions:**
+- Google OAuth SSO
+- Biometric authentication (Face ID/Touch ID)
+- Real-time messaging (WebSockets)
+- Offline sync with local SQLite
