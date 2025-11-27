@@ -1,154 +1,90 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, ActivityIndicator, Platform } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Feather } from '@expo/vector-icons';
-import { ThemedText } from '@/components/ThemedText';
-import { Input } from '@/components/Input';
-import { ProjectCard } from '@/components/ProjectCard';
-import { ScreenScrollView } from '@/components/ScreenScrollView';
-import { ProjectsStackParamList } from '@/navigation/ProjectsStackNavigator';
-import { useTheme } from '@/hooks/useTheme';
-import { Spacing } from '@/constants/theme';
-import { ProjectRepository, ProjectWithClient, ProjectStage } from '@/database/repositories/ProjectRepository';
+import React, { useState } from "react";
+import { View, StyleSheet, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Feather } from "@expo/vector-icons";
+import { ThemedText } from "@/components/ThemedText";
+import { Input } from "@/components/Input";
+import { ProjectCard } from "@/components/ProjectCard";
+import { ScreenScrollView } from "@/components/ScreenScrollView";
+import { ProjectsStackParamList } from "@/navigation/ProjectsStackNavigator";
+import { useTheme } from "@/hooks/useTheme";
+import { useAuth } from "@/contexts/AuthContext";
+import { Spacing } from "@/constants/theme";
+import { projectsApi, Project as ApiProject } from "@/services/api";
 
-type NavigationProp = NativeStackNavigationProp<ProjectsStackParamList, 'ProjectsList'>;
+type NavigationProp = NativeStackNavigationProp<ProjectsStackParamList, "ProjectsList">;
 
 const STAGES = [
-  { id: 'all', name: 'All', color: '#6B7280' },
-  { id: 'lead', name: 'Lead', color: '#F59E0B' },
-  { id: 'booked', name: 'Booked', color: '#3B82F6' },
-  { id: 'active', name: 'Active', color: '#8B4565' },
-  { id: 'completed', name: 'Completed', color: '#22C55E' },
+  { id: "all", name: "All", color: "#6B7280" },
+  { id: "lead", name: "Lead", color: "#F59E0B" },
+  { id: "booked", name: "Booked", color: "#3B82F6" },
+  { id: "active", name: "Active", color: "#8B4565" },
+  { id: "completed", name: "Completed", color: "#22C55E" },
 ];
 
-const getStageColor = (stage: ProjectStage): string => {
-  const stageColors: Record<ProjectStage, string> = {
-    lead: '#F59E0B',
-    booked: '#3B82F6',
-    active: '#8B4565',
-    completed: '#22C55E',
+const getStageColor = (stageName?: string): string => {
+  if (!stageName) return "#6B7280";
+  const normalizedStage = stageName.toLowerCase();
+  const stageColors: Record<string, string> = {
+    inquiry: "#F59E0B",
+    lead: "#F59E0B",
+    booked: "#3B82F6",
+    active: "#8B4565",
+    completed: "#22C55E",
+    cancelled: "#EF4444",
   };
-  return stageColors[stage];
+  return stageColors[normalizedStage] || "#6B7280";
 };
 
-const formatEventDate = (timestamp?: number): string => {
-  if (!timestamp) return 'No date set';
-  
-  const date = new Date(timestamp * 1000);
-  const month = date.toLocaleDateString('en-US', { month: 'short' });
+const formatEventDate = (dateString?: string): string => {
+  if (!dateString) return "No date set";
+
+  const date = new Date(dateString);
+  const month = date.toLocaleDateString("en-US", { month: "short" });
   const day = date.getDate();
   const year = date.getFullYear();
-  
+
   return `${month} ${day}, ${year}`;
 };
 
-const capitalizeStage = (stage: ProjectStage): string => {
-  return stage.charAt(0).toUpperCase() + stage.slice(1);
-};
-
-const MOCK_PROJECTS: ProjectWithClient[] = [
-  {
-    id: 1,
-    client_id: 1,
-    client_name: 'Sarah Johnson',
-    client_email: 'sarah.johnson@example.com',
-    title: 'Sarah & Mike Wedding',
-    stage: 'booked',
-    event_date: Math.floor(new Date('2025-06-15').getTime() / 1000),
-    created_at: Math.floor(Date.now() / 1000),
-    updated_at: Math.floor(Date.now() / 1000),
-  },
-  {
-    id: 2,
-    client_id: 2,
-    client_name: 'Emily Davis',
-    client_email: 'emily.davis@example.com',
-    title: 'Emily & James Engagement',
-    stage: 'active',
-    event_date: Math.floor(new Date('2025-03-22').getTime() / 1000),
-    created_at: Math.floor(Date.now() / 1000),
-    updated_at: Math.floor(Date.now() / 1000),
-  },
-  {
-    id: 3,
-    client_id: 3,
-    client_name: 'Rachel Martinez',
-    client_email: 'rachel.martinez@example.com',
-    title: 'Rachel & Tom Wedding',
-    stage: 'lead',
-    event_date: Math.floor(new Date('2025-08-10').getTime() / 1000),
-    created_at: Math.floor(Date.now() / 1000),
-    updated_at: Math.floor(Date.now() / 1000),
-  },
-  {
-    id: 4,
-    client_id: 4,
-    client_name: 'Jessica Wilson',
-    client_email: 'jessica.wilson@example.com',
-    title: 'Jessica & David Ceremony',
-    stage: 'booked',
-    event_date: Math.floor(new Date('2025-05-05').getTime() / 1000),
-    created_at: Math.floor(Date.now() / 1000),
-    updated_at: Math.floor(Date.now() / 1000),
-  },
-  {
-    id: 5,
-    client_id: 5,
-    client_name: 'Amanda Brown',
-    client_email: 'amanda.brown@example.com',
-    title: 'Amanda & Chris Wedding',
-    stage: 'completed',
-    event_date: Math.floor(new Date('2024-11-12').getTime() / 1000),
-    created_at: Math.floor(Date.now() / 1000),
-    updated_at: Math.floor(Date.now() / 1000),
-  },
-];
-
 export default function ProjectsListScreen() {
   const { theme } = useTheme();
+  const { token } = useAuth();
   const navigation = useNavigation<NavigationProp>();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStage, setSelectedStage] = useState('all');
-  const [projects, setProjects] = useState<ProjectWithClient[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedStage, setSelectedStage] = useState("all");
+  const [projects, setProjects] = useState<ApiProject[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const loadProjects = async () => {
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      let result: ProjectWithClient[];
+      setError(null);
+      
+      const stageFilter = selectedStage !== "all" ? selectedStage : undefined;
+      let result = await projectsApi.getAll(token, undefined, stageFilter);
 
-      if (Platform.OS === 'web') {
-        result = MOCK_PROJECTS;
-        
-        if (searchQuery.trim()) {
-          const query = searchQuery.trim().toLowerCase();
-          result = result.filter(project => 
+      if (searchQuery.trim()) {
+        const query = searchQuery.trim().toLowerCase();
+        result = result.filter(
+          (project) =>
             project.title.toLowerCase().includes(query) ||
-            project.client_name.toLowerCase().includes(query)
-          );
-        }
-        
-        if (selectedStage !== 'all') {
-          result = result.filter(project => project.stage === selectedStage);
-        }
-      } else {
-        if (searchQuery.trim()) {
-          result = await ProjectRepository.search(searchQuery.trim());
-        } else if (selectedStage !== 'all') {
-          result = await ProjectRepository.getByStage(selectedStage as ProjectStage);
-        } else {
-          result = await ProjectRepository.getAll();
-        }
-
-        if (searchQuery.trim() && selectedStage !== 'all') {
-          result = result.filter(project => project.stage === selectedStage);
-        }
+            (project.client?.firstName?.toLowerCase().includes(query)) ||
+            (project.client?.lastName?.toLowerCase().includes(query))
+        );
       }
 
       setProjects(result);
-    } catch (error) {
-      console.error('Error loading projects:', error);
+    } catch (err) {
+      console.error("Error loading projects:", err);
+      setError("Failed to load projects. Please try again.");
       setProjects([]);
     } finally {
       setLoading(false);
@@ -158,8 +94,15 @@ export default function ProjectsListScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadProjects();
-    }, [searchQuery, selectedStage])
+    }, [searchQuery, selectedStage, token])
   );
+
+  const getClientName = (project: ApiProject): string => {
+    if (project.client) {
+      return `${project.client.firstName || ""} ${project.client.lastName || ""}`.trim() || "Unknown Client";
+    }
+    return "Unknown Client";
+  };
 
   return (
     <ScreenScrollView>
@@ -196,7 +139,7 @@ export default function ProjectsListScreen() {
             <ThemedText
               style={[
                 styles.stageText,
-                { color: selectedStage === stage.id ? '#FFFFFF' : theme.text },
+                { color: selectedStage === stage.id ? "#FFFFFF" : theme.text },
               ]}
             >
               {stage.name}
@@ -209,22 +152,38 @@ export default function ProjectsListScreen() {
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.primary} />
         </View>
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Feather name="alert-circle" size={48} color={theme.textSecondary} />
+          <ThemedText style={[styles.errorText, { color: theme.textSecondary }]}>
+            {error}
+          </ThemedText>
+          <Pressable
+            style={[styles.retryButton, { backgroundColor: theme.primary }]}
+            onPress={loadProjects}
+          >
+            <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
+          </Pressable>
+        </View>
       ) : (
         <View style={styles.projectList}>
           {projects.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <ThemedText style={styles.emptyText}>No projects found</ThemedText>
+              <Feather name="folder" size={48} color={theme.textSecondary} />
+              <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
+                {searchQuery ? "No projects match your search" : "No projects yet"}
+              </ThemedText>
             </View>
           ) : (
             projects.map((project) => (
               <ProjectCard
-                key={project.id.toString()}
+                key={project.id}
                 projectTitle={project.title}
-                clientName={project.client_name}
-                stageName={capitalizeStage(project.stage)}
-                stageColor={getStageColor(project.stage)}
-                eventDate={formatEventDate(project.event_date)}
-                onPress={() => navigation.navigate('ProjectDetail', { projectId: project.id.toString() })}
+                clientName={getClientName(project)}
+                stageName={project.stage?.name || "Unknown"}
+                stageColor={project.stage?.color || getStageColor(project.stage?.name)}
+                eventDate={formatEventDate(project.eventDate)}
+                onPress={() => navigation.navigate("ProjectDetail", { projectId: project.id })}
               />
             ))
           )}
@@ -240,12 +199,12 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.md,
   },
   searchWrapper: {
-    position: 'relative',
+    position: "relative",
   },
   searchIcon: {
-    position: 'absolute',
+    position: "absolute",
     left: Spacing.md,
-    top: '50%',
+    top: "50%",
     transform: [{ translateY: -10 }],
     zIndex: 1,
   },
@@ -267,7 +226,7 @@ const styles = StyleSheet.create({
   },
   stageText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   projectList: {
     paddingVertical: Spacing.md,
@@ -275,18 +234,41 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: Spacing.xxl,
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: Spacing.xxl,
+    gap: Spacing.md,
   },
   emptyText: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: Spacing.xxl,
+    gap: Spacing.md,
+  },
+  errorText: {
+    fontSize: 16,
+    textAlign: "center",
+  },
+  retryButton: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: 8,
+    marginTop: Spacing.sm,
+  },
+  retryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });

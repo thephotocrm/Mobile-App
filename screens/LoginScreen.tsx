@@ -1,122 +1,334 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Image, Alert } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { Input } from '@/components/Input';
-import { PrimaryButton } from '@/components/PrimaryButton';
-import { SecondaryButton } from '@/components/SecondaryButton';
-import { ScreenScrollView } from '@/components/ScreenScrollView';
-import { useTheme } from '@/hooks/useTheme';
-import { Spacing, Typography } from '@/constants/theme';
+import React, { useState } from "react";
+import {
+  View,
+  StyleSheet,
+  Image,
+  Alert,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  TextInput,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
+import { Feather } from "@expo/vector-icons";
 
-interface LoginScreenProps {
-  onLogin: () => void;
-}
+import { ThemedText } from "@/components/ThemedText";
+import { useTheme } from "@/hooks/useTheme";
+import { useAuth } from "@/contexts/AuthContext";
+import { Spacing, Typography, BorderRadius, GradientColors } from "@/constants/theme";
 
-export default function LoginScreen({ onLogin }: LoginScreenProps) {
+export default function LoginScreen() {
   const { theme } = useTheme();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { login } = useAuth();
+  const insets = useSafeAreaInsets();
+  
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password');
+  const handleLogin = async () => {
+    if (!email.trim()) {
+      setError("Please enter your email");
       return;
     }
+    if (!password) {
+      setError("Please enter your password");
+      return;
+    }
+
+    setError(null);
     setLoading(true);
-    setTimeout(() => {
+
+    try {
+      await login(email.trim(), password);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Login failed. Please try again.";
+      setError(message);
+    } finally {
       setLoading(false);
-      onLogin();
-    }, 1000);
+    }
   };
 
   const handleGoogleLogin = () => {
-    Alert.alert('Coming Soon', 'Google OAuth integration will be available in the next release');
+    Alert.alert(
+      "Coming Soon",
+      "Google sign-in will be available in the next release"
+    );
+  };
+
+  const handleForgotPassword = () => {
+    Alert.alert(
+      "Reset Password",
+      "Please visit app.thephotocrm.com to reset your password"
+    );
   };
 
   return (
-    <ScreenScrollView contentContainerStyle={styles.container}>
-      <ThemedView style={styles.content}>
-        <Image
-          source={require('../assets/images/icon.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <ThemedText style={[styles.title, { fontSize: Typography.h1.fontSize, fontWeight: Typography.h1.fontWeight }]}>
-          Welcome to thePhotoCrm
-        </ThemedText>
-        <ThemedText style={[styles.subtitle, { color: theme.textSecondary }]}>
-          Manage your photography business on the go
-        </ThemedText>
+    <KeyboardAvoidingView
+      style={[styles.container, { backgroundColor: theme.backgroundRoot }]}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          {
+            paddingTop: insets.top + Spacing.xl,
+            paddingBottom: insets.bottom + Spacing.xl,
+          },
+        ]}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.logoContainer}>
+          <Image
+            source={require("../assets/images/icon.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
 
-        <View style={styles.form}>
-          <Input
-            placeholder="Email"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <Input
-            placeholder="Password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-          <PrimaryButton
-            title="Log In"
+        <View style={styles.headerContainer}>
+          <ThemedText style={styles.title}>Welcome back</ThemedText>
+          <ThemedText style={[styles.subtitle, { color: theme.textSecondary }]}>
+            Sign in to manage your photography business
+          </ThemedText>
+        </View>
+
+        <View style={styles.formContainer}>
+          {error ? (
+            <View style={[styles.errorContainer, { backgroundColor: "#FEE2E2" }]}>
+              <Feather name="alert-circle" size={16} color="#DC2626" />
+              <ThemedText style={styles.errorText}>{error}</ThemedText>
+            </View>
+          ) : null}
+
+          <View style={styles.inputContainer}>
+            <ThemedText style={[styles.label, { color: theme.textSecondary }]}>
+              Email
+            </ThemedText>
+            <View
+              style={[
+                styles.inputWrapper,
+                { backgroundColor: theme.backgroundCard, borderColor: theme.border },
+              ]}
+            >
+              <Feather name="mail" size={20} color={theme.textSecondary} />
+              <TextInput
+                value={email}
+                onChangeText={setEmail}
+                placeholder="you@example.com"
+                placeholderTextColor={theme.textSecondary}
+                autoCapitalize="none"
+                autoComplete="email"
+                keyboardType="email-address"
+                style={[styles.textInput, { color: theme.text }]}
+              />
+            </View>
+          </View>
+
+          <View style={styles.inputContainer}>
+            <ThemedText style={[styles.label, { color: theme.textSecondary }]}>
+              Password
+            </ThemedText>
+            <View
+              style={[
+                styles.inputWrapper,
+                { backgroundColor: theme.backgroundCard, borderColor: theme.border },
+              ]}
+            >
+              <Feather name="lock" size={20} color={theme.textSecondary} />
+              <TextInput
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Enter your password"
+                placeholderTextColor={theme.textSecondary}
+                secureTextEntry={!showPassword}
+                autoComplete="current-password"
+                style={[styles.textInput, { color: theme.text }]}
+              />
+              <Pressable
+                onPress={() => setShowPassword(!showPassword)}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <Feather
+                  name={showPassword ? "eye-off" : "eye"}
+                  size={20}
+                  color={theme.textSecondary}
+                />
+              </Pressable>
+            </View>
+          </View>
+
+          <Pressable onPress={handleForgotPassword} style={styles.forgotPassword}>
+            <ThemedText style={[styles.forgotPasswordText, { color: theme.primary }]}>
+              Forgot password?
+            </ThemedText>
+          </Pressable>
+
+          <Pressable
+            style={[styles.loginButton, loading && styles.loginButtonDisabled]}
             onPress={handleLogin}
-            loading={loading}
-          />
+            disabled={loading}
+          >
+            <LinearGradient
+              colors={GradientColors.journey as [string, string, ...string[]]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.gradientButton}
+            >
+              {loading ? (
+                <ThemedText style={styles.loginButtonText}>Signing in...</ThemedText>
+              ) : (
+                <ThemedText style={styles.loginButtonText}>Sign In</ThemedText>
+              )}
+            </LinearGradient>
+          </Pressable>
 
           <View style={styles.divider}>
             <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
-            <ThemedText style={[styles.dividerText, { color: theme.textSecondary }]}>OR</ThemedText>
+            <ThemedText style={[styles.dividerText, { color: theme.textSecondary }]}>
+              or
+            </ThemedText>
             <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
           </View>
 
-          <SecondaryButton
-            title="Continue with Google"
+          <Pressable
+            style={[
+              styles.googleButton,
+              { backgroundColor: theme.backgroundCard, borderColor: theme.border },
+            ]}
             onPress={handleGoogleLogin}
-          />
+          >
+            <View style={styles.googleIconContainer}>
+              <Feather name="globe" size={20} color={theme.text} />
+            </View>
+            <ThemedText style={styles.googleButtonText}>
+              Continue with Google
+            </ThemedText>
+          </Pressable>
         </View>
-      </ThemedView>
-    </ScreenScrollView>
+
+        <View style={styles.footer}>
+          <ThemedText style={[styles.footerText, { color: theme.textSecondary }]}>
+            Don't have an account?{" "}
+          </ThemedText>
+          <Pressable
+            onPress={() =>
+              Alert.alert(
+                "Sign Up",
+                "Please visit app.thephotocrm.com to create an account"
+              )
+            }
+          >
+            <ThemedText style={[styles.signUpText, { color: theme.primary }]}>
+              Sign up
+            </ThemedText>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    paddingHorizontal: 24,
   },
-  content: {
-    paddingHorizontal: Spacing.lg,
-    alignItems: 'center',
-  },
-  logo: {
-    width: 120,
-    height: 120,
+  logoContainer: {
+    alignItems: "center",
     marginBottom: Spacing.lg,
   },
-  title: {
-    textAlign: 'center',
-    marginBottom: Spacing.sm,
+  logo: {
+    width: 80,
+    height: 80,
+    borderRadius: BorderRadius.lg,
   },
-  subtitle: {
-    textAlign: 'center',
-    fontSize: 16,
+  headerContainer: {
+    alignItems: "center",
     marginBottom: Spacing.xl,
   },
-  form: {
-    width: '100%',
+  title: {
+    fontSize: 28,
+    fontWeight: "700",
+    marginBottom: Spacing.xs,
+  },
+  subtitle: {
+    fontSize: 16,
+    textAlign: "center",
+  },
+  formContainer: {
     gap: Spacing.md,
   },
+  errorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.sm,
+  },
+  errorText: {
+    flex: 1,
+    fontSize: 14,
+    color: "#DC2626",
+  },
+  inputContainer: {
+    gap: Spacing.xs,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    height: 52,
+    borderRadius: BorderRadius.sm,
+    borderWidth: 1,
+  },
+  textInput: {
+    flex: 1,
+    fontSize: 16,
+    height: "100%",
+  },
+  forgotPassword: {
+    alignSelf: "flex-end",
+  },
+  forgotPasswordText: {
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  loginButton: {
+    marginTop: Spacing.sm,
+    borderRadius: BorderRadius.sm,
+    overflow: "hidden",
+  },
+  loginButtonDisabled: {
+    opacity: 0.7,
+  },
+  gradientButton: {
+    height: 52,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loginButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
   divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: Spacing.sm,
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: Spacing.md,
   },
   dividerLine: {
     flex: 1,
@@ -125,5 +337,37 @@ const styles = StyleSheet.create({
   dividerText: {
     paddingHorizontal: Spacing.md,
     fontSize: 14,
+  },
+  googleButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    height: 52,
+    borderRadius: BorderRadius.sm,
+    borderWidth: 1,
+  },
+  googleIconContainer: {
+    width: 24,
+    height: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  googleButtonText: {
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: Spacing.xl,
+  },
+  footerText: {
+    fontSize: 14,
+  },
+  signUpText: {
+    fontSize: 14,
+    fontWeight: "600",
   },
 });

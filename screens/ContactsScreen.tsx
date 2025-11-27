@@ -1,41 +1,83 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Pressable, TextInput } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
-import { ThemedText } from '@/components/ThemedText';
-import { Avatar } from '@/components/Avatar';
-import { ScreenKeyboardAwareScrollView } from '@/components/ScreenKeyboardAwareScrollView';
-import { useTheme } from '@/hooks/useTheme';
-import { Spacing, Typography } from '@/constants/theme';
-import { ToolsStackParamList } from '@/navigation/ToolsStackNavigator';
+import React, { useState } from "react";
+import { View, StyleSheet, Pressable, TextInput, ActivityIndicator } from "react-native";
+import { Feather } from "@expo/vector-icons";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { ThemedText } from "@/components/ThemedText";
+import { Avatar } from "@/components/Avatar";
+import { ScreenKeyboardAwareScrollView } from "@/components/ScreenKeyboardAwareScrollView";
+import { useTheme } from "@/hooks/useTheme";
+import { useAuth } from "@/contexts/AuthContext";
+import { Spacing, Typography } from "@/constants/theme";
+import { ToolsStackParamList } from "@/navigation/ToolsStackNavigator";
+import { contactsApi, Contact } from "@/services/api";
 
-const MOCK_CONTACTS = [
-  { id: '1', name: 'Sarah Johnson', email: 'sarah.johnson@example.com', phone: '+1 (555) 123-4567', projectCount: 1, lastContact: 'Nov 22, 2024' },
-  { id: '2', name: 'Mike Chen', email: 'mike.chen@example.com', phone: '+1 (555) 234-5678', projectCount: 1, lastContact: 'Nov 20, 2024' },
-  { id: '3', name: 'Jennifer Mills', email: 'jennifer@weddingmagic.com', phone: '+1 (555) 345-6789', projectCount: 3, lastContact: 'Nov 18, 2024' },
-  { id: '4', name: 'Robert Johnson', email: 'robert.j@example.com', phone: '+1 (555) 456-7890', projectCount: 1, lastContact: 'Nov 15, 2024' },
-  { id: '5', name: 'Emily Davis', email: 'emily.davis@example.com', phone: '+1 (555) 567-8901', projectCount: 2, lastContact: 'Nov 12, 2024' },
-  { id: '6', name: 'David Martinez', email: 'david.m@example.com', phone: '+1 (555) 678-9012', projectCount: 1, lastContact: 'Nov 10, 2024' },
-  { id: '7', name: 'Lisa Anderson', email: 'lisa.anderson@example.com', phone: '+1 (555) 789-0123', projectCount: 2, lastContact: 'Nov 8, 2024' },
-  { id: '8', name: 'James Wilson', email: 'james.w@example.com', phone: '+1 (555) 890-1234', projectCount: 1, lastContact: 'Nov 5, 2024' },
-];
-
-type ContactsScreenNavigationProp = NativeStackNavigationProp<ToolsStackParamList, 'Contacts'>;
+type ContactsScreenNavigationProp = NativeStackNavigationProp<ToolsStackParamList, "Contacts">;
 
 export default function ContactsScreen() {
   const { theme } = useTheme();
+  const { token } = useAuth();
   const navigation = useNavigation<ContactsScreenNavigationProp>();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const filteredContacts = MOCK_CONTACTS.filter(contact =>
-    contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    contact.email.toLowerCase().includes(searchQuery.toLowerCase())
+  const loadContacts = async () => {
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const result = await contactsApi.getAll(token);
+      setContacts(result);
+    } catch (err) {
+      console.error("Error loading contacts:", err);
+      setError("Failed to load contacts");
+      setContacts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadContacts();
+    }, [token])
   );
 
+  const filteredContacts = contacts.filter((contact) => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase();
+    const fullName = `${contact.firstName || ""} ${contact.lastName || ""}`.toLowerCase();
+    return fullName.includes(query) || (contact.email?.toLowerCase().includes(query) ?? false);
+  });
+
   const handleContactPress = (contactId: string) => {
-    navigation.navigate('ContactDetail', { contactId });
+    navigation.navigate("ContactDetail", { contactId });
   };
+
+  const getContactName = (contact: Contact): string => {
+    return `${contact.firstName || ""} ${contact.lastName || ""}`.trim() || "Unknown";
+  };
+
+  const formatDate = (dateString?: string): string => {
+    if (!dateString) return "No date";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  };
+
+  if (loading) {
+    return (
+      <View style={[styles.loadingContainer, { backgroundColor: theme.backgroundRoot }]}>
+        <ActivityIndicator size="large" color={theme.primary} />
+      </View>
+    );
+  }
 
   return (
     <ScreenKeyboardAwareScrollView>
@@ -50,49 +92,78 @@ export default function ContactsScreen() {
             onChangeText={setSearchQuery}
           />
           {searchQuery.length > 0 ? (
-            <Pressable onPress={() => setSearchQuery('')}>
+            <Pressable onPress={() => setSearchQuery("")}>
               <Feather name="x" size={20} color={theme.textSecondary} />
             </Pressable>
           ) : null}
         </View>
 
         <ThemedText style={[styles.resultCount, { color: theme.textSecondary }]}>
-          {filteredContacts.length} {filteredContacts.length === 1 ? 'contact' : 'contacts'}
+          {filteredContacts.length} {filteredContacts.length === 1 ? "contact" : "contacts"}
         </ThemedText>
 
-        {filteredContacts.map((contact) => (
-          <Pressable
-            key={contact.id}
-            onPress={() => handleContactPress(contact.id)}
-            style={({ pressed }) => [
-              styles.contactCard,
-              { backgroundColor: theme.backgroundSecondary },
-              pressed && { opacity: 0.7 }
-            ]}
-          >
-            <View style={styles.contactHeader}>
-              <Avatar name={contact.name} size={48} />
-              <View style={styles.contactInfo}>
-                <ThemedText style={[styles.contactName, { fontSize: Typography.body.fontSize, fontWeight: Typography.body.fontWeight as any }]}>
-                  {contact.name}
-                </ThemedText>
-                <View style={styles.contactMeta}>
-                  <Feather name="briefcase" size={14} color={theme.textSecondary} />
-                  <ThemedText style={[styles.contactMetaText, { color: theme.textSecondary }]}>
-                    {contact.projectCount} {contact.projectCount === 1 ? 'project' : 'projects'}
+        {error ? (
+          <View style={styles.errorContainer}>
+            <Feather name="alert-circle" size={48} color={theme.textSecondary} />
+            <ThemedText style={[styles.errorText, { color: theme.textSecondary }]}>
+              {error}
+            </ThemedText>
+            <Pressable
+              style={[styles.retryButton, { backgroundColor: theme.primary }]}
+              onPress={loadContacts}
+            >
+              <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
+            </Pressable>
+          </View>
+        ) : filteredContacts.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Feather name="users" size={48} color={theme.textSecondary} />
+            <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
+              {searchQuery ? "No contacts match your search" : "No contacts yet"}
+            </ThemedText>
+          </View>
+        ) : (
+          filteredContacts.map((contact) => (
+            <Pressable
+              key={contact.id}
+              onPress={() => handleContactPress(contact.id)}
+              style={({ pressed }) => [
+                styles.contactCard,
+                { backgroundColor: theme.backgroundSecondary },
+                pressed && { opacity: 0.7 },
+              ]}
+            >
+              <View style={styles.contactHeader}>
+                <Avatar name={getContactName(contact)} size={48} />
+                <View style={styles.contactInfo}>
+                  <ThemedText
+                    style={[
+                      styles.contactName,
+                      { fontSize: Typography.body.fontSize, fontWeight: Typography.body.fontWeight as any },
+                    ]}
+                  >
+                    {getContactName(contact)}
                   </ThemedText>
+                  {contact.email ? (
+                    <View style={styles.contactMeta}>
+                      <Feather name="mail" size={14} color={theme.textSecondary} />
+                      <ThemedText style={[styles.contactMetaText, { color: theme.textSecondary }]}>
+                        {contact.email}
+                      </ThemedText>
+                    </View>
+                  ) : null}
+                  <View style={styles.contactMeta}>
+                    <Feather name="calendar" size={14} color={theme.textSecondary} />
+                    <ThemedText style={[styles.contactMetaText, { color: theme.textSecondary }]}>
+                      {contact.eventDate ? `Event: ${formatDate(contact.eventDate)}` : "No event date"}
+                    </ThemedText>
+                  </View>
                 </View>
-                <View style={styles.contactMeta}>
-                  <Feather name="clock" size={14} color={theme.textSecondary} />
-                  <ThemedText style={[styles.contactMetaText, { color: theme.textSecondary }]}>
-                    Last contact: {contact.lastContact}
-                  </ThemedText>
-                </View>
+                <Feather name="chevron-right" size={20} color={theme.textSecondary} />
               </View>
-              <Feather name="chevron-right" size={20} color={theme.textSecondary} />
-            </View>
-          </Pressable>
-        ))}
+            </Pressable>
+          ))
+        )}
       </View>
     </ScreenKeyboardAwareScrollView>
   );
@@ -103,9 +174,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: 8,
@@ -124,27 +200,60 @@ const styles = StyleSheet.create({
   },
   contactCard: {
     padding: Spacing.md,
-    borderRadius: 8,
-    marginBottom: Spacing.md,
+    borderRadius: 12,
+    marginBottom: Spacing.sm,
   },
   contactHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
+    flexDirection: "row",
+    alignItems: "center",
   },
   contactInfo: {
     flex: 1,
-    gap: Spacing.xs,
+    marginLeft: Spacing.md,
   },
   contactName: {
-    fontWeight: '600',
+    marginBottom: Spacing.xs,
   },
   contactMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.xs,
+    marginTop: 2,
   },
   contactMetaText: {
-    fontSize: 12,
+    fontSize: 13,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: Spacing.xxl,
+    gap: Spacing.md,
+  },
+  emptyText: {
+    fontSize: 16,
+    textAlign: "center",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: Spacing.xxl,
+    gap: Spacing.md,
+  },
+  errorText: {
+    fontSize: 16,
+    textAlign: "center",
+  },
+  retryButton: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: 8,
+    marginTop: Spacing.sm,
+  },
+  retryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });

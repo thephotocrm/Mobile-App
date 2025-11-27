@@ -49,6 +49,10 @@ localPort = 42823
 externalPort = 3002
 
 [[ports]]
+localPort = 46633
+externalPort = 8080
+
+[[ports]]
 localPort = 46745
 externalPort = 6000
 
@@ -127,3 +131,8 @@ value = "1"
 path = "/*"
 name = "expo-sfv-version"
 value = "0"
+
+[userenv]
+
+[userenv.shared]
+API_BASE_URL = "https://app.thephotocrm.com"

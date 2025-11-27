@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Platform, ActivityIndicator } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Feather } from '@expo/vector-icons';
-import { ConversationCard } from '@/components/ConversationCard';
-import { Input } from '@/components/Input';
-import { ThemedText } from '@/components/ThemedText';
-import { ScreenScrollView } from '@/components/ScreenScrollView';
-import { InboxStackParamList } from '@/navigation/InboxStackNavigator';
-import { Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/useTheme';
-import { ConversationRepository, ConversationWithLastMessage } from '@/database/repositories/ConversationRepository';
+import React, { useState } from "react";
+import { View, StyleSheet, ActivityIndicator, Pressable } from "react-native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Feather } from "@expo/vector-icons";
+import { ConversationCard } from "@/components/ConversationCard";
+import { Input } from "@/components/Input";
+import { ThemedText } from "@/components/ThemedText";
+import { ScreenScrollView } from "@/components/ScreenScrollView";
+import { InboxStackParamList } from "@/navigation/InboxStackNavigator";
+import { Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/useTheme";
+import { useAuth } from "@/contexts/AuthContext";
+import { conversationsApi, Conversation } from "@/services/api";
 
-type NavigationProp = NativeStackNavigationProp<InboxStackParamList, 'InboxList'>;
+type NavigationProp = NativeStackNavigationProp<InboxStackParamList, "InboxList">;
 
 interface ConversationItem {
   id: string;
@@ -22,30 +23,24 @@ interface ConversationItem {
   unreadCount: number;
 }
 
-const MOCK_CONVERSATIONS: ConversationItem[] = [
-  { id: '1', contactName: 'Sarah Johnson', lastMessage: 'Thank you so much! I cant wait to see the photos from our engagement shoot.', timestamp: '2h ago', unreadCount: 2 },
-  { id: '2', contactName: 'Emily Davis', lastMessage: 'Hi! I wanted to check on the timeline for receiving our wedding album.', timestamp: '5h ago', unreadCount: 0 },
-  { id: '3', contactName: 'Rachel Martinez', lastMessage: 'Just sent over the venue details via email. Let me know if you need anything else!', timestamp: '1d ago', unreadCount: 1 },
-  { id: '4', contactName: 'Jessica Wilson', lastMessage: 'We loved meeting with you yesterday! Excited to move forward with booking.', timestamp: '2d ago', unreadCount: 0 },
-  { id: '5', contactName: 'Amanda Brown', lastMessage: 'The sneak peeks are absolutely beautiful! My family is obsessed.', timestamp: '3d ago', unreadCount: 0 },
-];
-
-const formatTimestamp = (timestamp: number): string => {
-  const now = Math.floor(Date.now() / 1000);
-  const diff = now - timestamp;
+const formatTimestamp = (dateString?: string): string => {
+  if (!dateString) return "";
   
-  if (diff < 3600) {
-    const minutes = Math.floor(diff / 60);
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffHours = diffMs / (1000 * 60 * 60);
+  const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+  if (diffHours < 1) {
+    const minutes = Math.floor(diffMs / (1000 * 60));
     return `${minutes}m ago`;
-  } else if (diff < 86400) {
-    const hours = Math.floor(diff / 3600);
-    return `${hours}h ago`;
-  } else if (diff < 604800) {
-    const days = Math.floor(diff / 86400);
-    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+  } else if (diffHours < 24) {
+    return `${Math.floor(diffHours)}h ago`;
+  } else if (diffDays < 7) {
+    return `${Math.floor(diffDays)}d ago`;
   } else {
-    const date = new Date(timestamp * 1000);
-    const month = date.toLocaleDateString('en-US', { month: 'short' });
+    const month = date.toLocaleDateString("en-US", { month: "short" });
     const day = date.getDate();
     return `${month} ${day}`;
   }
@@ -53,49 +48,48 @@ const formatTimestamp = (timestamp: number): string => {
 
 export default function InboxScreen() {
   const { theme } = useTheme();
+  const { token } = useAuth();
   const navigation = useNavigation<NavigationProp>();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const loadConversations = async () => {
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      let result: ConversationItem[];
+      setError(null);
 
-      if (Platform.OS === 'web') {
-        result = MOCK_CONVERSATIONS;
-        
-        if (searchQuery.trim()) {
-          const query = searchQuery.trim().toLowerCase();
-          result = result.filter(conversation => 
+      const apiConversations = await conversationsApi.getAll(token);
+
+      let result: ConversationItem[] = apiConversations.map((conv: Conversation) => ({
+        id: conv.id,
+        contactName: conv.client
+          ? `${conv.client.firstName || ""} ${conv.client.lastName || ""}`.trim() || "Unknown"
+          : "Unknown",
+        lastMessage: "Tap to view messages",
+        timestamp: formatTimestamp(conv.lastMessageAt),
+        unreadCount: conv.unreadCount || 0,
+      }));
+
+      if (searchQuery.trim()) {
+        const query = searchQuery.trim().toLowerCase();
+        result = result.filter(
+          (conversation) =>
             conversation.contactName.toLowerCase().includes(query) ||
             conversation.lastMessage.toLowerCase().includes(query)
-          );
-        }
-      } else {
-        let dbConversations: ConversationWithLastMessage[];
-        
-        if (searchQuery.trim()) {
-          dbConversations = await ConversationRepository.searchWithLastMessage(searchQuery.trim());
-        } else {
-          dbConversations = await ConversationRepository.getAllWithLastMessage();
-        }
-
-        result = dbConversations.map((conversation) => ({
-          id: conversation.id.toString(),
-          contactName: conversation.client_name,
-          lastMessage: conversation.last_message_text || 'No messages yet',
-          timestamp: conversation.last_message_created_at 
-            ? formatTimestamp(conversation.last_message_created_at)
-            : formatTimestamp(conversation.last_message_at || Math.floor(Date.now() / 1000)),
-          unreadCount: conversation.unread_count,
-        }));
+        );
       }
 
       setConversations(result);
-    } catch (error) {
-      console.error('Error loading conversations:', error);
+    } catch (err) {
+      console.error("Error loading conversations:", err);
+      setError("Failed to load conversations");
       setConversations([]);
     } finally {
       setLoading(false);
@@ -105,7 +99,7 @@ export default function InboxScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadConversations();
-    }, [searchQuery])
+    }, [searchQuery, token])
   );
 
   return (
@@ -126,31 +120,45 @@ export default function InboxScreen() {
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.primary} />
         </View>
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Feather name="alert-circle" size={48} color={theme.textSecondary} />
+          <ThemedText style={[styles.errorText, { color: theme.textSecondary }]}>
+            {error}
+          </ThemedText>
+          <Pressable
+            style={[styles.retryButton, { backgroundColor: theme.primary }]}
+            onPress={loadConversations}
+          >
+            <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
+          </Pressable>
+        </View>
       ) : (
-        <View style={styles.list}>
+        <View style={styles.conversationList}>
           {conversations.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <ThemedText style={styles.emptyText}>No conversations found</ThemedText>
+              <Feather name="inbox" size={48} color={theme.textSecondary} />
+              <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
+                {searchQuery ? "No conversations match your search" : "No conversations yet"}
+              </ThemedText>
             </View>
           ) : (
-            <View style={[styles.listContainer, { backgroundColor: theme.backgroundRoot }]}>
-              {conversations.map((conversation, index) => (
-                <ConversationCard
-                  key={conversation.id}
-                  contactName={conversation.contactName}
-                  lastMessage={conversation.lastMessage}
-                  timestamp={conversation.timestamp}
-                  unreadCount={conversation.unreadCount}
-                  isLast={index === conversations.length - 1}
-                  onPress={() =>
-                    navigation.navigate('ThreadDetail', {
-                      conversationId: parseInt(conversation.id, 10),
-                      contactName: conversation.contactName,
-                    })
-                  }
-                />
-              ))}
-            </View>
+            conversations.map((conversation, index) => (
+              <ConversationCard
+                key={conversation.id}
+                contactName={conversation.contactName}
+                lastMessage={conversation.lastMessage}
+                timestamp={conversation.timestamp}
+                unreadCount={conversation.unreadCount}
+                isLast={index === conversations.length - 1}
+                onPress={() =>
+                  navigation.navigate("ThreadDetail", {
+                    conversationId: conversation.id,
+                    contactName: conversation.contactName,
+                  })
+                }
+              />
+            ))
           )}
         </View>
       )}
@@ -162,39 +170,61 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: 10,
     paddingTop: Spacing.md,
+    paddingBottom: Spacing.xs,
   },
   searchWrapper: {
-    position: 'relative',
+    position: "relative",
   },
   searchIcon: {
-    position: 'absolute',
+    position: "absolute",
     left: Spacing.md,
-    top: '50%',
+    top: "50%",
     transform: [{ translateY: -10 }],
     zIndex: 1,
   },
   searchInput: {
     paddingLeft: Spacing.xl + Spacing.md,
   },
-  list: {
-    paddingTop: Spacing.md,
-  },
-  listContainer: {
+  conversationList: {
+    paddingBottom: Spacing.md,
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: Spacing.xxl,
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: Spacing.xxl,
+    gap: Spacing.md,
   },
   emptyText: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: Spacing.xxl,
+    gap: Spacing.md,
+  },
+  errorText: {
+    fontSize: 16,
+    textAlign: "center",
+  },
+  retryButton: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: 8,
+    marginTop: Spacing.sm,
+  },
+  retryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });

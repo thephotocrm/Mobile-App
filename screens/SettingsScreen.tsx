@@ -6,6 +6,7 @@ import {
   Platform,
   Linking,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
@@ -16,6 +17,7 @@ import { Image } from "expo-image";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useTheme } from "@/hooks/useTheme";
+import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, BorderRadius } from "@/constants/theme";
 
 interface SettingsItemProps {
@@ -65,6 +67,7 @@ export function SettingsScreen() {
   const { theme, isDark } = useTheme();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const { logout, user } = useAuth();
 
   const handleClose = () => {
     navigation.goBack();
@@ -72,6 +75,23 @@ export function SettingsScreen() {
 
   const handleOpenLink = (url: string) => {
     Linking.openURL(url);
+  };
+
+  const handleLogout = () => {
+    Alert.alert(
+      "Log Out",
+      "Are you sure you want to log out?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Log Out",
+          style: "destructive",
+          onPress: async () => {
+            await logout();
+          },
+        },
+      ]
+    );
   };
 
   const headerContent = (
@@ -234,7 +254,10 @@ export function SettingsScreen() {
 
           <ThemedText style={styles.appName}>thePhotoCrm</ThemedText>
 
-          <Pressable style={[styles.logoutButton, { borderColor: theme.border }]}>
+          <Pressable 
+            style={[styles.logoutButton, { borderColor: theme.border }]}
+            onPress={handleLogout}
+          >
             <Feather name="log-out" size={18} color={theme.text} />
             <ThemedText style={styles.logoutText}>Log out</ThemedText>
           </Pressable>
