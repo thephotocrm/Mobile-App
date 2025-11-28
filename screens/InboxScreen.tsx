@@ -11,7 +11,7 @@ import { InboxStackParamList } from "@/navigation/InboxStackNavigator";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
-import { inboxApi, InboxConversation, createTenantContext } from "@/services/api";
+import { inboxApi, InboxConversationApiResponse, createTenantContext } from "@/services/api";
 
 type NavigationProp = NativeStackNavigationProp<InboxStackParamList, "InboxList">;
 
@@ -27,7 +27,19 @@ interface ConversationItem {
 const formatTimestamp = (dateString?: string): string => {
   if (!dateString) return "";
   
-  const date = new Date(dateString);
+  // Handle timestamps with space separator (e.g., "2025-11-28 19:47:20.215071")
+  // by replacing the space with 'T' for ISO format parsing
+  const isoDateString = dateString.includes(' ') && !dateString.includes('T') 
+    ? dateString.replace(' ', 'T') + 'Z'
+    : dateString;
+  
+  const date = new Date(isoDateString);
+  
+  // Check if date is valid
+  if (isNaN(date.getTime())) {
+    return "";
+  }
+  
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffHours = diffMs / (1000 * 60 * 60);
@@ -35,6 +47,7 @@ const formatTimestamp = (dateString?: string): string => {
 
   if (diffHours < 1) {
     const minutes = Math.floor(diffMs / (1000 * 60));
+    if (minutes < 0) return "Just now";
     return `${minutes}m ago`;
   } else if (diffHours < 24) {
     return `${Math.floor(diffHours)}h ago`;
@@ -70,16 +83,24 @@ export default function InboxScreen() {
       const tenant = createTenantContext(user);
       
       // Use the correct inbox API endpoint
-      const apiConversations = await inboxApi.getConversations(token, tenant);
+      const apiConversations = await inboxApi.getConversations(token, tenant) as unknown as InboxConversationApiResponse[];
 
-      let result: ConversationItem[] = apiConversations.map((conv: InboxConversation) => ({
-        contactId: conv.contactId,
-        contactName: conv.contactName || "Unknown",
-        lastMessage: conv.lastMessage || "No messages yet",
-        timestamp: formatTimestamp(conv.lastMessageAt),
-        unreadCount: conv.unreadCount || 0,
-        channel: conv.channel || "SMS",
-      }));
+      // Transform API response to UI format
+      let result: ConversationItem[] = apiConversations.map((conv: InboxConversationApiResponse) => {
+        // Build contact name from firstName + lastName
+        const firstName = conv.contact?.firstName || "";
+        const lastName = conv.contact?.lastName || "";
+        const contactName = `${firstName} ${lastName}`.trim() || "Unknown";
+        
+        return {
+          contactId: conv.contact?.id || "",
+          contactName,
+          lastMessage: conv.lastMessage || "No messages yet",
+          timestamp: formatTimestamp(conv.lastMessageAt),
+          unreadCount: conv.unreadCount || 0,
+          channel: "SMS" as const,
+        };
+      });
 
       if (searchQuery.trim()) {
         const query = searchQuery.trim().toLowerCase();

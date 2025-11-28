@@ -208,6 +208,22 @@ export interface Project {
 }
 
 // Inbox conversation from /api/inbox/conversations
+// API response structure for /api/inbox/conversations
+export interface InboxConversationApiResponse {
+  contact: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email?: string;
+    phone?: string;
+  };
+  lastMessage: string;
+  lastMessageAt: string;
+  unreadCount: number;
+  lastReadAt?: string;
+}
+
+// Transformed structure for UI consumption
 export interface InboxConversation {
   contactId: string;
   contactName: string;
