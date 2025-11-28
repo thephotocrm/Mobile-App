@@ -30,30 +30,57 @@ class ApiClient {
 
     const url = `${this.baseUrl}${endpoint}`;
     
+    console.log(`[API] ${options.method || 'GET'} ${url}`);
+    if (fetchOptions.body) {
+      const bodyForLog = JSON.parse(fetchOptions.body as string);
+      if (bodyForLog.password) {
+        bodyForLog.password = '***HIDDEN***';
+      }
+      console.log('[API] Request body:', JSON.stringify(bodyForLog));
+    }
+    
     try {
       const response = await fetch(url, {
         ...fetchOptions,
         headers,
       });
 
+      console.log(`[API] Response status: ${response.status} ${response.statusText}`);
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorText = await response.text();
+        console.log('[API] Error response body:', errorText);
+        
+        let errorData = {};
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { rawError: errorText };
+        }
+        
         throw new ApiError(
-          errorData.message || `HTTP ${response.status}`,
+          (errorData as { message?: string }).message || `HTTP ${response.status}`,
           response.status,
           errorData
         );
       }
 
       if (response.status === 204) {
+        console.log('[API] Empty response (204)');
         return {} as T;
       }
 
-      return response.json();
+      const data = await response.json();
+      console.log('[API] Success response:', JSON.stringify(data, (key, value) => 
+        key === 'token' ? '***TOKEN_RECEIVED***' : value
+      ));
+      return data;
     } catch (error) {
       if (error instanceof ApiError) {
+        console.log(`[API] ApiError: ${error.message} (status: ${error.status})`);
         throw error;
       }
+      console.log('[API] Network/Fetch error:', error instanceof Error ? error.message : String(error));
       throw new ApiError(
         error instanceof Error ? error.message : "Network error",
         0,

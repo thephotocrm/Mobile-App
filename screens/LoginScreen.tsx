@@ -31,25 +31,34 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async () => {
+    console.log('[LoginScreen] Sign In button pressed');
+    
     if (!email.trim()) {
+      console.log('[LoginScreen] Validation failed: empty email');
       setError("Please enter your email");
       return;
     }
     if (!password) {
+      console.log('[LoginScreen] Validation failed: empty password');
       setError("Please enter your password");
       return;
     }
 
+    console.log('[LoginScreen] Starting login for:', email.trim());
     setError(null);
     setLoading(true);
 
     try {
+      console.log('[LoginScreen] Calling login()...');
       await login(email.trim(), password);
+      console.log('[LoginScreen] Login completed successfully!');
     } catch (err) {
       const message = err instanceof Error ? err.message : "Login failed. Please try again.";
+      console.log('[LoginScreen] Login failed with error:', message);
       setError(message);
     } finally {
       setLoading(false);
+      console.log('[LoginScreen] Login process finished');
     }
   };
 
