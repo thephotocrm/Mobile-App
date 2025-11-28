@@ -8,9 +8,10 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { ThemedText } from '@/components/ThemedText';
 import { Avatar } from '@/components/Avatar';
 import { useTheme } from '@/hooks/useTheme';
+import { useAuth } from '@/contexts/AuthContext';
 import { Spacing, GradientColors } from '@/constants/theme';
 import { InboxStackParamList } from '@/navigation/InboxStackNavigator';
-import { MessageRepository, Message } from '@/database/repositories/ConversationRepository';
+import { inboxApi, InboxMessage, createTenantContext } from '@/services/api';
 
 type ThreadDetailRouteProp = RouteProp<InboxStackParamList, 'ThreadDetail'>;
 
@@ -21,13 +22,6 @@ interface DisplayMessage {
   timestamp: string;
   createdAt?: number;
 }
-
-const MOCK_MESSAGES: DisplayMessage[] = [
-  { id: '1', text: 'Hi! I wanted to check on the timeline for receiving our wedding album.', isSent: false, timestamp: '5h ago', createdAt: Date.now() / 1000 - 18000 },
-  { id: '2', text: 'Hi Emily! Your album is currently being designed. You should receive it within 2-3 weeks.', isSent: true, timestamp: '4h ago', createdAt: Date.now() / 1000 - 14400 },
-  { id: '3', text: 'That sounds great! Also, can we schedule a time to go over the final photo selections?', isSent: false, timestamp: '3h ago', createdAt: Date.now() / 1000 - 10800 },
-  { id: '4', text: 'Absolutely! How does next Tuesday at 2 PM work for you?', isSent: true, timestamp: '2h ago', createdAt: Date.now() / 1000 - 7200 },
-];
 
 const getDateSeparator = (timestamp: number): string => {
   const messageDate = new Date(timestamp * 1000);
@@ -85,34 +79,47 @@ const formatTimestamp = (timestamp: number): string => {
   }
 };
 
+const formatISOToTimestamp = (isoString: string): number => {
+  return Math.floor(new Date(isoString).getTime() / 1000);
+};
+
 export default function ThreadDetailScreen() {
   const { theme } = useTheme();
+  const { token, user } = useAuth();
   const route = useRoute<ThreadDetailRouteProp>();
-  const { conversationId } = route.params;
+  const { conversationId, contactName } = route.params;
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
   
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<DisplayMessage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
 
   const loadMessages = async () => {
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       
-      if (Platform.OS === 'web') {
-        setMessages(MOCK_MESSAGES);
-      } else {
-        const dbMessages = await MessageRepository.getByConversation(conversationId);
-        const displayMessages: DisplayMessage[] = dbMessages.map((msg) => ({
-          id: msg.id.toString(),
-          text: msg.text || '',
-          isSent: Boolean(msg.is_sent),
-          timestamp: formatTimestamp(msg.created_at),
-          createdAt: msg.created_at,
-        }));
-        setMessages(displayMessages);
-      }
+      // Create tenant context for multi-tenant routing
+      const tenant = createTenantContext(user);
+      
+      // Use the correct inbox API endpoint - conversationId is actually the contactId
+      const thread = await inboxApi.getThread(token, conversationId, tenant);
+      
+      const displayMessages: DisplayMessage[] = thread.messages.map((msg: InboxMessage) => ({
+        id: msg.id,
+        text: msg.messageBody || '',
+        isSent: msg.direction === 'OUTBOUND',
+        timestamp: formatTimestamp(formatISOToTimestamp(msg.sentAt)),
+        createdAt: formatISOToTimestamp(msg.sentAt),
+      }));
+      
+      setMessages(displayMessages);
     } catch (error) {
       console.error('Error loading messages:', error);
       setMessages([]);
@@ -123,12 +130,39 @@ export default function ThreadDetailScreen() {
 
   useEffect(() => {
     loadMessages();
-  }, [conversationId]);
+  }, [conversationId, token, user]);
 
-  const handleSend = () => {
-    if (message.trim()) {
-      Alert.alert('Message Sent', `Your message "${message}" has been sent`);
+  const handleSend = async () => {
+    if (!message.trim() || !token) return;
+    
+    try {
+      setSending(true);
+      const tenant = createTenantContext(user);
+      
+      // Send SMS via inbox API
+      await inboxApi.sendSms(token, conversationId, message.trim(), false, tenant);
+      
+      // Add the message locally for immediate feedback
+      const newMessage: DisplayMessage = {
+        id: `temp-${Date.now()}`,
+        text: message.trim(),
+        isSent: true,
+        timestamp: 'Just now',
+        createdAt: Math.floor(Date.now() / 1000),
+      };
+      setMessages(prev => [...prev, newMessage]);
       setMessage('');
+      
+      // Reload messages to get the confirmed message from server
+      setTimeout(() => {
+        loadMessages();
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Error sending message:', error);
+      Alert.alert('Send Failed', 'Failed to send message. Please try again.');
+    } finally {
+      setSending(false);
     }
   };
 
@@ -149,7 +183,9 @@ export default function ThreadDetailScreen() {
         >
           {messages.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <ThemedText style={styles.emptyText}>No messages yet</ThemedText>
+              <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
+                No messages yet. Start the conversation!
+              </ThemedText>
             </View>
           ) : (
             messages.map((msg, index) => {
@@ -158,7 +194,7 @@ export default function ThreadDetailScreen() {
               
               return (
                 <React.Fragment key={msg.id}>
-                  {showDateSeparator && msg.createdAt && (
+                  {showDateSeparator && msg.createdAt ? (
                     <View style={styles.dateSeparatorContainer}>
                       <View style={[styles.dateSeparatorLine, { backgroundColor: theme.border }]} />
                       <ThemedText style={[styles.dateSeparatorText, { color: theme.textSecondary }]}>
@@ -166,14 +202,14 @@ export default function ThreadDetailScreen() {
                       </ThemedText>
                       <View style={[styles.dateSeparatorLine, { backgroundColor: theme.border }]} />
                     </View>
-                  )}
+                  ) : null}
                   
                   <View style={[styles.messageRow, msg.isSent && styles.messageRowSent]}>
-                    {!msg.isSent && (
+                    {!msg.isSent ? (
                       <View style={styles.avatar}>
-                        <Avatar name={route.params.contactName} size={32} />
+                        <Avatar name={contactName} size={32} />
                       </View>
-                    )}
+                    ) : null}
                     
                     <View
                       style={[
@@ -236,11 +272,14 @@ export default function ThreadDetailScreen() {
             style={[styles.textInput, { color: theme.text }]}
             multiline
             maxLength={1000}
+            editable={!sending}
           />
           <Pressable
             onPress={handleSend}
+            disabled={!message.trim() || sending}
             style={({ pressed }) => [
               pressed && { opacity: 0.7 },
+              (!message.trim() || sending) && { opacity: 0.5 },
             ]}
           >
             <LinearGradient
@@ -249,7 +288,11 @@ export default function ThreadDetailScreen() {
               end={{ x: 1, y: 1 }}
               style={styles.sendButton}
             >
-              <Feather name="send" size={18} color="#FFFFFF" />
+              {sending ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <Feather name="send" size={18} color="#FFFFFF" />
+              )}
             </LinearGradient>
           </Pressable>
         </View>

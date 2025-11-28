@@ -2,8 +2,14 @@ import Constants from "expo-constants";
 
 const API_BASE_URL = Constants.expoConfig?.extra?.apiBaseUrl || process.env.EXPO_PUBLIC_API_BASE_URL || "https://app.thephotocrm.com";
 
+interface TenantContext {
+  photographerId?: string;
+  userRole?: "PHOTOGRAPHER" | "CLIENT";
+}
+
 interface RequestOptions extends RequestInit {
   token?: string | null;
+  tenant?: TenantContext;
 }
 
 class ApiClient {
@@ -17,7 +23,7 @@ class ApiClient {
     endpoint: string,
     options: RequestOptions = {}
   ): Promise<T> {
-    const { token, ...fetchOptions } = options;
+    const { token, tenant, ...fetchOptions } = options;
     
     const headers: HeadersInit = {
       "Content-Type": "application/json",
@@ -26,6 +32,14 @@ class ApiClient {
 
     if (token) {
       (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
+    }
+
+    // Add multi-tenant headers for mobile app routing
+    if (tenant?.photographerId) {
+      (headers as Record<string, string>)["x-photographer-id"] = tenant.photographerId;
+    }
+    if (tenant?.userRole) {
+      (headers as Record<string, string>)["x-user-role"] = tenant.userRole;
     }
 
     const url = `${this.baseUrl}${endpoint}`;
@@ -37,6 +51,9 @@ class ApiClient {
         bodyForLog.password = '***HIDDEN***';
       }
       console.log('[API] Request body:', JSON.stringify(bodyForLog));
+    }
+    if (tenant?.photographerId) {
+      console.log('[API] Tenant headers:', { photographerId: tenant.photographerId, userRole: tenant.userRole });
     }
     
     try {
@@ -89,28 +106,30 @@ class ApiClient {
     }
   }
 
-  async get<T>(endpoint: string, token?: string | null): Promise<T> {
-    return this.request<T>(endpoint, { method: "GET", token });
+  async get<T>(endpoint: string, token?: string | null, tenant?: TenantContext): Promise<T> {
+    return this.request<T>(endpoint, { method: "GET", token, tenant });
   }
 
-  async post<T>(endpoint: string, data?: unknown, token?: string | null): Promise<T> {
+  async post<T>(endpoint: string, data?: unknown, token?: string | null, tenant?: TenantContext): Promise<T> {
     return this.request<T>(endpoint, {
       method: "POST",
       body: data ? JSON.stringify(data) : undefined,
       token,
+      tenant,
     });
   }
 
-  async put<T>(endpoint: string, data?: unknown, token?: string | null): Promise<T> {
+  async put<T>(endpoint: string, data?: unknown, token?: string | null, tenant?: TenantContext): Promise<T> {
     return this.request<T>(endpoint, {
       method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
       token,
+      tenant,
     });
   }
 
-  async delete<T>(endpoint: string, token?: string | null): Promise<T> {
-    return this.request<T>(endpoint, { method: "DELETE", token });
+  async delete<T>(endpoint: string, token?: string | null, tenant?: TenantContext): Promise<T> {
+    return this.request<T>(endpoint, { method: "DELETE", token, tenant });
   }
 }
 
@@ -188,6 +207,37 @@ export interface Project {
   createdAt: string;
 }
 
+// Inbox conversation from /api/inbox/conversations
+export interface InboxConversation {
+  contactId: string;
+  contactName: string;
+  lastMessage: string;
+  lastMessageAt: string;
+  unreadCount: number;
+  channel: "SMS" | "EMAIL";
+}
+
+// Message from /api/inbox/thread/:contactId
+export interface InboxMessage {
+  id: string;
+  direction: "INBOUND" | "OUTBOUND";
+  messageBody: string;
+  channel: "SMS" | "EMAIL";
+  sentAt: string;
+  deliveredAt?: string;
+}
+
+export interface InboxThread {
+  contact: {
+    id: string;
+    name: string;
+    phone?: string;
+    email?: string;
+  };
+  messages: InboxMessage[];
+}
+
+// Legacy conversation types (kept for compatibility)
 export interface Conversation {
   id: string;
   projectId: string;
@@ -224,6 +274,14 @@ export interface Booking {
   createdAt: string;
 }
 
+// Helper to create tenant context from user
+export function createTenantContext(user: User | null): TenantContext {
+  return {
+    photographerId: user?.photographerId,
+    userRole: user?.role,
+  };
+}
+
 export const authApi = {
   login: (email: string, password: string) =>
     api.post<LoginResponse>("/api/auth/login", { email, password }),
@@ -231,85 +289,101 @@ export const authApi = {
   register: (email: string, password: string, businessName: string) =>
     api.post<LoginResponse>("/api/auth/register", { email, password, businessName }),
   
-  me: (token: string) =>
-    api.get<User>("/api/auth/me", token),
+  me: (token: string, tenant?: TenantContext) =>
+    api.get<User>("/api/auth/me", token, tenant),
   
-  logout: (token: string) =>
-    api.post<{ message: string }>("/api/auth/logout", undefined, token),
+  logout: (token: string, tenant?: TenantContext) =>
+    api.post<{ message: string }>("/api/auth/logout", undefined, token, tenant),
 };
 
 export const projectsApi = {
-  getAll: (token: string, status?: string, stageId?: string) => {
+  getAll: (token: string, tenant?: TenantContext, status?: string, stageId?: string) => {
     let endpoint = "/api/projects";
     const params = new URLSearchParams();
     if (status) params.append("status", status);
     if (stageId) params.append("stageId", stageId);
     if (params.toString()) endpoint += `?${params.toString()}`;
-    return api.get<Project[]>(endpoint, token);
+    return api.get<Project[]>(endpoint, token, tenant);
   },
   
-  getById: (token: string, id: string) =>
-    api.get<Project>(`/api/projects/${id}`, token),
+  getById: (token: string, id: string, tenant?: TenantContext) =>
+    api.get<Project>(`/api/projects/${id}`, token, tenant),
   
-  create: (token: string, data: Partial<Project>) =>
-    api.post<Project>("/api/projects", data, token),
+  create: (token: string, data: Partial<Project>, tenant?: TenantContext) =>
+    api.post<Project>("/api/projects", data, token, tenant),
   
-  update: (token: string, id: string, data: Partial<Project>) =>
-    api.put<Project>(`/api/projects/${id}`, data, token),
+  update: (token: string, id: string, data: Partial<Project>, tenant?: TenantContext) =>
+    api.put<Project>(`/api/projects/${id}`, data, token, tenant),
   
-  updateStage: (token: string, id: string, stageId: string) =>
-    api.put<Project>(`/api/projects/${id}/stage`, { stageId }, token),
+  updateStage: (token: string, id: string, stageId: string, tenant?: TenantContext) =>
+    api.put<Project>(`/api/projects/${id}/stage`, { stageId }, token, tenant),
 };
 
 export const contactsApi = {
-  getAll: (token: string, stageId?: string, status?: string) => {
+  getAll: (token: string, tenant?: TenantContext, stageId?: string, status?: string) => {
     let endpoint = "/api/contacts";
     const params = new URLSearchParams();
     if (stageId) params.append("stageId", stageId);
     if (status) params.append("status", status);
     if (params.toString()) endpoint += `?${params.toString()}`;
-    return api.get<Contact[]>(endpoint, token);
+    return api.get<Contact[]>(endpoint, token, tenant);
   },
   
-  getById: (token: string, id: string) =>
-    api.get<Contact>(`/api/contacts/${id}`, token),
+  getById: (token: string, id: string, tenant?: TenantContext) =>
+    api.get<Contact>(`/api/contacts/${id}`, token, tenant),
   
-  create: (token: string, data: Partial<Contact>) =>
-    api.post<Contact>("/api/contacts", data, token),
+  create: (token: string, data: Partial<Contact>, tenant?: TenantContext) =>
+    api.post<Contact>("/api/contacts", data, token, tenant),
   
-  update: (token: string, id: string, data: Partial<Contact>) =>
-    api.put<Contact>(`/api/contacts/${id}`, data, token),
+  update: (token: string, id: string, data: Partial<Contact>, tenant?: TenantContext) =>
+    api.put<Contact>(`/api/contacts/${id}`, data, token, tenant),
 };
 
+// NEW: Inbox API using correct endpoints from documentation
+export const inboxApi = {
+  // GET /api/inbox/conversations - Get all conversations for photographer
+  getConversations: (token: string, tenant?: TenantContext) =>
+    api.get<InboxConversation[]>("/api/inbox/conversations", token, tenant),
+  
+  // GET /api/inbox/thread/:contactId - Get message thread with a specific contact
+  getThread: (token: string, contactId: string, tenant?: TenantContext) =>
+    api.get<InboxThread>(`/api/inbox/thread/${contactId}`, token, tenant),
+  
+  // POST /api/inbox/send-sms - Send SMS to a contact
+  sendSms: (token: string, contactId: string, message: string, includePortalLink: boolean = false, tenant?: TenantContext) =>
+    api.post<{ success: boolean }>("/api/inbox/send-sms", { contactId, message, includePortalLink }, token, tenant),
+};
+
+// Legacy conversations API (kept for backwards compatibility)
 export const conversationsApi = {
-  getAll: (token: string) =>
-    api.get<Conversation[]>("/api/conversations", token),
+  getAll: (token: string, tenant?: TenantContext) =>
+    api.get<Conversation[]>("/api/conversations", token, tenant),
   
-  getById: (token: string, id: string) =>
-    api.get<Conversation>(`/api/conversations/${id}`, token),
+  getById: (token: string, id: string, tenant?: TenantContext) =>
+    api.get<Conversation>(`/api/conversations/${id}`, token, tenant),
   
-  getMessages: (token: string, conversationId: string) =>
-    api.get<Message[]>(`/api/conversations/${conversationId}/messages`, token),
+  getMessages: (token: string, conversationId: string, tenant?: TenantContext) =>
+    api.get<Message[]>(`/api/conversations/${conversationId}/messages`, token, tenant),
   
-  sendMessage: (token: string, conversationId: string, content: string, messageType: string = "SMS") =>
-    api.post<Message>(`/api/conversations/${conversationId}/messages`, { content, messageType }, token),
+  sendMessage: (token: string, conversationId: string, content: string, messageType: string = "SMS", tenant?: TenantContext) =>
+    api.post<Message>(`/api/conversations/${conversationId}/messages`, { content, messageType }, token, tenant),
 };
 
 export const bookingsApi = {
-  getAll: (token: string) =>
-    api.get<Booking[]>("/api/bookings", token),
+  getAll: (token: string, tenant?: TenantContext) =>
+    api.get<Booking[]>("/api/bookings", token, tenant),
   
-  getById: (token: string, id: string) =>
-    api.get<Booking>(`/api/bookings/${id}`, token),
+  getById: (token: string, id: string, tenant?: TenantContext) =>
+    api.get<Booking>(`/api/bookings/${id}`, token, tenant),
   
-  create: (token: string, data: Partial<Booking>) =>
-    api.post<Booking>("/api/bookings", data, token),
+  create: (token: string, data: Partial<Booking>, tenant?: TenantContext) =>
+    api.post<Booking>("/api/bookings", data, token, tenant),
   
-  update: (token: string, id: string, data: Partial<Booking>) =>
-    api.put<Booking>(`/api/bookings/${id}`, data, token),
+  update: (token: string, id: string, data: Partial<Booking>, tenant?: TenantContext) =>
+    api.put<Booking>(`/api/bookings/${id}`, data, token, tenant),
 };
 
 export const stagesApi = {
-  getAll: (token: string) =>
-    api.get<Stage[]>("/api/stages", token),
+  getAll: (token: string, tenant?: TenantContext) =>
+    api.get<Stage[]>("/api/stages", token, tenant),
 };

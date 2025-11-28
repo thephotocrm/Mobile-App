@@ -11,7 +11,7 @@ import { BookingsStackParamList } from "@/navigation/BookingsStackNavigator";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, Typography } from "@/constants/theme";
-import { bookingsApi, Booking } from "@/services/api";
+import { bookingsApi, Booking, createTenantContext } from "@/services/api";
 
 type NavigationProp = NativeStackNavigationProp<BookingsStackParamList, "BookingsList">;
 
@@ -38,7 +38,7 @@ const getBorderColor = (index: number): string => {
 
 export default function BookingsScreen() {
   const { theme } = useTheme();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const navigation = useNavigation<NavigationProp>();
   const [searchQuery, setSearchQuery] = useState("");
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -55,7 +55,10 @@ export default function BookingsScreen() {
       setLoading(true);
       setError(null);
 
-      const result = await bookingsApi.getAll(token);
+      // Create tenant context for multi-tenant routing
+      const tenant = createTenantContext(user);
+      
+      const result = await bookingsApi.getAll(token, tenant);
       setBookings(result);
     } catch (err) {
       console.error("Error loading bookings:", err);
@@ -69,7 +72,7 @@ export default function BookingsScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadBookings();
-    }, [token])
+    }, [token, user])
   );
 
   const filteredBookings = bookings.filter((booking) => {

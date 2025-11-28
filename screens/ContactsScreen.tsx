@@ -10,13 +10,13 @@ import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, Typography } from "@/constants/theme";
 import { ToolsStackParamList } from "@/navigation/ToolsStackNavigator";
-import { contactsApi, Contact } from "@/services/api";
+import { contactsApi, Contact, createTenantContext } from "@/services/api";
 
 type ContactsScreenNavigationProp = NativeStackNavigationProp<ToolsStackParamList, "Contacts">;
 
 export default function ContactsScreen() {
   const { theme } = useTheme();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const navigation = useNavigation<ContactsScreenNavigationProp>();
   const [searchQuery, setSearchQuery] = useState("");
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -33,7 +33,10 @@ export default function ContactsScreen() {
       setLoading(true);
       setError(null);
 
-      const result = await contactsApi.getAll(token);
+      // Create tenant context for multi-tenant routing
+      const tenant = createTenantContext(user);
+      
+      const result = await contactsApi.getAll(token, tenant);
       setContacts(result);
     } catch (err) {
       console.error("Error loading contacts:", err);
@@ -47,7 +50,7 @@ export default function ContactsScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadContacts();
-    }, [token])
+    }, [token, user])
   );
 
   const filteredContacts = contacts.filter((contact) => {

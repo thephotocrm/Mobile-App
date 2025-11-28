@@ -11,7 +11,7 @@ import { ProjectsStackParamList } from "@/navigation/ProjectsStackNavigator";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import { Spacing } from "@/constants/theme";
-import { projectsApi, Project as ApiProject } from "@/services/api";
+import { projectsApi, Project as ApiProject, createTenantContext } from "@/services/api";
 
 type NavigationProp = NativeStackNavigationProp<ProjectsStackParamList, "ProjectsList">;
 
@@ -50,7 +50,7 @@ const formatEventDate = (dateString?: string): string => {
 
 export default function ProjectsListScreen() {
   const { theme } = useTheme();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const navigation = useNavigation<NavigationProp>();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStage, setSelectedStage] = useState("all");
@@ -68,8 +68,11 @@ export default function ProjectsListScreen() {
       setLoading(true);
       setError(null);
       
+      // Create tenant context for multi-tenant routing
+      const tenant = createTenantContext(user);
+      
       const stageFilter = selectedStage !== "all" ? selectedStage : undefined;
-      let result = await projectsApi.getAll(token, undefined, stageFilter);
+      let result = await projectsApi.getAll(token, tenant, undefined, stageFilter);
 
       if (searchQuery.trim()) {
         const query = searchQuery.trim().toLowerCase();
@@ -94,7 +97,7 @@ export default function ProjectsListScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadProjects();
-    }, [searchQuery, selectedStage, token])
+    }, [searchQuery, selectedStage, token, user])
   );
 
   const getClientName = (project: ApiProject): string => {

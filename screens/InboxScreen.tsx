@@ -11,16 +11,17 @@ import { InboxStackParamList } from "@/navigation/InboxStackNavigator";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
-import { conversationsApi, Conversation } from "@/services/api";
+import { inboxApi, InboxConversation, createTenantContext } from "@/services/api";
 
 type NavigationProp = NativeStackNavigationProp<InboxStackParamList, "InboxList">;
 
 interface ConversationItem {
-  id: string;
+  contactId: string;
   contactName: string;
   lastMessage: string;
   timestamp: string;
   unreadCount: number;
+  channel: "SMS" | "EMAIL";
 }
 
 const formatTimestamp = (dateString?: string): string => {
@@ -48,7 +49,7 @@ const formatTimestamp = (dateString?: string): string => {
 
 export default function InboxScreen() {
   const { theme } = useTheme();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const navigation = useNavigation<NavigationProp>();
   const [searchQuery, setSearchQuery] = useState("");
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
@@ -65,16 +66,19 @@ export default function InboxScreen() {
       setLoading(true);
       setError(null);
 
-      const apiConversations = await conversationsApi.getAll(token);
+      // Create tenant context for multi-tenant routing
+      const tenant = createTenantContext(user);
+      
+      // Use the correct inbox API endpoint
+      const apiConversations = await inboxApi.getConversations(token, tenant);
 
-      let result: ConversationItem[] = apiConversations.map((conv: Conversation) => ({
-        id: conv.id,
-        contactName: conv.client
-          ? `${conv.client.firstName || ""} ${conv.client.lastName || ""}`.trim() || "Unknown"
-          : "Unknown",
-        lastMessage: "Tap to view messages",
+      let result: ConversationItem[] = apiConversations.map((conv: InboxConversation) => ({
+        contactId: conv.contactId,
+        contactName: conv.contactName || "Unknown",
+        lastMessage: conv.lastMessage || "No messages yet",
         timestamp: formatTimestamp(conv.lastMessageAt),
         unreadCount: conv.unreadCount || 0,
+        channel: conv.channel || "SMS",
       }));
 
       if (searchQuery.trim()) {
@@ -99,7 +103,7 @@ export default function InboxScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadConversations();
-    }, [searchQuery, token])
+    }, [searchQuery, token, user])
   );
 
   return (
@@ -145,7 +149,7 @@ export default function InboxScreen() {
           ) : (
             conversations.map((conversation, index) => (
               <ConversationCard
-                key={conversation.id}
+                key={conversation.contactId}
                 contactName={conversation.contactName}
                 lastMessage={conversation.lastMessage}
                 timestamp={conversation.timestamp}
@@ -153,7 +157,7 @@ export default function InboxScreen() {
                 isLast={index === conversations.length - 1}
                 onPress={() =>
                   navigation.navigate("ThreadDetail", {
-                    conversationId: conversation.id,
+                    conversationId: conversation.contactId,
                     contactName: conversation.contactName,
                   })
                 }
