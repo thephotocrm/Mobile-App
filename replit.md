@@ -148,11 +148,25 @@ The backend at https://app.thephotocrm.com must return the JWT token in the logi
 **Backend API Integration (Implemented):**
 - API client in `services/api.ts` connects to https://app.thephotocrm.com
 - JWT Bearer token authentication on all API requests
+- Multi-tenant support via custom headers:
+  - `x-photographer-id`: UUID from JWT token (photographer's unique ID)
+  - `x-user-role`: PHOTOGRAPHER or CLIENT (determines access level)
 - Connected screens: Projects, Inbox, Contacts, Bookings
-- API methods: projectsApi, contactsApi, conversationsApi, messagesApi, bookingsApi
+- API methods: projectsApi, contactsApi, inboxApi, bookingsApi
+
+**API Endpoints:**
+- `/api/auth/login` - POST - Email/password authentication
+- `/api/projects` - GET - List all projects with optional stage filter
+- `/api/contacts` - GET - List all contacts
+- `/api/inbox/conversations` - GET - List all conversations with last message
+- `/api/inbox/thread/:contactId` - GET - Get messages for a specific contact
+- `/api/inbox/sms` - POST - Send SMS message to contact
+- `/api/calendar/events` - GET - List all booking events
 
 **API Data Flow:**
 - Token retrieved from AuthContext via useAuth() hook
+- User object contains photographerId extracted from JWT claims
+- createTenantContext() helper builds headers from user object
 - Each screen checks for token before making API calls
 - useFocusEffect triggers data refresh when screen gains focus
 - Error handling displays user-friendly messages
@@ -213,12 +227,14 @@ The backend at https://app.thephotocrm.com must return the JWT token in the logi
 - REST API at https://app.thephotocrm.com
 - API client in `services/api.ts` using native fetch
 - JWT authentication via Authorization header
-- Endpoints: /api/auth/login, /api/projects, /api/contacts, /api/conversations, /api/bookings
+- Multi-tenant headers: x-photographer-id, x-user-role (required for tenant isolation)
+- Endpoints: /api/auth/login, /api/projects, /api/contacts, /api/inbox/conversations, /api/inbox/thread/:contactId, /api/calendar/events
 
 **Implemented Features:**
 - Login/logout with token persistence
 - Projects list with stage filtering and search
-- Inbox conversations with last message preview
+- Inbox conversations with last message preview (uses /api/inbox/conversations)
+- Thread detail with message history and SMS sending (uses /api/inbox/thread/:contactId)
 - Contacts list with search
 - Bookings calendar view
 
