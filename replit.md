@@ -59,6 +59,29 @@ Design preference: 10px horizontal edge-to-edge padding for maximum content widt
 - Quick action buttons: Call, Text, Email, Send Magic Link
 - All tabs use mock data; ready for backend integration via repository pattern
 
+**Notifications/Activity Feed (NotificationsScreen):**
+- Real-time aggregated activity feed from multiple API sources
+- Data sources fetched in parallel using Promise.allSettled:
+  - `/api/inbox/conversations` - Unread messages from clients
+  - `/api/projects` - Projects with upcoming event dates (within 3 days)
+  - `/api/bookings` - Today's and upcoming booking sessions
+- Alert types with distinct icons and colors:
+  - `message` - New unread SMS messages (message-circle icon, primary color)
+  - `event_today` - Project events happening today (sun icon, red color)
+  - `event_upcoming` - Project events within 3 days (clock icon, amber if tomorrow)
+  - `booking_today` - Today's bookings (calendar icon, red color)
+  - `booking_upcoming` - Upcoming bookings within 3 days (calendar icon)
+- Smart sorting prioritization:
+  1. Today's items first (events > bookings > messages)
+  2. Then urgent items (tomorrow's events/bookings)
+  3. Then by timestamp (soonest first for events, newest first for messages)
+- Features:
+  - Pull-to-refresh functionality
+  - Loading state with spinner
+  - Empty state when no activity ("All caught up!")
+  - Tappable cards navigate to relevant screens (Thread, Booking, Project)
+  - Visual urgency indicators (purple dot for urgent items)
+
 **Contacts Management (Tools Section):**
 - ContactsScreen lists all photographer's contacts with search functionality
   - Shows avatar, name, project count, and last contact date for each contact
