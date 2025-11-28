@@ -128,6 +128,9 @@ export default function ThreadDetailScreen() {
         };
       });
       
+      // Sort messages by timestamp ascending (oldest first, newest at bottom)
+      displayMessages.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+      
       setMessages(displayMessages);
     } catch (error) {
       console.error('Error loading messages:', error);
