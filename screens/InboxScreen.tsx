@@ -83,10 +83,10 @@ export default function InboxScreen() {
       const tenant = createTenantContext(user);
       
       // Use the correct inbox API endpoint
-      const apiConversations = await inboxApi.getConversations(token, tenant) as unknown as InboxConversationApiResponse[];
+      const apiConversations = await inboxApi.getConversations(token, tenant);
 
       // Transform API response to UI format
-      let result: ConversationItem[] = apiConversations.map((conv: InboxConversationApiResponse) => {
+      let result: ConversationItem[] = apiConversations.map((conv) => {
         // Build contact name from firstName + lastName
         const firstName = conv.contact?.firstName || "";
         const lastName = conv.contact?.lastName || "";

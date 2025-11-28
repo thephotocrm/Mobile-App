@@ -130,15 +130,19 @@ export function NotificationsScreen() {
 
       // Process unread messages
       if (conversationsResult.status === "fulfilled") {
-        const conversations = conversationsResult.value as unknown as InboxConversationApiResponse[];
+        const conversations = conversationsResult.value;
+        console.log("[Activity] Conversations received:", conversations.length);
         
         conversations.forEach((conv) => {
+          console.log("[Activity] Conversation:", conv.contact?.firstName, "unreadCount:", conv.unreadCount);
           if (conv.unreadCount > 0) {
             const contactName = conv.contact 
               ? `${conv.contact.firstName || ""} ${conv.contact.lastName || ""}`.trim() 
               : "Unknown";
             const messageTime = parseApiDate(conv.lastMessageAt);
             const messageDaysAgo = getDaysUntil(messageTime);
+            
+            console.log("[Activity] Adding message alert for:", contactName, "time:", messageTime);
             
             allAlerts.push({
               id: `msg-${conv.contact?.id || Math.random()}`,
@@ -153,6 +157,8 @@ export function NotificationsScreen() {
             });
           }
         });
+      } else {
+        console.log("[Activity] Conversations failed:", conversationsResult);
       }
 
       // Process projects with upcoming event dates (within 3 days)
@@ -243,6 +249,8 @@ export function NotificationsScreen() {
         });
       }
 
+      console.log("[Activity] Total alerts before sort:", allAlerts.length, allAlerts.map(a => a.title));
+
       // Sort alerts: Priority order: 1) Today items, 2) Urgent items, 3) By timestamp
       allAlerts.sort((a, b) => {
         // 1. Today's items always come first
@@ -270,6 +278,7 @@ export function NotificationsScreen() {
         return a.timestamp.getTime() - b.timestamp.getTime();
       });
 
+      console.log("[Activity] Setting alerts:", allAlerts.length);
       setAlerts(allAlerts);
     } catch (err) {
       console.error("Error loading alerts:", err);

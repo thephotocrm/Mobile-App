@@ -365,8 +365,9 @@ export const contactsApi = {
 // NEW: Inbox API using correct endpoints from documentation
 export const inboxApi = {
   // GET /api/inbox/conversations - Get all conversations for photographer
+  // Returns raw API format with nested contact object
   getConversations: (token: string, tenant?: TenantContext) =>
-    api.get<InboxConversation[]>("/api/inbox/conversations", token, tenant),
+    api.get<InboxConversationApiResponse[]>("/api/inbox/conversations", token, tenant),
   
   // GET /api/inbox/thread/:contactId - Get message thread with a specific contact
   getThread: (token: string, contactId: string, tenant?: TenantContext) =>
