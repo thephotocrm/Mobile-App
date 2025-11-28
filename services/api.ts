@@ -236,10 +236,17 @@ export interface InboxConversation {
 // Message from /api/inbox/thread/:contactId
 export interface InboxMessage {
   id: string;
+  type: "SMS" | "EMAIL";
+  content: string;
   direction: "INBOUND" | "OUTBOUND";
-  messageBody: string;
-  channel: "SMS" | "EMAIL";
-  sentAt: string;
+  timestamp: string;
+  isInbound: boolean;
+  status: string;
+  imageUrl?: string | null;
+  // Legacy fields for backwards compatibility
+  messageBody?: string;
+  channel?: "SMS" | "EMAIL";
+  sentAt?: string;
   deliveredAt?: string;
 }
 

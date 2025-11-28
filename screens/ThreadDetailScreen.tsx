@@ -111,13 +111,22 @@ export default function ThreadDetailScreen() {
       // Use the correct inbox API endpoint - conversationId is actually the contactId
       const thread = await inboxApi.getThread(token, conversationId, tenant);
       
-      const displayMessages: DisplayMessage[] = thread.messages.map((msg: InboxMessage) => ({
-        id: msg.id,
-        text: msg.messageBody || '',
-        isSent: msg.direction === 'OUTBOUND',
-        timestamp: formatTimestamp(formatISOToTimestamp(msg.sentAt)),
-        createdAt: formatISOToTimestamp(msg.sentAt),
-      }));
+      // API returns messages with: id, content, direction, timestamp, isInbound, status
+      const displayMessages: DisplayMessage[] = thread.messages.map((msg: any) => {
+        // Use content field (API) or messageBody field (legacy) for message text
+        const text = msg.content || msg.messageBody || '';
+        // Use timestamp field (API) or sentAt field (legacy) for time
+        const msgTimestamp = msg.timestamp || msg.sentAt || '';
+        const createdAt = msgTimestamp ? formatISOToTimestamp(msgTimestamp) : 0;
+        
+        return {
+          id: msg.id,
+          text,
+          isSent: msg.direction === 'OUTBOUND' || msg.isInbound === false,
+          timestamp: createdAt ? formatTimestamp(createdAt) : '',
+          createdAt,
+        };
+      });
       
       setMessages(displayMessages);
     } catch (error) {
