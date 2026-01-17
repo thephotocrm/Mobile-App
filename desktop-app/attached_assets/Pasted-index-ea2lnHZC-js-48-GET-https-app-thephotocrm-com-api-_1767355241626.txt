@@ -1,0 +1,65 @@
+index-ea2lnHZC.js:48  GET https://app.thephotocrm.com/api/drip-campaigns?projectType= 500 (Internal Server Error)
+le @ index-ea2lnHZC.js:48
+queryFn @ index-ea2lnHZC.js:1020
+i @ index-ea2lnHZC.js:48
+x @ index-ea2lnHZC.js:48
+start @ index-ea2lnHZC.js:48
+fetch @ index-ea2lnHZC.js:48
+xp @ index-ea2lnHZC.js:48
+onSubscribe @ index-ea2lnHZC.js:48
+subscribe @ index-ea2lnHZC.js:48
+(anonymous) @ index-ea2lnHZC.js:48
+Q6 @ index-ea2lnHZC.js:38
+Ov @ index-ea2lnHZC.js:40
+im @ index-ea2lnHZC.js:40
+MK @ index-ea2lnHZC.js:40
+bd @ index-ea2lnHZC.js:40
+zT @ index-ea2lnHZC.js:40
+cd @ index-ea2lnHZC.js:38
+(anonymous) @ index-ea2lnHZC.js:40
+setTimeout
+a @ index-ea2lnHZC.js:48
+o @ index-ea2lnHZC.js:48
+batch @ index-ea2lnHZC.js:48
+ul @ index-ea2lnHZC.js:48
+setData @ index-ea2lnHZC.js:48
+onSuccess @ index-ea2lnHZC.js:48
+m @ index-ea2lnHZC.js:48
+Promise.then
+x @ index-ea2lnHZC.js:48
+start @ index-ea2lnHZC.js:48
+fetch @ index-ea2lnHZC.js:48
+xp @ index-ea2lnHZC.js:48
+onSubscribe @ index-ea2lnHZC.js:48
+subscribe @ index-ea2lnHZC.js:48
+(anonymous) @ index-ea2lnHZC.js:48
+Q6 @ index-ea2lnHZC.js:38
+Ov @ index-ea2lnHZC.js:40
+im @ index-ea2lnHZC.js:40
+zT @ index-ea2lnHZC.js:40
+cd @ index-ea2lnHZC.js:38
+MK @ index-ea2lnHZC.js:40
+bd @ index-ea2lnHZC.js:40
+EF @ index-ea2lnHZC.js:40
+T @ index-ea2lnHZC.js:25
+_ @ index-ea2lnHZC.js:25Understand this error
+index-ea2lnHZC.js:48  GET https://app.thephotocrm.com/api/drip-campaigns/static-templates?projectType=WEDDING 404 (Not Found)
+le @ index-ea2lnHZC.js:48
+queryFn @ index-ea2lnHZC.js:1020
+i @ index-ea2lnHZC.js:48
+x @ index-ea2lnHZC.js:48
+start @ index-ea2lnHZC.js:48
+fetch @ index-ea2lnHZC.js:48
+xp @ index-ea2lnHZC.js:48
+setOptions @ index-ea2lnHZC.js:48
+(anonymous) @ index-ea2lnHZC.js:48
+Ov @ index-ea2lnHZC.js:40
+im @ index-ea2lnHZC.js:40
+zT @ index-ea2lnHZC.js:40
+cd @ index-ea2lnHZC.js:38
+MK @ index-ea2lnHZC.js:40
+bd @ index-ea2lnHZC.js:40
+EF @ index-ea2lnHZC.js:40
+T @ index-ea2lnHZC.js:25
+_ @ index-ea2lnHZC.js:25Understand this error
+index-ea2lnHZC.js:48  GET https://app.thephotocrm.com/api/drip-campaigns?projectType=WEDDING 500 (Internal Server Error)

@@ -1,0 +1,43 @@
+shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1  GET https://api.stripe.com/v1/elements/sessions?client_secret=pi_3Sb8jsGcQTg8qNet1ZGU8bku_secret_6L1rudKPrZa5pJHeP3dPVxjFk&key=pk_test_51SDzu2GcQTg8qNetn5PYkV1MgKrO83ZdRZ8YvFHi7MwkgWpMaEYGVKe6oxhzUZnPVsD1ZNjvnxQtyqqRE4PY0RAd00kjhouIsO&_stripe_version=2025-03-31.basil&elements_init_source=stripe.elements&referrer_host=abbiestreet.tpcportal.co&stripe_js_id=cf867ee5-c038-4bab-894e-f00b249e750d&locale=en-US&expand[0]=payment_method_preference.payment_intent.payment_method&type=payment_intent 400 (Bad Request)
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+e @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+c @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+i @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+s @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+e @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+n @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+a @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+i @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+_ @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+d @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+t.requestParams @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+ev @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+(anonymous) @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+(anonymous) @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+n @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+a @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+i @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+(anonymous) @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+(anonymous) @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+n @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+a @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+i @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+value @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+(anonymous) @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1Understand this error
+stripe.js:1 Unhandled payment Element loaderror {error: {…}}

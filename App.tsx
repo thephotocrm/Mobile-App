@@ -14,21 +14,21 @@ import { initializeDatabase } from "@/database";
 import { seedDatabase } from "@/database/seed";
 
 export default function App() {
-  const [isDbReady, setIsDbReady] = useState(Platform.OS === 'web');
+  const [isDbReady, setIsDbReady] = useState(Platform.OS === "web");
 
   useEffect(() => {
     async function setupDatabase() {
-      if (Platform.OS === 'web') {
+      if (Platform.OS === "web") {
         setIsDbReady(true);
         return;
       }
-      
+
       try {
         await initializeDatabase();
         await seedDatabase();
         setIsDbReady(true);
       } catch (error) {
-        console.error('Failed to initialize database:', error);
+        console.error("Failed to initialize database:", error);
         setIsDbReady(true);
       }
     }
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

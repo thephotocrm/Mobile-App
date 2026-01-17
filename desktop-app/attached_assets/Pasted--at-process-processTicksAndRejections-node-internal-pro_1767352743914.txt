@@ -1,0 +1,122 @@
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///app/node_modules/drizzle-orm/node-postgres/session.js:83:22
+    at async DatabaseStorage.getAutomationsByPhotographer (file:///app/dist/index.js:2876:24)
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_sid=461639d0-61a0-4a86-bff9-d9c534880cf70ae11f; photographer_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU
+Has Authorization header: false
+Origin: undefined
+    at async file:///app/dist/index.js:22380:28 {
+  length: 210,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: 'Perhaps you meant to reference the column "automations_stage.project_type".',
+  position: '2442',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3723',
+  routine: 'errorMissingColumn'
+}
+11:17:45 AM [express] GET /api/automations 500 in 73ms :: {"message":"Internal server error"}
+11:17:45 AM [express] GET /api/templates 200 in 82ms :: [{"id":"70edfb7f-fd46-49df-b62c-163cd9f707ad"…
+11:17:45 AM [express] GET /api/questionnaire-templates 304 in 74ms :: []
+📦 DEPLOYMENT CHECK: URL-FIX-V2-DEC14 | NODE_ENV: production | RAILWAY: production
+11:17:45 AM [express] GET /api/projects 304 in 30ms :: [{"id":"fd2af34a-1b61-4886-b4c9-cecc433e0fff",…
+Get automation count error: error: column automations_stage.project_type_id does not exist
+    at /app/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///app/node_modules/drizzle-orm/node-postgres/session.js:83:22
+    at async DatabaseStorage.getAutomationsByPhotographer (file:///app/dist/index.js:2876:24)
+    at async file:///app/dist/index.js:22370:28 {
+  length: 210,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: 'Perhaps you meant to reference the column "automations_stage.project_type".',
+  position: '2442',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3723',
+  routine: 'errorMissingColumn'
+}
+11:17:45 AM [express] GET /api/automations/count 500 in 80ms :: {"message":"Internal server error"}
+📥 INCOMING REQUEST: GET /api/automations/stage-templates
+Request URL: /api/automations/stage-templates?projectType=
+Request method: GET
+Has cookies object: true
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","__stripe_sid":"461639d0-61a0-4a86-bff9-d9c534880cf70ae11f","photographer_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU"}
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_sid=461639d0-61a0-4a86-bff9-d9c534880cf70ae11f; photographer_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Has Authorization header: false
+Has cookies object: true
+Origin: undefined
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","__stripe_sid":"461639d0-61a0-4a86-bff9-d9c534880cf70ae11f","photographer_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU"}
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_sid=461639d0-61a0-4a86-bff9-d9c534880cf70ae11f; photographer_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU
+Host: app.thephotocrm.com
+Token from cookie: photographer
+Token exists: true
+Auth source: photographer
+Token payload: true
+Authentication successful, continuing to route
+📥 INCOMING REQUEST: GET /api/smart-files
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/smart-files
+Request method: GET
+Token exists: true
+  column: undefined,
+Auth source: photographer
+Token payload: true
+Authentication successful, continuing to route
+Get smart files error: error: column "project_type_id" does not exist
+    at /app/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///app/node_modules/drizzle-orm/node-postgres/session.js:83:22
+    at async DatabaseStorage.getSmartFilesByPhotographer (file:///app/dist/index.js:4708:16)
+    at async file:///app/dist/index.js:20557:27 {
+  length: 186,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: 'Perhaps you meant to reference the column "smart_files.project_type".',
+  position: '72',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+Has Authorization header: false
+Origin: undefined
+Host: app.thephotocrm.com
+Token from cookie: photographer
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3723',
+  routine: 'errorMissingColumn'
+}
+11:17:45 AM [express] GET /api/smart-files 500 in 9ms :: {"message":"Internal server error"}
+11:17:45 AM [express] GET /api/automations/stage-templates 200 in 178ms :: [{"stageName":"New Inquiry…
+📥 INCOMING REQUEST: GET /automations
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+📥 INCOMING REQUEST: GET /assets/index-ea2lnHZC.js

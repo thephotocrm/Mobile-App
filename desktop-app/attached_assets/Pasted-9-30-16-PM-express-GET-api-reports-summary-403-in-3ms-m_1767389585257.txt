@@ -1,0 +1,86 @@
+9:30:16 PM [express] GET /api/reports/summary 403 in 3ms :: {"message":"Photographer access required…
+📥 INCOMING REQUEST: GET /api/projects
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/projects
+Request method: GET
+Has cookies object: true
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","sidebar_state":"true","__stripe_sid":"bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27","admin_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk"}
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; sidebar_state=true; __stripe_sid=bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27; admin_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk
+Has Authorization header: false
+Origin: undefined
+Host: app.thephotocrm.com
+  → Photographer domain detected
+Token from cookie: admin
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Token exists: true
+Request URL: /api/bookings
+Auth source: admin
+Request method: GET
+Token payload: true
+Authentication successful, continuing to route
+Has cookies object: true
+9:30:16 PM [express] GET /api/projects 403 in 2ms :: {"message":"Photographer access required"}
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","sidebar_state":"true","__stripe_sid":"bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27","admin_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk"}
+📥 INCOMING REQUEST: GET /api/bookings
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; sidebar_state=true; __stripe_sid=bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27; admin_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+Has Authorization header: false
+Origin: undefined
+Host: app.thephotocrm.com
+Token from cookie: admin
+Token exists: true
+Auth source: admin
+Token payload: true
+Authentication successful, continuing to route
+9:30:16 PM [express] GET /api/bookings 403 in 2ms :: {"message":"Photographer access required"}
+📥 INCOMING REQUEST: GET /api/admin/photographers
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/admin/photographers
+Request method: GET
+Has cookies object: true
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","sidebar_state":"true","__stripe_sid":"bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27","admin_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk"}
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; sidebar_state=true; __stripe_sid=bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27; admin_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk
+Has Authorization header: false
+Origin: undefined
+Host: app.thephotocrm.com
+Token from cookie: admin
+Token exists: true
+Auth source: admin
+Token payload: true
+Authentication successful, continuing to route
+9:30:16 PM [express] GET /api/admin/photographers 304 in 60ms :: [{"id":"e9dd8ca1-f427-4ab9-a1b7-2c6…
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","sidebar_state":"true","__stripe_sid":"bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27","admin_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk"}
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; sidebar_state=true; __stripe_sid=bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27; admin_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk
+Has Authorization header: false
+📥 INCOMING REQUEST: POST /api/admin/impersonate/a3afe398-bc89-4add-8f84-eb63b73d3e00
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/admin/impersonate/a3afe398-bc89-4add-8f84-eb63b73d3e00
+Request method: POST
+Has cookies object: true
+Origin: https://app.thephotocrm.com
+Host: app.thephotocrm.com
+Token from cookie: admin
+Token exists: true
+Auth source: admin
+Token payload: true
+Authentication successful, continuing to route
+🍪 Setting PHOTOGRAPHER cookie with domain: .thephotocrm.com for app.thephotocrm.com
+9:30:19 PM [express] POST /api/admin/impersonate/a3afe398-bc89-4add-8f84-eb63b73d3e00 200 in 59ms ::…
+Processing automations for photographer: e9dd8ca1-f427-4ab9-a1b7-2c65a331c0f5
+Processing automations for photographer: e9dd8ca1-f427-4ab9-a1b7-2c65a331c0f5
+Found 20 enabled automations
+Processing automation: Send email immediately when contact enters New Inquiry (type: COMMUNICATION)
+Found 20 enabled automations
+Processing automation: Send email immediately when contact enters New Inquiry (type: COMMUNICATION)
+Communication automation "Send email immediately when contact enters New Inquiry" (75f1b1bb-79ec-4c39-95c2-da72495b6584) - found 2 projects in stage
+Processing step for Austin  (aus

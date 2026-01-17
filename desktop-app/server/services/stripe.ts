@@ -1,0 +1,145 @@
+import Stripe from 'stripe';
+
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2023-10-16",
+});
+
+export interface CreatePaymentIntentParams {
+  amountCents: number;
+  currency?: string;
+  metadata?: Record<string, string>;
+}
+
+export interface CreateConnectPaymentIntentParams {
+  amountCents: number;
+  connectedAccountId: string;
+  platformFeeCents: number;
+  currency?: string;
+  metadata?: Record<string, string>;
+  idempotencyKey?: string;
+}
+
+export interface CreateConnectCheckoutSessionParams {
+  amountCents: number;
+  connectedAccountId: string;
+  platformFeeCents: number;
+  successUrl: string;
+  cancelUrl: string;
+  productName?: string;
+  metadata?: Record<string, string>;
+}
+
+export async function createPaymentIntent(params: CreatePaymentIntentParams): Promise<string> {
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: params.amountCents,
+    currency: params.currency || 'usd',
+    automatic_payment_methods: { enabled: true },
+    metadata: params.metadata || {},
+  });
+  
+  return paymentIntent.client_secret!;
+}
+
+export async function createConnectPaymentIntent(params: CreateConnectPaymentIntentParams): Promise<string> {
+  const paymentIntent = await stripe.paymentIntents.create(
+    {
+      amount: params.amountCents,
+      currency: params.currency || 'usd',
+      automatic_payment_methods: { enabled: true },
+      application_fee_amount: params.platformFeeCents,
+      transfer_data: {
+        destination: params.connectedAccountId,
+      },
+      metadata: params.metadata || {},
+    },
+    params.idempotencyKey ? { idempotencyKey: params.idempotencyKey } : undefined
+  );
+
+  return paymentIntent.client_secret!;
+}
+
+export async function createCheckoutSession(params: {
+  amountCents: number;
+  successUrl: string;
+  cancelUrl: string;
+  metadata?: Record<string, string>;
+}): Promise<string> {
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'Wedding Photography Services',
+          },
+          unit_amount: params.amountCents,
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: params.successUrl,
+    cancel_url: params.cancelUrl,
+    metadata: params.metadata,
+  });
+
+  return session.url!;
+}
+
+export async function createConnectCheckoutSession(params: CreateConnectCheckoutSessionParams): Promise<string> {
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: params.productName || 'Photography Services',
+          },
+          unit_amount: params.amountCents,
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: params.successUrl,
+    cancel_url: params.cancelUrl,
+    payment_intent_data: {
+      application_fee_amount: params.platformFeeCents,
+      transfer_data: {
+        destination: params.connectedAccountId,
+      },
+    },
+    metadata: params.metadata,
+  });
+
+  return session.url!;
+}
+
+export async function handleWebhook(body: string, signature: string): Promise<Stripe.Event | null> {
+  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+    throw new Error('STRIPE_WEBHOOK_SECRET must be set');
+  }
+
+  try {
+    const event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET);
+    return event;
+  } catch (error) {
+    console.error('Stripe webhook signature verification failed:', error);
+    return null;
+  }
+}
+
+// Platform fee calculation
+export function calculatePlatformFee(amountCents: number, feePercentage: number = 3.0): number {
+  // Calculate platform fee as percentage of total amount
+  // Default to 3% platform fee
+  return Math.round(amountCents * (feePercentage / 100));
+}
+
+export { stripe };

@@ -1,0 +1,87 @@
+7:37:58 PM [express] GET /api/auth/me 500 in 173ms :: {"message":"Internal server error"}
+    _isServer: false,
+    _sender: null,
+Cron job error: ErrorEvent {
+      open: [Function]
+    _redirects: 0,
+    _socket: null,
+  [Symbol(kTarget)]: WebSocket {
+    _events: [Object: null prototype] {
+    },
+    _bufferedAmount: 0,
+      error: [Function],
+    _closeMessage: <Buffer >,
+    _eventsCount: 4,
+      message: [Function],
+    _maxListeners: undefined,
+    _closeTimer: null,
+      close: [Function],
+    _binaryType: 'arraybuffer',
+    _closeCode: 1006,
+    _errorEmitted: true,
+    _closeFrameReceived: false,
+    _extensions: {},
+    _closeFrameSent: false,
+    _paused: false,
+    _protocol: '',
+    _readyState: 3,
+    _receiver: null,
+    _autoPong: true,
+    _closeCode: 1006,
+    _url: 'wss://postgres.railway.internal/v2',
+    _closeFrameReceived: false,
+    _req: null,
+    _closeFrameSent: false,
+    [Symbol(shapeMode)]: false,
+    [Symbol(kCapture)]: false
+  [Symbol(kTarget)]: WebSocket {
+  },
+  [Symbol(kType)]: 'error',
+  [Symbol(kError)]: AggregateError [ECONNREFUSED]: 
+    _events: [Object: null prototype] {
+      at internalConnectMultiple (node:net:1134:18)
+      at afterConnectMultiple (node:net:1715:7) {
+      error: [Function],
+    code: 'ECONNREFUSED',
+      message: [Function],
+    [errors]: [ [Error], [Error] ]
+      close: [Function],
+  },
+      open: [Function]
+  [Symbol(kMessage)]: ''
+    },
+}
+    _eventsCount: 4,
+Cron job error: ErrorEvent {
+    _maxListeners: undefined,
+    _binaryType: 'arraybuffer',
+    _closeMessage: <Buffer >,
+    _closeTimer: null,
+    _bufferedAmount: 0,
+    _errorEmitted: true,
+  [Symbol(kMessage)]: ''
+    _isServer: false,
+    _extensions: {},
+}
+    _redirects: 0,
+    _paused: false,
+    [Symbol(shapeMode)]: false,
+  [Symbol(kError)]: AggregateError [ECONNREFUSED]: 
+📥 INCOMING REQUEST: GET /assets/professional_wedding_67201dd8-DJzf3n6T.jpg
+    _protocol: '',
+    [Symbol(kCapture)]: false
+    code: 'ECONNREFUSED',
+    _autoPong: true,
+    _readyState: 3,
+      at internalConnectMultiple (node:net:1134:18)
+  },
+    _receiver: null,
+    [errors]: [ [Error], [Error] ]
+    _url: 'wss://postgres.railway.internal/v2',
+  [Symbol(kType)]: 'error',
+      at afterConnectMultiple (node:net:1715:7) {
+    _sender: null,
+  },
+    _req: null,
+    _socket: null,
+   Headers: undefined

@@ -9,6 +9,7 @@ import {
   Platform,
   Pressable,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -17,13 +18,18 @@ import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
-import { Spacing, Typography, BorderRadius, GradientColors } from "@/constants/theme";
+import {
+  Spacing,
+  Typography,
+  BorderRadius,
+  GradientColors,
+} from "@/constants/theme";
 
 export default function LoginScreen() {
   const { theme } = useTheme();
   const { login } = useAuth();
   const insets = useSafeAreaInsets();
-  
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -31,48 +37,42 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async () => {
-    console.log('[LoginScreen] Sign In button pressed');
-    
+    console.log("[LoginScreen] Sign In button pressed");
+
     if (!email.trim()) {
-      console.log('[LoginScreen] Validation failed: empty email');
+      console.log("[LoginScreen] Validation failed: empty email");
       setError("Please enter your email");
       return;
     }
     if (!password) {
-      console.log('[LoginScreen] Validation failed: empty password');
+      console.log("[LoginScreen] Validation failed: empty password");
       setError("Please enter your password");
       return;
     }
 
-    console.log('[LoginScreen] Starting login for:', email.trim());
+    console.log("[LoginScreen] Starting login for:", email.trim());
     setError(null);
     setLoading(true);
 
     try {
-      console.log('[LoginScreen] Calling login()...');
+      console.log("[LoginScreen] Calling login()...");
       await login(email.trim(), password);
-      console.log('[LoginScreen] Login completed successfully!');
+      console.log("[LoginScreen] Login completed successfully!");
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Login failed. Please try again.";
-      console.log('[LoginScreen] Login failed with error:', message);
+      const message =
+        err instanceof Error ? err.message : "Login failed. Please try again.";
+      console.log("[LoginScreen] Login failed with error:", message);
       setError(message);
     } finally {
       setLoading(false);
-      console.log('[LoginScreen] Login process finished');
+      console.log("[LoginScreen] Login process finished");
     }
-  };
-
-  const handleGoogleLogin = () => {
-    Alert.alert(
-      "Coming Soon",
-      "Google sign-in will be available in the next release"
-    );
   };
 
   const handleForgotPassword = () => {
     Alert.alert(
       "Reset Password",
-      "Please visit app.thephotocrm.com to reset your password"
+      "Please visit app.thephotocrm.com to reset your password",
     );
   };
 
@@ -109,9 +109,22 @@ export default function LoginScreen() {
 
         <View style={styles.formContainer}>
           {error ? (
-            <View style={[styles.errorContainer, { backgroundColor: "#FEE2E2" }]}>
-              <Feather name="alert-circle" size={16} color="#DC2626" />
-              <ThemedText style={styles.errorText}>{error}</ThemedText>
+            <View
+              style={[
+                styles.errorContainer,
+                { backgroundColor: theme.error + "15" },
+              ]}
+            >
+              <Feather name="alert-circle" size={16} color={theme.error} />
+              <ThemedText style={[styles.errorText, { color: theme.error }]}>
+                {error}
+              </ThemedText>
+              <Pressable
+                onPress={() => setError(null)}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <Feather name="x" size={16} color={theme.error} />
+              </Pressable>
             </View>
           ) : null}
 
@@ -122,7 +135,10 @@ export default function LoginScreen() {
             <View
               style={[
                 styles.inputWrapper,
-                { backgroundColor: theme.backgroundCard, borderColor: theme.border },
+                {
+                  backgroundColor: theme.backgroundCard,
+                  borderColor: theme.border,
+                },
               ]}
             >
               <Feather name="mail" size={20} color={theme.textSecondary} />
@@ -146,7 +162,10 @@ export default function LoginScreen() {
             <View
               style={[
                 styles.inputWrapper,
-                { backgroundColor: theme.backgroundCard, borderColor: theme.border },
+                {
+                  backgroundColor: theme.backgroundCard,
+                  borderColor: theme.border,
+                },
               ]}
             >
               <Feather name="lock" size={20} color={theme.textSecondary} />
@@ -172,8 +191,13 @@ export default function LoginScreen() {
             </View>
           </View>
 
-          <Pressable onPress={handleForgotPassword} style={styles.forgotPassword}>
-            <ThemedText style={[styles.forgotPasswordText, { color: theme.primary }]}>
+          <Pressable
+            onPress={handleForgotPassword}
+            style={styles.forgotPassword}
+          >
+            <ThemedText
+              style={[styles.forgotPasswordText, { color: theme.primary }]}
+            >
               Forgot password?
             </ThemedText>
           </Pressable>
@@ -190,46 +214,30 @@ export default function LoginScreen() {
               style={styles.gradientButton}
             >
               {loading ? (
-                <ThemedText style={styles.loginButtonText}>Signing in...</ThemedText>
+                <View style={styles.loadingContent}>
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ThemedText style={styles.loginButtonText}>
+                    Signing in...
+                  </ThemedText>
+                </View>
               ) : (
                 <ThemedText style={styles.loginButtonText}>Sign In</ThemedText>
               )}
             </LinearGradient>
           </Pressable>
-
-          <View style={styles.divider}>
-            <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
-            <ThemedText style={[styles.dividerText, { color: theme.textSecondary }]}>
-              or
-            </ThemedText>
-            <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
-          </View>
-
-          <Pressable
-            style={[
-              styles.googleButton,
-              { backgroundColor: theme.backgroundCard, borderColor: theme.border },
-            ]}
-            onPress={handleGoogleLogin}
-          >
-            <View style={styles.googleIconContainer}>
-              <Feather name="globe" size={20} color={theme.text} />
-            </View>
-            <ThemedText style={styles.googleButtonText}>
-              Continue with Google
-            </ThemedText>
-          </Pressable>
         </View>
 
         <View style={styles.footer}>
-          <ThemedText style={[styles.footerText, { color: theme.textSecondary }]}>
+          <ThemedText
+            style={[styles.footerText, { color: theme.textSecondary }]}
+          >
             Don't have an account?{" "}
           </ThemedText>
           <Pressable
             onPress={() =>
               Alert.alert(
                 "Sign Up",
-                "Please visit app.thephotocrm.com to create an account"
+                "Please visit app.thephotocrm.com to create an account",
               )
             }
           >
@@ -286,7 +294,6 @@ const styles = StyleSheet.create({
   errorText: {
     flex: 1,
     fontSize: 14,
-    color: "#DC2626",
   },
   inputContainer: {
     gap: Spacing.xs,
@@ -329,42 +336,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  loadingContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
   loginButtonText: {
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600",
-  },
-  divider: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: Spacing.md,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-  },
-  dividerText: {
-    paddingHorizontal: Spacing.md,
-    fontSize: 14,
-  },
-  googleButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: Spacing.sm,
-    height: 52,
-    borderRadius: BorderRadius.sm,
-    borderWidth: 1,
-  },
-  googleIconContainer: {
-    width: 24,
-    height: 24,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  googleButtonText: {
-    fontSize: 16,
-    fontWeight: "500",
   },
   footer: {
     flexDirection: "row",

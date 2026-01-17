@@ -20,14 +20,16 @@ export const getCommonScreenOptions = ({
 }: ScreenOptionsParams): NativeStackNavigationOptions => ({
   headerTitleAlign: "center",
   headerTransparent: transparent,
-  headerBlurEffect: transparent ? undefined : (isDark ? "dark" : "light"),
+  headerBlurEffect: transparent ? undefined : isDark ? "dark" : "light",
   headerTintColor: theme.text,
   headerShadowVisible: false,
   headerStyle: {
-    backgroundColor: transparent ? "transparent" : Platform.select({
-      ios: undefined,
-      android: theme.backgroundRoot,
-    }),
+    backgroundColor: transparent
+      ? "transparent"
+      : Platform.select({
+          ios: undefined,
+          android: theme.backgroundRoot,
+        }),
   },
   gestureEnabled: true,
   gestureDirection: "horizontal",
@@ -62,11 +64,6 @@ export const getMainScreenOptions = ({
     backgroundColor: theme.backgroundRoot,
   },
   header: function CustomHeader() {
-    return (
-      <MainHeader
-        title={title}
-        onSearchPress={onSearchPress}
-      />
-    );
+    return <MainHeader title={title} onSearchPress={onSearchPress} />;
   },
 });

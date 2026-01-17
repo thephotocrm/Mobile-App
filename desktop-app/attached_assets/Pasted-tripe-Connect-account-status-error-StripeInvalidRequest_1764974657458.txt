@@ -1,0 +1,67 @@
+tripe Connect account status error: StripeInvalidRequestError: The account acct_1SVq8aGuEyg7Yn1l was a test account created with a testmode key, and therefore can only be used with testmode keys.
+    at generateV1Error (file:///app/node_modules/stripe/esm/Error.js:8:20)
+    at res.toJSON.then.StripeAPIError.message (file:///app/node_modules/stripe/esm/RequestSender.js:105:31)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  type: 'StripeInvalidRequestError',
+  raw: {
+    message: 'The account acct_1SVq8aGuEyg7Yn1l was a test account created with a testmode key, and therefore can only be used with testmode keys.',
+    type: 'invalid_request_error',
+    headers: {
+      server: 'nginx',
+      date: 'Fri, 05 Dec 2025 22:39:43 GMT',
+      'content-type': 'application/json',
+      'content-length': '208',
+      connection: 'keep-alive',
+      'access-control-allow-credentials': 'true',
+      'access-control-allow-methods': 'GET, HEAD, PUT, PATCH, POST, DELETE',
+      'access-control-allow-origin': '*',
+      'access-control-expose-headers': 'Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required, X-Stripe-Privileged-Session-Required',
+      'access-control-max-age': '300',
+      'cache-control': 'no-cache, no-store',
+      'content-security-policy': "base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none'; img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src 'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=TSx5QcToAQOAEoCYLqFojauiYDYpD4OcJIQNacfxUaxcFkQXQtfQLi3Z1Ypntq9hVJZbyDlEQLqWglas",
+    'content-length': '208',
+    connection: 'keep-alive',
+      'stripe-version': '2023-10-16',
+    'access-control-allow-credentials': 'true',
+    'access-control-allow-methods': 'GET, HEAD, PUT, PATCH, POST, DELETE',
+      vary: 'Origin',
+    'access-control-allow-origin': '*',
+      'x-stripe-priority-routing-enabled': 'true',
+      'x-stripe-routing-context-priority-tier': 'livemode',
+      'x-wc': 'ABGHIJ',
+      'strict-transport-security': 'max-age=63072000; includeSubDomains; preload'
+    },
+    statusCode: 400,
+    requestId: undefined
+  },
+  rawType: 'invalid_request_error',
+  code: undefined,
+  doc_url: undefined,
+  param: undefined,
+  detail: undefined,
+  headers: {
+    server: 'nginx',
+    date: 'Fri, 05 Dec 2025 22:39:43 GMT',
+    'content-type': 'application/json',
+    'access-control-expose-headers': 'Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required, X-Stripe-Privileged-Session-Required',
+    'access-control-max-age': '300',
+    'cache-control': 'no-cache, no-store',
+    'content-security-policy': "base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none'; img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src 'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=TSx5QcToAQOAEoCYLqFojauiYDYpD4OcJIQNacfxUaxcFkQXQtfQLi3Z1Ypntq9hVJZbyDlEQLqWglas",
+    'stripe-version': '2023-10-16',
+    vary: 'Origin',
+    'x-stripe-priority-routing-enabled': 'true',
+    'x-stripe-routing-context-priority-tier': 'livemode',
+    'x-wc': 'ABGHIJ',
+    'strict-transport-security': 'max-age=63072000; includeSubDomains; preload'
+  },
+  requestId: undefined,
+  statusCode: 400,
+  userMessage: undefined,
+  charge: undefined,
+  decline_code: undefined,
+  payment_intent: undefined,
+  payment_method: undefined,
+  payment_method_type: undefined,
+  setup_intent: undefined,
+  source: undefined
+}

@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run check:*)",
+      "Bash(fuser:*)",
+      "Bash(pkill:*)",
+      "Bash(npm run dev:*)",
+      "Bash(ss:*)",
+      "Bash(netstat:*)",
+      "Bash(kill:*)",
+      "WebSearch",
+      "WebFetch(domain:developers.google.com)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run db:generate:*)",
+      "Bash(npm run db:push:*)",
+      "Bash(npx drizzle-kit generate:*)",
+      "Bash(ls:*)"
+    ]
+  }
+}

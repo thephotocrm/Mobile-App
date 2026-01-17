@@ -1,51 +1,40 @@
-import React, { useState, useCallback } from "react";
-import { View, StyleSheet, FlatList, Pressable, ActivityIndicator, RefreshControl } from "react-native";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import React, { useState, useCallback, useMemo } from "react";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Pressable,
+  ActivityIndicator,
+  RefreshControl,
+  SectionList,
+} from "react-native";
+import {
+  useNavigation,
+  useFocusEffect,
+  NavigationProp,
+} from "@react-navigation/native";
 import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import { Feather } from "@expo/vector-icons";
-import { 
-  inboxApi, 
-  projectsApi, 
-  bookingsApi, 
+import {
+  notificationsApi,
   createTenantContext,
-  InboxConversationApiResponse,
-  Project,
-  Booking
+  Notification,
+  NotificationType,
 } from "@/services/api";
 
-type AlertType = "message" | "booking_today" | "booking_upcoming" | "event_today" | "event_upcoming" | "payment";
-
-interface AlertItem {
-  id: string;
-  type: AlertType;
-  title: string;
-  subtitle: string;
-  time: string;
-  timestamp: Date;
-  isUrgent: boolean;
-  isToday: boolean;
-  contactId?: string;
-  projectId?: string;
-  bookingId?: string;
-}
-
-const parseApiDate = (dateStr: string): Date => {
-  if (!dateStr) return new Date();
-  
-  // Handle "YYYY-MM-DD HH:MM:SS" format (space separator)
-  if (dateStr.includes(" ") && !dateStr.includes("T")) {
-    const [datePart, timePart] = dateStr.split(" ");
-    return new Date(`${datePart}T${timePart}`);
-  }
-  
-  return new Date(dateStr);
+// Define the navigation types for tab navigator with nested stacks
+type RootTabParamList = {
+  InboxTab: { screen: string; params?: { contactId: string } };
+  BookingsTab: { screen: string; params?: { bookingId: string } };
+  ProjectsTab: { screen: string; params?: { projectId: string } };
 };
 
-const formatRelativeTime = (date: Date): string => {
+const formatRelativeTime = (dateString: string): string => {
+  const date = new Date(dateString);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / 60000);
@@ -53,62 +42,39 @@ const formatRelativeTime = (date: Date): string => {
   const diffDays = Math.floor(diffMs / 86400000);
 
   if (diffMins < 1) return "Just now";
-  if (diffMins < 60) return `${diffMins} min ago`;
+  if (diffMins < 60) return `${diffMins}min ago`;
   if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return `${diffDays} days ago`;
-  
+  if (diffDays < 7) return `${diffDays}d ago`;
+
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 };
 
-const formatEventDate = (date: Date): string => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  
-  const eventDate = new Date(date);
-  eventDate.setHours(0, 0, 0, 0);
-  
-  const diffDays = Math.round((eventDate.getTime() - today.getTime()) / 86400000);
-  
+const getDateSection = (dateString: string): string => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / 86400000);
+
   if (diffDays === 0) return "Today";
-  if (diffDays === 1) return "Tomorrow";
-  if (diffDays === 2) return "In 2 days";
-  if (diffDays === 3) return "In 3 days";
-  
-  return date.toLocaleDateString("en-US", { 
-    weekday: "short", 
-    month: "short", 
-    day: "numeric" 
-  });
-};
-
-const formatTime = (date: Date): string => {
-  return date.toLocaleTimeString("en-US", { 
-    hour: "numeric", 
-    minute: "2-digit", 
-    hour12: true 
-  });
-};
-
-const getDaysUntil = (date: Date): number => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const eventDate = new Date(date);
-  eventDate.setHours(0, 0, 0, 0);
-  return Math.round((eventDate.getTime() - today.getTime()) / 86400000);
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return "This Week";
+  if (diffDays < 30) return "This Month";
+  return "Earlier";
 };
 
 export function NotificationsScreen() {
   const { theme } = useTheme();
   const { token, user } = useAuth();
-  const navigation = useNavigation();
-  
-  const [alerts, setAlerts] = useState<AlertItem[]>([]);
+  const navigation = useNavigation<NavigationProp<RootTabParamList>>();
+
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<"all" | "unread">("all");
+  const [apiAvailable, setApiAvailable] = useState(true);
 
-  const loadAlerts = async (isRefresh = false) => {
+  const loadNotifications = async (isRefresh = false) => {
     if (!token) {
       setLoading(false);
       return;
@@ -119,170 +85,32 @@ export function NotificationsScreen() {
       setError(null);
 
       const tenant = createTenantContext(user);
-      const allAlerts: AlertItem[] = [];
+      const data = await notificationsApi.getAll(token, tenant, 50);
 
-      // Fetch all data in parallel
-      const [conversationsResult, projectsResult, bookingsResult] = await Promise.allSettled([
-        inboxApi.getConversations(token, tenant),
-        projectsApi.getAll(token, tenant),
-        bookingsApi.getAll(token, tenant),
-      ]);
-
-      // Process unread messages
-      if (conversationsResult.status === "fulfilled") {
-        const conversations = conversationsResult.value;
-        console.log("[Activity] Conversations received:", conversations.length);
-        
-        conversations.forEach((conv) => {
-          console.log("[Activity] Conversation:", conv.contact?.firstName, "unreadCount:", conv.unreadCount);
-          if (conv.unreadCount > 0) {
-            const contactName = conv.contact 
-              ? `${conv.contact.firstName || ""} ${conv.contact.lastName || ""}`.trim() 
-              : "Unknown";
-            const messageTime = parseApiDate(conv.lastMessageAt);
-            const messageDaysAgo = getDaysUntil(messageTime);
-            
-            console.log("[Activity] Adding message alert for:", contactName, "time:", messageTime);
-            
-            allAlerts.push({
-              id: `msg-${conv.contact?.id || Math.random()}`,
-              type: "message",
-              title: `New message from ${contactName}`,
-              subtitle: conv.lastMessage || "No preview available",
-              time: formatRelativeTime(messageTime),
-              timestamp: messageTime,
-              isUrgent: messageDaysAgo >= -1, // Today or yesterday is urgent
-              isToday: messageDaysAgo === 0, // Only today's messages are "today"
-              contactId: conv.contact?.id,
-            });
-          }
-        });
-      } else {
-        console.log("[Activity] Conversations failed:", conversationsResult);
+      // Validate that we got an array back (API might return HTML on error)
+      if (!Array.isArray(data)) {
+        console.warn(
+          "[Notifications] API returned non-array data:",
+          typeof data,
+        );
+        setNotifications([]);
+        return;
       }
 
-      // Process projects with upcoming event dates (within 3 days)
-      if (projectsResult.status === "fulfilled") {
-        const projects = projectsResult.value as Project[];
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        projects.forEach((project) => {
-          if (project.eventDate && project.status === "ACTIVE") {
-            const eventDate = parseApiDate(project.eventDate);
-            const daysUntil = getDaysUntil(eventDate);
-
-            // Today's events
-            if (daysUntil === 0) {
-              allAlerts.push({
-                id: `event-today-${project.id}`,
-                type: "event_today",
-                title: `Today: ${project.title}`,
-                subtitle: project.client 
-                  ? `${project.client.firstName} ${project.client.lastName}` 
-                  : project.projectType || "Event",
-                time: "Today",
-                timestamp: eventDate,
-                isUrgent: true,
-                isToday: true,
-                projectId: project.id,
-              });
-            }
-            // Upcoming within 3 days
-            else if (daysUntil > 0 && daysUntil <= 3) {
-              allAlerts.push({
-                id: `event-upcoming-${project.id}`,
-                type: "event_upcoming",
-                title: `${formatEventDate(eventDate)}: ${project.title}`,
-                subtitle: project.client 
-                  ? `${project.client.firstName} ${project.client.lastName}` 
-                  : project.projectType || "Upcoming event",
-                time: formatEventDate(eventDate),
-                timestamp: eventDate,
-                isUrgent: daysUntil === 1,
-                isToday: false,
-                projectId: project.id,
-              });
-            }
-          }
-        });
-      }
-
-      // Process bookings - today and upcoming
-      if (bookingsResult.status === "fulfilled") {
-        const bookings = bookingsResult.value as Booking[];
-        const now = new Date();
-        const threeDaysFromNow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-
-        bookings.forEach((booking) => {
-          const bookingDate = parseApiDate(booking.startTime);
-          const daysUntil = getDaysUntil(bookingDate);
-
-          // Today's bookings
-          if (daysUntil === 0) {
-            allAlerts.push({
-              id: `booking-today-${booking.id}`,
-              type: "booking_today",
-              title: `Today at ${formatTime(bookingDate)}: ${booking.title}`,
-              subtitle: booking.location || "No location set",
-              time: formatTime(bookingDate),
-              timestamp: bookingDate,
-              isUrgent: true,
-              isToday: true,
-              bookingId: booking.id,
-            });
-          }
-          // Upcoming bookings within 3 days
-          else if (daysUntil > 0 && daysUntil <= 3) {
-            allAlerts.push({
-              id: `booking-upcoming-${booking.id}`,
-              type: "booking_upcoming",
-              title: `${formatEventDate(bookingDate)}: ${booking.title}`,
-              subtitle: `${formatTime(bookingDate)} - ${booking.location || "No location"}`,
-              time: formatEventDate(bookingDate),
-              timestamp: bookingDate,
-              isUrgent: daysUntil === 1,
-              isToday: false,
-              bookingId: booking.id,
-            });
-          }
-        });
-      }
-
-      console.log("[Activity] Total alerts before sort:", allAlerts.length, allAlerts.map(a => a.title));
-
-      // Sort alerts: Priority order: 1) Today items, 2) Urgent items, 3) By timestamp
-      allAlerts.sort((a, b) => {
-        // 1. Today's items always come first
-        if (a.isToday && !b.isToday) return -1;
-        if (b.isToday && !a.isToday) return 1;
-
-        // 2. Within today's items: events first, then bookings, then messages
-        if (a.isToday && b.isToday) {
-          const todayPriority = { event_today: 0, booking_today: 1, message: 2 };
-          const aPriority = todayPriority[a.type as keyof typeof todayPriority] ?? 3;
-          const bPriority = todayPriority[b.type as keyof typeof todayPriority] ?? 3;
-          if (aPriority !== bPriority) return aPriority - bPriority;
-          // Same type: sort by time (soonest first for events/bookings, newest first for messages)
-          if (a.type === "message") {
-            return b.timestamp.getTime() - a.timestamp.getTime();
-          }
-          return a.timestamp.getTime() - b.timestamp.getTime();
-        }
-
-        // 3. For non-today items: urgent items come before non-urgent
-        if (a.isUrgent && !b.isUrgent) return -1;
-        if (b.isUrgent && !a.isUrgent) return 1;
-
-        // 4. Within same urgency level, sort by timestamp (soonest first)
-        return a.timestamp.getTime() - b.timestamp.getTime();
-      });
-
-      console.log("[Activity] Setting alerts:", allAlerts.length);
-      setAlerts(allAlerts);
+      console.log("[Notifications] Loaded:", data.length, "notifications");
+      setNotifications(data);
     } catch (err) {
-      console.error("Error loading alerts:", err);
-      setError("Failed to load activity");
+      console.error("Error loading notifications:", err);
+      // Check if this is a JSON parse error (API returning HTML)
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      if (errorMessage.includes("JSON") || errorMessage.includes("parse")) {
+        // API endpoint not available yet - show empty state instead of error
+        console.warn("[Notifications] API not available, showing empty state");
+        setNotifications([]);
+        setApiAvailable(false);
+      } else {
+        setError("Failed to load notifications");
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -291,128 +119,343 @@ export function NotificationsScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      loadAlerts();
-    }, [token, user])
+      loadNotifications();
+    }, [token, user]),
   );
 
   const onRefresh = () => {
     setRefreshing(true);
-    loadAlerts(true);
+    loadNotifications(true);
   };
 
-  const getIconName = (type: AlertType): keyof typeof Feather.glyphMap => {
+  const handleMarkAsRead = async (notification: Notification) => {
+    if (!token || notification.read) return;
+
+    try {
+      const tenant = createTenantContext(user);
+      await notificationsApi.markAsRead(token, notification.id, tenant);
+
+      // Update local state
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === notification.id ? { ...n, read: true } : n)),
+      );
+    } catch (err) {
+      console.error("Error marking notification as read:", err);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    if (!token) return;
+
+    try {
+      const tenant = createTenantContext(user);
+      await notificationsApi.markAllAsRead(token, tenant);
+
+      // Update local state
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    } catch (err) {
+      console.error("Error marking all notifications as read:", err);
+    }
+  };
+
+  const getIconName = (
+    type: NotificationType,
+  ): keyof typeof Feather.glyphMap => {
     switch (type) {
-      case "message":
+      case "MESSAGE":
         return "message-circle";
-      case "booking_today":
+      case "BOOKING":
         return "calendar";
-      case "booking_upcoming":
-        return "calendar";
-      case "event_today":
-        return "sun";
-      case "event_upcoming":
-        return "clock";
-      case "payment":
+      case "LEAD":
+        return "user-plus";
+      case "PAYMENT":
         return "credit-card";
+      case "CONTRACT":
+        return "file-text";
+      case "SMART_FILE_VIEWED":
+      case "SMART_FILE_ACCEPTED":
+        return "eye";
+      case "GALLERY":
+        return "image";
+      case "AUTOMATION":
+        return "zap";
+      case "REMINDER":
+        return "clock";
+      case "SYSTEM":
+        return "settings";
       default:
         return "bell";
     }
   };
 
-  const getIconColor = (type: AlertType, isUrgent: boolean): string => {
-    if (type === "event_today" || type === "booking_today") return "#EF4444"; // Red for today
-    if (type === "message") return theme.primary;
-    if (isUrgent) return "#F59E0B"; // Warning amber
-    return theme.textSecondary;
+  const getIconColor = (type: NotificationType, priority: string): string => {
+    if (priority === "HIGH") return "#F97316"; // Coral/orange for high priority
+
+    switch (type) {
+      case "MESSAGE":
+        return "#6B7280"; // Gray for messages/mentions
+      case "LEAD":
+        return "#14B8A6"; // Teal for leads
+      case "PAYMENT":
+        return "#22C55E"; // Green for payments
+      case "BOOKING":
+        return "#14B8A6"; // Teal for bookings
+      case "REMINDER":
+        return "#14B8A6"; // Teal for reminders (bell icon)
+      case "CONTRACT":
+      case "SMART_FILE_VIEWED":
+      case "SMART_FILE_ACCEPTED":
+        return "#F97316"; // Coral for contracts/alerts
+      default:
+        return "#6B7280"; // Gray default
+    }
   };
 
-  const handleAlertPress = (alert: AlertItem) => {
-    if (alert.type === "message" && alert.contactId) {
-      // Navigate to thread - need to type this properly
-      (navigation as any).navigate("InboxTab", {
+  const handleNotificationPress = (notification: Notification) => {
+    // Mark as read when tapped
+    handleMarkAsRead(notification);
+
+    // Navigate based on notification type
+    if (notification.contactId && notification.type === "MESSAGE") {
+      navigation.navigate("InboxTab", {
         screen: "ThreadDetail",
-        params: { contactId: alert.contactId },
+        params: { contactId: notification.contactId },
       });
-    } else if (alert.bookingId) {
-      (navigation as any).navigate("BookingsTab", {
-        screen: "BookingDetail",
-        params: { bookingId: alert.bookingId },
-      });
-    } else if (alert.projectId) {
-      (navigation as any).navigate("ProjectsTab", {
+    } else if (notification.projectId) {
+      navigation.navigate("ProjectsTab", {
         screen: "ProjectDetail",
-        params: { projectId: alert.projectId },
+        params: { projectId: notification.projectId },
       });
     }
   };
 
-  const renderAlert = ({ item }: { item: AlertItem }) => (
-    <Pressable
-      style={({ pressed }) => [pressed && styles.cardPressed]}
-      onPress={() => handleAlertPress(item)}
-    >
-      <Card 
-        style={[styles.alertCard, item.isUrgent && styles.urgentCard]}
-        elevation={item.isUrgent ? 2 : 1}
+  const filteredNotifications =
+    filter === "unread" ? notifications.filter((n) => !n.read) : notifications;
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  // Group notifications by date section
+  const groupedNotifications = useMemo(() => {
+    const sections: { [key: string]: Notification[] } = {};
+
+    filteredNotifications.forEach((notification) => {
+      const section = getDateSection(notification.createdAt);
+      if (!sections[section]) {
+        sections[section] = [];
+      }
+      sections[section].push(notification);
+    });
+
+    // Convert to array format for SectionList
+    const sectionOrder = [
+      "Today",
+      "Yesterday",
+      "This Week",
+      "This Month",
+      "Earlier",
+    ];
+    return sectionOrder
+      .filter((title) => sections[title] && sections[title].length > 0)
+      .map((title) => ({
+        title,
+        data: sections[title],
+      }));
+  }, [filteredNotifications]);
+
+  const renderNotification = ({ item }: { item: Notification }) => {
+    const iconColor = getIconColor(item.type, item.priority);
+
+    return (
+      <Pressable
+        style={({ pressed }) => [pressed && styles.cardPressed]}
+        onPress={() => handleNotificationPress(item)}
       >
-        <View 
+        <View
           style={[
-            styles.iconContainer, 
-            { 
-              backgroundColor: item.isUrgent 
-                ? `${getIconColor(item.type, item.isUrgent)}15` 
-                : theme.backgroundDefault 
-            }
+            styles.notificationCard,
+            { backgroundColor: theme.backgroundCard },
           ]}
         >
-          <Feather
-            name={getIconName(item.type)}
-            size={20}
-            color={getIconColor(item.type, item.isUrgent)}
-          />
-        </View>
-        <View style={styles.alertContent}>
-          <View style={styles.alertHeader}>
+          {/* Left: Circular icon */}
+          <View
+            style={[
+              styles.iconContainer,
+              {
+                backgroundColor: `${iconColor}20`,
+              },
+            ]}
+          >
+            <Feather
+              name={getIconName(item.type)}
+              size={20}
+              color={iconColor}
+            />
+          </View>
+
+          {/* Middle: Title and description */}
+          <View style={styles.notificationContent}>
             <ThemedText
               style={[
-                Typography.body, 
-                { color: theme.text }, 
-                item.isUrgent && { fontWeight: "700" }
+                styles.notificationTitle,
+                { color: theme.text },
+                !item.read && { fontWeight: "600" },
               ]}
               numberOfLines={1}
             >
               {item.title}
             </ThemedText>
-            {item.isUrgent && (
-              <View style={[styles.urgentDot, { backgroundColor: theme.primary }]} />
+            {item.description && (
+              <ThemedText
+                style={[
+                  styles.notificationDescription,
+                  { color: theme.textSecondary },
+                ]}
+                numberOfLines={2}
+              >
+                {item.description}
+              </ThemedText>
             )}
           </View>
-          <ThemedText 
-            style={[Typography.bodySmall, { color: theme.textSecondary, lineHeight: 20 }]}
-            numberOfLines={2}
+
+          {/* Right: Timestamp and unread dot */}
+          <View style={styles.notificationRight}>
+            <ThemedText
+              style={[styles.timestamp, { color: theme.textSecondary }]}
+            >
+              {formatRelativeTime(item.createdAt)}
+            </ThemedText>
+            {!item.read && (
+              <View
+                style={[styles.unreadDot, { backgroundColor: iconColor }]}
+              />
+            )}
+          </View>
+        </View>
+      </Pressable>
+    );
+  };
+
+  const renderHeader = () => {
+    // Don't show filters if API isn't available
+    if (!apiAvailable) {
+      return null;
+    }
+
+    return (
+      <View style={styles.headerContainer}>
+        {/* Filter Tabs */}
+        <View style={styles.filterTabs}>
+          <Pressable
+            style={[
+              styles.filterTab,
+              filter === "all" && [
+                styles.filterTabActive,
+                { borderBottomColor: theme.primary },
+              ],
+            ]}
+            onPress={() => setFilter("all")}
           >
-            {item.subtitle}
+            <ThemedText
+              style={[
+                styles.filterTabText,
+                {
+                  color: filter === "all" ? theme.primary : theme.textSecondary,
+                },
+              ]}
+            >
+              All
+            </ThemedText>
+          </Pressable>
+          <Pressable
+            style={[
+              styles.filterTab,
+              filter === "unread" && [
+                styles.filterTabActive,
+                { borderBottomColor: theme.primary },
+              ],
+            ]}
+            onPress={() => setFilter("unread")}
+          >
+            <ThemedText
+              style={[
+                styles.filterTabText,
+                {
+                  color:
+                    filter === "unread" ? theme.primary : theme.textSecondary,
+                },
+              ]}
+            >
+              Unread {unreadCount > 0 && `(${unreadCount})`}
+            </ThemedText>
+          </Pressable>
+        </View>
+
+        {/* Mark All Read Button */}
+        {unreadCount > 0 && (
+          <Pressable
+            style={({ pressed }) => [
+              styles.markAllButton,
+              pressed && { opacity: 0.7 },
+            ]}
+            onPress={handleMarkAllAsRead}
+          >
+            <Feather name="check-circle" size={16} color={theme.primary} />
+            <ThemedText style={[styles.markAllText, { color: theme.primary }]}>
+              Mark all read
+            </ThemedText>
+          </Pressable>
+        )}
+      </View>
+    );
+  };
+
+  const renderEmptyState = () => {
+    // Show different message if API isn't available yet
+    if (!apiAvailable) {
+      return (
+        <View style={styles.emptyContainer}>
+          <View
+            style={[
+              styles.emptyIconCircle,
+              { backgroundColor: `${theme.primary}15` },
+            ]}
+          >
+            <Feather name="bell" size={32} color={theme.primary} />
+          </View>
+          <ThemedText style={[styles.emptyTitle, { color: theme.text }]}>
+            Coming Soon
           </ThemedText>
-          <ThemedText style={[Typography.caption, { color: theme.textSecondary, marginTop: 4 }]}>
-            {item.time}
+          <ThemedText
+            style={[styles.emptyText, { color: theme.textSecondary }]}
+          >
+            Notifications are being set up. You'll soon see updates about
+            messages, bookings, payments, and more here.
           </ThemedText>
         </View>
-        <Feather name="chevron-right" size={20} color={theme.textSecondary} />
-      </Card>
-    </Pressable>
-  );
+      );
+    }
 
-  const renderEmptyState = () => (
-    <View style={styles.emptyContainer}>
-      <Feather name="bell-off" size={48} color={theme.textSecondary} />
-      <ThemedText style={[styles.emptyTitle, { color: theme.text }]}>
-        All caught up!
-      </ThemedText>
-      <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
-        No new messages, upcoming events, or bookings in the next 3 days.
-      </ThemedText>
-    </View>
-  );
+    return (
+      <View style={styles.emptyContainer}>
+        <View
+          style={[
+            styles.emptyIconCircle,
+            { backgroundColor: `${theme.primary}15` },
+          ]}
+        >
+          <Feather name="bell-off" size={32} color={theme.primary} />
+        </View>
+        <ThemedText style={[styles.emptyTitle, { color: theme.text }]}>
+          {filter === "unread" ? "No unread notifications" : "All caught up!"}
+        </ThemedText>
+        <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
+          {filter === "unread"
+            ? "You've read all your notifications."
+            : "You'll be notified about messages, bookings, and important updates here."}
+        </ThemedText>
+      </View>
+    );
+  };
 
   const renderError = () => (
     <View style={styles.errorContainer}>
@@ -422,7 +465,7 @@ export function NotificationsScreen() {
       </ThemedText>
       <Pressable
         style={[styles.retryButton, { backgroundColor: theme.primary }]}
-        onPress={() => loadAlerts()}
+        onPress={() => loadNotifications()}
       >
         <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
       </Pressable>
@@ -431,25 +474,46 @@ export function NotificationsScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.loadingContainer, { backgroundColor: theme.backgroundDefault }]}>
+      <View
+        style={[
+          styles.loadingContainer,
+          { backgroundColor: theme.backgroundDefault },
+        ]}
+      >
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={[styles.loadingText, { color: theme.textSecondary }]}>
-          Loading activity...
+        <ThemedText
+          style={[styles.loadingText, { color: theme.textSecondary }]}
+        >
+          Loading notifications...
         </ThemedText>
       </View>
     );
   }
 
+  const renderSectionHeader = ({ section }: { section: { title: string } }) => (
+    <View style={styles.sectionHeader}>
+      <ThemedText style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+        {section.title}
+      </ThemedText>
+    </View>
+  );
+
   return (
-    <View style={[styles.container, { backgroundColor: theme.backgroundDefault }]}>
-      {error ? renderError() : (
-        <FlatList
-          data={alerts}
-          renderItem={renderAlert}
+    <View
+      style={[styles.container, { backgroundColor: theme.backgroundDefault }]}
+    >
+      {error ? (
+        renderError()
+      ) : (
+        <SectionList
+          sections={groupedNotifications}
+          renderItem={renderNotification}
+          renderSectionHeader={renderSectionHeader}
           keyExtractor={(item) => item.id}
+          ListHeaderComponent={renderHeader}
           contentContainerStyle={[
             styles.listContent,
-            alerts.length === 0 && styles.emptyListContent
+            groupedNotifications.length === 0 && styles.emptyListContent,
           ]}
           ListEmptyComponent={renderEmptyState}
           refreshControl={
@@ -461,6 +525,7 @@ export function NotificationsScreen() {
             />
           }
           showsVerticalScrollIndicator={false}
+          stickySectionHeadersEnabled={false}
         />
       )}
     </View>
@@ -480,51 +545,122 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 14,
   },
+  headerContainer: {
+    marginBottom: Spacing.md,
+  },
+  filterTabs: {
+    flexDirection: "row",
+    marginBottom: Spacing.sm,
+  },
+  filterTab: {
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderBottomWidth: 2,
+    borderBottomColor: "transparent",
+  },
+  filterTabActive: {
+    borderBottomWidth: 2,
+  },
+  filterTabText: {
+    fontSize: 15,
+    fontWeight: "500",
+  },
+  markAllButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-end",
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.sm,
+    gap: Spacing.xs,
+  },
+  markAllText: {
+    fontSize: 13,
+    fontWeight: "500",
+  },
   listContent: {
-    paddingHorizontal: 10,
-    paddingTop: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.xs,
     paddingBottom: Spacing.xxl,
   },
   emptyListContent: {
     flex: 1,
     justifyContent: "center",
   },
-  alertCard: {
+  // Section header styles
+  sectionHeader: {
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.sm,
+  },
+  sectionTitle: {
+    fontSize: 13,
+    fontWeight: "500",
+    textTransform: "capitalize",
+  },
+  // Notification card styles (matching reference)
+  notificationCard: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: Spacing.md,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    marginBottom: 1, // Minimal spacing between cards
+    borderRadius: 0, // Flat design like reference
   },
-  urgentCard: {},
   cardPressed: {
-    opacity: 0.7,
+    opacity: 0.6,
   },
+  // Circular icon on the left
   iconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
     marginRight: Spacing.md,
   },
-  alertContent: {
+  // Middle content
+  notificationContent: {
     flex: 1,
     marginRight: Spacing.sm,
   },
-  alertHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: Spacing.xs,
+  notificationTitle: {
+    fontSize: 15,
+    fontWeight: "400",
+    lineHeight: 20,
+    marginBottom: 2,
   },
-  urgentDot: {
+  notificationDescription: {
+    fontSize: 13,
+    lineHeight: 18,
+    marginTop: 2,
+  },
+  // Right side (timestamp + dot)
+  notificationRight: {
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    minHeight: 40,
+  },
+  timestamp: {
+    fontSize: 12,
+    lineHeight: 16,
+  },
+  unreadDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    marginLeft: Spacing.sm,
+    marginTop: 4,
   },
+  // Empty state
   emptyContainer: {
     alignItems: "center",
     paddingHorizontal: Spacing.xl,
     gap: Spacing.md,
+  },
+  emptyIconCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: "center",
+    justifyContent: "center",
   },
   emptyTitle: {
     fontSize: 18,
@@ -535,6 +671,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 20,
   },
+  // Error state
   errorContainer: {
     flex: 1,
     justifyContent: "center",

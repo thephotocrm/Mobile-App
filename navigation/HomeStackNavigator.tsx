@@ -15,8 +15,8 @@ export function HomeStackNavigator() {
 
   return (
     <Stack.Navigator>
-      <Stack.Screen 
-        name="Home" 
+      <Stack.Screen
+        name="Home"
         component={HomeScreen}
         options={getMainScreenOptions({
           theme,

@@ -1,5 +1,5 @@
-import { getDatabase } from '../index';
-import { Client } from './ClientRepository';
+import { getDatabase } from "../index";
+import { Client } from "./ClientRepository";
 
 export interface Conversation {
   id: number;
@@ -79,20 +79,23 @@ export class ConversationRepository {
 
   static async getById(id: number): Promise<ConversationWithClient | null> {
     const db = getDatabase();
-    const result = await db.getFirstAsync<ConversationWithClient>(`
+    const result = await db.getFirstAsync<ConversationWithClient>(
+      `
       SELECT c.*, cl.name as client_name, cl.email as client_email, cl.phone as client_phone
       FROM conversations c
       INNER JOIN clients cl ON c.client_id = cl.id
       WHERE c.id = ?
-    `, [id]);
+    `,
+      [id],
+    );
     return result || null;
   }
 
   static async getByClientId(clientId: number): Promise<Conversation | null> {
     const db = getDatabase();
     const result = await db.getFirstAsync<Conversation>(
-      'SELECT * FROM conversations WHERE client_id = ?',
-      [clientId]
+      "SELECT * FROM conversations WHERE client_id = ?",
+      [clientId],
     );
     return result || null;
   }
@@ -100,66 +103,75 @@ export class ConversationRepository {
   static async create(input: CreateConversationInput): Promise<Conversation> {
     const db = getDatabase();
     const result = await db.runAsync(
-      'INSERT INTO conversations (client_id) VALUES (?)',
-      [input.client_id]
+      "INSERT INTO conversations (client_id) VALUES (?)",
+      [input.client_id],
     );
     const conversation = await db.getFirstAsync<Conversation>(
-      'SELECT * FROM conversations WHERE id = ?',
-      [result.lastInsertRowId]
+      "SELECT * FROM conversations WHERE id = ?",
+      [result.lastInsertRowId],
     );
     if (!conversation) {
-      throw new Error('Failed to create conversation');
+      throw new Error("Failed to create conversation");
     }
     return conversation;
   }
 
-  static async updateLastMessageAt(id: number, timestamp?: number): Promise<void> {
+  static async updateLastMessageAt(
+    id: number,
+    timestamp?: number,
+  ): Promise<void> {
     const db = getDatabase();
     const ts = timestamp || Math.floor(Date.now() / 1000);
     await db.runAsync(
-      'UPDATE conversations SET last_message_at = ? WHERE id = ?',
-      [ts, id]
+      "UPDATE conversations SET last_message_at = ? WHERE id = ?",
+      [ts, id],
     );
   }
 
   static async incrementUnreadCount(id: number): Promise<void> {
     const db = getDatabase();
     await db.runAsync(
-      'UPDATE conversations SET unread_count = unread_count + 1 WHERE id = ?',
-      [id]
+      "UPDATE conversations SET unread_count = unread_count + 1 WHERE id = ?",
+      [id],
     );
   }
 
   static async markAsRead(id: number): Promise<void> {
     const db = getDatabase();
     await db.runAsync(
-      'UPDATE conversations SET unread_count = 0 WHERE id = ?',
-      [id]
+      "UPDATE conversations SET unread_count = 0 WHERE id = ?",
+      [id],
     );
   }
 
   static async delete(id: number): Promise<void> {
     const db = getDatabase();
-    await db.runAsync('DELETE FROM conversations WHERE id = ?', [id]);
+    await db.runAsync("DELETE FROM conversations WHERE id = ?", [id]);
   }
 
   static async search(query: string): Promise<ConversationWithClient[]> {
     const db = getDatabase();
     const searchTerm = `%${query}%`;
-    const result = await db.getAllAsync<ConversationWithClient>(`
+    const result = await db.getAllAsync<ConversationWithClient>(
+      `
       SELECT c.*, cl.name as client_name, cl.email as client_email, cl.phone as client_phone
       FROM conversations c
       INNER JOIN clients cl ON c.client_id = cl.id
       WHERE cl.name LIKE ? OR cl.email LIKE ?
       ORDER BY c.last_message_at DESC
-    `, [searchTerm, searchTerm]);
+    `,
+      [searchTerm, searchTerm],
+    );
     return result;
   }
 
-  static async searchWithLastMessage(query: string): Promise<ConversationWithLastMessage[]> {
+  static async searchWithLastMessage(
+    query: string,
+  ): Promise<ConversationWithLastMessage[]> {
     const db = getDatabase();
     const searchTerm = `%${query}%`;
-    const result = await db.getAllAsync<ConversationWithLastMessage>(`
+    const result = await db.getAllAsync<ConversationWithLastMessage>(
+      `
       SELECT 
         c.*,
         cl.name as client_name,
@@ -182,7 +194,9 @@ export class ConversationRepository {
       ) m ON c.id = m.conversation_id
       WHERE cl.name LIKE ? OR cl.email LIKE ?
       ORDER BY c.last_message_at DESC
-    `, [searchTerm, searchTerm]);
+    `,
+      [searchTerm, searchTerm],
+    );
     return result;
   }
 }
@@ -191,8 +205,8 @@ export class MessageRepository {
   static async getByConversation(conversationId: number): Promise<Message[]> {
     const db = getDatabase();
     const result = await db.getAllAsync<Message>(
-      'SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at ASC',
-      [conversationId]
+      "SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at ASC",
+      [conversationId],
     );
     return result;
   }
@@ -200,8 +214,8 @@ export class MessageRepository {
   static async getLastMessage(conversationId: number): Promise<Message | null> {
     const db = getDatabase();
     const result = await db.getFirstAsync<Message>(
-      'SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at DESC LIMIT 1',
-      [conversationId]
+      "SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at DESC LIMIT 1",
+      [conversationId],
     );
     return result || null;
   }
@@ -209,32 +223,34 @@ export class MessageRepository {
   static async create(input: CreateMessageInput): Promise<Message> {
     const db = getDatabase();
     const result = await db.runAsync(
-      'INSERT INTO messages (conversation_id, text, is_sent) VALUES (?, ?, ?)',
-      [input.conversation_id, input.text, input.is_sent ? 1 : 0]
+      "INSERT INTO messages (conversation_id, text, is_sent) VALUES (?, ?, ?)",
+      [input.conversation_id, input.text, input.is_sent ? 1 : 0],
     );
-    
+
     await ConversationRepository.updateLastMessageAt(input.conversation_id);
     if (!input.is_sent) {
       await ConversationRepository.incrementUnreadCount(input.conversation_id);
     }
-    
+
     const message = await db.getFirstAsync<Message>(
-      'SELECT * FROM messages WHERE id = ?',
-      [result.lastInsertRowId]
+      "SELECT * FROM messages WHERE id = ?",
+      [result.lastInsertRowId],
     );
     if (!message) {
-      throw new Error('Failed to create message');
+      throw new Error("Failed to create message");
     }
     return message;
   }
 
   static async delete(id: number): Promise<void> {
     const db = getDatabase();
-    await db.runAsync('DELETE FROM messages WHERE id = ?', [id]);
+    await db.runAsync("DELETE FROM messages WHERE id = ?", [id]);
   }
 
   static async deleteByConversation(conversationId: number): Promise<void> {
     const db = getDatabase();
-    await db.runAsync('DELETE FROM messages WHERE conversation_id = ?', [conversationId]);
+    await db.runAsync("DELETE FROM messages WHERE conversation_id = ?", [
+      conversationId,
+    ]);
   }
 }

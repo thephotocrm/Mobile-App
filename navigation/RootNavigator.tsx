@@ -22,7 +22,12 @@ export function RootNavigator() {
 
   if (isLoading) {
     return (
-      <View style={[styles.loadingContainer, { backgroundColor: theme.backgroundRoot }]}>
+      <View
+        style={[
+          styles.loadingContainer,
+          { backgroundColor: theme.backgroundRoot },
+        ]}
+      >
         <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
@@ -31,8 +36,8 @@ export function RootNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {!isAuthenticated ? (
-        <Stack.Screen 
-          name="Login" 
+        <Stack.Screen
+          name="Login"
           component={LoginScreen}
           options={{
             contentStyle: {
@@ -44,8 +49,8 @@ export function RootNavigator() {
         <>
           <Stack.Screen name="MainTabs" component={MainTabNavigator} />
           <Stack.Group screenOptions={{ presentation: "modal" }}>
-            <Stack.Screen 
-              name="Settings" 
+            <Stack.Screen
+              name="Settings"
               component={SettingsScreen}
               options={{
                 contentStyle: {

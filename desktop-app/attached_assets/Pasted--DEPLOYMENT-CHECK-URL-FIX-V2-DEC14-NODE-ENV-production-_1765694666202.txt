@@ -1,0 +1,117 @@
+📦 DEPLOYMENT CHECK: URL-FIX-V2-DEC14 | NODE_ENV: production | RAILWAY: production
+6:42:55 AM [express] GET /api/projects 304 in 499ms :: [{"id":"e64dfdb1-338b-4556-b8f1-77e02db87333"…
+Processing automations for photographer: 02779ff6-61b7-40c8-9842-b17582d030c0
+Found 9 enabled automations
+Processing automation: Send email immediately when contact enters New Inquiry (type: COMMUNICATION)
+Communication automation "Send text 1 minute after entering New Inquiry" (da975ec2-b545-4656-8719-c168e7286d6f) - found 1 projects in stage
+Processing automation: Send email immediately when contact enters New Inquiry (type: COMMUNICATION)
+⏳ Automation reservation still fresh (within 2 min), skipping: COMMUNICATION for project e64dfdb1-338b-4556-b8f1-77e02db87333
+Processing automation: Send text 1 minute after entering New Inquiry (type: COMMUNICATION)
+Communication automation "Send email immediately when contact enters New Inquiry" (34b47f21-08f6-4f2a-9afe-2c81ff1657ad) - found 1 projects in stage
+🔒 Automation already reserved/executed for Timmy Shimma, prevented duplicate (bulletproof reservation)
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+⏰ Too early to send for Timmy Shimma. Should send at: Sun Dec 14 2025 06:43:23 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 06:43:00 GMT+0000 (Coordinated Universal Time)
+Processing automations for photographer: 02779ff6-61b7-40c8-9842-b17582d030c0
+Communication automation "Send email immediately when contact enters New Inquiry" (34b47f21-08f6-4f2a-9afe-2c81ff1657ad) - found 1 projects in stage
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+Found 9 enabled automations
+Processing automation: Send email 6 hours after entering New Inquiry (type: COMMUNICATION)
+⏳ Automation reservation still fresh (within 2 min), skipping: COMMUNICATION for project e64dfdb1-338b-4556-b8f1-77e02db87333
+🔒 Automation already reserved/executed for Timmy Shimma, prevented duplicate (bulletproof reservation)
+Processing automation: Send text 1 minute after entering New Inquiry (type: COMMUNICATION)
+Communication automation "Send email 6 hours after entering New Inquiry" (dd510f1e-1d17-44a0-8033-f37cbd37e4d1) - found 1 projects in stage
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+⏰ Too early to send for Timmy Shimma. Should send at: Sun Dec 14 2025 12:42:23 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 06:43:00 GMT+0000 (Coordinated Universal Time)
+Processing automation: Send email 24 hours after entering New Inquiry (type: COMMUNICATION)
+Communication automation "Send text 1 minute after entering New Inquiry" (da975ec2-b545-4656-8719-c168e7286d6f) - found 1 projects in stage
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+⏰ Too early to send for Timmy Shimma. Should send at: Sun Dec 14 2025 06:43:23 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 06:43:01 GMT+0000 (Coordinated Universal Time)
+Processing automation: Send email 6 hours after entering New Inquiry (type: COMMUNICATION)
+Communication automation "Send email 24 hours after entering New Inquiry" (b46be139-eb75-437b-a9a6-49a8ea085b28) - found 1 projects in stage
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+⏰ Too early to send for Timmy Shimma. Should send at: Mon Dec 15 2025 06:42:23 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 06:43:01 GMT+0000 (Coordinated Universal Time)
+Processing automation: Send email 48 hours after entering New Inquiry (type: COMMUNICATION)
+Communication automation "Send email 6 hours after entering New Inquiry" (dd510f1e-1d17-44a0-8033-f37cbd37e4d1) - found 1 projects in stage
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+⏰ Too early to send for Timmy Shimma. Should send at: Sun Dec 14 2025 12:42:23 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 06:43:01 GMT+0000 (Coordinated Universal Time)
+Processing automation: Send email 24 hours after entering New Inquiry (type: COMMUNICATION)
+Communication automation "Send email 48 hours after entering New Inquiry" (6f48a239-69f0-4179-8f92-bb403b50faa4) - found 1 projects in stage
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+⏰ Too early to send for Timmy Shimma. Should send at: Tue Dec 16 2025 06:42:23 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 06:43:01 GMT+0000 (Coordinated Universal Time)
+Processing automation: Send email 4 days after entering New Inquiry (type: COMMUNICATION)
+Communication automation "Send email 24 hours after entering New Inquiry" (b46be139-eb75-437b-a9a6-49a8ea085b28) - found 1 projects in stage
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+⏰ Too early to send for Timmy Shimma. Should send at: Mon Dec 15 2025 06:42:23 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 06:43:01 GMT+0000 (Coordinated Universal Time)
+Processing automation: Send email 48 hours after entering New Inquiry (type: COMMUNICATION)
+Communication automation "Send email 4 days after entering New Inquiry" (649dfbb7-0c10-44b1-9474-038f68d6f26f) - found 1 projects in stage
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+⏰ Too early to send for Timmy Shimma. Should send at: Thu Dec 18 2025 06:42:23 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 06:43:01 GMT+0000 (Coordinated Universal Time)
+Processing automation: Send email 7 days after entering New Inquiry (type: COMMUNICATION)
+Communication automation "Send email 48 hours after entering New Inquiry" (6f48a239-69f0-4179-8f92-bb403b50faa4) - found 1 projects in stage
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+⏰ Too early to send for Timmy Shimma. Should send at: Tue Dec 16 2025 06:42:23 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 06:43:01 GMT+0000 (Coordinated Universal Time)
+Processing automation: Send email 4 days after entering New Inquiry (type: COMMUNICATION)
+Communication automation "Send email 7 days after entering New Inquiry" (13bb9781-bb37-4677-8723-61244abfacce) - found 1 projects in stage
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+⏰ Too early to send for Timmy Shimma. Should send at: Sun Dec 21 2025 06:42:23 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 06:43:01 GMT+0000 (Coordinated Universal Time)
+Processing automation: Send email 14 days after entering New Inquiry (type: COMMUNICATION)
+Communication automation "Send email 4 days after entering New Inquiry" (649dfbb7-0c10-44b1-9474-038f68d6f26f) - found 1 projects in stage
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+⏰ Too early to send for Timmy Shimma. Should send at: Thu Dec 18 2025 06:42:23 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 06:43:01 GMT+0000 (Coordinated Universal Time)
+Processing automation: Send email 7 days after entering New Inquiry (type: COMMUNICATION)
+Communication automation "Send email 14 days after entering New Inquiry" (e8a7201c-0992-48b6-95dd-0fb7f5439451) - found 1 projects in stage
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+⏰ Too early to send for Timmy Shimma. Should send at: Sun Dec 28 2025 06:42:23 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 06:43:01 GMT+0000 (Coordinated Universal Time)
+Processing automation: Move to Discovery Call Scheduled when appointment is booked (type: STAGE_CHANGE)
+Processing stage change automation: Move to Discovery Call Scheduled when appointment is booked
+No enabled business triggers found for automation Move to Discovery Call Scheduled when appointment is booked, skipping
+Processing automations for photographer: 1cb9d49a-dab6-4bf0-ab5a-cbd016736b84
+Communication automation "Send email 7 days after entering New Inquiry" (13bb9781-bb37-4677-8723-61244abfacce) - found 1 projects in stage
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+⏰ Too early to send for Timmy Shimma. Should send at: Sun Dec 21 2025 06:42:23 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 06:43:02 GMT+0000 (Coordinated Universal Time)
+Processing automation: Send email 14 days after entering New Inquiry (type: COMMUNICATION)
+Found 9 enabled automations
+Processing automation: Send email immediately when contact enters New Inquiry (type: COMMUNICATION)
+Communication automation "Send email 14 days after entering New Inquiry" (e8a7201c-0992-48b6-95dd-0fb7f5439451) - found 1 projects in stage
+Processing step for Timmy Shimma (austinpacholek2014@gmail.com), project: e64dfdb1-338b-4556-b8f1-77e02db87333
+⏰ Too early to send for Timmy Shimma. Should send at: Sun Dec 28 2025 06:42:23 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 06:43:02 GMT+0000 (Coordinated Universal Time)
+Processing automation: Move to Discovery Call Scheduled when appointment is booked (type: STAGE_CHANGE)
+Processing stage change automation: Move to Discovery Call Scheduled when appointment is booked
+🔒 Automation already reserved/executed for Austin , prevented duplicate (bulletproof reservation)
+Communication automation "Send email immediately when contact enters New Inquiry" (44771a79-0518-489f-9859-9c88491bc640) - found 4 projects in stage
+Processing step for Austin  (austinpacholek2014@gmail.com), project: 2b8a1850-e855-4337-9dbd-f66d0f4028b4
+Communication automation "Send email immediately when contact enters New Inquiry" (44771a79-0518-489f-9859-9c88491bc640) - found 4 projects in stage
+Processing step for Austin  (austinpacholek2014@gmail.com), project: 5e200201-7fbe-48c7-b084-9c31ad3ca1e6
+No enabled business triggers found for automation Move to Discovery Call Scheduled when appointment is booked, skipping
+Processing step for Austin  (austinpacholek2014@gmail.com), project: 5e200201-7fbe-48c7-b084-9c31ad3ca1e6
+Processing automations for photographer: 1cb9d49a-dab6-4bf0-ab5a-cbd016736b84
+🚫 Automation already completed successfully: COMMUNICATION for project 2b8a1850-e855-4337-9dbd-f66d0f4028b4
+Found 9 enabled automations
+🔒 Automation already reserved/executed for Austin , prevented duplicate (bulletproof reservation)
+Processing automation: Send email immediately when contact enters New Inquiry (type: COMMUNICATION)
+Processing step for Austin  (austinpacholek2014@gmail.com), project: 8bff9274-03d4-4c7c-b002-d0030af11fb3
+🚫 Automation already completed successfully: COMMUNICATION for project 5e200201-7fbe-48c7-b084-9c31ad3ca1e6
+🚫 Automation already completed successfully: COMMUNICATION for project 5e200201-7fbe-48c7-b084-9c31ad3ca1e6
+🔒 Automation already reserved/executed for Austin , prevented duplicate (bulletproof reservation)
+Processing step for Austin  (austinpacholek2014@gmail.com), project: 2b8a1850-e855-4337-9dbd-f66d0f4028b4
+🚫 Automation already completed successfully: COMMUNICATION for project 8bff9274-03d4-4c7c-b002-d0030af11fb3
+🔒 Automation already reserved/executed for Austin , prevented duplicate (bulletproof reservation)
+Processing step for Austin  (austinpacholek2014@gmail.com), project: fcd8c359-9b98-4dae-9679-9bc62d9c2384
+🚫 Automation already completed successfully: COMMUNICATION for project 2b8a1850-e855-4337-9dbd-f66d0f4028b4
+🔒 Automation already reserved/executed for Austin , prevented duplicate (bulletproof reservation)
+Processing step for Austin  (austinpacholek2014@gmail.com), project: 8bff9274-03d4-4c7c-b002-d0030af11fb3
+🚫 Automation already completed successfully: COMMUNICATION for project fcd8c359-9b98-4dae-9679-9bc62d9c2384
+🔒 Automation already reserved/executed for Austin , prevented duplicate (bulletproof reservation)
+Processing automation: Send text 1 minute after entering New Inquiry (type: COMMUNICATION)
+🚫 Automation already completed successfully: COMMUNICATION for project 8bff9274-03d4-4c7c-b002-d0030af11fb3
+🔒 Automation already reserved/executed for Austin , prevented duplicate (bulletproof reservation)
+Processing step for Austin  (austinpacholek2014@gmail.com), project: fcd8c359-9b98-4dae-9679-9bc62d9c2384
+Communication automation "Send text 1 minute after entering New Inquiry" (a8d8d332-ed86-440d-8db5-bbd76e2bf9d2) - found 4 projects in stage
+Processing step for Austin  (austinpacholek2014@gmail.com), project: 5e200201-7fbe-48c7-b084-9c31ad3ca1e6
+📱 SMS opt-in missing for Austin , skipping (no reservation)
+Processing step for Austin  (austinpacholek2014@gmail.com), project: 2b8a1850-e855-4337-9dbd-f66d0f4028b4
+📱 SMS opt-in missing for Austin , skipping (no reservation)
+Processing step for Austin  (austinpacholek2014@gmail.com), project: 8bff9274-03d4-4c7c-b002-d0030af11fb3
+📱 SMS opt-in missing for Austin , skipping (no reservation)
+Processing step for Austin  (austinpacholek2014@gmail.com), project: fcd8c359-9b98-4dae-9679-9bc62d9c2384

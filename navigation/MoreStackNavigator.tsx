@@ -1,8 +1,11 @@
-import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import MoreScreen from '@/screens/MoreScreen';
-import { getMainScreenOptions, getCommonScreenOptions } from '@/navigation/screenOptions';
-import { useTheme } from '@/hooks/useTheme';
+import React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import MoreScreen from "@/screens/MoreScreen";
+import {
+  getMainScreenOptions,
+  getCommonScreenOptions,
+} from "@/navigation/screenOptions";
+import { useTheme } from "@/hooks/useTheme";
 
 export type MoreStackParamList = {
   MoreList: undefined;

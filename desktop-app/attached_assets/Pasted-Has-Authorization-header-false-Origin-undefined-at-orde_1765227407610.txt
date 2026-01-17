@@ -1,0 +1,37 @@
+Has Authorization header: false
+Origin: undefined
+    at orderSelectedFields (file:///app/node_modules/drizzle-orm/utils.js:53:33)
+Host: app.thephotocrm.com
+Token from cookie: photographer
+    at file:///app/node_modules/drizzle-orm/pg-core/query-builders/select.js:684:26
+Token exists: true
+    at Object.startActiveSpan (file:///app/node_modules/drizzle-orm/tracing.js:8:14)
+Auth source: photographer
+    at PgSelectBase._prepare (file:///app/node_modules/drizzle-orm/pg-core/query-builders/select.js:683:19)
+Token payload: true
+    at file:///app/node_modules/drizzle-orm/pg-core/query-builders/select.js:708:19
+    at Object.startActiveSpan (file:///app/node_modules/drizzle-orm/tracing.js:8:14)
+Authentication successful, continuing to route
+    at PgSelectBase.execute (file:///app/node_modules/drizzle-orm/pg-core/query-builders/select.js:707:19)
+Failed to fetch gallery: TypeError: Cannot convert undefined or null to object
+    at PgSelectBase.then (file:///app/node_modules/drizzle-orm/query-promise.js:21:17)
+    at Function.entries (<anonymous>)
+    at orderSelectedFields (file:///app/node_modules/drizzle-orm/utils.js:53:17)
+    at file:///app/node_modules/drizzle-orm/utils.js:63:22
+    at Array.reduce (<anonymous>)
+    at orderSelectedFields (file:///app/node_modules/drizzle-orm/utils.js:53:33)
+    at file:///app/node_modules/drizzle-orm/pg-core/query-builders/select.js:684:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.startActiveSpan (file:///app/node_modules/drizzle-orm/tracing.js:8:14)
+8:56:33 PM [express] GET /api/galleries/undefined 500 in 3ms :: {"message":"Failed to fetch gallery"}
+    at PgSelectBase._prepare (file:///app/node_modules/drizzle-orm/pg-core/query-builders/select.js:683:19)
+Failed to fetch galleries: TypeError: Cannot convert undefined or null to object
+    at file:///app/node_modules/drizzle-orm/pg-core/query-builders/select.js:708:19
+    at Function.entries (<anonymous>)
+    at Object.startActiveSpan (file:///app/node_modules/drizzle-orm/tracing.js:8:14)
+    at orderSelectedFields (file:///app/node_modules/drizzle-orm/utils.js:53:17)
+    at PgSelectBase.execute (file:///app/node_modules/drizzle-orm/pg-core/query-builders/select.js:707:19)
+    at file:///app/node_modules/drizzle-orm/utils.js:63:22
+    at Array.reduce (<anonymous>)
+    at PgSelectBase.then (file:///app/node_modules/drizzle-orm/query-promise.js:21:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)

@@ -1,47 +1,108 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Pressable, Linking, Alert } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import { ThemedText } from '@/components/ThemedText';
-import { Avatar } from '@/components/Avatar';
-import { Badge } from '@/components/Badge';
-import { ScreenScrollView } from '@/components/ScreenScrollView';
-import { useTheme } from '@/hooks/useTheme';
-import { Spacing, Typography } from '@/constants/theme';
+import React, { useState } from "react";
+import { View, StyleSheet, Pressable, Linking, Alert } from "react-native";
+import { Feather } from "@expo/vector-icons";
+import { ThemedText } from "@/components/ThemedText";
+import { Avatar } from "@/components/Avatar";
+import { Badge } from "@/components/Badge";
+import { ScreenScrollView } from "@/components/ScreenScrollView";
+import { useTheme } from "@/hooks/useTheme";
+import { Spacing, Typography } from "@/constants/theme";
 
 const MOCK_PROJECT = {
-  title: 'Sarah & Mike Wedding',
-  clientName: 'Sarah Johnson',
-  clientEmail: 'sarah.johnson@example.com',
-  clientPhone: '+1 (555) 123-4567',
-  eventDate: 'June 15, 2025',
-  stageName: 'Booked',
-  stageColor: '#3B82F6',
-  location: 'The Grand Ballroom, San Francisco',
-  package: 'Premium Wedding Package',
+  title: "Sarah & Mike Wedding",
+  clientName: "Sarah Johnson",
+  clientEmail: "sarah.johnson@example.com",
+  clientPhone: "+1 (555) 123-4567",
+  eventDate: "June 15, 2025",
+  stageName: "Booked",
+  stageColor: "#3B82F6",
+  location: "The Grand Ballroom, San Francisco",
+  package: "Premium Wedding Package",
   totalAmount: 4500,
   notes: [
-    { id: '1', text: 'Initial consultation completed - discussed venue and timeline', date: 'Nov 10, 2024', type: 'note' },
-    { id: '2', text: 'Contract signed and deposit received', date: 'Nov 15, 2024', type: 'milestone' },
-    { id: '3', text: 'Scheduled engagement shoot for Dec 5th', date: 'Nov 20, 2024', type: 'note' },
+    {
+      id: "1",
+      text: "Initial consultation completed - discussed venue and timeline",
+      date: "Nov 10, 2024",
+      type: "note",
+    },
+    {
+      id: "2",
+      text: "Contract signed and deposit received",
+      date: "Nov 15, 2024",
+      type: "milestone",
+    },
+    {
+      id: "3",
+      text: "Scheduled engagement shoot for Dec 5th",
+      date: "Nov 20, 2024",
+      type: "note",
+    },
   ],
   payments: [
-    { id: '1', amount: 1500, date: 'Nov 15, 2024', description: 'Deposit payment', status: 'Paid' },
-    { id: '2', amount: 1500, date: 'Jan 15, 2025', description: 'Second installment', status: 'Pending' },
-    { id: '3', amount: 1500, date: 'May 15, 2025', description: 'Final payment', status: 'Pending' },
+    {
+      id: "1",
+      amount: 1500,
+      date: "Nov 15, 2024",
+      description: "Deposit payment",
+      status: "Paid",
+    },
+    {
+      id: "2",
+      amount: 1500,
+      date: "Jan 15, 2025",
+      description: "Second installment",
+      status: "Pending",
+    },
+    {
+      id: "3",
+      amount: 1500,
+      date: "May 15, 2025",
+      description: "Final payment",
+      status: "Pending",
+    },
   ],
   contacts: [
-    { id: '1', name: 'Sarah Johnson', role: 'Bride', email: 'sarah.johnson@example.com', phone: '+1 (555) 123-4567', isPrimary: true },
-    { id: '2', name: 'Mike Chen', role: 'Groom', email: 'mike.chen@example.com', phone: '+1 (555) 234-5678', isPrimary: false },
-    { id: '3', name: 'Jennifer Mills', role: 'Wedding Planner', email: 'jennifer@weddingmagic.com', phone: '+1 (555) 345-6789', isPrimary: false },
-    { id: '4', name: 'Robert Johnson', role: 'Father of Bride', email: 'robert.j@example.com', phone: '+1 (555) 456-7890', isPrimary: false },
+    {
+      id: "1",
+      name: "Sarah Johnson",
+      role: "Bride",
+      email: "sarah.johnson@example.com",
+      phone: "+1 (555) 123-4567",
+      isPrimary: true,
+    },
+    {
+      id: "2",
+      name: "Mike Chen",
+      role: "Groom",
+      email: "mike.chen@example.com",
+      phone: "+1 (555) 234-5678",
+      isPrimary: false,
+    },
+    {
+      id: "3",
+      name: "Jennifer Mills",
+      role: "Wedding Planner",
+      email: "jennifer@weddingmagic.com",
+      phone: "+1 (555) 345-6789",
+      isPrimary: false,
+    },
+    {
+      id: "4",
+      name: "Robert Johnson",
+      role: "Father of Bride",
+      email: "robert.j@example.com",
+      phone: "+1 (555) 456-7890",
+      isPrimary: false,
+    },
   ],
 };
 
-type TabType = 'activity' | 'payments' | 'files' | 'details';
+type TabType = "activity" | "payments" | "files" | "details";
 
 export default function ProjectDetailScreen() {
   const { theme } = useTheme();
-  const [activeTab, setActiveTab] = useState<TabType>('activity');
+  const [activeTab, setActiveTab] = useState<TabType>("activity");
 
   const handleCall = () => {
     Linking.openURL(`tel:${MOCK_PROJECT.clientPhone}`);
@@ -56,33 +117,73 @@ export default function ProjectDetailScreen() {
   };
 
   const handleSendLink = () => {
-    Alert.alert('Magic Link Sent', `A secure login link has been sent to ${MOCK_PROJECT.clientEmail}`);
+    Alert.alert(
+      "Magic Link Sent",
+      `A secure login link has been sent to ${MOCK_PROJECT.clientEmail}`,
+    );
   };
 
-  const totalPaid = MOCK_PROJECT.payments.filter(p => p.status === 'Paid').reduce((sum, p) => sum + p.amount, 0);
-  const totalPending = MOCK_PROJECT.payments.filter(p => p.status === 'Pending').reduce((sum, p) => sum + p.amount, 0);
+  const totalPaid = MOCK_PROJECT.payments
+    .filter((p) => p.status === "Paid")
+    .reduce((sum, p) => sum + p.amount, 0);
+  const totalPending = MOCK_PROJECT.payments
+    .filter((p) => p.status === "Pending")
+    .reduce((sum, p) => sum + p.amount, 0);
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'activity':
+      case "activity":
         return (
           <View style={styles.tabContent}>
-            <ThemedText style={[styles.sectionTitle, { fontSize: Typography.h3.fontSize, fontWeight: Typography.h3.fontWeight }]}>
+            <ThemedText
+              style={[
+                styles.sectionTitle,
+                {
+                  fontSize: Typography.h3.fontSize,
+                  fontWeight: Typography.h3.fontWeight,
+                },
+              ]}
+            >
               Activity Timeline
             </ThemedText>
             {MOCK_PROJECT.notes.map((note) => (
-              <View key={note.id} style={[styles.activityCard, { backgroundColor: theme.backgroundCard }]}>
+              <View
+                key={note.id}
+                style={[
+                  styles.activityCard,
+                  { backgroundColor: theme.backgroundCard },
+                ]}
+              >
                 <View style={styles.activityHeader}>
-                  <View style={[styles.activityIcon, { backgroundColor: note.type === 'milestone' ? theme.primary : theme.border }]}>
-                    <Feather 
-                      name={note.type === 'milestone' ? 'check' : 'edit-3'} 
-                      size={14} 
-                      color={note.type === 'milestone' ? '#fff' : theme.textSecondary} 
+                  <View
+                    style={[
+                      styles.activityIcon,
+                      {
+                        backgroundColor:
+                          note.type === "milestone"
+                            ? theme.primary
+                            : theme.border,
+                      },
+                    ]}
+                  >
+                    <Feather
+                      name={note.type === "milestone" ? "check" : "edit-3"}
+                      size={14}
+                      color={
+                        note.type === "milestone" ? "#fff" : theme.textSecondary
+                      }
                     />
                   </View>
                   <View style={styles.activityContent}>
-                    <ThemedText style={styles.activityText}>{note.text}</ThemedText>
-                    <ThemedText style={[styles.activityDate, { color: theme.textSecondary }]}>
+                    <ThemedText style={styles.activityText}>
+                      {note.text}
+                    </ThemedText>
+                    <ThemedText
+                      style={[
+                        styles.activityDate,
+                        { color: theme.textSecondary },
+                      ]}
+                    >
                       {note.date}
                     </ThemedText>
                   </View>
@@ -92,43 +193,111 @@ export default function ProjectDetailScreen() {
           </View>
         );
 
-      case 'payments':
+      case "payments":
         return (
           <View style={styles.tabContent}>
-            <ThemedText style={[styles.sectionTitle, { fontSize: Typography.h3.fontSize, fontWeight: Typography.h3.fontWeight }]}>
+            <ThemedText
+              style={[
+                styles.sectionTitle,
+                {
+                  fontSize: Typography.h3.fontSize,
+                  fontWeight: Typography.h3.fontWeight,
+                },
+              ]}
+            >
               Payment Schedule
             </ThemedText>
-            
-            <View style={[styles.paymentSummary, { backgroundColor: theme.backgroundCard }]}>
+
+            <View
+              style={[
+                styles.paymentSummary,
+                { backgroundColor: theme.backgroundCard },
+              ]}
+            >
               <View style={styles.paymentSummaryRow}>
-                <ThemedText style={[styles.paymentSummaryLabel, { color: theme.textSecondary }]}>Total Contract</ThemedText>
-                <ThemedText style={styles.paymentSummaryValue}>${MOCK_PROJECT.totalAmount.toLocaleString()}</ThemedText>
+                <ThemedText
+                  style={[
+                    styles.paymentSummaryLabel,
+                    { color: theme.textSecondary },
+                  ]}
+                >
+                  Total Contract
+                </ThemedText>
+                <ThemedText style={styles.paymentSummaryValue}>
+                  ${MOCK_PROJECT.totalAmount.toLocaleString()}
+                </ThemedText>
               </View>
               <View style={styles.paymentSummaryRow}>
-                <ThemedText style={[styles.paymentSummaryLabel, { color: theme.success }]}>Paid</ThemedText>
-                <ThemedText style={[styles.paymentSummaryValue, { color: theme.success }]}>${totalPaid.toLocaleString()}</ThemedText>
+                <ThemedText
+                  style={[styles.paymentSummaryLabel, { color: theme.success }]}
+                >
+                  Paid
+                </ThemedText>
+                <ThemedText
+                  style={[styles.paymentSummaryValue, { color: theme.success }]}
+                >
+                  ${totalPaid.toLocaleString()}
+                </ThemedText>
               </View>
               <View style={styles.paymentSummaryRow}>
-                <ThemedText style={[styles.paymentSummaryLabel, { color: theme.textSecondary }]}>Pending</ThemedText>
-                <ThemedText style={[styles.paymentSummaryValue, { color: theme.textSecondary }]}>${totalPending.toLocaleString()}</ThemedText>
+                <ThemedText
+                  style={[
+                    styles.paymentSummaryLabel,
+                    { color: theme.textSecondary },
+                  ]}
+                >
+                  Pending
+                </ThemedText>
+                <ThemedText
+                  style={[
+                    styles.paymentSummaryValue,
+                    { color: theme.textSecondary },
+                  ]}
+                >
+                  ${totalPending.toLocaleString()}
+                </ThemedText>
               </View>
             </View>
 
             {MOCK_PROJECT.payments.map((payment) => (
-              <View key={payment.id} style={[styles.paymentCard, { backgroundColor: theme.backgroundCard }]}>
+              <View
+                key={payment.id}
+                style={[
+                  styles.paymentCard,
+                  { backgroundColor: theme.backgroundCard },
+                ]}
+              >
                 <View style={styles.paymentHeader}>
-                  <ThemedText style={styles.paymentDescription}>{payment.description}</ThemedText>
-                  <Badge 
-                    label={payment.status} 
-                    backgroundColor={payment.status === 'Paid' ? theme.success : theme.warningDark}
-                    color='#FFFFFF'
+                  <ThemedText style={styles.paymentDescription}>
+                    {payment.description}
+                  </ThemedText>
+                  <Badge
+                    label={payment.status}
+                    backgroundColor={
+                      payment.status === "Paid"
+                        ? theme.success
+                        : theme.warningDark
+                    }
+                    color="#FFFFFF"
                   />
                 </View>
                 <View style={styles.paymentFooter}>
-                  <ThemedText style={[styles.paymentDate, { color: theme.textSecondary }]}>
+                  <ThemedText
+                    style={[styles.paymentDate, { color: theme.textSecondary }]}
+                  >
                     {payment.date}
                   </ThemedText>
-                  <ThemedText style={[styles.paymentAmount, { color: payment.status === 'Paid' ? theme.success : theme.text }]}>
+                  <ThemedText
+                    style={[
+                      styles.paymentAmount,
+                      {
+                        color:
+                          payment.status === "Paid"
+                            ? theme.success
+                            : theme.text,
+                      },
+                    ]}
+                  >
                     ${payment.amount.toLocaleString()}
                   </ThemedText>
                 </View>
@@ -137,81 +306,178 @@ export default function ProjectDetailScreen() {
           </View>
         );
 
-      case 'files':
+      case "files":
         return (
           <View style={styles.tabContent}>
-            <ThemedText style={[styles.sectionTitle, { fontSize: Typography.h3.fontSize, fontWeight: Typography.h3.fontWeight }]}>
+            <ThemedText
+              style={[
+                styles.sectionTitle,
+                {
+                  fontSize: Typography.h3.fontSize,
+                  fontWeight: Typography.h3.fontWeight,
+                },
+              ]}
+            >
               Files
             </ThemedText>
-            <View style={[styles.emptyState, { backgroundColor: theme.backgroundCard }]}>
+            <View
+              style={[
+                styles.emptyState,
+                { backgroundColor: theme.backgroundCard },
+              ]}
+            >
               <Feather name="folder" size={48} color={theme.textSecondary} />
-              <ThemedText style={[styles.emptyStateText, { color: theme.textSecondary }]}>
+              <ThemedText
+                style={[styles.emptyStateText, { color: theme.textSecondary }]}
+              >
                 No files uploaded yet
               </ThemedText>
-              <ThemedText style={[styles.emptyStateSubtext, { color: theme.textSecondary }]}>
+              <ThemedText
+                style={[
+                  styles.emptyStateSubtext,
+                  { color: theme.textSecondary },
+                ]}
+              >
                 Share contracts, invoices, and photos with your client
               </ThemedText>
+              <Pressable
+                onPress={() =>
+                  Alert.alert("Upload", "File upload coming soon!")
+                }
+                style={({ pressed }) => [
+                  styles.emptyStateCta,
+                  { backgroundColor: theme.primary },
+                  pressed && { opacity: 0.8 },
+                ]}
+              >
+                <Feather name="upload" size={16} color="#FFFFFF" />
+                <ThemedText style={styles.emptyStateCtaText}>
+                  Upload file
+                </ThemedText>
+              </Pressable>
             </View>
           </View>
         );
 
-      case 'details':
+      case "details":
         return (
           <View style={styles.tabContent}>
-            <ThemedText style={[styles.sectionTitle, { fontSize: Typography.h3.fontSize, fontWeight: Typography.h3.fontWeight }]}>
+            <ThemedText
+              style={[
+                styles.sectionTitle,
+                {
+                  fontSize: Typography.h3.fontSize,
+                  fontWeight: Typography.h3.fontWeight,
+                },
+              ]}
+            >
               Project Details
             </ThemedText>
-            
-            <View style={[styles.detailCard, { backgroundColor: theme.backgroundCard }]}>
+
+            <View
+              style={[
+                styles.detailCard,
+                { backgroundColor: theme.backgroundCard },
+              ]}
+            >
               <View style={styles.detailRow}>
                 <Feather name="calendar" size={18} color={theme.primary} />
                 <View style={styles.detailContent}>
-                  <ThemedText style={[styles.detailLabel, { color: theme.textSecondary }]}>Event Date</ThemedText>
-                  <ThemedText style={styles.detailValue}>{MOCK_PROJECT.eventDate}</ThemedText>
+                  <ThemedText
+                    style={[styles.detailLabel, { color: theme.textSecondary }]}
+                  >
+                    Event Date
+                  </ThemedText>
+                  <ThemedText style={styles.detailValue}>
+                    {MOCK_PROJECT.eventDate}
+                  </ThemedText>
                 </View>
               </View>
 
-              <View style={[styles.detailRow, styles.detailRowBorder, { borderTopColor: theme.border }]}>
+              <View
+                style={[
+                  styles.detailRow,
+                  styles.detailRowBorder,
+                  { borderTopColor: theme.border },
+                ]}
+              >
                 <Feather name="map-pin" size={18} color={theme.primary} />
                 <View style={styles.detailContent}>
-                  <ThemedText style={[styles.detailLabel, { color: theme.textSecondary }]}>Location</ThemedText>
-                  <ThemedText style={styles.detailValue}>{MOCK_PROJECT.location}</ThemedText>
+                  <ThemedText
+                    style={[styles.detailLabel, { color: theme.textSecondary }]}
+                  >
+                    Location
+                  </ThemedText>
+                  <ThemedText style={styles.detailValue}>
+                    {MOCK_PROJECT.location}
+                  </ThemedText>
                 </View>
               </View>
 
-              <View style={[styles.detailRow, styles.detailRowBorder, { borderTopColor: theme.border }]}>
+              <View
+                style={[
+                  styles.detailRow,
+                  styles.detailRowBorder,
+                  { borderTopColor: theme.border },
+                ]}
+              >
                 <Feather name="package" size={18} color={theme.primary} />
                 <View style={styles.detailContent}>
-                  <ThemedText style={[styles.detailLabel, { color: theme.textSecondary }]}>Package</ThemedText>
-                  <ThemedText style={styles.detailValue}>{MOCK_PROJECT.package}</ThemedText>
+                  <ThemedText
+                    style={[styles.detailLabel, { color: theme.textSecondary }]}
+                  >
+                    Package
+                  </ThemedText>
+                  <ThemedText style={styles.detailValue}>
+                    {MOCK_PROJECT.package}
+                  </ThemedText>
                 </View>
               </View>
-
             </View>
 
-            <ThemedText style={[styles.sectionTitle, { fontSize: Typography.h3.fontSize, fontWeight: Typography.h3.fontWeight, marginTop: Spacing.lg }]}>
+            <ThemedText
+              style={[
+                styles.sectionTitle,
+                {
+                  fontSize: Typography.h3.fontSize,
+                  fontWeight: Typography.h3.fontWeight,
+                  marginTop: Spacing.lg,
+                },
+              ]}
+            >
               Contacts
             </ThemedText>
-            
+
             {MOCK_PROJECT.contacts.map((contact, index) => (
-              <View 
-                key={contact.id} 
+              <View
+                key={contact.id}
                 style={[
-                  styles.contactCard, 
+                  styles.contactCard,
                   { backgroundColor: theme.backgroundCard },
-                  index === 0 && { marginTop: 0 }
+                  index === 0 && { marginTop: 0 },
                 ]}
               >
                 <View style={styles.contactHeader}>
                   <Avatar name={contact.name} size={40} />
                   <View style={styles.contactInfo}>
                     <View style={styles.contactNameRow}>
-                      <ThemedText style={styles.contactName}>{contact.name}</ThemedText>
+                      <ThemedText style={styles.contactName}>
+                        {contact.name}
+                      </ThemedText>
                       {contact.isPrimary ? (
-                        <Badge label="Primary" backgroundColor={theme.primary} color="#FFFFFF" />
+                        <Badge
+                          label="Primary"
+                          backgroundColor={theme.primary}
+                          color="#FFFFFF"
+                        />
                       ) : null}
                     </View>
-                    <ThemedText style={[styles.contactRole, { color: theme.textSecondary }]}>
+                    <ThemedText
+                      style={[
+                        styles.contactRole,
+                        { color: theme.textSecondary },
+                      ]}
+                    >
                       {contact.role}
                     </ThemedText>
                   </View>
@@ -219,16 +485,34 @@ export default function ProjectDetailScreen() {
                 <View style={styles.contactDetails}>
                   {contact.email ? (
                     <View style={styles.contactDetailRow}>
-                      <Feather name="mail" size={14} color={theme.textSecondary} />
-                      <ThemedText style={[styles.contactDetailText, { color: theme.textSecondary }]}>
+                      <Feather
+                        name="mail"
+                        size={14}
+                        color={theme.textSecondary}
+                      />
+                      <ThemedText
+                        style={[
+                          styles.contactDetailText,
+                          { color: theme.textSecondary },
+                        ]}
+                      >
                         {contact.email}
                       </ThemedText>
                     </View>
                   ) : null}
                   {contact.phone ? (
                     <View style={styles.contactDetailRow}>
-                      <Feather name="phone" size={14} color={theme.textSecondary} />
-                      <ThemedText style={[styles.contactDetailText, { color: theme.textSecondary }]}>
+                      <Feather
+                        name="phone"
+                        size={14}
+                        color={theme.textSecondary}
+                      />
+                      <ThemedText
+                        style={[
+                          styles.contactDetailText,
+                          { color: theme.textSecondary },
+                        ]}
+                      >
                         {contact.phone}
                       </ThemedText>
                     </View>
@@ -248,14 +532,27 @@ export default function ProjectDetailScreen() {
     <ScreenScrollView contentContainerStyle={{ paddingTop: Spacing.md }}>
       <View style={[styles.hero, { backgroundColor: theme.backgroundCard }]}>
         <Avatar name={MOCK_PROJECT.clientName} size={64} />
-        <ThemedText style={[styles.heroTitle, { fontSize: Typography.h2.fontSize, fontWeight: Typography.h2.fontWeight }]}>
+        <ThemedText
+          style={[
+            styles.heroTitle,
+            {
+              fontSize: Typography.h2.fontSize,
+              fontWeight: Typography.h2.fontWeight,
+            },
+          ]}
+        >
           {MOCK_PROJECT.title}
         </ThemedText>
-        <ThemedText style={[styles.heroSubtitle, { color: theme.textSecondary }]}>
+        <ThemedText
+          style={[styles.heroSubtitle, { color: theme.textSecondary }]}
+        >
           {MOCK_PROJECT.clientName}
         </ThemedText>
         <View style={styles.heroBadge}>
-          <Badge label={MOCK_PROJECT.stageName} backgroundColor={MOCK_PROJECT.stageColor} />
+          <Badge
+            label={MOCK_PROJECT.stageName}
+            backgroundColor={MOCK_PROJECT.stageColor}
+          />
         </View>
         <ThemedText style={[styles.heroDate, { color: theme.textSecondary }]}>
           Event Date: {MOCK_PROJECT.eventDate}
@@ -265,9 +562,20 @@ export default function ProjectDetailScreen() {
       <View style={styles.actionsContainer}>
         <Pressable
           onPress={handleCall}
-          style={({ pressed }) => [styles.actionButton, pressed && { opacity: 0.7 }]}
+          style={({ pressed }) => [
+            styles.actionButton,
+            pressed && { opacity: 0.7 },
+          ]}
         >
-          <View style={[styles.actionIcon, { backgroundColor: theme.backgroundCard, borderColor: theme.border }]}>
+          <View
+            style={[
+              styles.actionIcon,
+              {
+                backgroundColor: theme.backgroundCard,
+                borderColor: theme.border,
+              },
+            ]}
+          >
             <Feather name="phone" size={24} color={theme.primary} />
           </View>
           <ThemedText style={styles.actionLabel}>Call</ThemedText>
@@ -275,9 +583,20 @@ export default function ProjectDetailScreen() {
 
         <Pressable
           onPress={handleText}
-          style={({ pressed }) => [styles.actionButton, pressed && { opacity: 0.7 }]}
+          style={({ pressed }) => [
+            styles.actionButton,
+            pressed && { opacity: 0.7 },
+          ]}
         >
-          <View style={[styles.actionIcon, { backgroundColor: theme.backgroundCard, borderColor: theme.border }]}>
+          <View
+            style={[
+              styles.actionIcon,
+              {
+                backgroundColor: theme.backgroundCard,
+                borderColor: theme.border,
+              },
+            ]}
+          >
             <Feather name="message-square" size={24} color={theme.primary} />
           </View>
           <ThemedText style={styles.actionLabel}>Text</ThemedText>
@@ -285,9 +604,20 @@ export default function ProjectDetailScreen() {
 
         <Pressable
           onPress={handleEmail}
-          style={({ pressed }) => [styles.actionButton, pressed && { opacity: 0.7 }]}
+          style={({ pressed }) => [
+            styles.actionButton,
+            pressed && { opacity: 0.7 },
+          ]}
         >
-          <View style={[styles.actionIcon, { backgroundColor: theme.backgroundCard, borderColor: theme.border }]}>
+          <View
+            style={[
+              styles.actionIcon,
+              {
+                backgroundColor: theme.backgroundCard,
+                borderColor: theme.border,
+              },
+            ]}
+          >
             <Feather name="mail" size={24} color={theme.primary} />
           </View>
           <ThemedText style={styles.actionLabel}>Email</ThemedText>
@@ -295,54 +625,121 @@ export default function ProjectDetailScreen() {
 
         <Pressable
           onPress={handleSendLink}
-          style={({ pressed }) => [styles.actionButton, pressed && { opacity: 0.7 }]}
+          style={({ pressed }) => [
+            styles.actionButton,
+            pressed && { opacity: 0.7 },
+          ]}
         >
-          <View style={[styles.actionIcon, { backgroundColor: theme.backgroundCard, borderColor: theme.border }]}>
+          <View
+            style={[
+              styles.actionIcon,
+              {
+                backgroundColor: theme.backgroundCard,
+                borderColor: theme.border,
+              },
+            ]}
+          >
             <Feather name="link" size={24} color={theme.primary} />
           </View>
           <ThemedText style={styles.actionLabel}>Send Link</ThemedText>
         </Pressable>
       </View>
 
-      <View style={[styles.tabBar, { backgroundColor: theme.backgroundSecondary, borderBottomColor: theme.border }]}>
+      <View
+        style={[
+          styles.tabBar,
+          {
+            backgroundColor: theme.backgroundSecondary,
+            borderBottomColor: theme.border,
+          },
+        ]}
+      >
         <Pressable
-          onPress={() => setActiveTab('activity')}
-          style={[styles.tab, activeTab === 'activity' && styles.tabActive]}
+          onPress={() => setActiveTab("activity")}
+          style={[styles.tab, activeTab === "activity" && styles.tabActive]}
         >
-          <ThemedText style={[styles.tabText, activeTab === 'activity' && { color: theme.primary, fontWeight: '600' }]}>
+          <ThemedText
+            style={[
+              styles.tabText,
+              activeTab === "activity" && {
+                color: theme.primary,
+                fontWeight: "600",
+              },
+            ]}
+          >
             Activity
           </ThemedText>
-          {activeTab === 'activity' && <View style={[styles.tabIndicator, { backgroundColor: theme.primary }]} />}
+          {activeTab === "activity" && (
+            <View
+              style={[styles.tabIndicator, { backgroundColor: theme.primary }]}
+            />
+          )}
         </Pressable>
 
         <Pressable
-          onPress={() => setActiveTab('payments')}
-          style={[styles.tab, activeTab === 'payments' && styles.tabActive]}
+          onPress={() => setActiveTab("payments")}
+          style={[styles.tab, activeTab === "payments" && styles.tabActive]}
         >
-          <ThemedText style={[styles.tabText, activeTab === 'payments' && { color: theme.primary, fontWeight: '600' }]}>
+          <ThemedText
+            style={[
+              styles.tabText,
+              activeTab === "payments" && {
+                color: theme.primary,
+                fontWeight: "600",
+              },
+            ]}
+          >
             Payments
           </ThemedText>
-          {activeTab === 'payments' && <View style={[styles.tabIndicator, { backgroundColor: theme.primary }]} />}
+          {activeTab === "payments" && (
+            <View
+              style={[styles.tabIndicator, { backgroundColor: theme.primary }]}
+            />
+          )}
         </Pressable>
 
         <Pressable
-          onPress={() => setActiveTab('files')}
-          style={[styles.tab, activeTab === 'files' && styles.tabActive]}
+          onPress={() => setActiveTab("files")}
+          style={[styles.tab, activeTab === "files" && styles.tabActive]}
         >
-          <ThemedText style={[styles.tabText, activeTab === 'files' && { color: theme.primary, fontWeight: '600' }]}>
+          <ThemedText
+            style={[
+              styles.tabText,
+              activeTab === "files" && {
+                color: theme.primary,
+                fontWeight: "600",
+              },
+            ]}
+          >
             Files
           </ThemedText>
-          {activeTab === 'files' && <View style={[styles.tabIndicator, { backgroundColor: theme.primary }]} />}
+          {activeTab === "files" && (
+            <View
+              style={[styles.tabIndicator, { backgroundColor: theme.primary }]}
+            />
+          )}
         </Pressable>
 
         <Pressable
-          onPress={() => setActiveTab('details')}
-          style={[styles.tab, activeTab === 'details' && styles.tabActive]}
+          onPress={() => setActiveTab("details")}
+          style={[styles.tab, activeTab === "details" && styles.tabActive]}
         >
-          <ThemedText style={[styles.tabText, activeTab === 'details' && { color: theme.primary, fontWeight: '600' }]}>
+          <ThemedText
+            style={[
+              styles.tabText,
+              activeTab === "details" && {
+                color: theme.primary,
+                fontWeight: "600",
+              },
+            ]}
+          >
             Details
           </ThemedText>
-          {activeTab === 'details' && <View style={[styles.tabIndicator, { backgroundColor: theme.primary }]} />}
+          {activeTab === "details" && (
+            <View
+              style={[styles.tabIndicator, { backgroundColor: theme.primary }]}
+            />
+          )}
         </Pressable>
       </View>
 
@@ -354,10 +751,10 @@ export default function ProjectDetailScreen() {
 const styles = StyleSheet.create({
   hero: {
     padding: Spacing.xl,
-    alignItems: 'center',
-    marginHorizontal: 10,
+    alignItems: "center",
+    marginHorizontal: Spacing.md,
     borderRadius: 12,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
@@ -365,7 +762,7 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     marginTop: Spacing.md,
-    textAlign: 'center',
+    textAlign: "center",
   },
   heroSubtitle: {
     marginTop: Spacing.xs,
@@ -379,52 +776,54 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   actionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: Spacing.lg,
+    flexDirection: "row",
+    justifyContent: "center",
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.sm,
+    gap: Spacing.lg,
   },
   actionButton: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: Spacing.sm,
+    minWidth: 64,
   },
   actionIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
   },
   actionLabel: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   tabBar: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderBottomWidth: 1,
     marginTop: Spacing.md,
   },
   tab: {
     flex: 1,
     paddingVertical: Spacing.md,
-    alignItems: 'center',
-    position: 'relative',
+    alignItems: "center",
+    position: "relative",
   },
-  tabActive: {
-  },
+  tabActive: {},
   tabText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   tabIndicator: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    height: 2,
+    height: 3,
   },
   tabContent: {
-    padding: 10,
+    padding: Spacing.md,
     paddingTop: Spacing.lg,
   },
   sectionTitle: {
@@ -434,22 +833,22 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderRadius: 8,
     marginBottom: Spacing.md,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
     elevation: 1,
   },
   activityHeader: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.md,
   },
   activityIcon: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   activityContent: {
     flex: 1,
@@ -466,64 +865,64 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: Spacing.lg,
     gap: Spacing.sm,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
     elevation: 1,
   },
   paymentSummaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   paymentSummaryLabel: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   paymentSummaryValue: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   paymentCard: {
     padding: Spacing.md,
     borderRadius: 8,
     marginBottom: Spacing.md,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
     elevation: 1,
   },
   paymentHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: Spacing.sm,
   },
   paymentDescription: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
     flex: 1,
   },
   paymentFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   paymentDate: {
     fontSize: 12,
   },
   paymentAmount: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   emptyState: {
     padding: Spacing.xl,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
     gap: Spacing.md,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
@@ -531,23 +930,37 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   emptyStateSubtext: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
+  },
+  emptyStateCta: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: 8,
+    marginTop: Spacing.md,
+  },
+  emptyStateCtaText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
   },
   detailCard: {
     borderRadius: 8,
-    overflow: 'hidden',
-    shadowColor: '#000',
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
     elevation: 1,
   },
   detailRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: Spacing.md,
     gap: Spacing.md,
   },
@@ -563,7 +976,7 @@ const styles = StyleSheet.create({
   },
   detailValue: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   detailSubvalue: {
     fontSize: 14,
@@ -573,14 +986,14 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderRadius: 8,
     marginTop: Spacing.md,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
     elevation: 1,
   },
   contactHeader: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.md,
     marginBottom: Spacing.sm,
   },
@@ -588,14 +1001,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contactNameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.sm,
     marginBottom: Spacing.xs,
   },
   contactName: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   contactRole: {
     fontSize: 12,
@@ -605,8 +1018,8 @@ const styles = StyleSheet.create({
     paddingLeft: 52,
   },
   contactDetailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.sm,
   },
   contactDetailText: {

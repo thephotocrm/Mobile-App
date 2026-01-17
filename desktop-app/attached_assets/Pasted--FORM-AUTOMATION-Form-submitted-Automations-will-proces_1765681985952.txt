@@ -1,0 +1,92 @@
+[FORM AUTOMATION] Form submitted. Automations will process this project based on stage: 00500eb0-56d0-498c-9a91-8274981c862e
+3:11:54 AM [express] POST /api/public/forms/1c59ab9f-c239-4a62-8a04-76114f229ff7/submit 201 in 1184m…
+Processing automations for photographer: 02779ff6-61b7-40c8-9842-b17582d030c0
+Found 9 enabled automations
+Processing automation: Send email immediately when contact enters New Inquiry (type: COMMUNICATION)
+Communication automation "Send email immediately when contact enters New Inquiry" (34b47f21-08f6-4f2a-9afe-2c81ff1657ad) - found 10 projects in stage
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 93b8c957-0a35-4d7b-a141-d482574441c4
+Processing automations for photographer: 02779ff6-61b7-40c8-9842-b17582d030c0
+Found 9 enabled automations
+Processing automation: Send email immediately when contact enters New Inquiry (type: COMMUNICATION)
+⏳ Automation reservation still fresh (within 2 min), skipping: COMMUNICATION for project 93b8c957-0a35-4d7b-a141-d482574441c4
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 72fc72b9-d3ac-4d57-95af-d03adc7f930f
+Communication automation "Send email immediately when contact enters New Inquiry" (34b47f21-08f6-4f2a-9afe-2c81ff1657ad) - found 10 projects in stage
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 93b8c957-0a35-4d7b-a141-d482574441c4
+🚫 Automation already completed successfully: COMMUNICATION for project 72fc72b9-d3ac-4d57-95af-d03adc7f930f
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 8e57598c-938c-417f-8cc8-7aeda8467bbc
+⏳ Automation reservation still fresh (within 2 min), skipping: COMMUNICATION for project 93b8c957-0a35-4d7b-a141-d482574441c4
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 72fc72b9-d3ac-4d57-95af-d03adc7f930f
+🚫 Automation already completed successfully: COMMUNICATION for project 8e57598c-938c-417f-8cc8-7aeda8467bbc
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: dba974a7-7735-40ff-af5d-a98c46fd7f42
+🚫 Automation already completed successfully: COMMUNICATION for project 72fc72b9-d3ac-4d57-95af-d03adc7f930f
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 8e57598c-938c-417f-8cc8-7aeda8467bbc
+🚫 Automation already completed successfully: COMMUNICATION for project dba974a7-7735-40ff-af5d-a98c46fd7f42
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 7541df9e-bc7d-4c07-9c60-7e372a3a2bd2
+🚫 Automation already completed successfully: COMMUNICATION for project 8e57598c-938c-417f-8cc8-7aeda8467bbc
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: dba974a7-7735-40ff-af5d-a98c46fd7f42
+🚫 Automation already completed successfully: COMMUNICATION for project 7541df9e-bc7d-4c07-9c60-7e372a3a2bd2
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: b2338524-a8a1-4498-967a-765cee8bd682
+🚫 Automation already completed successfully: COMMUNICATION for project dba974a7-7735-40ff-af5d-a98c46fd7f42
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 7541df9e-bc7d-4c07-9c60-7e372a3a2bd2
+🚫 Automation already completed successfully: COMMUNICATION for project b2338524-a8a1-4498-967a-765cee8bd682
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 8d5f4a90-7dad-40ec-915f-da9d24984c45
+🚫 Automation already completed successfully: COMMUNICATION for project 7541df9e-bc7d-4c07-9c60-7e372a3a2bd2
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: b2338524-a8a1-4498-967a-765cee8bd682
+🚫 Automation already completed successfully: COMMUNICATION for project 8d5f4a90-7dad-40ec-915f-da9d24984c45
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 3ee43ee4-b01a-4e71-9d50-df98ab5b4f36
+🚫 Automation already completed successfully: COMMUNICATION for project b2338524-a8a1-4498-967a-765cee8bd682
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 8d5f4a90-7dad-40ec-915f-da9d24984c45
+🚫 Automation already completed successfully: COMMUNICATION for project 3ee43ee4-b01a-4e71-9d50-df98ab5b4f36
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 94c43319-7caf-43bb-aa10-1c40ad568df0
+🚫 Automation already completed successfully: COMMUNICATION for project 8d5f4a90-7dad-40ec-915f-da9d24984c45
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 3ee43ee4-b01a-4e71-9d50-df98ab5b4f36
+🚫 Automation already completed successfully: COMMUNICATION for project 94c43319-7caf-43bb-aa10-1c40ad568df0
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 699ab7d4-707f-41b0-91af-47313a19a46d
+🚫 Automation already completed successfully: COMMUNICATION for project 3ee43ee4-b01a-4e71-9d50-df98ab5b4f36
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 94c43319-7caf-43bb-aa10-1c40ad568df0
+🚫 Automation already completed successfully: COMMUNICATION for project 699ab7d4-707f-41b0-91af-47313a19a46d
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing automation: Send text 1 minute after entering New Inquiry (type: COMMUNICATION)
+Processing automation: Send text 1 minute after entering New Inquiry (type: COMMUNICATION)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 93b8c957-0a35-4d7b-a141-d482574441c4
+⏰ Too early to send for Tim Joiner. Should send at: Sun Dec 14 2025 03:12:53 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 03:12:02 GMT+0000 (Coordinated Universal Time)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 72fc72b9-d3ac-4d57-95af-d03adc7f930f
+🚫 Automation already completed successfully: COMMUNICATION for project 72fc72b9-d3ac-4d57-95af-d03adc7f930f
+🚫 Automation already completed successfully: COMMUNICATION for project 94c43319-7caf-43bb-aa10-1c40ad568df0
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 699ab7d4-707f-41b0-91af-47313a19a46d
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Communication automation "Send text 1 minute after entering New Inquiry" (da975ec2-b545-4656-8719-c168e7286d6f) - found 10 projects in stage
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 8e57598c-938c-417f-8cc8-7aeda8467bbc
+🚫 Automation already completed successfully: COMMUNICATION for project 699ab7d4-707f-41b0-91af-47313a19a46d
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 72fc72b9-d3ac-4d57-95af-d03adc7f930f
+🚫 Automation already completed successfully: COMMUNICATION for project 7541df9e-bc7d-4c07-9c60-7e372a3a2bd2
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: b2338524-a8a1-4498-967a-765cee8bd682
+🚫 Automation already completed successfully: COMMUNICATION for project 8e57598c-938c-417f-8cc8-7aeda8467bbc
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: dba974a7-7735-40ff-af5d-a98c46fd7f42
+🚫 Automation already completed successfully: COMMUNICATION for project dba974a7-7735-40ff-af5d-a98c46fd7f42
+🔒 Automation already reserved/executed for Tim Joiner, prevented duplicate (bulletproof reservation)
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 7541df9e-bc7d-4c07-9c60-7e372a3a2bd2
+Communication automation "Send text 1 minute after entering New Inquiry" (da975ec2-b545-4656-8719-c168e7286d6f) - found 10 projects in stage
+Processing step for Tim Joiner (austinpacholek2014@gmail.com), project: 93b8c957-0a35-4d7b-a141-d482574441c4
+⏰ Too early to send for Tim Joiner. Should send at: Sun Dec 14 2025 03:12:53 GMT+0000 (Coordinated Universal Time), now: Sun Dec 14 2025 03:12:03 GMT+0000 (Coordinated Universal Time)

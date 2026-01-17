@@ -1,14 +1,14 @@
 import React from "react";
 import { View, StyleSheet, Pressable, Alert, Switch } from "react-native";
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { Feather } from "@expo/vector-icons";
-import { ToolsStackParamList } from '@/navigation/ToolsStackNavigator';
+import { ToolsStackParamList } from "@/navigation/ToolsStackNavigator";
 
 interface ToolItem {
   id: string;
@@ -16,15 +16,33 @@ interface ToolItem {
   description: string;
   icon: keyof typeof Feather.glyphMap;
   color: string;
+  available: boolean;
 }
 
 const TOOLS: ToolItem[] = [
+  {
+    id: "calendar",
+    title: "Calendar",
+    description: "View and manage your schedule",
+    icon: "calendar",
+    color: "#C92667",
+    available: true,
+  },
   {
     id: "contacts",
     title: "Contacts",
     description: "Manage all your client contacts",
     icon: "users",
     color: "#8B4565",
+    available: true,
+  },
+  {
+    id: "automations",
+    title: "Automations",
+    description: "Manage your automated workflows",
+    icon: "zap",
+    color: "#8B5CF6",
+    available: true,
   },
   {
     id: "1",
@@ -32,6 +50,7 @@ const TOOLS: ToolItem[] = [
     description: "Manage and send professional email templates",
     icon: "mail",
     color: "#3B82F6",
+    available: false,
   },
   {
     id: "2",
@@ -39,6 +58,7 @@ const TOOLS: ToolItem[] = [
     description: "Create and manage client contracts",
     icon: "file-text",
     color: "#10B981",
+    available: false,
   },
   {
     id: "3",
@@ -46,6 +66,7 @@ const TOOLS: ToolItem[] = [
     description: "Send and track invoices and payments",
     icon: "credit-card",
     color: "#F59E0B",
+    available: false,
   },
   {
     id: "4",
@@ -53,6 +74,7 @@ const TOOLS: ToolItem[] = [
     description: "Collect client information with custom forms",
     icon: "clipboard",
     color: "#8B5CF6",
+    available: false,
   },
   {
     id: "5",
@@ -60,6 +82,7 @@ const TOOLS: ToolItem[] = [
     description: "Share photo galleries with clients",
     icon: "image",
     color: "#EC4899",
+    available: false,
   },
   {
     id: "6",
@@ -67,6 +90,7 @@ const TOOLS: ToolItem[] = [
     description: "View business analytics and insights",
     icon: "bar-chart-2",
     color: "#06B6D4",
+    available: false,
   },
   {
     id: "7",
@@ -74,6 +98,7 @@ const TOOLS: ToolItem[] = [
     description: "Automate your business processes",
     icon: "git-branch",
     color: "#F97316",
+    available: false,
   },
   {
     id: "8",
@@ -81,25 +106,33 @@ const TOOLS: ToolItem[] = [
     description: "Connect with other apps and services",
     icon: "link",
     color: "#6366F1",
+    available: false,
   },
 ];
 
-type ToolsScreenNavigationProp = NativeStackNavigationProp<ToolsStackParamList, 'Tools'>;
+type ToolsScreenNavigationProp = NativeStackNavigationProp<
+  ToolsStackParamList,
+  "Tools"
+>;
 
 export function ToolsScreen() {
   const { theme, isDark, setMode } = useTheme();
   const navigation = useNavigation<ToolsScreenNavigationProp>();
-  
+
   const handleToolPress = (tool: ToolItem) => {
-    if (tool.id === 'contacts') {
-      navigation.navigate('Contacts');
-    } else {
-      Alert.alert(tool.title, `Open ${tool.title.toLowerCase()} tool`);
+    if (tool.available) {
+      if (tool.id === "calendar") {
+        navigation.navigate("Calendar");
+      } else if (tool.id === "contacts") {
+        navigation.navigate("Contacts");
+      } else if (tool.id === "automations") {
+        navigation.navigate("Automations");
+      }
     }
   };
 
   const handleThemeToggle = (value: boolean) => {
-    setMode(value ? 'dark' : 'light');
+    setMode(value ? "dark" : "light");
   };
 
   return (
@@ -111,18 +144,64 @@ export function ToolsScreen() {
               key={tool.id}
               style={({ pressed }) => [
                 styles.toolCardWrapper,
-                pressed && styles.toolCardPressed,
+                pressed && tool.available && styles.toolCardPressed,
               ]}
               onPress={() => handleToolPress(tool)}
+              disabled={!tool.available}
             >
-              <Card style={styles.toolCard} elevation={1}>
+              <Card
+                style={[
+                  styles.toolCard,
+                  !tool.available && styles.toolCardDisabled,
+                ]}
+                elevation={tool.available ? 1 : 0}
+              >
+                {!tool.available && (
+                  <View style={styles.comingSoonBadge}>
+                    <ThemedText style={styles.comingSoonText}>
+                      Coming Soon
+                    </ThemedText>
+                  </View>
+                )}
                 <View
-                  style={[styles.iconContainer, { backgroundColor: tool.color }]}
+                  style={[
+                    styles.iconContainer,
+                    {
+                      backgroundColor: tool.available
+                        ? tool.color
+                        : theme.border,
+                    },
+                  ]}
                 >
-                  <Feather name={tool.icon} size={24} color="#FFFFFF" />
+                  <Feather
+                    name={tool.icon}
+                    size={24}
+                    color={tool.available ? "#FFFFFF" : theme.textSecondary}
+                  />
                 </View>
-                <ThemedText style={[Typography.body, { color: theme.text, fontWeight: "600", textAlign: "center" }]}>{tool.title}</ThemedText>
-                <ThemedText style={[Typography.caption, { color: theme.textSecondary, textAlign: "center", lineHeight: 16 }]}>
+                <ThemedText
+                  style={[
+                    Typography.body,
+                    {
+                      color: tool.available ? theme.text : theme.textSecondary,
+                      fontWeight: "600",
+                      textAlign: "center",
+                    },
+                  ]}
+                >
+                  {tool.title}
+                </ThemedText>
+                <ThemedText
+                  style={[
+                    Typography.caption,
+                    {
+                      color: theme.textSecondary,
+                      textAlign: "center",
+                      lineHeight: 16,
+                      opacity: tool.available ? 1 : 0.7,
+                    },
+                  ]}
+                >
                   {tool.description}
                 </ThemedText>
               </Card>
@@ -131,20 +210,48 @@ export function ToolsScreen() {
         </View>
 
         <View style={styles.settingsSection}>
-          <ThemedText style={[Typography.h4, { color: theme.text, marginBottom: Spacing.md }]}>
+          <ThemedText
+            style={[
+              Typography.h4,
+              { color: theme.text, marginBottom: Spacing.md },
+            ]}
+          >
             Settings
           </ThemedText>
-          <View style={[styles.settingRow, { backgroundColor: theme.backgroundSecondary }]}>
+          <View
+            style={[
+              styles.settingRow,
+              { backgroundColor: theme.backgroundSecondary },
+            ]}
+          >
             <View style={styles.settingLeft}>
-              <View style={[styles.settingIcon, { backgroundColor: theme.backgroundTertiary }]}>
-                <Feather name={isDark ? "moon" : "sun"} size={20} color={theme.primary} />
+              <View
+                style={[
+                  styles.settingIcon,
+                  { backgroundColor: theme.backgroundTertiary },
+                ]}
+              >
+                <Feather
+                  name={isDark ? "moon" : "sun"}
+                  size={20}
+                  color={theme.primary}
+                />
               </View>
               <View>
-                <ThemedText style={[Typography.body, { color: theme.text, fontWeight: "500" }]}>
+                <ThemedText
+                  style={[
+                    Typography.body,
+                    { color: theme.text, fontWeight: "500" },
+                  ]}
+                >
                   Dark Mode
                 </ThemedText>
-                <ThemedText style={[Typography.caption, { color: theme.textSecondary }]}>
-                  {isDark ? "Currently using dark theme" : "Currently using light theme"}
+                <ThemedText
+                  style={[Typography.caption, { color: theme.textSecondary }]}
+                >
+                  {isDark
+                    ? "Currently using dark theme"
+                    : "Currently using light theme"}
                 </ThemedText>
               </View>
             </View>
@@ -164,7 +271,7 @@ export function ToolsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: Spacing.sm,
   },
   toolsGrid: {
     flexDirection: "row",
@@ -177,9 +284,31 @@ const styles = StyleSheet.create({
   },
   toolCard: {
     alignItems: "center",
+    position: "relative",
+    overflow: "hidden",
   },
   toolCardPressed: {
     opacity: 0.7,
+  },
+  toolCardDisabled: {
+    opacity: 0.6,
+  },
+  comingSoonBadge: {
+    position: "absolute",
+    top: 8,
+    right: -24,
+    backgroundColor: "#6B7280",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 2,
+    transform: [{ rotate: "45deg" }],
+    zIndex: 1,
+  },
+  comingSoonText: {
+    color: "#FFFFFF",
+    fontSize: 8,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
   iconContainer: {
     width: 56,
@@ -193,25 +322,25 @@ const styles = StyleSheet.create({
     marginTop: Spacing.lg,
     paddingTop: Spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(0,0,0,0.1)',
+    borderTopColor: "rgba(0,0,0,0.1)",
   },
   settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,
   },
   settingLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.md,
   },
   settingIcon: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

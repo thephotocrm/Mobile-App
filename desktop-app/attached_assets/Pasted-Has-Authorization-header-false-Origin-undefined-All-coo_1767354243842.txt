@@ -1,0 +1,106 @@
+Has Authorization header: false
+Origin: undefined
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","__stripe_sid":"461639d0-61a0-4a86-bff9-d9c534880cf70ae11f","photographer_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU"}
+Host: app.thephotocrm.com
+Token from cookie: photographer
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_sid=461639d0-61a0-4a86-bff9-d9c534880cf70ae11f; photographer_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU
+Token exists: true
+Auth source: photographer
+Token payload: true
+Authentication successful, continuing to route
+📥 INCOMING REQUEST: GET /api/project-types
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/project-types
+Request method: GET
+Has Authorization header: false
+Origin: undefined
+Host: app.thephotocrm.com
+Token from cookie: photographer
+Token exists: true
+Auth source: photographer
+Token payload: true
+Authentication successful, continuing to route
+📥 INCOMING REQUEST: GET /api/automations/count
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/automations/count
+Request method: GET
+Has cookies object: true
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","__stripe_sid":"461639d0-61a0-4a86-bff9-d9c534880cf70ae11f","photographer_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU"}
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_sid=461639d0-61a0-4a86-bff9-d9c534880cf70ae11f; photographer_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU
+Has Authorization header: false
+  schema: undefined,
+  code: '42703',
+Origin: undefined
+  table: undefined,
+Host: app.thephotocrm.com
+Token from cookie: photographer
+Token exists: true
+Auth source: photographer
+Token payload: true
+Authentication successful, continuing to route
+Get automations error: error: column automations_stage.project_type_id does not exist
+    at /app/node_modules/pg-pool/index.js:45:11
+  detail: undefined,
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///app/node_modules/drizzle-orm/node-postgres/session.js:83:22
+  hint: 'Perhaps you meant to reference the column "automations_stage.project_type".',
+    at async DatabaseStorage.getAutomationsByPhotographer (file:///app/dist/index.js:2876:24)
+  position: '2442',
+    at async file:///app/dist/index.js:22380:28 {
+  internalPosition: undefined,
+  length: 210,
+  severity: 'ERROR',
+  internalQuery: undefined,
+  where: undefined,
+  column: undefined,
+    at async file:///app/node_modules/drizzle-orm/node-postgres/session.js:83:22
+  dataType: undefined,
+    at async DatabaseStorage.getAutomationsByPhotographer (file:///app/dist/index.js:2876:24)
+  constraint: undefined,
+    at async file:///app/dist/index.js:22370:28 {
+  file: 'parse_relation.c',
+  length: 210,
+  severity: 'ERROR',
+  line: '3723',
+  code: '42703',
+  routine: 'errorMissingColumn'
+  detail: undefined,
+}
+  hint: 'Perhaps you meant to reference the column "automations_stage.project_type".',
+11:42:24 AM [express] GET /api/automations 500 in 69ms :: {"message":"Internal server error"}
+  position: '2442',
+11:42:24 AM [express] GET /api/photographer 304 in 65ms :: {"id":"e9dd8ca1-f427-4ab9-a1b7-2c65a331c0f…
+  internalPosition: undefined,
+11:42:24 AM [express] GET /api/project-types 304 in 53ms :: [{"id":"567c3b51-e9e9-4938-a069-665711f14…
+Get automation count error: error: column automations_stage.project_type_id does not exist
+    at /app/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+  internalQuery: undefined,
+11:42:25 AM [express] GET /api/automations/count 500 in 77ms :: {"message":"Internal server error"}
+Request URL: /api/automations?projectType=WEDDING
+  where: undefined,
+11:42:25 AM [express] GET /api/smart-files 304 in 121ms :: [{"id":"0030f31c-b5f1-4a04-99e8-75fe0e6617…
+  schema: undefined,
+11:42:25 AM [express] GET /api/automations/stage-templates 304 in 212ms :: [{"stageName":"New Inquiry…
+  table: undefined,
+11:42:25 AM [express] GET /api/photographers/me 304 in 187ms :: {"id":"e9dd8ca1-f427-4ab9-a1b7-2c65a3…
+  column: undefined,
+11:42:25 AM [express] GET /api/questionnaire-templates 304 in 194ms :: []
+  dataType: undefined,
+11:42:25 AM [express] GET /api/templates 304 in 201ms :: [{"id":"70edfb7f-fd46-49df-b62c-163cd9f707ad…
+  constraint: undefined,
+  file: 'parse_relation.c',
+📥 INCOMING REQUEST: GET /api/automations
+  line: '3723',
+   Headers: undefined
+  routine: 'errorMissingColumn'
+🌐 Domain detection: app.thephotocrm.com
+}
+  → Photographer domain detected

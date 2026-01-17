@@ -1,0 +1,61 @@
+🔍 Looking up photographer by slug: abbiestreet for API route: /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU/packages
+📥 INCOMING REQUEST: GET /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU/add-ons
+   Headers: undefined
+🌐 Domain detection: abbiestreet.tpcportal.co
+  → Client portal subdomain detected: abbiestreet
+🔍 Looking up photographer by slug: abbiestreet for API route: /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU/add-ons
+📥 INCOMING REQUEST: GET /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU/packages
+   Headers: undefined
+📥 INCOMING REQUEST: GET /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU/booking
+   Headers: undefined
+🌐 Domain detection: abbiestreet.tpcportal.co
+  → Client portal subdomain detected: abbiestreet
+🔍 Looking up photographer by slug: abbiestreet for API route: /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU/booking
+✅ Found photographer: Austin Pacholek Photography (ID: a16236ad-09ab-44ce-b5d9-b985017fa780)
+✅ Found photographer: Austin Pacholek Photography (ID: a16236ad-09ab-44ce-b5d9-b985017fa780)
+✅ Found photographer: Austin Pacholek Photography (ID: a16236ad-09ab-44ce-b5d9-b985017fa780)
+8:55:18 AM [express] GET /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU/add-ons 200 in 520…
+8:55:18 AM [express] GET /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU/packages 200 in 97…
+8:55:19 AM [express] GET /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU/booking 200 in 942…
+/app/node_modules/puppeteer/.local-chromium/linux-901912/chrome-linux/chrome: error while loading shared libraries: libgobject-2.0.so.0: cannot open shared object file: No such file or directory
+📥 INCOMING REQUEST: PATCH /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU/sign
+   Headers: "application/json"
+🌐 Domain detection: abbiestreet.tpcportal.co
+  → Client portal subdomain detected: abbiestreet
+TROUBLESHOOTING: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md
+🔍 Looking up photographer by slug: abbiestreet for API route: /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU/sign
+✅ Found photographer: Austin Pacholek Photography (ID: a16236ad-09ab-44ce-b5d9-b985017fa780)
+PDF Generation Error: Error: Failed to launch the browser process!
+    at onClose (/app/node_modules/puppeteer/lib/cjs/puppeteer/node/BrowserRunner.js:197:20)
+    at Interface.<anonymous> (/app/node_modules/puppeteer/lib/cjs/puppeteer/node/BrowserRunner.js:187:68)
+    at Interface.emit (node:events:531:35)
+    at Interface.close (node:internal/readline/interface:530:10)
+    at Socket.onend (node:internal/readline/interface:260:10)
+    at Socket.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+PDF generation failed: Error: Failed to generate PDF
+    at generateContractPDF (file:///app/dist/index.js:9746:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///app/dist/index.js:17108:29
+Failed to send contract signature email: ReferenceError: contact is not defined
+    at file:///app/dist/index.js:17148:23
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+📥 INCOMING REQUEST: GET /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU
+   Headers: undefined
+🌐 Domain detection: abbiestreet.tpcportal.co
+  → Client portal subdomain detected: abbiestreet
+🔍 Looking up photographer by slug: abbiestreet for API route: /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU
+✅ Found photographer: Austin Pacholek Photography (ID: a16236ad-09ab-44ce-b5d9-b985017fa780)
+8:55:37 AM [express] PATCH /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU/sign 200 in 2706…
+8:55:39 AM [express] GET /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU 200 in 2401ms :: {…
+📥 INCOMING REQUEST: PATCH /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU/accept
+   Headers: "application/json"
+🌐 Domain detection: abbiestreet.tpcportal.co
+  → Client portal subdomain detected: abbiestreet
+🔍 Looking up photographer by slug: abbiestreet for API route: /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU/accept
+✅ Found photographer: Austin Pacholek Photography (ID: a16236ad-09ab-44ce-b5d9-b985017fa780)
+Error sending acceptance notification: ReferenceError: client is not defined
+    at file:///app/dist/index.js:17001:29
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+8:55:46 AM [express] PATCH /api/public/smart-files/xXfQwdSexX10r6NtHnSwkKHuVBSoCheU/accept 200 in 23…

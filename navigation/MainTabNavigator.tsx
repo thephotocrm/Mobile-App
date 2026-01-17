@@ -22,7 +22,7 @@ interface TabIconProps {
 
 function TabIcon({ name, label, size, focused, inactiveColor }: TabIconProps) {
   const focusedColor = "#9333EA";
-  
+
   if (!focused) {
     return (
       <View style={styles.tabItem}>
@@ -31,7 +31,7 @@ function TabIcon({ name, label, size, focused, inactiveColor }: TabIconProps) {
       </View>
     );
   }
-  
+
   return (
     <View style={styles.tabItem}>
       <Feather name={name} size={size} color={focusedColor} />
@@ -95,7 +95,13 @@ export default function MainTabNavigator() {
         component={HomeStackNavigator}
         options={{
           tabBarIcon: ({ focused, size }) => (
-            <TabIcon name="home" label="Home" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
+            <TabIcon
+              name="home"
+              label="Home"
+              size={size}
+              focused={focused}
+              inactiveColor={theme.tabIconDefault}
+            />
           ),
         }}
       />
@@ -104,7 +110,13 @@ export default function MainTabNavigator() {
         component={ProjectsStackNavigator}
         options={{
           tabBarIcon: ({ focused, size }) => (
-            <TabIcon name="folder" label="Proj" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
+            <TabIcon
+              name="folder"
+              label="Proj"
+              size={size}
+              focused={focused}
+              inactiveColor={theme.tabIconDefault}
+            />
           ),
         }}
       />
@@ -113,7 +125,13 @@ export default function MainTabNavigator() {
         component={InboxStackNavigator}
         options={{
           tabBarIcon: ({ focused, size }) => (
-            <TabIcon name="message-square" label="Inbox" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
+            <TabIcon
+              name="message-square"
+              label="Inbox"
+              size={size}
+              focused={focused}
+              inactiveColor={theme.tabIconDefault}
+            />
           ),
         }}
       />
@@ -122,7 +140,13 @@ export default function MainTabNavigator() {
         component={NotificationsStackNavigator}
         options={{
           tabBarIcon: ({ focused, size }) => (
-            <TabIcon name="bell" label="Alerts" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
+            <TabIcon
+              name="bell"
+              label="Alerts"
+              size={size}
+              focused={focused}
+              inactiveColor={theme.tabIconDefault}
+            />
           ),
         }}
       />
@@ -131,7 +155,13 @@ export default function MainTabNavigator() {
         component={ToolsStackNavigator}
         options={{
           tabBarIcon: ({ focused, size }) => (
-            <TabIcon name="grid" label="Tools" size={size} focused={focused} inactiveColor={theme.tabIconDefault} />
+            <TabIcon
+              name="grid"
+              label="Tools"
+              size={size}
+              focused={focused}
+              inactiveColor={theme.tabIconDefault}
+            />
           ),
         }}
       />
@@ -141,14 +171,14 @@ export default function MainTabNavigator() {
 
 const styles = StyleSheet.create({
   tabItem: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     gap: 4,
     minHeight: 44,
-    overflow: 'visible',
+    overflow: "visible",
   },
   tabLabel: {
     fontSize: 10,
-    fontWeight: '500',
+    fontWeight: "500",
   },
 });

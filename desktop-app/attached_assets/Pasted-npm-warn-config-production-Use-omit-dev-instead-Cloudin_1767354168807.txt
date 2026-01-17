@@ -1,0 +1,121 @@
+npm warn config production Use `--omit=dev` instead.
+🔐 Cloudinary config check: {
+  hasCloudName: true,
+  hasApiKey: true,
+  hasApiSecret: true,
+  cloudName: 'dpqnbq0lq'
+}
+Google Calendar: GOOGLE_OAUTH_HMAC_SECRET not set in production. Using GOOGLE_CLIENT_SECRET as HMAC key.
+🚀🚀🚀 THEPHOTOCRM SERVER STARTING - BUILD v2025.12.14.6 🚀🚀🚀
+🌍 ENVIRONMENT: {
+  NODE_ENV: 'production',
+  RAILWAY_PROJECT_ID: 'set',
+  RAILWAY_ENVIRONMENT_NAME: 'production',
+  REPLIT_DEV_DOMAIN: 'unset',
+  isProduction: true
+}
+Cron jobs started
+✅ Cookie-parser middleware initialized
+✅ Domain detection and tenant isolation middleware initialized
+✅ REGISTERING Twilio inbound webhook route at /webhooks/twilio/inbound
+Cron jobs started
+✅ Client portal meta tag injection middleware registered
+11:42:00 AM [express] serving on port 8080
+Request method: GET
+Has cookies object: true
+  → Photographer domain detected
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","__stripe_sid":"461639d0-61a0-4a86-bff9-d9c534880cf70ae11f","photographer_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU"}
+📥 INCOMING REQUEST: GET /assets/index-ea2lnHZC.js
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+   Headers: undefined
+Request URL: /api/auth/me
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+📥 INCOMING REQUEST: GET /api/auth/me
+   Headers: undefined
+📥 INCOMING REQUEST: GET /automations
+🌐 Domain detection: app.thephotocrm.com
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+11:42:24 AM [express] GET /api/domain 304 in 2ms :: {"type":"photographer"}
+📥 INCOMING REQUEST: GET /api/domain
+11:42:24 AM [express] GET /api/auth/me 304 in 224ms :: {"id":"e478ce34-6029-477c-a4ed-b4c66d204dd7","…
+   Headers: undefined
+📥 INCOMING REQUEST: GET /api/inbox/unread-count
+🌐 Domain detection: app.thephotocrm.com
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_sid=461639d0-61a0-4a86-bff9-d9c534880cf70ae11f; photographer_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU
+Token exists: true
+  → Photographer domain detected
+Has Authorization header: false
+Auth source: photographer
+Origin: undefined
+Token payload: true
+Host: app.thephotocrm.com
+Authentication successful, continuing to route
+Token from cookie: photographer
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/inbox/unread-count
+Request method: GET
+Has cookies object: true
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","__stripe_sid":"461639d0-61a0-4a86-bff9-d9c534880cf70ae11f","photographer_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU"}
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_sid=461639d0-61a0-4a86-bff9-d9c534880cf70ae11f; photographer_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU
+Has Authorization header: false
+Origin: undefined
+Host: app.thephotocrm.com
+Token from cookie: photographer
+Authentication successful, continuing to route
+Token exists: true
+Auth source: photographer
+📥 INCOMING REQUEST: GET /api/automations/stage-templates
+Token payload: true
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_sid=461639d0-61a0-4a86-bff9-d9c534880cf70ae11f; photographer_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+Request URL: /api/automations/stage-templates?projectType=
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request method: GET
+Has cookies object: true
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","__stripe_sid":"461639d0-61a0-4a86-bff9-d9c534880cf70ae11f","photographer_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU"}
+Has Authorization header: false
+Origin: undefined
+Host: app.thephotocrm.com
+Token from cookie: photographer
+Token exists: true
+Auth source: photographer
+Token payload: true
+Authentication successful, continuing to route
+11:42:24 AM [express] GET /api/inbox/unread-count 304 in 51ms :: {"unreadCount":0}
+📥 INCOMING REQUEST: GET /api/stages
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/stages?projectType=
+Request method: GET
+Has cookies object: true
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","__stripe_sid":"461639d0-61a0-4a86-bff9-d9c534880cf70ae11f","photographer_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU"}
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_sid=461639d0-61a0-4a86-bff9-d9c534880cf70ae11f; photographer_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU
+Has cookies object: true
+Has Authorization header: false
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","__stripe_sid":"461639d0-61a0-4a86-bff9-d9c534880cf70ae11f","photographer_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU"}
+Origin: undefined
+Host: app.thephotocrm.com
+Token from cookie: photographer
+Token exists: true
+Auth source: photographer
+Token payload: true
+Authentication successful, continuing to route
+📥 INCOMING REQUEST: GET /api/smart-files
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/smart-files
+Request method: GET
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_sid=461639d0-61a0-4a86-bff9-d9c534880cf70ae11f; photographer_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNDc4Y2UzNC02MDI5LTQ3N2MtYTRlZC1iNGM2NmQyMDRkZDciLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJlOWRkOGNhMS1mNDI3LTRhYjktYTFiNy0yYzY1YTMzMWMwZjUiLCJpYXQiOjE3NjczNTI1NjgsImV4cCI6MTc2Nzk1NzM2OH0.TXcfrEvPGe4tq1oAi518z7JbTmLy9LTM1YrBtDc6TsU
+Has Authorization header: false

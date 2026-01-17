@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
 import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { authApi, User, ApiError } from "@/services/api";
@@ -57,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (storedToken && storedUser) {
         const parsedUser = JSON.parse(storedUser) as User;
-        
+
         try {
           const freshUser = await authApi.me(storedToken);
           setToken(storedToken);
@@ -88,34 +95,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = useCallback(async (email: string, password: string) => {
-    console.log('[AuthContext] Login attempt for:', email);
-    console.log('[AuthContext] Calling authApi.login...');
-    
+    console.log("[AuthContext] Login attempt for:", email);
+    console.log("[AuthContext] Calling authApi.login...");
+
     try {
       const response = await authApi.login(email, password);
-      
-      console.log('[AuthContext] Login response received');
-      console.log('[AuthContext] User:', response.user ? JSON.stringify(response.user) : 'null');
-      console.log('[AuthContext] Token received:', response.token ? 'YES' : 'NO');
-      
+
+      console.log("[AuthContext] Login response received");
+      console.log(
+        "[AuthContext] User:",
+        response.user ? JSON.stringify(response.user) : "null",
+      );
+      console.log(
+        "[AuthContext] Token received:",
+        response.token ? "YES" : "NO",
+      );
+
       if (!response.token) {
-        console.log('[AuthContext] ERROR: No token in response');
-        throw new Error("Server did not return authentication token. Please contact support.");
+        console.log("[AuthContext] ERROR: No token in response");
+        throw new Error(
+          "Server did not return authentication token. Please contact support.",
+        );
       }
-      
-      console.log('[AuthContext] Storing token and user in secure storage...');
+
+      console.log("[AuthContext] Storing token and user in secure storage...");
       await setSecureItem(TOKEN_KEY, response.token);
       await setSecureItem(USER_KEY, JSON.stringify(response.user));
-      
-      console.log('[AuthContext] Setting auth state...');
+
+      console.log("[AuthContext] Setting auth state...");
       setToken(response.token);
       setUser(response.user);
-      console.log('[AuthContext] Login successful!');
+      console.log("[AuthContext] Login successful!");
     } catch (error) {
-      console.log('[AuthContext] Login error:', error instanceof Error ? error.message : String(error));
+      console.log(
+        "[AuthContext] Login error:",
+        error instanceof Error ? error.message : String(error),
+      );
       if (error instanceof ApiError) {
-        console.log('[AuthContext] ApiError status:', error.status);
-        console.log('[AuthContext] ApiError data:', JSON.stringify(error.data));
+        console.log("[AuthContext] ApiError status:", error.status);
+        console.log("[AuthContext] ApiError data:", JSON.stringify(error.data));
         if (error.status === 401) {
           throw new Error("Invalid email or password");
         }
@@ -139,7 +157,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshUser = useCallback(async () => {
     if (!token) return;
-    
+
     try {
       const freshUser = await authApi.me(token);
       setUser(freshUser);

@@ -1,7 +1,7 @@
-import React from 'react';
-import { Pressable, StyleSheet, Text, ActivityIndicator } from 'react-native';
-import { useTheme } from '@/hooks/useTheme';
-import { Spacing, Typography } from '@/constants/theme';
+import React from "react";
+import { Pressable, StyleSheet, Text, ActivityIndicator } from "react-native";
+import { useTheme } from "@/hooks/useTheme";
+import { Spacing, Typography } from "@/constants/theme";
 
 interface PrimaryButtonProps {
   title: string;
@@ -10,7 +10,12 @@ interface PrimaryButtonProps {
   disabled?: boolean;
 }
 
-export function PrimaryButton({ title, onPress, loading, disabled }: PrimaryButtonProps) {
+export function PrimaryButton({
+  title,
+  onPress,
+  loading,
+  disabled,
+}: PrimaryButtonProps) {
   const { theme } = useTheme();
 
   return (
@@ -37,8 +42,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md - 4,
     paddingHorizontal: Spacing.lg,
     borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     minHeight: Spacing.buttonHeight,
   },
   text: {

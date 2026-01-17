@@ -1,9 +1,9 @@
-import React from 'react';
-import { Pressable, View, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import { ThemedText } from './ThemedText';
-import { useTheme } from '@/hooks/useTheme';
-import { Spacing } from '@/constants/theme';
+import React from "react";
+import { Pressable, View, StyleSheet } from "react-native";
+import { Feather } from "@expo/vector-icons";
+import { ThemedText } from "./ThemedText";
+import { useTheme } from "@/hooks/useTheme";
+import { Spacing } from "@/constants/theme";
 
 interface BookingCardProps {
   eventTitle: string;
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: Spacing.md,
     borderLeftWidth: 4,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -71,15 +71,15 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   subtitle: {
     fontSize: 14,
     opacity: 0.7,
   },
   infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.sm,
     marginTop: Spacing.xs,
   },

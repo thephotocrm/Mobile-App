@@ -29,21 +29,43 @@ interface SettingsItemProps {
   danger?: boolean;
 }
 
-function SettingsItem({ icon, title, subtitle, showChevron = false, onPress, danger }: SettingsItemProps) {
+function SettingsItem({
+  icon,
+  title,
+  subtitle,
+  showChevron = false,
+  onPress,
+  danger,
+}: SettingsItemProps) {
   const { theme } = useTheme();
-  
+
   return (
-    <Pressable 
+    <Pressable
       style={[styles.settingsItem, { borderBottomColor: theme.border }]}
       onPress={onPress}
     >
-      <View style={[styles.iconContainer, { backgroundColor: theme.backgroundSecondary }]}>
-        <Feather name={icon} size={20} color={danger ? "#DC2626" : theme.textSecondary} />
+      <View
+        style={[
+          styles.iconContainer,
+          { backgroundColor: theme.backgroundSecondary },
+        ]}
+      >
+        <Feather
+          name={icon}
+          size={20}
+          color={danger ? "#DC2626" : theme.textSecondary}
+        />
       </View>
       <View style={styles.itemContent}>
-        <ThemedText style={[styles.itemTitle, danger && { color: "#DC2626" }]}>{title}</ThemedText>
+        <ThemedText style={[styles.itemTitle, danger && { color: "#DC2626" }]}>
+          {title}
+        </ThemedText>
         {subtitle ? (
-          <ThemedText style={[styles.itemSubtitle, { color: theme.textSecondary }]}>{subtitle}</ThemedText>
+          <ThemedText
+            style={[styles.itemSubtitle, { color: theme.textSecondary }]}
+          >
+            {subtitle}
+          </ThemedText>
         ) : null}
       </View>
       {showChevron ? (
@@ -55,10 +77,17 @@ function SettingsItem({ icon, title, subtitle, showChevron = false, onPress, dan
 
 function SectionHeader({ title }: { title: string }) {
   const { theme } = useTheme();
-  
+
   return (
-    <View style={[styles.sectionHeader, { backgroundColor: theme.backgroundSecondary }]}>
-      <ThemedText style={[styles.sectionTitle, { color: theme.textSecondary }]}>{title}</ThemedText>
+    <View
+      style={[
+        styles.sectionHeader,
+        { backgroundColor: theme.backgroundSecondary },
+      ]}
+    >
+      <ThemedText style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+        {title}
+      </ThemedText>
     </View>
   );
 }
@@ -78,20 +107,16 @@ export function SettingsScreen() {
   };
 
   const handleLogout = () => {
-    Alert.alert(
-      "Log Out",
-      "Are you sure you want to log out?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Log Out",
-          style: "destructive",
-          onPress: async () => {
-            await logout();
-          },
+    Alert.alert("Log Out", "Are you sure you want to log out?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Log Out",
+        style: "destructive",
+        onPress: async () => {
+          await logout();
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const headerContent = (
@@ -119,133 +144,154 @@ export function SettingsScreen() {
           {headerContent}
         </BlurView>
       ) : (
-        <View style={[styles.header, { backgroundColor: theme.backgroundRoot }]}>
+        <View
+          style={[styles.header, { backgroundColor: theme.backgroundRoot }]}
+        >
           {headerContent}
         </View>
       )}
 
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingTop: insets.top + 60, paddingBottom: Spacing.xl }
+          { paddingTop: insets.top + 60, paddingBottom: Spacing.xl },
         ]}
       >
-        <View style={[styles.notificationBanner, { backgroundColor: "#EDE9FE", borderLeftColor: "#8B45FF" }]}>
+        <View
+          style={[
+            styles.notificationBanner,
+            { backgroundColor: "#EDE9FE", borderLeftColor: "#8B45FF" },
+          ]}
+        >
           <View style={styles.notificationIcon}>
             <Feather name="bell" size={20} color="#8B45FF" />
           </View>
           <View style={styles.notificationContent}>
-            <ThemedText style={styles.notificationTitle}>Turn on real-time updates?</ThemedText>
-            <ThemedText style={[styles.notificationSubtitle, { color: theme.textSecondary }]}>
+            <ThemedText style={styles.notificationTitle}>
+              Turn on real-time updates?
+            </ThemedText>
+            <ThemedText
+              style={[
+                styles.notificationSubtitle,
+                { color: theme.textSecondary },
+              ]}
+            >
               You'll be notified about new leads, payments, and client messages.
             </ThemedText>
             <Pressable>
-              <ThemedText style={[styles.notificationAction, { color: "#8B45FF" }]}>Allow notifications</ThemedText>
+              <ThemedText
+                style={[styles.notificationAction, { color: "#8B45FF" }]}
+              >
+                Allow notifications
+              </ThemedText>
             </Pressable>
           </View>
         </View>
 
         <SectionHeader title="ACCOUNT SETTINGS" />
-        
-        <View style={[styles.section, { backgroundColor: theme.backgroundCard }]}>
-          <SettingsItem 
-            icon="user" 
-            title="Account details" 
+
+        <View
+          style={[styles.section, { backgroundColor: theme.backgroundCard }]}
+        >
+          <SettingsItem
+            icon="user"
+            title="Account details"
             subtitle="Update your name, website, and description."
             showChevron
           />
-          <SettingsItem 
-            icon="droplet" 
-            title="Brand elements" 
+          <SettingsItem
+            icon="droplet"
+            title="Brand elements"
             subtitle="Add your brand to invoices, emails, & more."
             showChevron
           />
-          <SettingsItem 
-            icon="check-circle" 
-            title="Setup status" 
+          <SettingsItem
+            icon="check-circle"
+            title="Setup status"
             subtitle="Tap to review content. Completed: 0%"
             showChevron
           />
-          <SettingsItem 
-            icon="lock" 
-            title="Phone number" 
+          <SettingsItem
+            icon="lock"
+            title="Phone number"
             subtitle="Add security phone number to verify it's you."
             showChevron
           />
-          <SettingsItem 
-            icon="calendar" 
-            title="OOO settings" 
+          <SettingsItem
+            icon="calendar"
+            title="OOO settings"
             subtitle="Set an out-of-office reply."
             showChevron
           />
         </View>
 
         <SectionHeader title="APP SETTINGS" />
-        
-        <View style={[styles.section, { backgroundColor: theme.backgroundCard }]}>
-          <SettingsItem 
-            icon="sliders" 
-            title="App preferences" 
+
+        <View
+          style={[styles.section, { backgroundColor: theme.backgroundCard }]}
+        >
+          <SettingsItem
+            icon="sliders"
+            title="App preferences"
             subtitle="Manage your calendar, reminders, and sound..."
             showChevron
           />
-          <SettingsItem 
-            icon="cpu" 
-            title="thePhotoCrm AI" 
+          <SettingsItem
+            icon="cpu"
+            title="thePhotoCrm AI"
             subtitle="Manage AI settings."
             showChevron
           />
-          <SettingsItem 
-            icon="bell" 
-            title="Mobile notifications" 
+          <SettingsItem
+            icon="bell"
+            title="Mobile notifications"
             subtitle="Manage your real-time updates."
             showChevron
           />
         </View>
 
         <SectionHeader title="GENERAL" />
-        
-        <View style={[styles.section, { backgroundColor: theme.backgroundCard }]}>
-          <SettingsItem 
-            icon="message-circle" 
-            title="Chat with us" 
-          />
-          <SettingsItem 
-            icon="help-circle" 
-            title="Help center" 
-          />
-          <SettingsItem 
-            icon="globe" 
-            title="Connect with the Community" 
-          />
-          <SettingsItem 
-            icon="trash-2" 
-            title="Delete account" 
-            danger
-          />
-          <SettingsItem 
-            icon="file-text" 
-            title="Terms & privacy" 
-          />
+
+        <View
+          style={[styles.section, { backgroundColor: theme.backgroundCard }]}
+        >
+          <SettingsItem icon="message-circle" title="Chat with us" />
+          <SettingsItem icon="help-circle" title="Help center" />
+          <SettingsItem icon="globe" title="Connect with the Community" />
+          <SettingsItem icon="trash-2" title="Delete account" danger />
+          <SettingsItem icon="file-text" title="Terms & privacy" />
         </View>
 
         <View style={styles.footer}>
-          <ThemedText style={[styles.connectLabel, { color: theme.textSecondary }]}>CONNECT WITH US</ThemedText>
+          <ThemedText
+            style={[styles.connectLabel, { color: theme.textSecondary }]}
+          >
+            CONNECT WITH US
+          </ThemedText>
           <View style={styles.socialIcons}>
-            <Pressable 
-              style={[styles.socialButton, { backgroundColor: theme.backgroundSecondary }]}
+            <Pressable
+              style={[
+                styles.socialButton,
+                { backgroundColor: theme.backgroundSecondary },
+              ]}
               onPress={() => handleOpenLink("https://facebook.com")}
             >
               <Feather name="facebook" size={20} color={theme.text} />
             </Pressable>
-            <Pressable 
-              style={[styles.socialButton, { backgroundColor: theme.backgroundSecondary }]}
+            <Pressable
+              style={[
+                styles.socialButton,
+                { backgroundColor: theme.backgroundSecondary },
+              ]}
               onPress={() => handleOpenLink("https://twitter.com")}
             >
               <Feather name="twitter" size={20} color={theme.text} />
             </Pressable>
-            <Pressable 
-              style={[styles.socialButton, { backgroundColor: theme.backgroundSecondary }]}
+            <Pressable
+              style={[
+                styles.socialButton,
+                { backgroundColor: theme.backgroundSecondary },
+              ]}
               onPress={() => handleOpenLink("https://instagram.com")}
             >
               <Feather name="instagram" size={20} color={theme.text} />
@@ -254,7 +300,7 @@ export function SettingsScreen() {
 
           <ThemedText style={styles.appName}>thePhotoCrm</ThemedText>
 
-          <Pressable 
+          <Pressable
             style={[styles.logoutButton, { borderColor: theme.border }]}
             onPress={handleLogout}
           >
@@ -262,7 +308,9 @@ export function SettingsScreen() {
             <ThemedText style={styles.logoutText}>Log out</ThemedText>
           </Pressable>
 
-          <ThemedText style={[styles.version, { color: theme.textSecondary }]}>v 1.0.0 (1), rev 1</ThemedText>
+          <ThemedText style={[styles.version, { color: theme.textSecondary }]}>
+            v 1.0.0 (1), rev 1
+          </ThemedText>
         </View>
       </ScrollView>
     </ThemedView>

@@ -1,0 +1,161 @@
+1. Kill Manual Naming at Step 1
+
+Problem:
+Users don’t yet know what they’re naming → junk names, long-term clutter.
+
+Fix:
+
+Remove Step 1 entirely or
+
+Auto-generate name live as choices are made
+
+Example auto-name:
+
+New Inquiry → Send Welcome Email (Immediate)
+
+Allow edit only at Review step.
+
+Why this matters:
+Automation lists rot fast. Names are the index. Garbage here poisons the system.
+
+2. Rename Steps to Match Mental Models
+
+You currently have conceptual duplication.
+
+Change:
+
+Step 3 → Choose an Action
+
+Step 4 → Configure Action
+
+Do not underestimate how much clarity this buys you.
+
+3. Explicitly State Execution Rules (Once vs Repeating)
+
+Right now, users must infer behavior.
+
+Add one non-negotiable sentence in Step 5:
+
+“This automation runs once per trigger unless the trigger occurs again.”
+
+or more specific:
+
+“Each time a project enters this stage, this automation will run.”
+
+Why:
+This prevents the #1 automation misunderstanding: “Is this recurring?”
+
+4. Force Explicit Timing Choice
+
+Defaulting to “Send Immediately” is dangerous.
+
+Fix:
+
+Require the user to actively choose:
+
+○ Send immediately
+
+○ Send after delay
+
+No default selection.
+
+Why:
+Defaults = responsibility transfer. Don’t own user mistakes.
+
+⚠️ Tier 2 — Strongly Recommended (Medium Effort, High Trust)
+5. Visually Separate “Messaging” vs “Pipeline” Actions
+
+Right now they’re siblings. They shouldn’t be.
+
+Fix:
+Use section headers or cards:
+
+📩 Client Communication
+
+🔁 Pipeline Automation
+
+This reinforces consequences.
+
+6. Add “Dry Run” Explanation to Test Buttons
+
+Testing without context causes fear.
+
+Microcopy next to Test:
+
+“Sends a test message to you only. Does not affect clients.”
+
+If that’s not true — make it true.
+
+7. Prevent Contradictory Automations
+
+Example:
+
+Move to Stage A
+
+AND move to Stage B
+
+Fix:
+
+Soft validation warning:
+
+“Multiple stage movements may conflict. Are you sure?”
+
+Not a block — a speed bump.
+
+8. Surface Trigger Scope at All Times
+
+Users forget context mid-build.
+
+Persistent breadcrumb:
+
+Trigger: Stage → New Inquiry
+
+Visible on Steps 3–5.
+
+Why:
+Context loss = configuration errors.
+
+🧠 Tier 3 — Power-User & System Integrity (Higher Effort, Big Payoff)
+9. Introduce Automation “Types” (Internally Enforced)
+
+Behind the scenes, tag automations as:
+
+Communication
+
+Pipeline
+
+Deadline-based
+
+System
+
+Expose lightly in UI (icon + label).
+
+Why:
+This future-proofs filtering, conflict resolution, and analytics.
+
+10. Add an “Impact Summary” in Review
+
+Not what it is — what it does.
+
+Example:
+
+✔ Sends 1 email
+✔ Runs immediately
+✔ Triggers when client enters New Inquiry
+⚠ Can send multiple times if client re-enters stage
+
+This is confidence-building, not fluff.
+
+11. Lock High-Risk Changes After Activation
+
+Edits to:
+
+Trigger
+
+Timing
+
+should prompt:
+
+“This change affects active automations. Continue?”
+
+You’re protecting them from themselves.

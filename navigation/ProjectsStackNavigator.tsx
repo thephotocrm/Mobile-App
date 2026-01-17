@@ -1,9 +1,12 @@
-import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ProjectsListScreen from '@/screens/ProjectsListScreen';
-import ProjectDetailScreen from '@/screens/ProjectDetailScreen';
-import { getMainScreenOptions, getCommonScreenOptions } from '@/navigation/screenOptions';
-import { useTheme } from '@/hooks/useTheme';
+import React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import ProjectsListScreen from "@/screens/ProjectsListScreen";
+import ProjectDetailScreen from "@/screens/ProjectDetailScreen";
+import {
+  getMainScreenOptions,
+  getCommonScreenOptions,
+} from "@/navigation/screenOptions";
+import { useTheme } from "@/hooks/useTheme";
 
 export type ProjectsStackParamList = {
   ProjectsList: undefined;
@@ -34,7 +37,7 @@ export default function ProjectsStackNavigator() {
         name="ProjectDetail"
         component={ProjectDetailScreen}
         options={{
-          headerTitle: 'Project Details',
+          headerTitle: "Project Details",
           headerTransparent: false,
           headerStyle: {
             backgroundColor: theme.backgroundRoot,

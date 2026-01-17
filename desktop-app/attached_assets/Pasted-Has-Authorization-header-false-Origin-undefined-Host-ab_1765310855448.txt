@@ -1,0 +1,118 @@
+Has Authorization header: false
+Origin: undefined
+Host: abbiestreet.tpcportal.co
+Token from cookie: client
+Token exists: true
+Auth source: client
+Token payload: true
+Authentication successful, continuing to route
+✅ Found photographer: Austin Pacholek Photography (ID: a16236ad-09ab-44ce-b5d9-b985017fa780)
+8:06:19 PM [express] GET /api/auth/me 304 in 425ms :: {"id":"3ce2ab72-0c7f-4261-88a2-52b9bc962370","…
+8:06:19 PM [express] GET /api/domain 304 in 509ms :: {"type":"client_portal","photographerSlug":"abb…
+📥 INCOMING REQUEST: GET /api/client-portal/projects/bffa3ff9-4de6-483f-8e39-72103c20bb8a
+   Headers: undefined
+🌐 Domain detection: abbiestreet.tpcportal.co
+  → Client portal subdomain detected: abbiestreet
+🔍 Looking up photographer by slug: abbiestreet for API route: /api/client-portal/projects/bffa3ff9-4de6-483f-8e39-72103c20bb8a
+📥 INCOMING REQUEST: GET /api/client-portal/projects
+   Headers: undefined
+🌐 Domain detection: abbiestreet.tpcportal.co
+  → Client portal subdomain detected: abbiestreet
+🔍 Looking up photographer by slug: abbiestreet for API route: /api/client-portal/projects
+✅ Found photographer: Austin Pacholek Photography (ID: a16236ad-09ab-44ce-b5d9-b985017fa780)
+Host: abbiestreet.tpcportal.co
+Token from cookie: client
+Token exists: true
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/client-portal/projects/bffa3ff9-4de6-483f-8e39-72103c20bb8a
+Auth source: client
+Request method: GET
+Token payload: true
+Has cookies object: true
+All cookies: {"__stripe_mid":"b39731fc-970c-430f-962a-cf85872cf525e6fab7","client_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzY2UyYWI3Mi0wYzdmLTQyNjEtODhhMi01MmI5YmM5NjIzNzAiLCJlbWFpbCI6ImF1c3RpbnBhY2hvbGVrMjAxNEBnbWFpbC5jb20iLCJyb2xlIjoiQ0xJRU5UIiwicGhvdG9ncmFwaGVySWQiOiJhMTYyMzZhZC0wOWFiLTQ0Y2UtYjVkOS1iOTg1MDE3ZmE3ODAiLCJpYXQiOjE3NjUwNDI2MjgsImV4cCI6MTc2NTY0NzQyOH0.hr-KS67ke8rXRC6-PTUkcAjJlt5mXGMb1mOHIEAqDo0","__stripe_sid":"3fc101b8-eca2-45a5-bbba-23e5f1aa15b38990cb"}
+Authentication successful, continuing to route
+Cookie header: __stripe_mid=b39731fc-970c-430f-962a-cf85872cf525e6fab7; client_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzY2UyYWI3Mi0wYzdmLTQyNjEtODhhMi01MmI5YmM5NjIzNzAiLCJlbWFpbCI6ImF1c3RpbnBhY2hvbGVrMjAxNEBnbWFpbC5jb20iLCJyb2xlIjoiQ0xJRU5UIiwicGhvdG9ncmFwaGVySWQiOiJhMTYyMzZhZC0wOWFiLTQ0Y2UtYjVkOS1iOTg1MDE3ZmE3ODAiLCJpYXQiOjE3NjUwNDI2MjgsImV4cCI6MTc2NTY0NzQyOH0.hr-KS67ke8rXRC6-PTUkcAjJlt5mXGMb1mOHIEAqDo0; __stripe_sid=3fc101b8-eca2-45a5-bbba-23e5f1aa15b38990cb
+✅ SECURITY: User austinpacholek2014@gmail.com authorized for photographer a16236ad-09ab-44ce-b5d9-b985017fa780
+Has Authorization header: false
+Origin: undefined
+✅ Found photographer: Austin Pacholek Photography (ID: a16236ad-09ab-44ce-b5d9-b985017fa780)
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/client-portal/projects
+Request method: GET
+Has cookies object: true
+All cookies: {"__stripe_mid":"b39731fc-970c-430f-962a-cf85872cf525e6fab7","client_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzY2UyYWI3Mi0wYzdmLTQyNjEtODhhMi01MmI5YmM5NjIzNzAiLCJlbWFpbCI6ImF1c3RpbnBhY2hvbGVrMjAxNEBnbWFpbC5jb20iLCJyb2xlIjoiQ0xJRU5UIiwicGhvdG9ncmFwaGVySWQiOiJhMTYyMzZhZC0wOWFiLTQ0Y2UtYjVkOS1iOTg1MDE3ZmE3ODAiLCJpYXQiOjE3NjUwNDI2MjgsImV4cCI6MTc2NTY0NzQyOH0.hr-KS67ke8rXRC6-PTUkcAjJlt5mXGMb1mOHIEAqDo0","__stripe_sid":"3fc101b8-eca2-45a5-bbba-23e5f1aa15b38990cb"}
+Cookie header: __stripe_mid=b39731fc-970c-430f-962a-cf85872cf525e6fab7; client_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzY2UyYWI3Mi0wYzdmLTQyNjEtODhhMi01MmI5YmM5NjIzNzAiLCJlbWFpbCI6ImF1c3RpbnBhY2hvbGVrMjAxNEBnbWFpbC5jb20iLCJyb2xlIjoiQ0xJRU5UIiwicGhvdG9ncmFwaGVySWQiOiJhMTYyMzZhZC0wOWFiLTQ0Y2UtYjVkOS1iOTg1MDE3ZmE3ODAiLCJpYXQiOjE3NjUwNDI2MjgsImV4cCI6MTc2NTY0NzQyOH0.hr-KS67ke8rXRC6-PTUkcAjJlt5mXGMb1mOHIEAqDo0; __stripe_sid=3fc101b8-eca2-45a5-bbba-23e5f1aa15b38990cb
+Has Authorization header: false
+Origin: undefined
+Host: abbiestreet.tpcportal.co
+Token from cookie: client
+Token exists: true
+Auth source: client
+Token payload: true
+Authentication successful, continuing to route
+8:06:20 PM [express] GET /api/client-portal/projects 304 in 624ms :: [{"id":"bffa3ff9-4de6-483f-8e39…
+    {
+✅ SECURITY: User austinpacholek2014@gmail.com authorized for photographer a16236ad-09ab-44ce-b5d9-b985017fa780
+📁 [CLIENT PORTAL PROJECT] Project bffa3ff9-4de6-483f-8e39-72103c20bb8a Smart Files query returned: {
+      id: '487f5ef1-369d-4f67-9fec-514639ea3640',
+    {
+  count: 7,
+[CLIENT PORTAL PROJECTS] Request from user: austinpacholek2014@gmail.com, photographerId: a16236ad-09ab-44ce-b5d9-b985017fa780
+      title: '8 Hour Wedding Photo/Video',
+      id: '982876c8-f554-4980-a6ed-dfb27cb46e49',
+  files: [
+[CLIENT PORTAL PROJECTS] Found contact: 87d952ee-a2e6-4724-8a69-f2d8dd79be53, photographerId: a16236ad-09ab-44ce-b5d9-b985017fa780
+      title: 'dwdw',
+[CLIENT PORTAL PROJECTS] Own projects count: 1
+      status: 'DEPOSIT_PAID',
+[CLIENT PORTAL PROJECTS] Participant projects count: 0
+      createdAt: 2025-12-05T22:19:46.920Z
+[CLIENT PORTAL PROJECTS] Total projects before filtering: 1
+    },
+[CLIENT PORTAL PROJECTS] Projects after photographer filter: 1
+[CLIENT PORTAL PROJECTS] Returning 1 formatted projects
+    },
+    },
+    {
+    {
+      id: 'ad23140e-76f4-4c91-a75d-851aa20b7005',
+      id: '5d9c5845-a134-41b1-8d9b-46e8dd1ff2b5',
+      id: 'bc63f128-8ced-436b-83c6-681333c8dcd0',
+      title: 'Wedding Package Glossary',
+      title: 'Wedding Package Glossary',
+      status: 'ACCEPTED',
+      status: 'VIEWED',
+      createdAt: 2025-11-25T05:52:55.764Z
+      createdAt: 2025-11-25T08:54:52.477Z
+      status: 'ACCEPTED',
+    },
+      createdAt: 2025-12-05T22:07:16.860Z
+    {
+    },
+    {
+      id: 'f4e648a8-a098-4292-bdf1-3de2c2ed8ac5',
+      title: 'Wedding Package Glossary',
+      status: 'ACCEPTED',
+      createdAt: 2025-11-25T10:22:23.631Z
+    },
+    {
+      id: '3d2513b8-7f53-4bb8-aec9-6d4ae7a8a2aa',
+      title: 'Wedding Package Glossary',
+      status: 'ACCEPTED',
+      createdAt: 2025-11-25T09:12:07.498Z
+      title: 'Wedding Package Glossary',
+      status: 'DEPOSIT_PAID',
+      createdAt: 2025-11-21T08:16:30.241Z
+    }
+  ]
+}
+8:06:20 PM [express] GET /api/client-portal/projects/bffa3ff9-4de6-483f-8e39-72103c20bb8a 304 in 104…
+📥 INCOMING REQUEST: GET /api/galleries/d372ce59-a575-41e3-9267-3fd824e7e8dc/view
+   Headers: undefined
+🌐 Domain detection: abbiestreet.tpcportal.co
+  → Client portal subdomain detected: abbiestreet
+🔍 Looking up photographer by slug: abbiestreet for API route: /api/galleries/d372ce59-a575-41e3-9267-3fd824e7e8dc/view
+📥 INCOMING REQUEST: GET /api/galleries/d372ce59-a575-41e3-9267-3fd824e7e8dc/favorites
+   Headers: undefined
+🌐 Domain detection: abbiestreet.tpcportal.co
+  → Client portal subdomain detected: abbiestreet

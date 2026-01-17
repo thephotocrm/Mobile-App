@@ -1,0 +1,83 @@
+🔍 Looking up photographer by slug: abbiestreet for API route: /api/domain
+✅ Found photographer: Austin Pacholek Photography (ID: a16236ad-09ab-44ce-b5d9-b985017fa780)
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/auth/me
+Request method: GET
+Has cookies object: true
+All cookies: {"__stripe_mid":"b39731fc-970c-430f-962a-cf85872cf525e6fab7","client_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzY2UyYWI3Mi0wYzdmLTQyNjEtODhhMi01MmI5YmM5NjIzNzAiLCJlbWFpbCI6ImF1c3RpbnBhY2hvbGVrMjAxNEBnbWFpbC5jb20iLCJyb2xlIjoiQ0xJRU5UIiwicGhvdG9ncmFwaGVySWQiOiJhMTYyMzZhZC0wOWFiLTQ0Y2UtYjVkOS1iOTg1MDE3ZmE3ODAiLCJpYXQiOjE3NjUwNDI2MjgsImV4cCI6MTc2NTY0NzQyOH0.hr-KS67ke8rXRC6-PTUkcAjJlt5mXGMb1mOHIEAqDo0","__stripe_sid":"3fc101b8-eca2-45a5-bbba-23e5f1aa15b38990cb"}
+📥 INCOMING REQUEST: GET /api/galleries/d372ce59-a575-41e3-9267-3fd824e7e8dc/favorites
+   Headers: undefined
+🌐 Domain detection: abbiestreet.tpcportal.co
+  → Client portal subdomain detected: abbiestreet
+🔍 Looking up photographer by slug: abbiestreet for API route: /api/galleries/d372ce59-a575-41e3-9267-3fd824e7e8dc/favorites
+✅ Found photographer: Austin Pacholek Photography (ID: a16236ad-09ab-44ce-b5d9-b985017fa780)
+✅ Found photographer: Austin Pacholek Photography (ID: a16236ad-09ab-44ce-b5d9-b985017fa780)
+8:37:18 PM [express] GET /api/galleries/d372ce59-a575-41e3-9267-3fd824e7e8dc/favorites 304 in 498ms …
+🖼️ [GALLERY VIEW DEBUG] Gallery ID: d372ce59-a575-41e3-9267-3fd824e7e8dc
+🖼️ [GALLERY VIEW DEBUG] Gallery projectId: bffa3ff9-4de6-483f-8e39-72103c20bb8a
+🖼️ [GALLERY VIEW DEBUG] Gallery isPublic: false
+🖼️ [GALLERY VIEW DEBUG] authResult: { source: 'client', hasToken: true }
+🖼️ [GALLERY VIEW DEBUG] Decoded JWT userId: 3ce2ab72-0c7f-4261-88a2-52b9bc962370 role: CLIENT
+🖼️ [GALLERY VIEW DEBUG] User found: {
+  id: '3ce2ab72-0c7f-4261-88a2-52b9bc962370',
+  role: 'CLIENT',
+  clientId: '87d952ee-a2e6-4724-8a69-f2d8dd79be53'
+}
+🖼️ [GALLERY VIEW DEBUG] Contact found: {
+  id: '87d952ee-a2e6-4724-8a69-f2d8dd79be53',
+  email: 'austinpacholek2014@gmail.com'
+}
+🖼️ [GALLERY VIEW DEBUG] Project found: { id: 'bffa3ff9-4de6-483f-8e39-72103c20bb8a', contactId: undefined }
+🖼️ [GALLERY VIEW DEBUG] Comparing project.contactId: undefined vs contact.id: 87d952ee-a2e6-4724-8a69-f2d8dd79be53
+🖼️ [GALLERY VIEW DEBUG] Participants: []
+🖼️ [GALLERY VIEW DEBUG] Final isAuthorizedClient: false
+8:37:19 PM [express] GET /api/galleries/d372ce59-a575-41e3-9267-3fd824e7e8dc/view 403 in 1300ms :: {…
+📥 INCOMING REQUEST: GET /api/galleries/d372ce59-a575-41e3-9267-3fd824e7e8dc/view
+   Headers: undefined
+🌐 Domain detection: abbiestreet.tpcportal.co
+  → Client portal subdomain detected: abbiestreet
+🔍 Looking up photographer by slug: abbiestreet for API route: /api/galleries/d372ce59-a575-41e3-9267-3fd824e7e8dc/view
+✅ Found photographer: Austin Pacholek Photography (ID: a16236ad-09ab-44ce-b5d9-b985017fa780)
+🖼️ [GALLERY VIEW DEBUG] Gallery ID: d372ce59-a575-41e3-9267-3fd824e7e8dc
+🖼️ [GALLERY VIEW DEBUG] Gallery projectId: bffa3ff9-4de6-483f-8e39-72103c20bb8a
+🖼️ [GALLERY VIEW DEBUG] Gallery isPublic: false
+🖼️ [GALLERY VIEW DEBUG] authResult: { source: 'client', hasToken: true }
+🖼️ [GALLERY VIEW DEBUG] Decoded JWT userId: 3ce2ab72-0c7f-4261-88a2-52b9bc962370 role: CLIENT
+🖼️ [GALLERY VIEW DEBUG] User found: {
+  id: '3ce2ab72-0c7f-4261-88a2-52b9bc962370',
+  role: 'CLIENT',
+  clientId: '87d952ee-a2e6-4724-8a69-f2d8dd79be53'
+}
+🖼️ [GALLERY VIEW DEBUG] Contact found: {
+  id: '87d952ee-a2e6-4724-8a69-f2d8dd79be53',
+  email: 'austinpacholek2014@gmail.com'
+}
+🖼️ [GALLERY VIEW DEBUG] Project found: { id: 'bffa3ff9-4de6-483f-8e39-72103c20bb8a', contactId: undefined }
+🖼️ [GALLERY VIEW DEBUG] Comparing project.contactId: undefined vs contact.id: 87d952ee-a2e6-4724-8a69-f2d8dd79be53
+🖼️ [GALLERY VIEW DEBUG] Participants: []
+🖼️ [GALLERY VIEW DEBUG] Final isAuthorizedClient: false
+8:37:20 PM [express] GET /api/galleries/d372ce59-a575-41e3-9267-3fd824e7e8dc/view 403 in 922ms :: {"…
+📥 INCOMING REQUEST: GET /api/inbox/unread-count
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/inbox/unread-count
+Request method: GET
+Has cookies object: true
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","photographer_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzZTMyZDg2NC0xNWIxLTRiOTItYWZlZC1jYjJkMTcyZDQ4ZTgiLCJlbWFpbCI6ImF1c3RpbnBhY2hvbGVrMjAxNEBnbWFpbC5jb20iLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJhMTYyMzZhZC0wOWFiLTQ0Y2UtYjVkOS1iOTg1MDE3ZmE3ODAiLCJpYXQiOjE3NjQ5NzE5NzgsImV4cCI6MTc2NTU3Njc3OH0.FtHYoFSqZH_aYhsZ6MgYLWwDAIKu82t7W9w3gppmXhY"}
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; photographer_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzZTMyZDg2NC0xNWIxLTRiOTItYWZlZC1jYjJkMTcyZDQ4ZTgiLCJlbWFpbCI6ImF1c3RpbnBhY2hvbGVrMjAxNEBnbWFpbC5jb20iLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJhMTYyMzZhZC0wOWFiLTQ0Y2UtYjVkOS1iOTg1MDE3ZmE3ODAiLCJpYXQiOjE3NjQ5NzE5NzgsImV4cCI6MTc2NTU3Njc3OH0.FtHYoFSqZH_aYhsZ6MgYLWwDAIKu82t7W9w3gppmXhY
+Has Authorization header: false
+Origin: undefined
+Host: app.thephotocrm.com
+Token from cookie: photographer
+Token exists: true
+Auth source: photographer
+Token payload: true
+🌐 Domain detection: app.thephotocrm.com
+Authentication successful, continuing to route
+📥 INCOMING REQUEST: GET /api/domain
+  → Photographer domain detected
+   Headers: undefined
+8:37:26 PM [express] GET /api/domain 304 in 1ms :: {"type":"photographer"}
+8:37:26 PM [express] GET /api/inbox/unread-count 304 in 398ms :: {"unreadCount":0}

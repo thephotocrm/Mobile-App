@@ -1,0 +1,33 @@
+injected.js:37 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ injected.js:37
+(anonymous) @ chunk-LY4YDYTP.js?v=8acdf224:339
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8acdf224:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8acdf224:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8acdf224:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8acdf224:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8acdf224:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8acdf224:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8acdf224:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=8acdf224:19416
+commitRoot @ chunk-RPCDYKBN.js?v=8acdf224:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8acdf224:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8acdf224:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8acdf224:18627
+injected.js:37 [ButtonInsert] editorContainer: <div data-replit-metadata=​"client/​src/​components/​AutomationWizard.tsx:​1194:​30" data-component-name=​"div" class=​"mt-1">​…​</div>​
+injected.js:37 [ButtonInsert] editor element: <div data-replit-metadata=​"client/​src/​components/​ButtonRichTextEditor.tsx:​335:​6" data-component-name=​"div" contenteditable=​"true" class=​"
+          w-full rounded-md border border-input bg-background px-3 py-2
+          text-sm ring-offset-background
+          focus:​outline-none focus:​ring-2 focus:​ring-ring focus:​ring-offset-2
+          disabled:​cursor-not-allowed disabled:​opacity-50
+          overflow-auto whitespace-pre-wrap
+          rich-text-editor
+        " data-testid=​"button-rich-text-editor" style=​"min-height:​ 120px;​">​…​</div>​
+injected.js:37 [ButtonInsert] insertButton method exists: true
+injected.js:37 [ButtonInsert] Calling insertButton with: CALENDAR sve
+injected.js:37 [insertButton] Called with: {linkType: 'CALENDAR', buttonText: 'sve', customUrl: undefined}
+injected.js:37 [insertButton] chipHtml: <span contenteditable="false" class="button-chip" data-button-marker="%5B%5BBUTTON%3ACALENDAR%3Asve%5D%5D" data-link-type="CALENDAR" data-button-text="sve" data-custom-url=""><span class="chip-content">sve</span><span class="chip-delete" data-action="delete">×</span></span>
+injected.js:37 [insertButton] selection: Selection {anchorNode: div, anchorOffset: 1, focusNode: div, focusOffset: 1, isCollapsed: true, …} rangeCount: 1
+injected.js:37 [insertButton] range: Range {commonAncestorContainer: div, startContainer: div, startOffset: 1, endContainer: div, endOffset: 1, …} startContainer: <div data-replit-metadata=​"client/​src/​components/​AutomationWizard.tsx:​1551:​12" data-component-name=​"div">​…​</div>​
+injected.js:37 [insertButton] Selection not inside editor, appending to end
+injected.js:37 [insertButton] Editor innerHTML after insert: dwdwd <span contenteditable="false" class="button-chip" data-button-marker="%5B%5BBUTTON%3ACALENDAR%3Asve%5D%5D" data-link-type="CALENDAR" data-button-text="sve" data-custom-url=""><span class="chip-content">sve</span><span class="chip-delete" data-action="delete">×</span></span>
+injected.js:37 [insertButton] handleInput called

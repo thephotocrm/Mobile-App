@@ -1,7 +1,7 @@
-import React from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
-import { useTheme } from '@/hooks/useTheme';
-import { Spacing, Typography } from '@/constants/theme';
+import React from "react";
+import { Pressable, StyleSheet, Text } from "react-native";
+import { useTheme } from "@/hooks/useTheme";
+import { Spacing, Typography } from "@/constants/theme";
 
 interface SecondaryButtonProps {
   title: string;
@@ -9,7 +9,11 @@ interface SecondaryButtonProps {
   disabled?: boolean;
 }
 
-export function SecondaryButton({ title, onPress, disabled }: SecondaryButtonProps) {
+export function SecondaryButton({
+  title,
+  onPress,
+  disabled,
+}: SecondaryButtonProps) {
   const { theme } = useTheme();
 
   return (
@@ -33,10 +37,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     borderRadius: 8,
     borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     minHeight: Spacing.buttonHeight,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   text: {
     fontSize: Typography.button.fontSize,

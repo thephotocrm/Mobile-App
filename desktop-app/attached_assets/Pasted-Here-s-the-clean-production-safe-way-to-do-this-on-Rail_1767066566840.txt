@@ -1,0 +1,184 @@
+Here’s the clean, production-safe way to do this on Railway with Drizzle, given your setup (site + DB both on Railway).
+
+I’ll be direct and opinionated because this matters.
+
+1) Situation
+
+You are:
+
+Hosting the app on Railway
+
+Hosting Postgres on Railway
+
+Using Drizzle ORM
+
+Currently relying on drizzle-kit push
+
+You want:
+
+“The best way to migrate on every deploy without breaking prod.”
+
+2) Core principle (this is the mental model)
+
+On Railway, deploy = new container.
+
+So the only safe strategy is:
+
+Run migrations during build or startup, before the app serves traffic
+
+Not manually.
+Not from your laptop.
+Not “sometimes.”
+
+3) The BEST approach (recommended)
+✅ Use Drizzle migrations + run them on every deploy
+
+That means:
+
+Generate migrations locally
+
+Apply migrations automatically in Railway
+
+Never use push in production
+
+4) Why drizzle-kit push is NOT the best long-term option
+
+You can do it — but here’s the honest tradeoff:
+
+push	Migrations
+Fast	Slight setup
+No history	Versioned
+Can drop columns	Safe diffs
+Bad for SaaS	Industry standard
+
+For ThePhotoCRM, which is multi-tenant and growing:
+👉 Migrations are the correct call
+
+5) The correct setup (step-by-step)
+Step 1: Generate migrations locally (one-time habit)
+
+On your machine:
+
+npx drizzle-kit generate
+
+
+This creates:
+
+/drizzle
+  └── 0001_init.sql
+
+
+Commit these files.
+
+Step 2: Add a migrate script
+
+Update package.json:
+
+"scripts": {
+  "db:migrate": "drizzle-kit migrate",
+  "build": "npm run db:migrate && vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+  "start": "NODE_ENV=production node dist/index.js"
+}
+
+
+This is the key line:
+
+npm run db:migrate
+
+Step 3: Why this works perfectly on Railway
+
+On every deploy, Railway does:
+
+Injects DATABASE_URL
+
+Runs npm run build
+
+→ drizzle-kit migrate executes
+
+Pending migrations are applied
+
+App starts with correct schema
+
+Drizzle migrations are:
+
+Idempotent
+
+Tracked
+
+Safe to run every deploy
+
+If nothing changed → nothing happens.
+
+6) Where NOT to run migrations
+
+❌ Inside server/index.ts
+❌ On app startup hooks
+❌ In cron jobs
+❌ Manually in Railway shell
+
+Why:
+
+Race conditions
+
+Multiple instances
+
+Hard-to-debug crashes
+
+Build-time is correct.
+
+7) Environment safety (important)
+Railway environments
+
+You’ll likely have:
+
+production
+
+preview (PR deploys)
+
+This setup works unchanged for both.
+
+Each environment has:
+
+Its own DATABASE_URL
+
+Its own migration history
+
+8) Final recommendation (no hedging)
+
+Do this:
+
+Use Drizzle migrations
+
+Run drizzle-kit migrate in build
+
+Commit migration files
+
+Never use push in prod again
+
+Avoid this:
+
+push on production data
+
+Runtime schema changes
+
+Manual DB fiddling
+
+9) Final sanity check (1 quick question)
+
+Before I lock this 100%:
+
+Do you already have production data you care about?
+
+Yes → migrations ONLY
+
+No → we can temporarily use push, then switch
+
+If you want, next we can:
+
+Audit drizzle.config.ts
+
+Confirm SSL / pool config for Railway
+
+Set up preview-DB isolation
+
+You’re very close — this is the last infra “gotcha” before things feel solid.

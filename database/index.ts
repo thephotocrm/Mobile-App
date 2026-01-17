@@ -1,4 +1,4 @@
-import * as SQLite from 'expo-sqlite';
+import * as SQLite from "expo-sqlite";
 
 let db: SQLite.SQLiteDatabase | null = null;
 
@@ -7,7 +7,7 @@ export async function initializeDatabase(): Promise<SQLite.SQLiteDatabase> {
     return db;
   }
 
-  db = await SQLite.openDatabaseAsync('photocrm.db');
+  db = await SQLite.openDatabaseAsync("photocrm.db");
 
   await db.execAsync(`
     PRAGMA journal_mode = WAL;
@@ -106,7 +106,9 @@ export async function initializeDatabase(): Promise<SQLite.SQLiteDatabase> {
 
 export function getDatabase(): SQLite.SQLiteDatabase {
   if (!db) {
-    throw new Error('Database not initialized. Call initializeDatabase() first.');
+    throw new Error(
+      "Database not initialized. Call initializeDatabase() first.",
+    );
   }
   return db;
 }

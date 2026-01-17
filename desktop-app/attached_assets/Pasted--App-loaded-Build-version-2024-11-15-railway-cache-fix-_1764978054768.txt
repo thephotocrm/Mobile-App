@@ -1,0 +1,56 @@
+🚀 App loaded - Build version: 2024-11-15-railway-cache-fix-v2
+shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1  GET https://api.stripe.com/v1/elements/sessions?client_secret=pi_3Sb8bHGcQTg8qNet14pwKmQt_secret_33dV2BTTxm6xGPmobOPPIvs35&key=pk_test_51SDzu2GcQTg8qNetn5PYkV1MgKrO83ZdRZ8YvFHi7MwkgWpMaEYGVKe6oxhzUZnPVsD1ZNjvnxQtyqqRE4PY0RAd00kjhouIsO&_stripe_account=acct_1Sb7ydGTT34iRpdX&_stripe_version=2025-03-31.basil&elements_init_source=stripe.elements&referrer_host=abbiestreet.tpcportal.co&stripe_js_id=04e76469-bfe5-4a27-bec9-fc4984280c3e&locale=en-US&expand[0]=payment_method_preference.payment_intent.payment_method&type=payment_intent 400 (Bad Request)
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+e @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+c @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+i @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+s @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+e @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+n @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+a @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+i @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+_ @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+d @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+t.requestParams @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+ev @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+(anonymous) @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+(anonymous) @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+n @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+a @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+i @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+(anonymous) @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+(anonymous) @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+n @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+a @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+i @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ shared-1dd01b575b2e38d3a5c01a08ec26feec.js:1
+(anonymous) @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+value @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1
+(anonymous) @ controller-with-preconnect-b074cc8a49969336d15fdcea21a18780.js:1Understand this error
+stripe.js:1 Unhandled payment Element loaderror {error: {…}}
+i._emitEvent @ stripe.js:1
+(anonymous) @ stripe.js:1
+(anonymous) @ stripe.js:1
+(anonymous) @ stripe.js:1
+_handleMessage @ stripe.js:1
+r.4505.d @ stripe.js:1
+(anonymous) @ stripe.js:1Understand this error
+FtNp60FSup5u-PaB4wBLBGqE3Ao1bQjS:1 Error while trying to use the following icon from the Manifest: https://www.gstatic.com/instantbuy/svg/transparent_square.svg (Download error or resource isn't a valid image)Understand this warning
+FtNp60FSup5u-PaB4wBLBGqE3Ao1bQjS:1 Failed to download or decode the icon from web app manifest "https://pay.google.com/gp/p/web_manifest.json" for payment handler manifest "https://google.com/pay".Understand this error
+FtNp60FSup5u-PaB4wBLBGqE3Ao1bQjS:1 Failed to download or decode a non-empty icon for payment app with "https://pay.google.com/gp/p/web_manifest.json" manifest.Understand this error
+FtNp60FSup5u-PaB4wBLBGqE3Ao1bQjS:1 Cannot download icons after the webpage has been closed (web app manifest "https://pay.google.com/gp/p/web_manifest.json" for payment handler manifest "https://google.com/pay").Understand this warning
+FtNp60FSup5u-PaB4wBLBGqE3Ao1bQjS:1 Failed to download or decode a non-empty icon for payment app with "https://pay.google.com/gp/p/web_manifest.json" manifest.

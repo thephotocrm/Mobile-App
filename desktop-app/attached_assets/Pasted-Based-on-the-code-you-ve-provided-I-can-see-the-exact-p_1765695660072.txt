@@ -1,0 +1,127 @@
+Based on the code you've provided, I can see the exact problem. Let me trace through the logic:
+The Root Cause: targetUrl Mismatch
+Look at this critical section (lines 1114-1170):
+typescript// 1. Generate the target URL with NEW baseUrl
+const targetUrl = `${baseUrl}/booking/calendar/${photographer.publicToken}`;
+
+// 2. Look for existing short link
+const existingBookingLink = existingLinks.find(link => 
+  link.linkType === 'BOOKING' && link.targetUrl === targetUrl
+);
+
+// 3. If found, use it
+if (existingBookingLink) {
+  schedulingLink = `${baseUrl}/s/${existingBookingLink.shortCode}`;
+}
+```
+
+**The problem:** The database has old short links with `targetUrl` like:
+```
+https://old-replit-url.dev/booking/calendar/abc123
+```
+
+But your code is searching for:
+```
+https://photographer-slug.tpcportal.co/booking/calendar/abc123
+These don't match! So existingBookingLink is undefined, and the code falls through to the else block to create a new short link... BUT the new short link is probably failing silently or there's an issue with the creation logic.
+Why You're Not Seeing the Console Log
+The console.log IS being called, but you might be missing it because:
+
+Railway logs might be filtered or not showing all output
+The log might be appearing but you're searching for the wrong timestamp
+There could be multiple automation runs and you're looking at the wrong one
+
+The Real Issue: What URL is Actually Being Sent?
+Here's what's likely happening:
+Scenario 1: New Link Creation is Failing
+typescriptif (existingBookingLink) {
+  // This is NOT matching because targetUrl is different
+  schedulingLink = `${baseUrl}/s/${existingBookingLink.shortCode}`;
+} else {
+  // Code falls through here to create new link
+  // But if this fails or returns undefined...
+  schedulingLink = `${baseUrl}/s/${newLink.shortCode}`;
+  // ^ newLink might be undefined or have issues
+}
+If newLink creation fails, schedulingLink might be empty or malformed.
+Scenario 2: Template Has Hardcoded Link
+Check your SMS template in the database. Does the template itself contain a hardcoded URL?
+sqlSELECT id, name, text_body 
+FROM automation_templates 
+WHERE text_body LIKE '%replit%';
+Immediate Debug Steps
+1. Add logging right before SMS send (line ~1431):
+typescriptconsole.log('🚨 [SMS-DEBUG] About to send SMS:', {
+  schedulingLink,
+  schedulingLinkLength: schedulingLink.length,
+  variables: {
+    scheduling_link: variables.scheduling_link,
+    scheduler_link: variables.scheduler_link,
+  },
+  renderedBody: body.substring(0, 200), // First 200 chars of actual SMS
+});
+2. Add logging in the short link lookup section (line ~1126):
+typescriptconsole.log('🔗 [SHORTLINK-DEBUG]:', {
+  targetUrl,
+  existingLinksCount: existingLinks.length,
+  existingBookingLink: existingBookingLink ? 'FOUND' : 'NOT FOUND',
+  allExistingTargetUrls: existingLinks.map(l => l.targetUrl),
+});
+3. Check what's actually in the database:
+sql-- See all short links for this photographer
+SELECT 
+  short_code,
+  target_url,
+  link_type,
+  created_at
+FROM short_links
+WHERE photographer_id = [YOUR_PHOTOGRAPHER_ID]
+ORDER BY created_at DESC;
+The Likely Fix
+You have old short links in the database with Replit URLs. You need to either:
+Option A: Update existing short links (Recommended)
+sqlUPDATE short_links 
+SET target_url = REPLACE(
+  target_url, 
+  'https://[old-replit-domain].replit.dev',
+  'https://[photographer-slug].tpcportal.co'
+)
+WHERE target_url LIKE '%replit.dev%';
+Option B: Delete old short links and let code create new ones
+sqlDELETE FROM short_links 
+WHERE target_url LIKE '%replit.dev%';
+Option C: Fix the lookup logic to be domain-agnostic
+typescript// Instead of exact targetUrl match, match on the path only
+const existingBookingLink = existingLinks.find(link => 
+  link.linkType === 'BOOKING' && 
+  link.targetUrl.includes(`/booking/calendar/${photographer.publicToken}`)
+);
+
+// Then UPDATE the targetUrl if found
+if (existingBookingLink) {
+  // Update the stored targetUrl to new domain
+  await storage.updateShortLinkTargetUrl(
+    existingBookingLink.id, 
+    targetUrl
+  );
+  schedulingLink = `${baseUrl}/s/${existingBookingLink.shortCode}`;
+}
+```
+
+## What to Check Right Now
+
+1. **View your Railway logs with this filter:**
+```
+   resolvePortalBaseUrl
+It should be there. If not, check Railway's log retention settings.
+
+Check the actual SMS template:
+
+sql   SELECT text_body FROM automation_templates WHERE id = [template_id];
+Does it have {{scheduler_link}} or a hardcoded URL?
+
+Check the short_links table:
+What URLs are actually stored there?
+
+The resolvePortalBaseUrl function IS working correctly. The problem is that the old short links with Replit URLs don't match the new search criteria, so the code can't find them, and something goes wrong when creating new ones.
+Tell me: What happens in the else block where new links are created? Is there error handling there?

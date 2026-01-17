@@ -12,9 +12,10 @@ export function useScreenInsets() {
   const tabBarHeight = useBottomTabBarHeight();
 
   // If using custom header (nativeHeaderHeight is 0), calculate it manually
-  const headerHeight = nativeHeaderHeight > 0 
-    ? nativeHeaderHeight 
-    : insets.top + CUSTOM_HEADER_CONTENT_HEIGHT + Spacing.sm;
+  const headerHeight =
+    nativeHeaderHeight > 0
+      ? nativeHeaderHeight
+      : insets.top + CUSTOM_HEADER_CONTENT_HEIGHT + Spacing.sm;
 
   return {
     paddingTop: headerHeight + Spacing.md,

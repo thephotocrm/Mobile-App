@@ -1,10 +1,10 @@
-import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import BookingsScreen from '@/screens/BookingsScreen';
-import BookingDetailScreen from '@/screens/BookingDetailScreen';
-import { getCommonScreenOptions } from './screenOptions';
-import { HeaderTitle } from '@/components/HeaderTitle';
-import { useTheme } from '@/hooks/useTheme';
+import React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import BookingsScreen from "@/screens/BookingsScreen";
+import BookingDetailScreen from "@/screens/BookingDetailScreen";
+import { getCommonScreenOptions } from "./screenOptions";
+import { HeaderTitle } from "@/components/HeaderTitle";
+import { useTheme } from "@/hooks/useTheme";
 
 export type BookingsStackParamList = {
   BookingsList: undefined;
@@ -33,7 +33,7 @@ export default function BookingsStackNavigator() {
         name="BookingDetail"
         component={BookingDetailScreen}
         options={{
-          headerTitle: 'Booking Details',
+          headerTitle: "Booking Details",
           headerTransparent: false,
         }}
       />

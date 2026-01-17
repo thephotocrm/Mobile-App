@@ -12,7 +12,7 @@ import { Feather } from "@expo/vector-icons";
 import { Spacing, BorderRadius, Fonts, Colors } from "@/constants/theme";
 
 const fallbackTheme = {
-  background: Colors.light.background,
+  background: Colors.light.backgroundRoot,
   backgroundDefault: Colors.light.backgroundSecondary,
   text: Colors.light.text,
   link: Colors.light.primary,
@@ -96,7 +96,12 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
           onRequestClose={() => setIsModalVisible(false)}
         >
           <View style={styles.modalOverlay}>
-            <View style={[styles.modalContainer, { backgroundColor: theme.background }]}>
+            <View
+              style={[
+                styles.modalContainer,
+                { backgroundColor: theme.background },
+              ]}
+            >
               <View style={styles.modalHeader}>
                 <Text style={[styles.modalTitle, { color: theme.text }]}>
                   Error Details

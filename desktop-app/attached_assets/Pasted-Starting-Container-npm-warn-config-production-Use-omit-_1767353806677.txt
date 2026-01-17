@@ -1,0 +1,124 @@
+Starting Container
+npm warn config production Use `--omit=dev` instead.
+> rest-express@1.0.0 start
+> NODE_ENV=production node dist/index.js
+🔐 Cloudinary config check: {
+  hasCloudName: true,
+  hasApiKey: true,
+  hasApiSecret: true,
+  cloudName: 'dpqnbq0lq'
+}
+Google Calendar: GOOGLE_OAUTH_HMAC_SECRET not set in production. Using GOOGLE_CLIENT_SECRET as HMAC key.
+🚀🚀🚀 THEPHOTOCRM SERVER STARTING - BUILD v2025.12.14.6 🚀🚀🚀
+🌍 ENVIRONMENT: {
+  NODE_ENV: 'production',
+  RAILWAY_PROJECT_ID: 'set',
+  RAILWAY_ENVIRONMENT_NAME: 'production',
+  REPLIT_DEV_DOMAIN: 'unset',
+  isProduction: true
+}
+Cron jobs started
+✅ Cookie-parser middleware initialized
+✅ Domain detection and tenant isolation middleware initialized
+✅ REGISTERING Twilio inbound webhook route at /webhooks/twilio/inbound
+Cron jobs started
+✅ Client portal meta tag injection middleware registered
+11:35:32 AM [express] serving on port 8080
+  internalQuery: undefined,
+Processing automations for photographer: e9dd8ca1-f427-4ab9-a1b7-2c65a331c0f5
+  where: undefined,
+Error processing automations: error: column "project_type_id" does not exist
+  schema: undefined,
+  table: undefined,
+    at /app/node_modules/pg-pool/index.js:45:11
+  column: undefined,
+  dataType: undefined,
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+  constraint: undefined,
+    at async file:///app/node_modules/drizzle-orm/node-postgres/session.js:83:22
+  file: 'parse_relation.c',
+    at async processAutomations (file:///app/dist/index.js:8554:28)
+    at async file:///app/dist/index.js:16504:9
+    at async Timeout._onTimeout (/app/node_modules/node-cron/dist/esm/scheduler/runner.js:70:44) {
+  length: 186,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: 'Perhaps you meant to reference the column "automations.project_type".',
+  position: '49',
+  internalPosition: undefined,
+Processing automations for photographer: e9dd8ca1-f427-4ab9-a1b7-2c65a331c0f5
+  line: '3723',
+  routine: 'errorMissingColumn'
+}
+Error processing automations: error: column "project_type_id" does not exist
+    at /app/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///app/node_modules/drizzle-orm/node-postgres/session.js:83:22
+    at async processAutomations (file:///app/dist/index.js:8554:28)
+    at async file:///app/dist/index.js:16504:9
+    at async Timeout._onTimeout (/app/node_modules/node-cron/dist/esm/scheduler/runner.js:70:44) {
+  length: 186,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: 'Perhaps you meant to reference the column "automations.project_type".',
+  position: '49',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3723',
+  routine: 'errorMissingColumn'
+}
+  table: undefined,
+  severity: 'ERROR',
+Processing automations for photographer: a3afe398-bc89-4add-8f84-eb63b73d3e00
+  column: undefined,
+Processing automations for photographer: a3afe398-bc89-4add-8f84-eb63b73d3e00
+  code: '42703',
+  dataType: undefined,
+Error processing automations: error: column "project_type_id" does not exist
+  detail: undefined,
+    at /app/node_modules/pg-pool/index.js:45:11
+  hint: 'Perhaps you meant to reference the column "automations.project_type".',
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+  position: '49',
+    at async file:///app/node_modules/drizzle-orm/node-postgres/session.js:83:22
+  internalPosition: undefined,
+    at async processAutomations (file:///app/dist/index.js:8554:28)
+    at async file:///app/dist/index.js:16504:9
+  internalQuery: undefined,
+    at async Timeout._onTimeout (/app/node_modules/node-cron/dist/esm/scheduler/runner.js:70:44) {
+  where: undefined,
+  length: 186,
+  schema: undefined,
+  severity: 'ERROR',
+  constraint: undefined,
+  file: 'parse_relation.c',
+  code: '42703',
+  line: '3723',
+  routine: 'errorMissingColumn'
+  detail: undefined,
+}
+Error processing automations: error: column "project_type_id" does not exist
+  hint: 'Perhaps you meant to reference the column "automations.project_type".',
+    at /app/node_modules/pg-pool/index.js:45:11
+  position: '49',
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///app/node_modules/drizzle-orm/node-postgres/session.js:83:22
+  internalPosition: undefined,
+    at async processAutomations (file:///app/dist/index.js:8554:28)
+  internalQuery: undefined,
+    at async file:///app/dist/index.js:16504:9
+  where: undefined,
+    at async Timeout._onTimeout (/app/node_modules/node-cron/dist/esm/scheduler/runner.js:70:44) {
+  schema: undefined,
+  length: 186,
+  table: undefined,
+  column: undefined,

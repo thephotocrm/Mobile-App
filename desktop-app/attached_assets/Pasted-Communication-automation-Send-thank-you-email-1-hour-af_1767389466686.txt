@@ -1,0 +1,119 @@
+Communication automation "Send thank you email 1 hour after the call" (522e3bfc-607f-40a0-9eac-9b8ed4890450) - found 0 projects in stage
+Processing automation: Send proposal nudge 24 hours after the call (type: COMMUNICATION)
+Communication automation "Send reminder email 3 days after proposal sent" (ff7fe57b-9ce2-4549-9f6b-4721f81429df) - found 0 projects in stage
+Processing automation: Send final follow-up email 7 days after proposal sent (type: COMMUNICATION)
+Communication automation "Send proposal nudge 24 hours after the call" (e514fa36-ddfb-4340-9172-9d8a91e64aa7) - found 0 projects in stage
+Processing automation: Move to Proposal Sent when Smart File is sent (type: STAGE_CHANGE)
+Processing stage change automation: Move to Proposal Sent when Smart File is sent
+Communication automation "Send final follow-up email 7 days after proposal sent" (3e80bf9d-85e9-4819-a8ef-b072fdb5cf8c) - found 0 projects in stage
+Found 1 enabled business triggers for automation: SMART_FILE_SENT
+Processing automations for photographer: a3afe398-bc89-4add-8f84-eb63b73d3e00
+Found 3 active projects to check for business triggers
+Processing automation: Move to Booked when any payment is made (type: STAGE_CHANGE)
+Processing stage change automation: Move to Booked when any payment is made
+Found 0 enabled automations
+Found 1 enabled business triggers for automation: ANY_PAYMENT_MADE
+Processing automations for photographer: cc82412b-bddb-46a2-a860-319e2d4c92d9
+Found 3 active projects to check for business triggers
+Processing automation: Send follow-up email 24 hours after proposal sent (type: COMMUNICATION)
+Found 0 enabled automations
+Communication automation "Send follow-up email 24 hours after proposal sent" (3c844f1a-725b-41f8-b67e-6b07c17162ce) - found 0 projects in stage
+Processing automation: Send reminder email 3 days after proposal sent (type: COMMUNICATION)
+Communication automation "Send reminder email 3 days after proposal sent" (ff7fe57b-9ce2-4549-9f6b-4721f81429df) - found 0 projects in stage
+Processing automation: Send final follow-up email 7 days after proposal sent (type: COMMUNICATION)
+Communication automation "Send final follow-up email 7 days after proposal sent" (3e80bf9d-85e9-4819-a8ef-b072fdb5cf8c) - found 0 projects in stage
+Processing automations for photographer: a3afe398-bc89-4add-8f84-eb63b73d3e00
+Found 0 enabled automations
+Processing automations for photographer: cc82412b-bddb-46a2-a860-319e2d4c92d9
+Found 0 enabled automations
+📥 INCOMING REQUEST: GET /api/domain
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+9:30:08 PM [express] GET /api/domain 304 in 3ms :: {"type":"photographer"}
+📥 INCOMING REQUEST: POST /api/auth/login
+   Headers: "application/json"
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+🍪 Setting ADMIN cookie with domain: .thephotocrm.com for app.thephotocrm.com
+9:30:16 PM [express] POST /api/auth/login 200 in 129ms :: {"user":{"id":"00836a45-6395-4e9a-8f41-a92…
+📥 INCOMING REQUEST: GET /api/stats/photographer-count
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+9:30:16 PM [express] GET /api/stats/photographer-count 200 in 2ms
+Origin: undefined
+📥 INCOMING REQUEST: GET /api/reports/summary
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/reports/summary
+Request method: GET
+Has cookies object: true
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","sidebar_state":"true","__stripe_sid":"bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27","admin_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk"}
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; sidebar_state=true; __stripe_sid=bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27; admin_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk
+Has Authorization header: false
+Host: app.thephotocrm.com
+Token from cookie: admin
+Token exists: true
+Auth source: admin
+Token payload: true
+Authentication successful, continuing to route
+9:30:16 PM [express] GET /api/reports/summary 403 in 3ms :: {"message":"Photographer access required…
+📥 INCOMING REQUEST: GET /api/projects
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/projects
+Request method: GET
+Has cookies object: true
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","sidebar_state":"true","__stripe_sid":"bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27","admin_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk"}
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; sidebar_state=true; __stripe_sid=bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27; admin_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk
+Has Authorization header: false
+Origin: undefined
+Host: app.thephotocrm.com
+  → Photographer domain detected
+Token from cookie: admin
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Token exists: true
+Request URL: /api/bookings
+Auth source: admin
+Request method: GET
+Token payload: true
+Authentication successful, continuing to route
+Has cookies object: true
+9:30:16 PM [express] GET /api/projects 403 in 2ms :: {"message":"Photographer access required"}
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","sidebar_state":"true","__stripe_sid":"bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27","admin_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk"}
+📥 INCOMING REQUEST: GET /api/bookings
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; sidebar_state=true; __stripe_sid=bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27; admin_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+Has Authorization header: false
+Origin: undefined
+Host: app.thephotocrm.com
+Token from cookie: admin
+Token exists: true
+Auth source: admin
+Token payload: true
+Authentication successful, continuing to route
+9:30:16 PM [express] GET /api/bookings 403 in 2ms :: {"message":"Photographer access required"}
+📥 INCOMING REQUEST: GET /api/admin/photographers
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/admin/photographers
+Request method: GET
+Has cookies object: true
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","sidebar_state":"true","__stripe_sid":"bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27","admin_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk"}
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; sidebar_state=true; __stripe_sid=bc44e380-14f4-4cd4-810e-28b9a7ee47f58d4d27; admin_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDgzNmE0NS02Mzk1LTRlOWEtOGY0MS1hOTIxZmJkMzY2YTUiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjczODk0MTYsImV4cCI6MTc2Nzk5NDIxNn0.63UbtJRMWkFx90fyxK9gat-WtuJz6DW2b3iOKCvbpHk
+Has Authorization header: false
+Origin: undefined
+Host: app.thephotocrm.com
+Token from cookie: admin
+Token exists: true
+Auth source: admin
+Token payload: true
+Authentication successful, continuing to route

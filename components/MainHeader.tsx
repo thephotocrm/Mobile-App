@@ -1,13 +1,13 @@
 import React from "react";
-import { View, StyleSheet, Pressable, Platform } from "react-native";
+import { View, StyleSheet, Pressable, Platform, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BlurView } from "expo-blur";
 import { Feather } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import { ThemedText } from "./ThemedText";
 import { useTheme } from "@/hooks/useTheme";
+import { useAuth } from "@/contexts/AuthContext";
 import { Typography, Spacing } from "@/constants/theme";
 import { RootStackParamList } from "@/navigation/RootNavigator";
 
@@ -18,11 +18,24 @@ interface MainHeaderProps {
 
 export function MainHeader({ title, onSearchPress }: MainHeaderProps) {
   const { theme, isDark } = useTheme();
+  const { user } = useAuth();
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handleAvatarPress = () => {
     navigation.navigate("Settings");
+  };
+
+  // Get initials from email
+  const getInitials = (): string => {
+    if (!user?.email) return "?";
+    const emailName = user.email.split("@")[0];
+    const parts = emailName.split(/[._-]/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return emailName.slice(0, 2).toUpperCase();
   };
 
   const headerContent = (
@@ -44,12 +57,17 @@ export function MainHeader({ title, onSearchPress }: MainHeaderProps) {
         style={styles.iconButton}
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
       >
-        <View style={styles.avatarContainer}>
-          <Image
-            source={{ uri: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" }}
-            style={styles.avatar}
-            contentFit="cover"
-          />
+        <View
+          style={[
+            styles.avatarContainer,
+            { backgroundColor: isDark ? "#404244" : "#E0DBD3" },
+          ]}
+        >
+          <Text
+            style={[styles.initials, { color: isDark ? "#9CA3AF" : "#6B7280" }]}
+          >
+            {getInitials()}
+          </Text>
         </View>
       </Pressable>
     </View>
@@ -100,10 +118,12 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  avatar: {
-    width: "100%",
-    height: "100%",
+  initials: {
+    fontSize: 12,
+    fontWeight: "700",
+    letterSpacing: 0.5,
   },
 });

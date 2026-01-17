@@ -1,0 +1,158 @@
+Activity
+
+thephotocrm
+
+Deployment successful
+
+3 minutes ago
+
+thephotocrm
+
+Deployment successful
+
+4 days ago
+
+thephotocrm
+
+Deployment successful
+
+4 days ago
+
+thephotocrm
+
+Deployment successful
+
+4 days ago
+
+thephotocrm
+
+Deployment successful
+
+4 days ago
+
+thephotocrm
+
+Deployment successful
+
+4 days ago
+
+Scroll to load more
+
+thephotocrm
+Deployments
+Variables
+Metrics
+Settings
+*.tpcportal.co
+22.21.1node@22.21.1
+europe-west4-drams3a
+1 Replica
+
+
+
+
+History
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+thephotocrm
+/
+48a8f3b5
+Active
+
+Dec 13, 2025, 4:09 PM
+*.tpcportal.co
+Details
+Build Logs
+Deploy Logs
+HTTP Logs
+Filter and search logs
+
+You reached the start of the range
+Dec 13, 2025, 4:09 PM
+Starting Container
+npm warn config production Use `--omit=dev` instead.
+> rest-express@1.0.0 start
+> NODE_ENV=production node dist/index.js
+🔐 Cloudinary config check: {
+  hasCloudName: true,
+  hasApiKey: true,
+  hasApiSecret: true,
+  cloudName: 'dpqnbq0lq'
+}
+Google Calendar: GOOGLE_OAUTH_HMAC_SECRET not set in production. Using GOOGLE_CLIENT_SECRET as HMAC key.
+Cron jobs started
+✅ Cookie-parser middleware initialized
+✅ Domain detection and tenant isolation middleware initialized
+✅ REGISTERING Twilio inbound webhook route at /webhooks/twilio/inbound
+Cron jobs started
+✅ Client portal meta tag injection middleware registered
+10:11:05 PM [express] serving on port 8080
+📥 INCOMING REQUEST: GET /form/32ba7795-65c9-4a57-a039-e240b90b20bf
+Request method: GET
+   Headers: undefined
+Has cookies object: true
+🌐 Domain detection: app.thephotocrm.com
+All cookies: {"__stripe_mid":"d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0","__stripe_sid":"468aa3a5-4330-4bfa-a455-f05429eba5e99cd597","photographer_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzZTMyZDg2NC0xNWIxLTRiOTItYWZlZC1jYjJkMTcyZDQ4ZTgiLCJlbWFpbCI6ImF1c3RpbnBhY2hvbGVrMjAxNEBnbWFpbC5jb20iLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJhMTYyMzZhZC0wOWFiLTQ0Y2UtYjVkOS1iOTg1MDE3ZmE3ODAiLCJpYXQiOjE3NjU2NjIxMDIsImV4cCI6MTc2NjI2NjkwMn0.TFu407Z4pAja_TUb33G3fDFf5iZj2n2F1o5rmgcGONY"}
+  → Photographer domain detected
+  → Photographer domain detected
+📥 INCOMING REQUEST: GET /api/domain
+📥 INCOMING REQUEST: GET /assets/index-Dry2tODF.js
+   Headers: undefined
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+10:11:32 PM [express] GET /api/domain 304 in 4ms :: {"type":"photographer"}
+📥 INCOMING REQUEST: GET /api/auth/me
+   Headers: undefined
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+=== AUTHENTICATE TOKEN MIDDLEWARE ===
+Request URL: /api/auth/me
+Cookie header: __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_mid=d626ff4f-e717-4edc-a2c7-883657ab4bba2367a0; __stripe_sid=468aa3a5-4330-4bfa-a455-f05429eba5e99cd597; photographer_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzZTMyZDg2NC0xNWIxLTRiOTItYWZlZC1jYjJkMTcyZDQ4ZTgiLCJlbWFpbCI6ImF1c3RpbnBhY2hvbGVrMjAxNEBnbWFpbC5jb20iLCJyb2xlIjoiUEhPVE9HUkFQSEVSIiwicGhvdG9ncmFwaGVySWQiOiJhMTYyMzZhZC0wOWFiLTQ0Y2UtYjVkOS1iOTg1MDE3ZmE3ODAiLCJpYXQiOjE3NjU2NjIxMDIsImV4cCI6MTc2NjI2NjkwMn0.TFu407Z4pAja_TUb33G3fDFf5iZj2n2F1o5rmgcGONY; __stripe_sid=468aa3a5-4330-4bfa-a455-f05429eba5e99cd597
+Has Authorization header: false
+Origin: undefined
+Host: app.thephotocrm.com
+Token from cookie: photographer
+Token exists: true
+Auth source: photographer
+Token payload: true
+Authentication successful, continuing to route
+10:11:33 PM [express] GET /api/auth/me 304 in 578ms :: {"id":"3e32d864-15b1-4b92-afed-cb2d172d48e8","…
+  statusCode: 404,
+📥 INCOMING REQUEST: GET /widget/form-embed.js
+   Headers: undefined
+  status: 404
+🌐 Domain detection: app.thephotocrm.com
+  → Photographer domain detected
+}
+Global error handler caught error: [Error: ENOENT: no such file or directory, stat '/app/server/public/form-embed.js'] {
+Error details: {
+  errno: -2,
+  code: 'ENOENT',
+  name: 'Error',
+  syscall: 'stat',
+  message: "ENOENT: no such file or directory, stat '/app/server/public/form-embed.js'",
+  path: '/app/server/public/form-embed.js',
+  expose: false,
+  stack: "Error: ENOENT: no such file or directory, stat '/app/server/public/form-embed.js'",
+  url: '/widget/form-embed.js',
+  method: 'GET'
+}

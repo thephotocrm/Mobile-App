@@ -1,0 +1,120 @@
+index-ea2lnHZC.js:48  POST https://app.thephotocrm.com/api/auth/login 401 (Unauthorized)
+le @ index-ea2lnHZC.js:48
+UJ @ index-ea2lnHZC.js:703
+c @ index-ea2lnHZC.js:703
+C @ index-ea2lnHZC.js:790
+JW @ index-ea2lnHZC.js:37
+tG @ index-ea2lnHZC.js:37
+sG @ index-ea2lnHZC.js:37
+mT @ index-ea2lnHZC.js:37
+M6 @ index-ea2lnHZC.js:37
+(anonymous) @ index-ea2lnHZC.js:37
+sS @ index-ea2lnHZC.js:40
+r6 @ index-ea2lnHZC.js:37
+ij @ index-ea2lnHZC.js:37
+_2 @ index-ea2lnHZC.js:37
+yG @ index-ea2lnHZC.js:37Understand this error
+index-ea2lnHZC.js:817  GET https://app.thephotocrm.com/api/reports/summary 403 (Forbidden)
+queryFn @ index-ea2lnHZC.js:817
+i @ index-ea2lnHZC.js:48
+x @ index-ea2lnHZC.js:48
+start @ index-ea2lnHZC.js:48
+fetch @ index-ea2lnHZC.js:48
+xp @ index-ea2lnHZC.js:48
+onSubscribe @ index-ea2lnHZC.js:48
+subscribe @ index-ea2lnHZC.js:48
+(anonymous) @ index-ea2lnHZC.js:48
+Q6 @ index-ea2lnHZC.js:38
+Ov @ index-ea2lnHZC.js:40
+im @ index-ea2lnHZC.js:40
+MK @ index-ea2lnHZC.js:40
+bd @ index-ea2lnHZC.js:40
+zT @ index-ea2lnHZC.js:40
+cd @ index-ea2lnHZC.js:38
+MK @ index-ea2lnHZC.js:40
+bd @ index-ea2lnHZC.js:40
+EF @ index-ea2lnHZC.js:40
+T @ index-ea2lnHZC.js:25
+_ @ index-ea2lnHZC.js:25Understand this error
+index-ea2lnHZC.js:817  GET https://app.thephotocrm.com/api/projects 403 (Forbidden)
+queryFn @ index-ea2lnHZC.js:817
+i @ index-ea2lnHZC.js:48
+x @ index-ea2lnHZC.js:48
+start @ index-ea2lnHZC.js:48
+fetch @ index-ea2lnHZC.js:48
+xp @ index-ea2lnHZC.js:48
+onSubscribe @ index-ea2lnHZC.js:48
+subscribe @ index-ea2lnHZC.js:48
+(anonymous) @ index-ea2lnHZC.js:48
+Q6 @ index-ea2lnHZC.js:38
+Ov @ index-ea2lnHZC.js:40
+im @ index-ea2lnHZC.js:40
+MK @ index-ea2lnHZC.js:40
+bd @ index-ea2lnHZC.js:40
+zT @ index-ea2lnHZC.js:40
+cd @ index-ea2lnHZC.js:38
+MK @ index-ea2lnHZC.js:40
+bd @ index-ea2lnHZC.js:40
+EF @ index-ea2lnHZC.js:40
+T @ index-ea2lnHZC.js:25
+_ @ index-ea2lnHZC.js:25Understand this error
+index-ea2lnHZC.js:817  GET https://app.thephotocrm.com/api/bookings 403 (Forbidden)
+queryFn @ index-ea2lnHZC.js:817
+i @ index-ea2lnHZC.js:48
+x @ index-ea2lnHZC.js:48
+start @ index-ea2lnHZC.js:48
+fetch @ index-ea2lnHZC.js:48
+xp @ index-ea2lnHZC.js:48
+onSubscribe @ index-ea2lnHZC.js:48
+subscribe @ index-ea2lnHZC.js:48
+(anonymous) @ index-ea2lnHZC.js:48
+Q6 @ index-ea2lnHZC.js:38
+Ov @ index-ea2lnHZC.js:40
+im @ index-ea2lnHZC.js:40
+MK @ index-ea2lnHZC.js:40
+bd @ index-ea2lnHZC.js:40
+zT @ index-ea2lnHZC.js:40
+cd @ index-ea2lnHZC.js:38
+MK @ index-ea2lnHZC.js:40
+bd @ index-ea2lnHZC.js:40
+EF @ index-ea2lnHZC.js:40
+T @ index-ea2lnHZC.js:25
+_ @ index-ea2lnHZC.js:25Understand this error
+7dashboard:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this error
+index-ea2lnHZC.js:817  GET https://app.thephotocrm.com/api/bookings 403 (Forbidden)
+queryFn @ index-ea2lnHZC.js:817
+i @ index-ea2lnHZC.js:48
+x @ index-ea2lnHZC.js:48
+start @ index-ea2lnHZC.js:48
+fetch @ index-ea2lnHZC.js:48
+xp @ index-ea2lnHZC.js:48
+onSubscribe @ index-ea2lnHZC.js:48
+subscribe @ index-ea2lnHZC.js:48
+(anonymous) @ index-ea2lnHZC.js:48
+Q6 @ index-ea2lnHZC.js:38
+Ov @ index-ea2lnHZC.js:40
+im @ index-ea2lnHZC.js:40
+MK @ index-ea2lnHZC.js:40
+bd @ index-ea2lnHZC.js:40
+zT @ index-ea2lnHZC.js:40
+cd @ index-ea2lnHZC.js:38
+(anonymous) @ index-ea2lnHZC.js:40Understand this error
+index-ea2lnHZC.js:817  GET https://app.thephotocrm.com/api/reports/summary 403 (Forbidden)
+queryFn @ index-ea2lnHZC.js:817
+i @ index-ea2lnHZC.js:48
+x @ index-ea2lnHZC.js:48
+start @ index-ea2lnHZC.js:48
+fetch @ index-ea2lnHZC.js:48
+xp @ index-ea2lnHZC.js:48
+onSubscribe @ index-ea2lnHZC.js:48
+subscribe @ index-ea2lnHZC.js:48
+(anonymous) @ index-ea2lnHZC.js:48
+Q6 @ index-ea2lnHZC.js:38
+Ov @ index-ea2lnHZC.js:40
+im @ index-ea2lnHZC.js:40
+MK @ index-ea2lnHZC.js:40
+bd @ index-ea2lnHZC.js:40
+zT @ index-ea2lnHZC.js:40
+cd @ index-ea2lnHZC.js:38
+(anonymous) @ index-ea2lnHZC.js:40Understand this error
+index-ea2lnHZC.js:817  GET https://app.thephotocrm.com/api/projects 403 (Forbidden)
