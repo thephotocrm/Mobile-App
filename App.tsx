@@ -10,6 +10,7 @@ import { RootNavigator } from "@/navigation/RootNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 import { initializeDatabase } from "@/database";
 import { seedDatabase } from "@/database/seed";
 
@@ -28,7 +29,9 @@ export default function App() {
         await seedDatabase();
         setIsDbReady(true);
       } catch (error) {
-        console.error("Failed to initialize database:", error);
+        if (__DEV__) {
+          console.error("Failed to initialize database:", error);
+        }
         setIsDbReady(true);
       }
     }
@@ -49,16 +52,18 @@ export default function App() {
     <ErrorBoundary>
       <ThemeProvider>
         <AuthProvider>
-          <SafeAreaProvider>
-            <GestureHandlerRootView style={styles.root}>
-              <KeyboardProvider>
-                <NavigationContainer>
-                  <RootNavigator />
-                </NavigationContainer>
-                <StatusBar style="dark" />
-              </KeyboardProvider>
-            </GestureHandlerRootView>
-          </SafeAreaProvider>
+          <NotificationProvider>
+            <SafeAreaProvider>
+              <GestureHandlerRootView style={styles.root}>
+                <KeyboardProvider>
+                  <NavigationContainer>
+                    <RootNavigator />
+                  </NavigationContainer>
+                  <StatusBar style="auto" />
+                </KeyboardProvider>
+              </GestureHandlerRootView>
+            </SafeAreaProvider>
+          </NotificationProvider>
         </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>

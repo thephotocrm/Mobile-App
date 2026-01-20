@@ -48,19 +48,21 @@ class ApiClient {
 
     const url = `${this.baseUrl}${endpoint}`;
 
-    console.log(`[API] ${options.method || "GET"} ${url}`);
-    if (fetchOptions.body) {
-      const bodyForLog = JSON.parse(fetchOptions.body as string);
-      if (bodyForLog.password) {
-        bodyForLog.password = "***HIDDEN***";
+    if (__DEV__) {
+      console.log(`[API] ${options.method || "GET"} ${url}`);
+      if (fetchOptions.body) {
+        const bodyForLog = JSON.parse(fetchOptions.body as string);
+        if (bodyForLog.password) {
+          bodyForLog.password = "***HIDDEN***";
+        }
+        console.log("[API] Request body:", JSON.stringify(bodyForLog));
       }
-      console.log("[API] Request body:", JSON.stringify(bodyForLog));
-    }
-    if (tenant?.photographerId) {
-      console.log("[API] Tenant headers:", {
-        photographerId: tenant.photographerId,
-        userRole: tenant.userRole,
-      });
+      if (tenant?.photographerId) {
+        console.log("[API] Tenant headers:", {
+          photographerId: tenant.photographerId,
+          userRole: tenant.userRole,
+        });
+      }
     }
 
     try {
@@ -69,13 +71,17 @@ class ApiClient {
         headers,
       });
 
-      console.log(
-        `[API] Response status: ${response.status} ${response.statusText}`,
-      );
+      if (__DEV__) {
+        console.log(
+          `[API] Response status: ${response.status} ${response.statusText}`,
+        );
+      }
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.log("[API] Error response body:", errorText);
+        if (__DEV__) {
+          console.log("[API] Error response body:", errorText);
+        }
 
         let errorData = {};
         try {
@@ -93,29 +99,37 @@ class ApiClient {
       }
 
       if (response.status === 204) {
-        console.log("[API] Empty response (204)");
+        if (__DEV__) {
+          console.log("[API] Empty response (204)");
+        }
         return {} as T;
       }
 
       const data = await response.json();
-      console.log(
-        "[API] Success response:",
-        JSON.stringify(data, (key, value) =>
-          key === "token" ? "***TOKEN_RECEIVED***" : value,
-        ),
-      );
+      if (__DEV__) {
+        console.log(
+          "[API] Success response:",
+          JSON.stringify(data, (key, value) =>
+            key === "token" ? "***TOKEN_RECEIVED***" : value,
+          ),
+        );
+      }
       return data;
     } catch (error) {
       if (error instanceof ApiError) {
-        console.log(
-          `[API] ApiError: ${error.message} (status: ${error.status})`,
-        );
+        if (__DEV__) {
+          console.log(
+            `[API] ApiError: ${error.message} (status: ${error.status})`,
+          );
+        }
         throw error;
       }
-      console.log(
-        "[API] Network/Fetch error:",
-        error instanceof Error ? error.message : String(error),
-      );
+      if (__DEV__) {
+        console.log(
+          "[API] Network/Fetch error:",
+          error instanceof Error ? error.message : String(error),
+        );
+      }
       throw new ApiError(
         error instanceof Error ? error.message : "Network error",
         0,
@@ -400,6 +414,9 @@ export const authApi = {
 
   logout: (token: string, tenant?: TenantContext) =>
     api.post<{ message: string }>("/api/auth/logout", undefined, token, tenant),
+
+  deleteAccount: (token: string, tenant?: TenantContext) =>
+    api.delete<{ message: string }>("/api/auth/delete-account", token, tenant),
 };
 
 export const projectsApi = {

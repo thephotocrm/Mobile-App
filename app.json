@@ -3,6 +3,8 @@
     "name": "thePhotoCrm",
     "slug": "thephotocrm",
     "version": "1.0.0",
+    "privacy": "public",
+    "privacyPolicyUrl": "https://app.thephotocrm.com/privacy",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "thephotocrm",
@@ -10,16 +12,30 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.thephotocrm.app"
+      "bundleIdentifier": "com.thephotocrm.app",
+      "buildNumber": "1",
+      "deploymentTarget": "15.0",
+      "infoPlist": {
+        "UIBackgroundModes": ["remote-notification"]
+      }
     },
     "android": {
       "package": "com.thephotocrm.app",
+      "versionCode": 1,
+      "targetSdkVersion": 34,
+      "compileSdkVersion": 34,
       "adaptiveIcon": {
         "backgroundColor": "#8B4565",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE"
+      ],
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
@@ -40,7 +56,15 @@
           }
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#8B4565",
+          "defaultChannel": "default"
+        }
+      ]
     ],
     "experiments": {
       "reactCompiler": true

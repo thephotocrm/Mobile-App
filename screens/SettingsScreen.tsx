@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -18,6 +18,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNotifications } from "@/contexts/NotificationContext";
 import { Spacing, BorderRadius } from "@/constants/theme";
 
 interface SettingsItemProps {
@@ -97,6 +98,8 @@ export function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { logout, user } = useAuth();
+  const { permissionStatus, requestPermissions, isSupported } =
+    useNotifications();
 
   const handleClose = () => {
     navigation.goBack();
@@ -118,6 +121,82 @@ export function SettingsScreen() {
       },
     ]);
   };
+
+  const handleDeleteAccount = () => {
+    const subject = encodeURIComponent("Account Deletion Request");
+    const body = encodeURIComponent(
+      `Hi,\n\nI would like to request deletion of my thePhotoCRM account.\n\nAccount email: ${user?.email || "N/A"}\n\nPlease confirm once my account and all associated data have been permanently deleted.\n\nThank you`,
+    );
+    const mailtoUrl = `mailto:support@thephotocrm.com?subject=${subject}&body=${body}`;
+    Linking.openURL(mailtoUrl);
+  };
+
+  const handlePrivacyPolicy = () => {
+    Linking.openURL("https://app.thephotocrm.com/privacy");
+  };
+
+  const handleTermsOfService = () => {
+    Linking.openURL("https://app.thephotocrm.com/tos");
+  };
+
+  const showComingSoon = (feature: string) => {
+    Alert.alert(
+      "Coming Soon",
+      `${feature} will be available in a future update.`,
+      [{ text: "OK" }],
+    );
+  };
+
+  const handleMobileNotifications = useCallback(async () => {
+    if (!isSupported) {
+      Alert.alert(
+        "Not Supported",
+        "Push notifications are only available on physical iOS and Android devices.",
+        [{ text: "OK" }],
+      );
+      return;
+    }
+
+    if (permissionStatus === "granted") {
+      Alert.alert(
+        "Notifications Enabled",
+        "Push notifications are enabled. You'll receive real-time updates about your projects and messages.",
+        [
+          { text: "OK" },
+          {
+            text: "Open Settings",
+            onPress: () => Linking.openSettings(),
+          },
+        ],
+      );
+      return;
+    }
+
+    if (permissionStatus === "denied") {
+      Alert.alert(
+        "Notifications Disabled",
+        "Push notifications are disabled. To enable them, please go to your device settings.",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Open Settings",
+            onPress: () => Linking.openSettings(),
+          },
+        ],
+      );
+      return;
+    }
+
+    // Permission is undetermined - request it
+    const granted = await requestPermissions();
+    if (granted) {
+      Alert.alert(
+        "Notifications Enabled",
+        "You'll now receive real-time updates about your projects and messages.",
+        [{ text: "Great!" }],
+      );
+    }
+  }, [isSupported, permissionStatus, requestPermissions]);
 
   const headerContent = (
     <View style={[styles.headerContent, { paddingTop: insets.top }]}>
@@ -157,37 +236,6 @@ export function SettingsScreen() {
           { paddingTop: insets.top + 60, paddingBottom: Spacing.xl },
         ]}
       >
-        <View
-          style={[
-            styles.notificationBanner,
-            { backgroundColor: "#EDE9FE", borderLeftColor: "#8B45FF" },
-          ]}
-        >
-          <View style={styles.notificationIcon}>
-            <Feather name="bell" size={20} color="#8B45FF" />
-          </View>
-          <View style={styles.notificationContent}>
-            <ThemedText style={styles.notificationTitle}>
-              Turn on real-time updates?
-            </ThemedText>
-            <ThemedText
-              style={[
-                styles.notificationSubtitle,
-                { color: theme.textSecondary },
-              ]}
-            >
-              You'll be notified about new leads, payments, and client messages.
-            </ThemedText>
-            <Pressable>
-              <ThemedText
-                style={[styles.notificationAction, { color: "#8B45FF" }]}
-              >
-                Allow notifications
-              </ThemedText>
-            </Pressable>
-          </View>
-        </View>
-
         <SectionHeader title="ACCOUNT SETTINGS" />
 
         <View
@@ -198,30 +246,35 @@ export function SettingsScreen() {
             title="Account details"
             subtitle="Update your name, website, and description."
             showChevron
+            onPress={() => showComingSoon("Account details")}
           />
           <SettingsItem
             icon="droplet"
             title="Brand elements"
             subtitle="Add your brand to invoices, emails, & more."
             showChevron
+            onPress={() => showComingSoon("Brand elements")}
           />
           <SettingsItem
             icon="check-circle"
             title="Setup status"
             subtitle="Tap to review content. Completed: 0%"
             showChevron
+            onPress={() => showComingSoon("Setup status")}
           />
           <SettingsItem
             icon="lock"
             title="Phone number"
             subtitle="Add security phone number to verify it's you."
             showChevron
+            onPress={() => showComingSoon("Phone number verification")}
           />
           <SettingsItem
             icon="calendar"
             title="OOO settings"
             subtitle="Set an out-of-office reply."
             showChevron
+            onPress={() => showComingSoon("Out-of-office settings")}
           />
         </View>
 
@@ -235,18 +288,27 @@ export function SettingsScreen() {
             title="App preferences"
             subtitle="Manage your calendar, reminders, and sound..."
             showChevron
+            onPress={() => showComingSoon("App preferences")}
           />
           <SettingsItem
             icon="cpu"
             title="thePhotoCrm AI"
             subtitle="Manage AI settings."
             showChevron
+            onPress={() => showComingSoon("thePhotoCrm AI")}
           />
           <SettingsItem
             icon="bell"
             title="Mobile notifications"
-            subtitle="Manage your real-time updates."
+            subtitle={
+              permissionStatus === "granted"
+                ? "Notifications enabled"
+                : permissionStatus === "denied"
+                  ? "Tap to enable in settings"
+                  : "Tap to enable push notifications"
+            }
             showChevron
+            onPress={handleMobileNotifications}
           />
         </View>
 
@@ -255,11 +317,39 @@ export function SettingsScreen() {
         <View
           style={[styles.section, { backgroundColor: theme.backgroundCard }]}
         >
-          <SettingsItem icon="message-circle" title="Chat with us" />
-          <SettingsItem icon="help-circle" title="Help center" />
-          <SettingsItem icon="globe" title="Connect with the Community" />
-          <SettingsItem icon="trash-2" title="Delete account" danger />
-          <SettingsItem icon="file-text" title="Terms & privacy" />
+          <SettingsItem
+            icon="message-circle"
+            title="Chat with us"
+            onPress={() => showComingSoon("Live chat support")}
+          />
+          <SettingsItem
+            icon="help-circle"
+            title="Help center"
+            onPress={() => showComingSoon("Help center")}
+          />
+          <SettingsItem
+            icon="globe"
+            title="Connect with the Community"
+            onPress={() => showComingSoon("Community")}
+          />
+          <SettingsItem
+            icon="trash-2"
+            title="Delete account"
+            subtitle="Contact support to delete your account"
+            showChevron
+            danger
+            onPress={handleDeleteAccount}
+          />
+          <SettingsItem
+            icon="shield"
+            title="Privacy policy"
+            onPress={handlePrivacyPolicy}
+          />
+          <SettingsItem
+            icon="file-text"
+            title="Terms of service"
+            onPress={handleTermsOfService}
+          />
         </View>
 
         <View style={styles.footer}>
@@ -274,7 +364,7 @@ export function SettingsScreen() {
                 styles.socialButton,
                 { backgroundColor: theme.backgroundSecondary },
               ]}
-              onPress={() => handleOpenLink("https://facebook.com")}
+              onPress={() => handleOpenLink("https://facebook.com/thephotocrm")}
             >
               <Feather name="facebook" size={20} color={theme.text} />
             </Pressable>
@@ -283,7 +373,7 @@ export function SettingsScreen() {
                 styles.socialButton,
                 { backgroundColor: theme.backgroundSecondary },
               ]}
-              onPress={() => handleOpenLink("https://twitter.com")}
+              onPress={() => handleOpenLink("https://twitter.com/thephotocrm")}
             >
               <Feather name="twitter" size={20} color={theme.text} />
             </Pressable>
@@ -292,7 +382,9 @@ export function SettingsScreen() {
                 styles.socialButton,
                 { backgroundColor: theme.backgroundSecondary },
               ]}
-              onPress={() => handleOpenLink("https://instagram.com")}
+              onPress={() =>
+                handleOpenLink("https://instagram.com/thephotocrm")
+              }
             >
               <Feather name="instagram" size={20} color={theme.text} />
             </Pressable>

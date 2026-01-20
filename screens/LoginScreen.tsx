@@ -14,6 +14,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
+import * as WebBrowser from "expo-web-browser";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
@@ -37,43 +38,56 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async () => {
-    console.log("[LoginScreen] Sign In button pressed");
+    if (__DEV__) {
+      console.log("[LoginScreen] Sign In button pressed");
+    }
 
     if (!email.trim()) {
-      console.log("[LoginScreen] Validation failed: empty email");
+      if (__DEV__) {
+        console.log("[LoginScreen] Validation failed: empty email");
+      }
       setError("Please enter your email");
       return;
     }
     if (!password) {
-      console.log("[LoginScreen] Validation failed: empty password");
+      if (__DEV__) {
+        console.log("[LoginScreen] Validation failed: empty password");
+      }
       setError("Please enter your password");
       return;
     }
 
-    console.log("[LoginScreen] Starting login for:", email.trim());
+    if (__DEV__) {
+      console.log("[LoginScreen] Starting login for:", email.trim());
+    }
     setError(null);
     setLoading(true);
 
     try {
-      console.log("[LoginScreen] Calling login()...");
+      if (__DEV__) {
+        console.log("[LoginScreen] Calling login()...");
+      }
       await login(email.trim(), password);
-      console.log("[LoginScreen] Login completed successfully!");
+      if (__DEV__) {
+        console.log("[LoginScreen] Login completed successfully!");
+      }
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Login failed. Please try again.";
-      console.log("[LoginScreen] Login failed with error:", message);
+      if (__DEV__) {
+        console.log("[LoginScreen] Login failed with error:", message);
+      }
       setError(message);
     } finally {
       setLoading(false);
-      console.log("[LoginScreen] Login process finished");
+      if (__DEV__) {
+        console.log("[LoginScreen] Login process finished");
+      }
     }
   };
 
-  const handleForgotPassword = () => {
-    Alert.alert(
-      "Reset Password",
-      "Please visit app.thephotocrm.com to reset your password",
-    );
+  const handleForgotPassword = async () => {
+    await WebBrowser.openBrowserAsync("https://app.thephotocrm.com/reset-password");
   };
 
   return (
@@ -234,12 +248,7 @@ export default function LoginScreen() {
             Don't have an account?{" "}
           </ThemedText>
           <Pressable
-            onPress={() =>
-              Alert.alert(
-                "Sign Up",
-                "Please visit app.thephotocrm.com to create an account",
-              )
-            }
+            onPress={() => WebBrowser.openBrowserAsync("https://app.thephotocrm.com/signup")}
           >
             <ThemedText style={[styles.signUpText, { color: theme.primary }]}>
               Sign up
