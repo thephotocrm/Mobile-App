@@ -14,6 +14,7 @@ import {
   addNotificationListeners,
   getPermissionStatus,
 } from "@/services/notifications";
+import { pushTokensApi, createTenantContext } from "@/services/api";
 
 type PermissionStatus = "granted" | "denied" | "undetermined";
 
@@ -91,12 +92,28 @@ export function NotificationProvider({
       // Small delay to let the app settle after login
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const pushToken = await registerForPushNotificationsAsync();
-      if (pushToken) {
-        setPushToken(pushToken);
+      const newPushToken = await registerForPushNotificationsAsync();
+      if (newPushToken) {
+        setPushToken(newPushToken);
         setPermissionStatus("granted");
         if (__DEV__) {
-          console.log("Push token registered:", pushToken);
+          console.log("Push token registered:", newPushToken);
+        }
+
+        // Register push token with the backend API
+        if (token && user) {
+          try {
+            const tenant = createTenantContext(user);
+            const platform = Platform.OS as "ios" | "android";
+            await pushTokensApi.register(token, newPushToken, platform, undefined, tenant);
+            if (__DEV__) {
+              console.log("Push token sent to API successfully");
+            }
+          } catch (error) {
+            if (__DEV__) {
+              console.error("Failed to register push token with API:", error);
+            }
+          }
         }
       } else {
         const status = await getPermissionStatus();
@@ -119,9 +136,25 @@ export function NotificationProvider({
 
         // If permission was granted in settings, register for push token
         if (status === "granted" && !pushToken) {
-          const token = await registerForPushNotificationsAsync();
-          if (token) {
-            setPushToken(token);
+          const newPushToken = await registerForPushNotificationsAsync();
+          if (newPushToken) {
+            setPushToken(newPushToken);
+
+            // Register push token with the backend API
+            if (token && user) {
+              try {
+                const tenant = createTenantContext(user);
+                const platform = Platform.OS as "ios" | "android";
+                await pushTokensApi.register(token, newPushToken, platform, undefined, tenant);
+                if (__DEV__) {
+                  console.log("Push token sent to API successfully (from settings change)");
+                }
+              } catch (error) {
+                if (__DEV__) {
+                  console.error("Failed to register push token with API:", error);
+                }
+              }
+            }
           }
         }
       }
@@ -132,22 +165,39 @@ export function NotificationProvider({
       handleAppStateChange,
     );
     return () => subscription.remove();
-  }, [isSupported, pushToken]);
+  }, [isSupported, pushToken, token, user]);
 
   const requestPermissions = useCallback(async () => {
     if (!isSupported) return false;
 
-    const token = await registerForPushNotificationsAsync();
-    if (token) {
-      setPushToken(token);
+    const newPushToken = await registerForPushNotificationsAsync();
+    if (newPushToken) {
+      setPushToken(newPushToken);
       setPermissionStatus("granted");
+
+      // Register push token with the backend API
+      if (token && user) {
+        try {
+          const tenant = createTenantContext(user);
+          const platform = Platform.OS as "ios" | "android";
+          await pushTokensApi.register(token, newPushToken, platform, undefined, tenant);
+          if (__DEV__) {
+            console.log("Push token sent to API successfully (from requestPermissions)");
+          }
+        } catch (error) {
+          if (__DEV__) {
+            console.error("Failed to register push token with API:", error);
+          }
+        }
+      }
+
       return true;
     }
 
     const status = await getPermissionStatus();
     setPermissionStatus(status);
     return false;
-  }, [isSupported]);
+  }, [isSupported, token, user]);
 
   return (
     <NotificationContext.Provider

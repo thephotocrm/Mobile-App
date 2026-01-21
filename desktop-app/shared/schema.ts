@@ -189,6 +189,13 @@ export const photographers = pgTable("photographers", {
   appointmentReminderEnabled: boolean("appointment_reminder_enabled").default(false),
   appointmentReminderMinutes: integer("appointment_reminder_minutes").default(60), // How many minutes before to send reminder
   appointmentReminderLastSentId: text("appointment_reminder_last_sent_id"), // Track last booking we sent reminder for to avoid duplicates
+  // Push Notifications (Mobile App)
+  pushTokens: json("push_tokens").$type<Array<{
+    token: string;
+    platform: "ios" | "android";
+    deviceId?: string;
+    createdAt: string;
+  }>>().default([]),
   createdAt: timestamp("created_at").defaultNow()
 });
 

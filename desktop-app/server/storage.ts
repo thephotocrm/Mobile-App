@@ -767,6 +767,69 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
 
+  // Push Token Management for Mobile Notifications
+  async registerPushToken(
+    photographerId: string,
+    tokenData: { token: string; platform: "ios" | "android"; deviceId?: string }
+  ): Promise<void> {
+    const photographer = await this.getPhotographer(photographerId);
+    if (!photographer) throw new Error("Photographer not found");
+
+    const existingTokens = (photographer.pushTokens || []) as Array<{
+      token: string;
+      platform: "ios" | "android";
+      deviceId?: string;
+      createdAt: string;
+    }>;
+
+    // Check if token already exists
+    const tokenExists = existingTokens.some((t) => t.token === tokenData.token);
+    if (tokenExists) return;
+
+    // Add new token
+    const updatedTokens = [
+      ...existingTokens,
+      {
+        token: tokenData.token,
+        platform: tokenData.platform,
+        deviceId: tokenData.deviceId,
+        createdAt: new Date().toISOString(),
+      },
+    ];
+
+    await db
+      .update(photographers)
+      .set({ pushTokens: updatedTokens })
+      .where(eq(photographers.id, photographerId));
+  }
+
+  async unregisterPushToken(photographerId: string, token: string): Promise<void> {
+    const photographer = await this.getPhotographer(photographerId);
+    if (!photographer) throw new Error("Photographer not found");
+
+    const existingTokens = (photographer.pushTokens || []) as Array<{
+      token: string;
+      platform: "ios" | "android";
+      deviceId?: string;
+      createdAt: string;
+    }>;
+
+    const updatedTokens = existingTokens.filter((t) => t.token !== token);
+
+    await db
+      .update(photographers)
+      .set({ pushTokens: updatedTokens })
+      .where(eq(photographers.id, photographerId));
+  }
+
+  async getPushTokens(photographerId: string): Promise<string[]> {
+    const photographer = await this.getPhotographer(photographerId);
+    if (!photographer) return [];
+
+    const tokens = (photographer.pushTokens || []) as Array<{ token: string }>;
+    return tokens.map((t) => t.token);
+  }
+
   async getPhotographerByEmail(email: string): Promise<Photographer | undefined> {
     // Get photographer by their Google email (googleEmail field)
     const [photographer] = await db

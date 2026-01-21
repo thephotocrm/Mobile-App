@@ -3572,6 +3572,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Push Token Registration (Mobile App)
+  app.post("/api/push-tokens", authenticateToken, requirePhotographer, async (req, res) => {
+    try {
+      const photographerId = req.user!.photographerId!;
+      const { token, platform, deviceId } = req.body;
+
+      if (!token || !platform) {
+        return res.status(400).json({ error: "Token and platform are required" });
+      }
+
+      if (!["ios", "android"].includes(platform)) {
+        return res.status(400).json({ error: "Platform must be 'ios' or 'android'" });
+      }
+
+      await storage.registerPushToken(photographerId, { token, platform, deviceId });
+
+      console.log(`Push token registered for photographer ${photographerId}: ${token.substring(0, 20)}...`);
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error registering push token:", error);
+      res.status(500).json({ error: "Failed to register push token" });
+    }
+  });
+
+  app.delete("/api/push-tokens/:token", authenticateToken, requirePhotographer, async (req, res) => {
+    try {
+      const photographerId = req.user!.photographerId!;
+      const { token } = req.params;
+
+      await storage.unregisterPushToken(photographerId, decodeURIComponent(token));
+
+      console.log(`Push token unregistered for photographer ${photographerId}`);
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error unregistering push token:", error);
+      res.status(500).json({ error: "Failed to unregister push token" });
+    }
+  });
+
   // Contacts
   app.get("/api/contacts", authenticateToken, requirePhotographer, requireActiveSubscription, async (req, res) => {
     try {

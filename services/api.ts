@@ -851,6 +851,36 @@ export const availabilityApi = {
     api.delete<void>(`/api/availability/overrides/${id}`, token, tenant),
 };
 
+// Push Token Registration API
+export const pushTokensApi = {
+  // POST /api/push-tokens - Register a push notification token
+  register: (
+    authToken: string,
+    pushToken: string,
+    platform: "ios" | "android",
+    deviceId?: string,
+    tenant?: TenantContext,
+  ) =>
+    api.post<{ success: boolean }>(
+      "/api/push-tokens",
+      { token: pushToken, platform, deviceId },
+      authToken,
+      tenant,
+    ),
+
+  // DELETE /api/push-tokens/:token - Unregister a push notification token
+  unregister: (
+    authToken: string,
+    pushToken: string,
+    tenant?: TenantContext,
+  ) =>
+    api.delete<{ success: boolean }>(
+      `/api/push-tokens/${encodeURIComponent(pushToken)}`,
+      authToken,
+      tenant,
+    ),
+};
+
 export const clientPortalApi = {
   // POST /api/client-portal/projects/:id/send-message - Client sends message to photographer
   sendMessage: (
