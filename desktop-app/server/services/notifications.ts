@@ -1,5 +1,6 @@
 import { storage } from "../storage";
 import { notificationTypeEnum, notificationPriorityEnum } from "@shared/schema";
+import { sendPushNotification } from "./push-service";
 
 type NotificationType = keyof typeof notificationTypeEnum;
 type NotificationPriority = keyof typeof notificationPriorityEnum;
@@ -53,7 +54,7 @@ export async function notifyNewLead(params: {
   projectId?: string;
   source?: string;
 }) {
-  return createNotification({
+  const notification = await createNotification({
     photographerId: params.photographerId,
     type: "LEAD",
     priority: "HIGH",
@@ -65,6 +66,22 @@ export async function notifyNewLead(params: {
     relatedType: "contact",
     actionUrl: params.projectId ? `/projects/${params.projectId}` : `/contacts/${params.contactId}`
   });
+
+  // Send push notification
+  await sendPushNotification({
+    photographerId: params.photographerId,
+    title: "New Lead!",
+    body: `${params.contactName} inquired about photography`,
+    data: {
+      type: "LEAD",
+      notificationId: notification.id,
+      contactId: params.contactId,
+      projectId: params.projectId,
+      actionUrl: params.projectId ? `/projects/${params.projectId}` : `/contacts/${params.contactId}`,
+    },
+  });
+
+  return notification;
 }
 
 /**
@@ -83,7 +100,7 @@ export async function notifyPaymentReceived(params: {
     currency: "USD"
   });
 
-  return createNotification({
+  const notification = await createNotification({
     photographerId: params.photographerId,
     type: "PAYMENT",
     priority: "HIGH",
@@ -95,6 +112,22 @@ export async function notifyPaymentReceived(params: {
     relatedType: "project",
     actionUrl: `/projects/${params.projectId}`
   });
+
+  // Send push notification
+  await sendPushNotification({
+    photographerId: params.photographerId,
+    title: "Payment Received",
+    body: `${amount} payment from ${params.contactName}`,
+    data: {
+      type: "PAYMENT",
+      notificationId: notification.id,
+      projectId: params.projectId,
+      contactId: params.contactId,
+      actionUrl: `/projects/${params.projectId}`,
+    },
+  });
+
+  return notification;
 }
 
 /**
@@ -107,7 +140,7 @@ export async function notifyContractSigned(params: {
   contactName: string;
   smartFileName?: string;
 }) {
-  return createNotification({
+  const notification = await createNotification({
     photographerId: params.photographerId,
     type: "CONTRACT",
     priority: "HIGH",
@@ -119,6 +152,22 @@ export async function notifyContractSigned(params: {
     relatedType: "project",
     actionUrl: `/projects/${params.projectId}`
   });
+
+  // Send push notification
+  await sendPushNotification({
+    photographerId: params.photographerId,
+    title: "Contract Signed!",
+    body: `${params.contactName} signed ${params.smartFileName || "the contract"}`,
+    data: {
+      type: "CONTRACT",
+      notificationId: notification.id,
+      projectId: params.projectId,
+      contactId: params.contactId,
+      actionUrl: `/projects/${params.projectId}`,
+    },
+  });
+
+  return notification;
 }
 
 /**
@@ -132,7 +181,7 @@ export async function notifySmartFileViewed(params: {
   smartFileName: string;
   smartFileId: string;
 }) {
-  return createNotification({
+  const notification = await createNotification({
     photographerId: params.photographerId,
     type: "SMART_FILE_VIEWED",
     priority: "MEDIUM",
@@ -144,6 +193,22 @@ export async function notifySmartFileViewed(params: {
     relatedType: "smartFile",
     actionUrl: `/projects/${params.projectId}`
   });
+
+  // Send push notification
+  await sendPushNotification({
+    photographerId: params.photographerId,
+    title: "Proposal Viewed",
+    body: `${params.contactName} is viewing ${params.smartFileName}`,
+    data: {
+      type: "SMART_FILE_VIEWED",
+      notificationId: notification.id,
+      projectId: params.projectId,
+      contactId: params.contactId,
+      actionUrl: `/projects/${params.projectId}`,
+    },
+  });
+
+  return notification;
 }
 
 /**
@@ -157,7 +222,7 @@ export async function notifySmartFileAccepted(params: {
   smartFileName: string;
   smartFileId: string;
 }) {
-  return createNotification({
+  const notification = await createNotification({
     photographerId: params.photographerId,
     type: "SMART_FILE_ACCEPTED",
     priority: "HIGH",
@@ -169,6 +234,22 @@ export async function notifySmartFileAccepted(params: {
     relatedType: "smartFile",
     actionUrl: `/projects/${params.projectId}`
   });
+
+  // Send push notification
+  await sendPushNotification({
+    photographerId: params.photographerId,
+    title: "Proposal Accepted!",
+    body: `${params.contactName} accepted ${params.smartFileName}`,
+    data: {
+      type: "SMART_FILE_ACCEPTED",
+      notificationId: notification.id,
+      projectId: params.projectId,
+      contactId: params.contactId,
+      actionUrl: `/projects/${params.projectId}`,
+    },
+  });
+
+  return notification;
 }
 
 /**
@@ -182,7 +263,7 @@ export async function notifyNewMessage(params: {
   messagePreview?: string;
   channel: "email" | "sms";
 }) {
-  return createNotification({
+  const notification = await createNotification({
     photographerId: params.photographerId,
     type: "MESSAGE",
     priority: "HIGH",
@@ -194,6 +275,24 @@ export async function notifyNewMessage(params: {
     relatedType: "contact",
     actionUrl: params.projectId ? `/projects/${params.projectId}` : `/inbox`
   });
+
+  // Send push notification
+  const messageType = params.channel === "sms" ? "text" : "email";
+  const preview = params.messagePreview?.slice(0, 50) || "";
+  await sendPushNotification({
+    photographerId: params.photographerId,
+    title: "New Message",
+    body: `${params.contactName}: ${preview}${preview.length >= 50 ? "..." : ""}`,
+    data: {
+      type: "MESSAGE",
+      notificationId: notification.id,
+      projectId: params.projectId,
+      contactId: params.contactId,
+      actionUrl: params.projectId ? `/projects/${params.projectId}` : `/inbox`,
+    },
+  });
+
+  return notification;
 }
 
 /**
@@ -213,7 +312,12 @@ export async function notifyNewBooking(params: {
     day: "numeric"
   });
 
-  return createNotification({
+  const timeStr = params.bookingDate.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit"
+  });
+
+  const notification = await createNotification({
     photographerId: params.photographerId,
     type: "BOOKING",
     priority: "MEDIUM",
@@ -225,6 +329,22 @@ export async function notifyNewBooking(params: {
     relatedType: "booking",
     actionUrl: `/projects/${params.projectId}`
   });
+
+  // Send push notification
+  await sendPushNotification({
+    photographerId: params.photographerId,
+    title: "New Booking",
+    body: `${params.bookingType || "Consultation"} with ${params.contactName} - ${dateStr} at ${timeStr}`,
+    data: {
+      type: "BOOKING",
+      notificationId: notification.id,
+      projectId: params.projectId,
+      contactId: params.contactId,
+      actionUrl: `/projects/${params.projectId}`,
+    },
+  });
+
+  return notification;
 }
 
 /**
@@ -241,23 +361,31 @@ export async function notifyGalleryActivity(params: {
 }) {
   let title = "";
   let description = "";
+  let pushTitle = "";
+  let pushBody = "";
 
   switch (params.activityType) {
     case "upload_complete":
       title = "Gallery upload complete";
       description = `${params.count || 0} photos uploaded to ${params.galleryName}`;
+      pushTitle = "Upload Complete";
+      pushBody = `${params.count || 0} photos uploaded to ${params.galleryName}`;
       break;
     case "favorites_added":
       title = `${params.contactName || "Client"} favorited photos`;
       description = `${params.count || 0} photos marked as favorites in ${params.galleryName}`;
+      pushTitle = "Favorites Added";
+      pushBody = `${params.contactName || "Client"} favorited ${params.count || 0} photos`;
       break;
     case "download":
       title = `${params.contactName || "Client"} downloaded photos`;
       description = `Photos downloaded from ${params.galleryName}`;
+      pushTitle = "Photos Downloaded";
+      pushBody = `${params.contactName || "Client"} downloaded photos from ${params.galleryName}`;
       break;
   }
 
-  return createNotification({
+  const notification = await createNotification({
     photographerId: params.photographerId,
     type: "GALLERY",
     priority: "LOW",
@@ -269,6 +397,22 @@ export async function notifyGalleryActivity(params: {
     relatedType: "gallery",
     actionUrl: `/projects/${params.projectId}`
   });
+
+  // Send push notification
+  await sendPushNotification({
+    photographerId: params.photographerId,
+    title: pushTitle,
+    body: pushBody,
+    data: {
+      type: "GALLERY",
+      notificationId: notification.id,
+      projectId: params.projectId,
+      contactId: params.contactId,
+      actionUrl: `/projects/${params.projectId}`,
+    },
+  });
+
+  return notification;
 }
 
 /**
@@ -284,7 +428,7 @@ export async function notifyAutomation(params: {
 }) {
   const isError = params.status === "failed";
 
-  return createNotification({
+  const notification = await createNotification({
     photographerId: params.photographerId,
     type: "AUTOMATION",
     priority: isError ? "HIGH" : "LOW",
@@ -295,6 +439,24 @@ export async function notifyAutomation(params: {
     relatedType: "automation",
     actionUrl: params.projectId ? `/projects/${params.projectId}` : `/automations`
   });
+
+  // Only send push for failures (don't spam with routine automation triggers)
+  if (isError) {
+    await sendPushNotification({
+      photographerId: params.photographerId,
+      title: "Automation Failed",
+      body: `${params.automationName}: ${params.errorMessage?.slice(0, 50) || "Check details"}`,
+      data: {
+        type: "AUTOMATION",
+        notificationId: notification.id,
+        projectId: params.projectId,
+        contactId: params.contactId,
+        actionUrl: params.projectId ? `/projects/${params.projectId}` : `/automations`,
+      },
+    });
+  }
+
+  return notification;
 }
 
 /**
@@ -307,7 +469,7 @@ export async function notifyReminder(params: {
   title: string;
   description?: string;
 }) {
-  return createNotification({
+  const notification = await createNotification({
     photographerId: params.photographerId,
     type: "REMINDER",
     priority: "MEDIUM",
@@ -317,4 +479,20 @@ export async function notifyReminder(params: {
     contactId: params.contactId,
     actionUrl: params.projectId ? `/projects/${params.projectId}` : undefined
   });
+
+  // Send push notification
+  await sendPushNotification({
+    photographerId: params.photographerId,
+    title: "Reminder",
+    body: params.title,
+    data: {
+      type: "REMINDER",
+      notificationId: notification.id,
+      projectId: params.projectId,
+      contactId: params.contactId,
+      actionUrl: params.projectId ? `/projects/${params.projectId}` : undefined,
+    },
+  });
+
+  return notification;
 }
