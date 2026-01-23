@@ -95,6 +95,7 @@
     "html-pdf-node": "^1.0.8",
     "input-otp": "^1.4.2",
     "jsonwebtoken": "^9.0.2",
+    "jwks-rsa": "^3.2.1",
     "lucide-react": "^0.453.0",
     "memoizee": "^0.4.17",
     "memorystore": "^1.6.7",

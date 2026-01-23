@@ -19,6 +19,12 @@ interface AppleLoginPayload {
   lastName?: string;
 }
 
+interface GoogleLoginPayload {
+  idToken: string;
+  firstName?: string;
+  lastName?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   token: string | null;
@@ -26,6 +32,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   loginWithApple: (payload: AppleLoginPayload) => Promise<void>;
+  loginWithGoogle: (payload: GoogleLoginPayload) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -134,7 +141,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       if (__DEV__) {
-        console.log("[AuthContext] Storing token and user in secure storage...");
+        console.log(
+          "[AuthContext] Storing token and user in secure storage...",
+        );
       }
       await setSecureItem(TOKEN_KEY, response.token);
       await setSecureItem(USER_KEY, JSON.stringify(response.user));
@@ -157,7 +166,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error instanceof ApiError) {
         if (__DEV__) {
           console.log("[AuthContext] ApiError status:", error.status);
-          console.log("[AuthContext] ApiError data:", JSON.stringify(error.data));
+          console.log(
+            "[AuthContext] ApiError data:",
+            JSON.stringify(error.data),
+          );
         }
         if (error.status === 401) {
           throw new Error("Invalid email or password");
@@ -199,7 +211,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       if (__DEV__) {
-        console.log("[AuthContext] Storing token and user in secure storage...");
+        console.log(
+          "[AuthContext] Storing token and user in secure storage...",
+        );
       }
       await setSecureItem(TOKEN_KEY, response.token);
       await setSecureItem(USER_KEY, JSON.stringify(response.user));
@@ -222,12 +236,85 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error instanceof ApiError) {
         if (__DEV__) {
           console.log("[AuthContext] ApiError status:", error.status);
-          console.log("[AuthContext] ApiError data:", JSON.stringify(error.data));
+          console.log(
+            "[AuthContext] ApiError data:",
+            JSON.stringify(error.data),
+          );
         }
         if (error.status === 401) {
           throw new Error("Apple authentication failed");
         }
         throw new Error(error.message || "Apple login failed");
+      }
+      throw error;
+    }
+  }, []);
+
+  const loginWithGoogle = useCallback(async (payload: GoogleLoginPayload) => {
+    if (__DEV__) {
+      console.log("[AuthContext] Google login attempt");
+      console.log("[AuthContext] Calling authApi.googleLogin...");
+    }
+
+    try {
+      const response = await authApi.googleLogin(payload);
+
+      if (__DEV__) {
+        console.log("[AuthContext] Google login response received");
+        console.log(
+          "[AuthContext] User:",
+          response.user ? JSON.stringify(response.user) : "null",
+        );
+        console.log(
+          "[AuthContext] Token received:",
+          response.token ? "YES" : "NO",
+        );
+      }
+
+      if (!response.token) {
+        if (__DEV__) {
+          console.log("[AuthContext] ERROR: No token in Google login response");
+        }
+        throw new Error(
+          "Server did not return authentication token. Please contact support.",
+        );
+      }
+
+      if (__DEV__) {
+        console.log(
+          "[AuthContext] Storing token and user in secure storage...",
+        );
+      }
+      await setSecureItem(TOKEN_KEY, response.token);
+      await setSecureItem(USER_KEY, JSON.stringify(response.user));
+
+      if (__DEV__) {
+        console.log("[AuthContext] Setting auth state...");
+      }
+      setToken(response.token);
+      setUser(response.user);
+      if (__DEV__) {
+        console.log("[AuthContext] Google login successful!");
+      }
+    } catch (error) {
+      if (__DEV__) {
+        console.log(
+          "[AuthContext] Google login error:",
+          error instanceof Error ? error.message : String(error),
+        );
+      }
+      if (error instanceof ApiError) {
+        if (__DEV__) {
+          console.log("[AuthContext] ApiError status:", error.status);
+          console.log(
+            "[AuthContext] ApiError data:",
+            JSON.stringify(error.data),
+          );
+        }
+        if (error.status === 401) {
+          throw new Error("Google authentication failed");
+        }
+        throw new Error(error.message || "Google login failed");
       }
       throw error;
     }
@@ -268,6 +355,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAuthenticated: !!token && !!user,
     login,
     loginWithApple,
+    loginWithGoogle,
     logout,
     refreshUser,
   };

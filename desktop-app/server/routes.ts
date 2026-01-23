@@ -1862,6 +1862,321 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Apple Sign In for Mobile Apps (accepts identity token from iOS)
+  app.post("/api/auth/apple/mobile", async (req, res) => {
+    try {
+      const { identityToken, firstName, lastName } = req.body;
+
+      if (!identityToken) {
+        return res.status(400).json({ message: "Identity token is required" });
+      }
+
+      // Decode and verify Apple identity token
+      // Apple's identity token is a JWT signed by Apple
+      const jwt = await import('jsonwebtoken');
+      const jwksClient = await import('jwks-rsa');
+
+      // Apple's JWKS endpoint
+      const client = jwksClient.default({
+        jwksUri: 'https://appleid.apple.com/auth/keys',
+        cache: true,
+        rateLimit: true,
+      });
+
+      // Decode token header to get key ID
+      const decoded = jwt.default.decode(identityToken, { complete: true });
+      if (!decoded || typeof decoded === 'string') {
+        return res.status(401).json({ message: "Invalid Apple identity token" });
+      }
+
+      const kid = decoded.header.kid;
+      if (!kid) {
+        return res.status(401).json({ message: "No key ID in Apple token" });
+      }
+
+      // Get the signing key from Apple
+      let signingKey;
+      try {
+        const key = await client.getSigningKey(kid);
+        signingKey = key.getPublicKey();
+      } catch (keyError) {
+        console.error("❌ Failed to get Apple signing key:", keyError);
+        return res.status(401).json({ message: "Failed to verify Apple token" });
+      }
+
+      // Verify the token
+      let payload: any;
+      try {
+        payload = jwt.default.verify(identityToken, signingKey, {
+          algorithms: ['RS256'],
+          issuer: 'https://appleid.apple.com',
+          audience: process.env.APPLE_BUNDLE_ID || 'com.thephotocrm.app',
+        });
+      } catch (verifyError) {
+        console.error("❌ Apple token verification failed:", verifyError);
+        return res.status(401).json({ message: "Invalid Apple identity token" });
+      }
+
+      if (!payload.email) {
+        return res.status(401).json({ message: "No email in Apple token" });
+      }
+
+      const normalizedEmail = payload.email.toLowerCase().trim();
+      const appleId = payload.sub;
+
+      // Try to find existing user by appleId
+      let user = await storage.getUserByAppleId(appleId);
+
+      if (!user) {
+        // Try to find by email
+        const existingUser = await storage.getUserByEmail(normalizedEmail);
+
+        if (existingUser) {
+          // Link Apple account to existing user
+          await storage.updateUser(existingUser.id, { appleId, authProvider: 'apple' });
+          user = { ...existingUser, appleId, authProvider: 'apple' };
+          console.log(`🔗 Linked Apple account to existing user: ${normalizedEmail}`);
+        } else {
+          // New user - create account
+          console.log(`✨ Creating new photographer account via Apple Sign In: ${normalizedEmail}`);
+
+          const userFirstName = firstName || normalizedEmail.split('@')[0];
+          const userLastName = lastName || '';
+          const businessName = `${userFirstName} ${userLastName}`.trim() + " Photography";
+
+          const isBetaMode = process.env.BETA_MODE === 'true';
+          const portalSlug = await generateUniquePortalSlug(businessName);
+
+          const photographer = await storage.createPhotographer({
+            businessName,
+            portalSlug,
+            photographerName: `${userFirstName} ${userLastName}`.trim(),
+            timezone: "America/New_York",
+            ...(isBetaMode && {
+              subscriptionStatus: 'unlimited',
+              galleryPlanId: 'beta_unlimited'
+            })
+          });
+
+          if (isBetaMode) {
+            console.log(`🎉 BETA MODE: Granted unlimited access to Apple user ${normalizedEmail}`);
+          }
+
+          // Create default project types and stages
+          await storage.seedDefaultProjectTypes(photographer.id);
+
+          // Create default scheduling availability
+          const defaultScheduleTemplates = [
+            { dayOfWeek: 0, startTime: "07:00", endTime: "19:00", isEnabled: true },
+            { dayOfWeek: 1, startTime: "07:00", endTime: "19:00", isEnabled: true },
+            { dayOfWeek: 2, startTime: "07:00", endTime: "19:00", isEnabled: true },
+            { dayOfWeek: 3, startTime: "07:00", endTime: "19:00", isEnabled: true },
+            { dayOfWeek: 4, startTime: "07:00", endTime: "19:00", isEnabled: true },
+            { dayOfWeek: 5, startTime: "07:00", endTime: "19:00", isEnabled: true },
+            { dayOfWeek: 6, startTime: "07:00", endTime: "19:00", isEnabled: true },
+          ];
+
+          for (const template of defaultScheduleTemplates) {
+            await storage.createDailyAvailabilityTemplate({
+              ...template,
+              photographerId: photographer.id
+            });
+          }
+
+          user = await storage.createUser({
+            email: normalizedEmail,
+            role: "PHOTOGRAPHER",
+            photographerId: photographer.id,
+            appleId,
+            authProvider: "apple"
+          });
+
+          console.log(`📱 New photographer signup via Apple Sign In: ${normalizedEmail}`);
+        }
+      } else {
+        console.log(`✅ Existing Apple user logging in: ${user.email}`);
+      }
+
+      // Generate JWT token
+      const { generateToken } = await import('./services/auth');
+      const token = generateToken({
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+        photographerId: user.photographerId || undefined
+      });
+
+      res.json({
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          photographerId: user.photographerId
+        }
+      });
+    } catch (error) {
+      console.error("❌ Apple Mobile auth error:", error);
+      res.status(500).json({ message: "Authentication failed" });
+    }
+  });
+
+  // Google OAuth for Mobile Apps (accepts ID token from mobile Google Sign-In)
+  app.post("/api/auth/google/mobile", async (req, res) => {
+    try {
+      const { idToken, firstName: providedFirstName, lastName: providedLastName } = req.body;
+
+      if (!idToken) {
+        return res.status(400).json({ message: "ID token is required" });
+      }
+
+      // Verify the ID token with Google
+      const { OAuth2Client } = await import('google-auth-library');
+      const clientId = process.env.GOOGLE_CLIENT_ID;
+
+      if (!clientId) {
+        console.error("❌ GOOGLE_CLIENT_ID not configured");
+        return res.status(503).json({ message: "Google authentication not configured" });
+      }
+
+      const client = new OAuth2Client(clientId);
+
+      let payload;
+      try {
+        const ticket = await client.verifyIdToken({
+          idToken,
+          audience: [
+            clientId,
+            // Also accept iOS and Android client IDs if configured
+            process.env.GOOGLE_IOS_CLIENT_ID,
+            process.env.GOOGLE_ANDROID_CLIENT_ID,
+          ].filter(Boolean) as string[],
+        });
+        payload = ticket.getPayload();
+      } catch (verifyError) {
+        console.error("❌ Google ID token verification failed:", verifyError);
+        return res.status(401).json({ message: "Invalid Google ID token" });
+      }
+
+      if (!payload || !payload.email) {
+        return res.status(401).json({ message: "No email in Google token" });
+      }
+
+      if (!payload.email_verified) {
+        return res.status(401).json({ message: "Email not verified by Google" });
+      }
+
+      const normalizedEmail = payload.email.toLowerCase().trim();
+      const googleId = payload.sub;
+
+      // Try to find existing user by googleId first
+      let user = await storage.getUserByGoogleId(googleId);
+
+      if (!user) {
+        // Try to find by email
+        const existingUser = await storage.getUserByEmail(normalizedEmail);
+
+        if (existingUser) {
+          // Existing user without Google linked - for mobile, auto-link if they're using Google Sign-In
+          // This is different from web where we show a confirmation page
+          if (existingUser.authProvider === 'google' || !existingUser.passwordHash) {
+            // Already a Google user or no password set, safe to link
+            await storage.updateUser(existingUser.id, { googleId });
+            user = { ...existingUser, googleId };
+            console.log(`🔗 Linked Google account to existing user: ${normalizedEmail}`);
+          } else {
+            // Has a password - this is a security consideration
+            // For mobile, we'll allow linking since they authenticated with Google
+            await storage.updateUser(existingUser.id, { googleId, authProvider: 'google' });
+            user = { ...existingUser, googleId, authProvider: 'google' };
+            console.log(`🔗 Linked Google account to existing password user: ${normalizedEmail}`);
+          }
+        } else {
+          // New user - create account
+          console.log(`✨ Creating new photographer account via Google Mobile: ${normalizedEmail}`);
+
+          const firstName = providedFirstName || payload.given_name || normalizedEmail.split('@')[0];
+          const lastName = providedLastName || payload.family_name || '';
+          const businessName = `${firstName} ${lastName}`.trim() + " Photography";
+
+          const isBetaMode = process.env.BETA_MODE === 'true';
+          const portalSlug = await generateUniquePortalSlug(businessName);
+
+          const photographer = await storage.createPhotographer({
+            businessName,
+            portalSlug,
+            photographerName: `${firstName} ${lastName}`.trim(),
+            timezone: "America/New_York",
+            ...(isBetaMode && {
+              subscriptionStatus: 'unlimited',
+              galleryPlanId: 'beta_unlimited'
+            })
+          });
+
+          if (isBetaMode) {
+            console.log(`🎉 BETA MODE: Granted unlimited access to Google Mobile user ${normalizedEmail}`);
+          }
+
+          // Create default project types and stages
+          await storage.seedDefaultProjectTypes(photographer.id);
+
+          // Create default scheduling availability
+          const defaultScheduleTemplates = [
+            { dayOfWeek: 0, startTime: "07:00", endTime: "19:00", isEnabled: true },
+            { dayOfWeek: 1, startTime: "07:00", endTime: "19:00", isEnabled: true },
+            { dayOfWeek: 2, startTime: "07:00", endTime: "19:00", isEnabled: true },
+            { dayOfWeek: 3, startTime: "07:00", endTime: "19:00", isEnabled: true },
+            { dayOfWeek: 4, startTime: "07:00", endTime: "19:00", isEnabled: true },
+            { dayOfWeek: 5, startTime: "07:00", endTime: "19:00", isEnabled: true },
+            { dayOfWeek: 6, startTime: "07:00", endTime: "19:00", isEnabled: true },
+          ];
+
+          for (const template of defaultScheduleTemplates) {
+            await storage.createDailyAvailabilityTemplate({
+              ...template,
+              photographerId: photographer.id
+            });
+          }
+
+          user = await storage.createUser({
+            email: normalizedEmail,
+            role: "PHOTOGRAPHER",
+            photographerId: photographer.id,
+            googleId,
+            authProvider: "google"
+          });
+
+          console.log(`📱 New photographer signup via Google Mobile: ${normalizedEmail}`);
+        }
+      } else {
+        console.log(`✅ Existing Google user logging in via mobile: ${user.email}`);
+      }
+
+      // Generate JWT token
+      const { generateToken } = await import('./services/auth');
+      const token = generateToken({
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+        photographerId: user.photographerId || undefined
+      });
+
+      // Return token and user info (mobile doesn't use cookies)
+      res.json({
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          photographerId: user.photographerId
+        }
+      });
+    } catch (error) {
+      console.error("❌ Google Mobile auth error:", error);
+      res.status(500).json({ message: "Authentication failed" });
+    }
+  });
+
   // Account Linking Confirmation (when user chooses to link Google to existing password account)
   app.post("/api/auth/link-google", async (req, res) => {
     try {

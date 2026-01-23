@@ -208,7 +208,8 @@ export const users = pgTable("users", {
   clientId: varchar("client_id"),
   // OAuth fields
   googleId: text("google_id").unique(), // Google OAuth user ID
-  authProvider: text("auth_provider"), // 'google' or 'email'
+  appleId: text("apple_id").unique(), // Apple Sign In user ID
+  authProvider: text("auth_provider"), // 'google', 'apple', or 'email'
   resetToken: text("reset_token"),
   resetTokenExpiry: timestamp("reset_token_expiry"),
   resetTokenUsed: boolean("reset_token_used").default(false),

@@ -415,6 +415,12 @@ export const authApi = {
     lastName?: string;
   }) => api.post<LoginResponse>("/api/auth/apple/mobile", payload),
 
+  googleLogin: (payload: {
+    idToken: string;
+    firstName?: string;
+    lastName?: string;
+  }) => api.post<LoginResponse>("/api/auth/google/mobile", payload),
+
   me: (token: string, tenant?: TenantContext) =>
     api.get<User>("/api/auth/me", token, tenant),
 
@@ -779,7 +785,12 @@ export const automationsApi = {
     return api.get<Automation[]>(endpoint, token, tenant);
   },
 
-  toggle: (token: string, id: string, enabled: boolean, tenant?: TenantContext) =>
+  toggle: (
+    token: string,
+    id: string,
+    enabled: boolean,
+    tenant?: TenantContext,
+  ) =>
     api.patch<Automation>(`/api/automations/${id}`, { enabled }, token, tenant),
 };
 
@@ -842,7 +853,10 @@ export const availabilityApi = {
   // POST /api/availability/overrides - Create override (block time or custom hours)
   createOverride: (
     token: string,
-    data: Omit<DailyAvailabilityOverride, "id" | "photographerId" | "createdAt">,
+    data: Omit<
+      DailyAvailabilityOverride,
+      "id" | "photographerId" | "createdAt"
+    >,
     tenant?: TenantContext,
   ) =>
     api.post<DailyAvailabilityOverride>(
@@ -875,11 +889,7 @@ export const pushTokensApi = {
     ),
 
   // DELETE /api/push-tokens/:token - Unregister a push notification token
-  unregister: (
-    authToken: string,
-    pushToken: string,
-    tenant?: TenantContext,
-  ) =>
+  unregister: (authToken: string, pushToken: string, tenant?: TenantContext) =>
     api.delete<{ success: boolean }>(
       `/api/push-tokens/${encodeURIComponent(pushToken)}`,
       authToken,
