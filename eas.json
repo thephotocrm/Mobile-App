@@ -26,7 +26,8 @@
     "production": {
       "autoIncrement": true,
       "ios": {
-        "buildConfiguration": "Release"
+        "buildConfiguration": "Release",
+        "appleTeamId": "U8642G7Q84"
       },
       "android": {
         "buildType": "app-bundle"
