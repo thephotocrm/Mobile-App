@@ -6,7 +6,13 @@
       "Bash(grep:*)",
       "Bash(find:*)",
       "Bash(npx expo config:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(eas env:create:*)",
+      "Bash(EXPO_TOKEN=8H-LYKK5M0DxyE5xMzVL-R3FxqvYlk79h3R7Hae7 eas project:link:*)",
+      "Bash(EXPO_TOKEN=8H-LYKK5M0DxyE5xMzVL-R3FxqvYlk79h3R7Hae7 eas init:*)",
+      "Bash(EXPO_TOKEN=8H-LYKK5M0DxyE5xMzVL-R3FxqvYlk79h3R7Hae7 EXPO_PUBLIC_EAS_PROJECT_ID=cbbce86b-1967-4eec-a895-b1954270f408 eas env:create --scope project --name EXPO_PUSH_APNS_KEY_ID --type string --value \"43QZ9S2UMJ\" --visibility secret --environment production)",
+      "Bash(EXPO_TOKEN=8H-LYKK5M0DxyE5xMzVL-R3FxqvYlk79h3R7Hae7 EXPO_PUBLIC_EAS_PROJECT_ID=cbbce86b-1967-4eec-a895-b1954270f408 eas env:create:*)",
+      "Bash(EXPO_TOKEN=8H-LYKK5M0DxyE5xMzVL-R3FxqvYlk79h3R7Hae7 EXPO_PUBLIC_EAS_PROJECT_ID=cbbce86b-1967-4eec-a895-b1954270f408 eas env:list:*)"
     ]
   }
 }

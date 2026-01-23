@@ -2,6 +2,7 @@
   "expo": {
     "name": "thePhotoCrm",
     "slug": "thephotocrm",
+    "owner": "replit-private-0e045e38-8cdf-46a9-884b-60a9a96636df",
     "version": "1.0.0",
     "privacy": "public",
     "privacyPolicyUrl": "https://app.thephotocrm.com/privacy",
@@ -10,14 +11,22 @@
     "scheme": "thephotocrm",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "extra": {
+      "eas": {
+        "projectId": "cbbce86b-1967-4eec-a895-b1954270f408"
+      }
+    },
     "ios": {
+      "appleTeamId": "U8642G7Q84",
       "supportsTablet": true,
-      "bundleIdentifier": "com.thephotocrm.app",
+      "bundleIdentifier": "app.replit.pixelpot",
       "buildNumber": "1",
       "deploymentTarget": "15.0",
       "usesAppleSignIn": true,
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"],
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
         "ITSAppUsesNonExemptEncryption": false
       }
     },
