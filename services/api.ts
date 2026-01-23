@@ -409,6 +409,12 @@ export const authApi = {
       businessName,
     }),
 
+  appleLogin: (payload: {
+    identityToken: string;
+    firstName?: string;
+    lastName?: string;
+  }) => api.post<LoginResponse>("/api/auth/apple/mobile", payload),
+
   me: (token: string, tenant?: TenantContext) =>
     api.get<User>("/api/auth/me", token, tenant),
 

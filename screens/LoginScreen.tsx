@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
+import * as AppleAuthentication from "expo-apple-authentication";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
@@ -28,14 +29,22 @@ import {
 
 export default function LoginScreen() {
   const { theme } = useTheme();
-  const { login } = useAuth();
+  const { login, loginWithApple } = useAuth();
   const insets = useSafeAreaInsets();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAppleAvailable, setIsAppleAvailable] = useState(false);
+
+  useEffect(() => {
+    if (Platform.OS === "ios") {
+      AppleAuthentication.isAvailableAsync().then(setIsAppleAvailable);
+    }
+  }, []);
 
   const handleLogin = async () => {
     if (__DEV__) {
@@ -90,6 +99,68 @@ export default function LoginScreen() {
     await WebBrowser.openBrowserAsync("https://app.thephotocrm.com/reset-password");
   };
 
+  const handleAppleSignIn = async () => {
+    if (__DEV__) {
+      console.log("[LoginScreen] Apple Sign In button pressed");
+    }
+
+    setError(null);
+    setAppleLoading(true);
+
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      if (__DEV__) {
+        console.log("[LoginScreen] Apple credential received");
+      }
+
+      if (!credential.identityToken) {
+        throw new Error("No identity token received from Apple");
+      }
+
+      // Apple only provides name on first sign-in
+      const firstName = credential.fullName?.givenName ?? undefined;
+      const lastName = credential.fullName?.familyName ?? undefined;
+
+      await loginWithApple({
+        identityToken: credential.identityToken,
+        firstName,
+        lastName,
+      });
+
+      if (__DEV__) {
+        console.log("[LoginScreen] Apple Sign In completed successfully!");
+      }
+    } catch (err: unknown) {
+      // User cancelled - don't show error
+      if (
+        err &&
+        typeof err === "object" &&
+        "code" in err &&
+        err.code === "ERR_REQUEST_CANCELED"
+      ) {
+        if (__DEV__) {
+          console.log("[LoginScreen] Apple Sign In cancelled by user");
+        }
+        return;
+      }
+
+      const message =
+        err instanceof Error ? err.message : "Apple Sign In failed. Please try again.";
+      if (__DEV__) {
+        console.log("[LoginScreen] Apple Sign In failed:", message);
+      }
+      setError(message);
+    } finally {
+      setAppleLoading(false);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={[styles.container, { backgroundColor: theme.backgroundRoot }]}
@@ -122,6 +193,35 @@ export default function LoginScreen() {
         </View>
 
         <View style={styles.formContainer}>
+          {Platform.OS === "ios" && isAppleAvailable ? (
+            <View style={styles.appleButtonContainer}>
+              <AppleAuthentication.AppleAuthenticationButton
+                buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+                buttonStyle={
+                  theme.isDark
+                    ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
+                    : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+                }
+                cornerRadius={BorderRadius.sm}
+                style={styles.appleButton}
+                onPress={handleAppleSignIn}
+              />
+              {appleLoading ? (
+                <View style={styles.appleLoadingOverlay}>
+                  <ActivityIndicator size="small" color={theme.isDark ? "#000" : "#FFF"} />
+                </View>
+              ) : null}
+
+              <View style={styles.dividerContainer}>
+                <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
+                <ThemedText style={[styles.dividerText, { color: theme.textSecondary }]}>
+                  or
+                </ThemedText>
+                <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
+              </View>
+            </View>
+          ) : null}
+
           {error ? (
             <View
               style={[
@@ -367,5 +467,36 @@ const styles = StyleSheet.create({
   signUpText: {
     fontSize: 14,
     fontWeight: "600",
+  },
+  appleButtonContainer: {
+    marginBottom: Spacing.sm,
+  },
+  appleButton: {
+    width: "100%",
+    height: 52,
+  },
+  appleLoadingOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 52,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(128, 128, 128, 0.3)",
+    borderRadius: BorderRadius.sm,
+  },
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: Spacing.lg,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+  },
+  dividerText: {
+    paddingHorizontal: Spacing.md,
+    fontSize: 14,
   },
 });

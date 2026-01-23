@@ -1,0 +1,51 @@
+~/workspace$ git push origin main --force
+Enumerating objects: 1800, done.
+Counting objects: 100% (1800/1800), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (1773/1773), done.
+Writing objects: 100% (1800/1800), 109.88 MiB | 5.65 MiB/s, done.
+Total 1800 (delta 906), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (906/906), done.
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote: 
+remote: - GITHUB PUSH PROTECTION
+remote:   —————————————————————————————————————————
+remote:     Resolve the following violations before pushing again
+remote: 
+remote:     - Push cannot contain secrets
+remote: 
+remote:     
+remote:      (?) Learn how to resolve a blocked push
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
+remote:     
+remote:     
+remote:       —— Google OAuth Refresh Token ————————————————————————
+remote:        locations:
+remote:          - commit: 832d1765476d7480e77fca4d5b476bf0536be2bb
+remote:            path: desktop-app/attached_assets/Pasted--at-async-sendViaGmail-file-app-dist-index-js-5626-22-at-async-Promise-allSettled-inde-1763095027562_1763095027562.txt:19
+remote:          - commit: 832d1765476d7480e77fca4d5b476bf0536be2bb
+remote:            path: desktop-app/attached_assets/Pasted--at-async-sendViaGmail-file-app-dist-index-js-5626-22-at-async-Promise-allSettled-inde-1763095027562_1763095027562.txt:33
+remote:          - commit: 832d1765476d7480e77fca4d5b476bf0536be2bb
+remote:            path: desktop-app/attached_assets/Pasted-2025-11-14T04-34-09-684786591Z-inf-Questionnaire-already-assigned-to-Austin-Pacholek-for-this--1763094943955_1763094943956.txt:491
+remote:          - commit: 832d1765476d7480e77fca4d5b476bf0536be2bb
+remote:            path: desktop-app/attached_assets/Pasted-2025-11-14T04-34-09-684786591Z-inf-Questionnaire-already-assigned-to-Austin-Pacholek-for-this--1763094943955_1763094943956.txt:505
+remote:     
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/thephotocrm/Mobile-App/security/secret-scanning/unblock-secret/38YOpKT6JLHUMUHS6ZdeHnwcv4R
+remote:     
+remote:     
+remote:       —— Twilio Account String Identifier ——————————————————
+remote:        locations:
+remote:          - commit: 832d1765476d7480e77fca4d5b476bf0536be2bb
+remote:            path: desktop-app/attached_assets/Pasted-Message-Details-Troubleshoot-this-message-Properties-Message-SID-SM356040535634dd1844a2366b464-1761257700304_1761257700305.txt:175
+remote:          - commit: 832d1765476d7480e77fca4d5b476bf0536be2bb
+remote:            path: desktop-app/attached_assets/Pasted-Twilio-Platform-Message-Created-17-36-23-CDT-2025-10-23-Enqueued-17-36-23-CDT-2025-10-23-TwiML-1761259081565_1761259081566.txt:127
+remote:     
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/thephotocrm/Mobile-App/security/secret-scanning/unblock-secret/38YOpPTgRJ03Py9veaS1Oa4H5li
+remote:     
+remote: 
+remote: 
+To https://github.com/thephotocrm/Mobile-App.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/thephotocrm/Mobile-App.git'

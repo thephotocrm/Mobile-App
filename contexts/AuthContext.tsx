@@ -13,12 +13,19 @@ import { authApi, User, ApiError } from "@/services/api";
 const TOKEN_KEY = "auth_token";
 const USER_KEY = "auth_user";
 
+interface AppleLoginPayload {
+  identityToken: string;
+  firstName?: string;
+  lastName?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithApple: (payload: AppleLoginPayload) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -161,6 +168,71 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const loginWithApple = useCallback(async (payload: AppleLoginPayload) => {
+    if (__DEV__) {
+      console.log("[AuthContext] Apple login attempt");
+      console.log("[AuthContext] Calling authApi.appleLogin...");
+    }
+
+    try {
+      const response = await authApi.appleLogin(payload);
+
+      if (__DEV__) {
+        console.log("[AuthContext] Apple login response received");
+        console.log(
+          "[AuthContext] User:",
+          response.user ? JSON.stringify(response.user) : "null",
+        );
+        console.log(
+          "[AuthContext] Token received:",
+          response.token ? "YES" : "NO",
+        );
+      }
+
+      if (!response.token) {
+        if (__DEV__) {
+          console.log("[AuthContext] ERROR: No token in Apple login response");
+        }
+        throw new Error(
+          "Server did not return authentication token. Please contact support.",
+        );
+      }
+
+      if (__DEV__) {
+        console.log("[AuthContext] Storing token and user in secure storage...");
+      }
+      await setSecureItem(TOKEN_KEY, response.token);
+      await setSecureItem(USER_KEY, JSON.stringify(response.user));
+
+      if (__DEV__) {
+        console.log("[AuthContext] Setting auth state...");
+      }
+      setToken(response.token);
+      setUser(response.user);
+      if (__DEV__) {
+        console.log("[AuthContext] Apple login successful!");
+      }
+    } catch (error) {
+      if (__DEV__) {
+        console.log(
+          "[AuthContext] Apple login error:",
+          error instanceof Error ? error.message : String(error),
+        );
+      }
+      if (error instanceof ApiError) {
+        if (__DEV__) {
+          console.log("[AuthContext] ApiError status:", error.status);
+          console.log("[AuthContext] ApiError data:", JSON.stringify(error.data));
+        }
+        if (error.status === 401) {
+          throw new Error("Apple authentication failed");
+        }
+        throw new Error(error.message || "Apple login failed");
+      }
+      throw error;
+    }
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       if (token) {
@@ -195,6 +267,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading,
     isAuthenticated: !!token && !!user,
     login,
+    loginWithApple,
     logout,
     refreshUser,
   };
