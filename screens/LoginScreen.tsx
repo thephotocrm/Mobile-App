@@ -16,6 +16,7 @@ import { Feather } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 import * as AppleAuthentication from "expo-apple-authentication";
 import * as Google from "expo-auth-session/providers/google";
+import { makeRedirectUri } from "expo-auth-session";
 import Constants from "expo-constants";
 import Svg, { Path } from "react-native-svg";
 
@@ -77,11 +78,17 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
   const [isAppleAvailable, setIsAppleAvailable] = useState(false);
 
-  // Google Auth setup
+  // Google Auth setup - use Expo auth proxy for redirect URI
+  const redirectUri = makeRedirectUri({
+    scheme: "thephotocrm",
+    useProxy: true,
+  });
+
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId: googleClientId,
     iosClientId: googleIosClientId,
     androidClientId: googleAndroidClientId,
+    redirectUri,
   });
 
   useEffect(() => {
