@@ -73,31 +73,61 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loadStoredAuth = async () => {
     try {
-      const storedToken = await getSecureItem(TOKEN_KEY);
-      const storedUser = await getSecureItem(USER_KEY);
+      // Defensive SecureStore reads - catch any keychain errors (e.g., bundle ID changes)
+      let storedToken: string | null = null;
+      let storedUser: string | null = null;
 
-      if (storedToken && storedUser) {
-        const parsedUser = JSON.parse(storedUser) as User;
+      try {
+        storedToken = await getSecureItem(TOKEN_KEY);
+      } catch (storageError) {
+        console.warn("SecureStore token read failed, clearing auth:", storageError);
+        storedToken = null;
+      }
 
-        try {
-          const freshUser = await authApi.me(storedToken);
+      try {
+        storedUser = await getSecureItem(USER_KEY);
+      } catch (storageError) {
+        console.warn("SecureStore user read failed, clearing auth:", storageError);
+        storedUser = null;
+      }
+
+      if (!storedToken || !storedUser) {
+        // No stored auth or storage error - user will need to log in
+        setIsLoading(false);
+        return;
+      }
+
+      let parsedUser: User;
+      try {
+        parsedUser = JSON.parse(storedUser) as User;
+      } catch (parseError) {
+        console.warn("Failed to parse stored user:", parseError);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const freshUser = await authApi.me(storedToken);
+        setToken(storedToken);
+        setUser(freshUser);
+        await setSecureItem(USER_KEY, JSON.stringify(freshUser));
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 401) {
+          await clearAuth();
+        } else {
+          // Network error or other issue - use cached data
           setToken(storedToken);
-          setUser(freshUser);
-          await setSecureItem(USER_KEY, JSON.stringify(freshUser));
-        } catch (error) {
-          if (error instanceof ApiError && error.status === 401) {
-            await clearAuth();
-          } else {
-            setToken(storedToken);
-            setUser(parsedUser);
-          }
+          setUser(parsedUser);
         }
       }
     } catch (error) {
-      if (__DEV__) {
-        console.error("Error loading stored auth:", error);
+      console.error("Auth initialization error:", error);
+      // Always fall back to logged-out state
+      try {
+        await clearAuth();
+      } catch {
+        // Ignore secondary errors during cleanup
       }
-      await clearAuth();
     } finally {
       setIsLoading(false);
     }

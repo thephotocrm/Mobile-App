@@ -29,9 +29,9 @@ export default function App() {
         await seedDatabase();
         setIsDbReady(true);
       } catch (error) {
-        if (__DEV__) {
-          console.error("Failed to initialize database:", error);
-        }
+        // Log in production too for crash diagnostics
+        console.error("Database initialization failed:", error);
+        // Set ready anyway so app can run without local DB
         setIsDbReady(true);
       }
     }

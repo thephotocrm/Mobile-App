@@ -54,8 +54,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const theme = Colors[mode];
   const isDark = mode === "dark";
 
+  // Return children with default theme instead of null to prevent blank screen
   if (!isLoaded) {
-    return null;
+    const defaultTheme = Colors.light;
+    return (
+      <ThemeContext.Provider value={{ mode: "light", setMode: () => {}, theme: defaultTheme, isDark: false }}>
+        {children}
+      </ThemeContext.Provider>
+    );
   }
 
   return (
