@@ -51,10 +51,12 @@ function GoogleIcon() {
 }
 
 // Get Google Client ID from app config
-const googleClientId = Constants.expoConfig?.extra?.googleClientId;
-const googleIosClientId = Constants.expoConfig?.extra?.googleIosClientId;
-const googleAndroidClientId =
-  Constants.expoConfig?.extra?.googleAndroidClientId;
+const googleClientId = Constants.expoConfig?.extra?.googleClientId || "";
+const googleIosClientId = Constants.expoConfig?.extra?.googleIosClientId || "";
+const googleAndroidClientId = Constants.expoConfig?.extra?.googleAndroidClientId || "";
+
+// Check if Google auth is properly configured
+const isGoogleConfigured = !!(googleClientId || googleIosClientId || googleAndroidClientId);
 
 export default function LoginScreen() {
   const { theme } = useTheme();
@@ -425,31 +427,33 @@ export default function LoginScreen() {
 
           {/* Social Sign In Buttons */}
           <View style={styles.socialButtonsContainer}>
-            {/* Google Sign In */}
-            <Pressable
-              style={[
-                styles.socialButton,
-                {
-                  backgroundColor: theme.backgroundCard,
-                  borderColor: theme.border,
-                },
-              ]}
-              onPress={handleGoogleSignIn}
-              disabled={googleLoading || !request}
-            >
-              {googleLoading ? (
-                <ActivityIndicator size="small" color={theme.text} />
-              ) : (
-                <>
-                  <View style={styles.googleIconContainer}>
-                    <GoogleIcon />
-                  </View>
-                  <ThemedText style={styles.socialButtonText}>
-                    Continue with Google
-                  </ThemedText>
-                </>
-              )}
-            </Pressable>
+            {/* Google Sign In - only show if configured */}
+            {isGoogleConfigured ? (
+              <Pressable
+                style={[
+                  styles.socialButton,
+                  {
+                    backgroundColor: theme.backgroundCard,
+                    borderColor: theme.border,
+                  },
+                ]}
+                onPress={handleGoogleSignIn}
+                disabled={googleLoading || !request}
+              >
+                {googleLoading ? (
+                  <ActivityIndicator size="small" color={theme.text} />
+                ) : (
+                  <>
+                    <View style={styles.googleIconContainer}>
+                      <GoogleIcon />
+                    </View>
+                    <ThemedText style={styles.socialButtonText}>
+                      Continue with Google
+                    </ThemedText>
+                  </>
+                )}
+              </Pressable>
+            ) : null}
 
             {/* Apple Sign In - iOS only */}
             {Platform.OS === "ios" && isAppleAvailable ? (
