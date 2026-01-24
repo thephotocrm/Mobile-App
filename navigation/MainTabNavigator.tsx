@@ -2,7 +2,6 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import { Platform, StyleSheet, View, Text } from "react-native";
 import { HomeStackNavigator } from "@/navigation/HomeStackNavigator";
 import ProjectsStackNavigator from "@/navigation/ProjectsStackNavigator";
@@ -10,7 +9,8 @@ import InboxStackNavigator from "@/navigation/InboxStackNavigator";
 import { NotificationsStackNavigator } from "@/navigation/NotificationsStackNavigator";
 import { ToolsStackNavigator } from "@/navigation/ToolsStackNavigator";
 import { useTheme } from "@/hooks/useTheme";
-import { GradientColors, Spacing } from "@/constants/theme";
+import { useInbox } from "@/contexts/InboxContext";
+import { MessagingColors } from "@/constants/theme";
 
 interface TabIconProps {
   name: keyof typeof Feather.glyphMap;
@@ -18,24 +18,33 @@ interface TabIconProps {
   size: number;
   focused: boolean;
   inactiveColor: string;
+  badge?: number;
 }
 
-function TabIcon({ name, label, size, focused, inactiveColor }: TabIconProps) {
+function TabIcon({
+  name,
+  label,
+  size,
+  focused,
+  inactiveColor,
+  badge,
+}: TabIconProps) {
   const focusedColor = "#9333EA";
-
-  if (!focused) {
-    return (
-      <View style={styles.tabItem}>
-        <Feather name={name} size={size} color={inactiveColor} />
-        <Text style={[styles.tabLabel, { color: inactiveColor }]}>{label}</Text>
-      </View>
-    );
-  }
+  const iconColor = focused ? focusedColor : inactiveColor;
 
   return (
     <View style={styles.tabItem}>
-      <Feather name={name} size={size} color={focusedColor} />
-      <Text style={[styles.tabLabel, { color: focusedColor }]}>{label}</Text>
+      <View style={styles.iconContainer}>
+        <Feather name={name} size={size} color={iconColor} />
+        {badge !== undefined && badge > 0 && (
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>
+              {badge > 99 ? "99+" : badge}
+            </Text>
+          </View>
+        )}
+      </View>
+      <Text style={[styles.tabLabel, { color: iconColor }]}>{label}</Text>
     </View>
   );
 }
@@ -52,6 +61,7 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export default function MainTabNavigator() {
   const { theme, isDark } = useTheme();
+  const { unreadCount } = useInbox();
 
   return (
     <Tab.Navigator
@@ -131,6 +141,7 @@ export default function MainTabNavigator() {
               size={size}
               focused={focused}
               inactiveColor={theme.tabIconDefault}
+              badge={unreadCount}
             />
           ),
         }}

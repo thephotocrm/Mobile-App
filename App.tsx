@@ -11,6 +11,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import { InboxProvider } from "@/contexts/InboxContext";
 import { initializeDatabase } from "@/database";
 import { seedDatabase } from "@/database/seed";
 
@@ -117,8 +118,9 @@ export default function App() {
     <ErrorBoundary>
       <ThemeProvider>
         <AuthProvider>
-          <NotificationProvider>
-            <SafeAreaProvider>
+          <InboxProvider>
+            <NotificationProvider>
+              <SafeAreaProvider>
               <GestureHandlerRootView style={styles.root}>
                 <KeyboardProvider>
                   <NavigationContainer>
@@ -128,7 +130,8 @@ export default function App() {
                 </KeyboardProvider>
               </GestureHandlerRootView>
             </SafeAreaProvider>
-          </NotificationProvider>
+            </NotificationProvider>
+          </InboxProvider>
         </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>

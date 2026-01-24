@@ -4,9 +4,9 @@ import {
   StyleSheet,
   Pressable,
   Text,
-  ScrollView,
   RefreshControl,
   ActivityIndicator,
+  useWindowDimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
@@ -16,7 +16,13 @@ import Animated, {
   FadeInUp,
   FadeInRight,
   Easing,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  runOnJS,
 } from "react-native-reanimated";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { Feather } from "@expo/vector-icons";
@@ -39,18 +45,36 @@ import {
   createTenantContext,
 } from "@/services/api";
 
-// Generate dates for the horizontal date strip
-const generateDates = (centerDate: Date, range: number = 7) => {
-  const dates: Date[] = [];
-  const start = new Date(centerDate);
-  start.setDate(start.getDate() - Math.floor(range / 2));
+// Get Sunday of the week containing a date
+const getStartOfWeek = (date: Date): Date => {
+  const d = new Date(date);
+  d.setDate(d.getDate() - d.getDay());
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
 
-  for (let i = 0; i < range; i++) {
-    const date = new Date(start);
-    date.setDate(start.getDate() + i);
+// Generate Sunday-Saturday week
+const getWeekDates = (weekStart: Date): Date[] => {
+  const dates: Date[] = [];
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(weekStart);
+    date.setDate(weekStart.getDate() + i);
     dates.push(date);
   }
   return dates;
+};
+
+// Week navigation
+const getNextWeekStart = (current: Date): Date => {
+  const next = new Date(current);
+  next.setDate(next.getDate() + 7);
+  return next;
+};
+
+const getPrevWeekStart = (current: Date): Date => {
+  const prev = new Date(current);
+  prev.setDate(prev.getDate() - 7);
+  return prev;
 };
 
 // Event type definition for UI
@@ -221,6 +245,7 @@ export function CalendarScreen() {
   const { token, user } = useAuth();
   const insets = useSafeAreaInsets();
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [currentWeekStart, setCurrentWeekStart] = useState(() => getStartOfWeek(new Date()));
   const [refreshing, setRefreshing] = useState(false);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [templates, setTemplates] = useState<DailyAvailabilityTemplate[]>([]);
@@ -276,8 +301,8 @@ export function CalendarScreen() {
     }, [loadData]),
   );
 
-  // Generate dates for the strip
-  const dates = useMemo(() => generateDates(selectedDate, 7), [selectedDate]);
+  // Generate dates for the strip (Sunday-Saturday)
+  const dates = useMemo(() => getWeekDates(currentWeekStart), [currentWeekStart]);
 
   // Get day info (status + event count) for a date
   const getDayInfo = useCallback(
@@ -321,6 +346,63 @@ export function CalendarScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedDate(date);
   };
+
+  // Week navigation handlers - preserve selected day of week
+  const handleNextWeek = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const dayOfWeek = selectedDate.getDay();
+    setCurrentWeekStart(prev => {
+      const newWeekStart = getNextWeekStart(prev);
+      // Update selected date to same day of week in new week
+      const newSelectedDate = new Date(newWeekStart);
+      newSelectedDate.setDate(newWeekStart.getDate() + dayOfWeek);
+      setSelectedDate(newSelectedDate);
+      return newWeekStart;
+    });
+  }, [selectedDate]);
+
+  const handlePrevWeek = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const dayOfWeek = selectedDate.getDay();
+    setCurrentWeekStart(prev => {
+      const newWeekStart = getPrevWeekStart(prev);
+      // Update selected date to same day of week in new week
+      const newSelectedDate = new Date(newWeekStart);
+      newSelectedDate.setDate(newWeekStart.getDate() + dayOfWeek);
+      setSelectedDate(newSelectedDate);
+      return newWeekStart;
+    });
+  }, [selectedDate]);
+
+  // Swipe gesture for week navigation
+  const { width: screenWidth } = useWindowDimensions();
+  const translateX = useSharedValue(0);
+  const SWIPE_THRESHOLD = screenWidth * 0.01;
+
+  const weekSwipeGesture = Gesture.Pan()
+    .activeOffsetX([-15, 15])
+    .onUpdate((e) => {
+      translateX.value = e.translationX;
+    })
+    .onEnd((e) => {
+      if (e.translationX < -SWIPE_THRESHOLD) {
+        translateX.value = withTiming(-screenWidth, { duration: 200 }, () => {
+          runOnJS(handleNextWeek)();
+          translateX.value = 0;
+        });
+      } else if (e.translationX > SWIPE_THRESHOLD) {
+        translateX.value = withTiming(screenWidth, { duration: 200 }, () => {
+          runOnJS(handlePrevWeek)();
+          translateX.value = 0;
+        });
+      } else {
+        translateX.value = withSpring(0);
+      }
+    });
+
+  const dateStripAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
 
   // Check if date is today
   const isToday = (date: Date) => {
@@ -383,7 +465,7 @@ export function CalendarScreen() {
           style={styles.monthYearHeader}
         >
           <ThemedText style={[styles.monthYearText, { color: theme.text }]}>
-            {selectedDate.toLocaleDateString("en-US", {
+            {currentWeekStart.toLocaleDateString("en-US", {
               month: "long",
               year: "numeric",
             })}
@@ -397,90 +479,88 @@ export function CalendarScreen() {
             .easing(Easing.out(Easing.cubic))}
           style={styles.dateStripContainer}
         >
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.dateStripContent}
-          >
-            {dates.map((date, index) => {
-              const selected = isSelected(date);
-              const today = isToday(date);
-              const dayInfo = getDayInfo(date);
-              return (
-                <Pressable
-                  key={index}
-                  onPress={() => handleDateSelect(date)}
-                  style={({ pressed }) => [
-                    styles.dateItem,
-                    selected && [
-                      styles.dateItemSelected,
-                      { backgroundColor: CalendarColors.primary },
-                    ],
-                    pressed && !selected && { opacity: 0.7 },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.dateNumber,
-                      { color: selected ? "#FFFFFF" : theme.text },
-                      today && !selected && { color: CalendarColors.primary },
+          <GestureDetector gesture={weekSwipeGesture}>
+            <Animated.View style={[styles.dateStripContent, dateStripAnimatedStyle]}>
+              {dates.map((date, index) => {
+                const selected = isSelected(date);
+                const today = isToday(date);
+                const dayInfo = getDayInfo(date);
+                return (
+                  <Pressable
+                    key={index}
+                    onPress={() => handleDateSelect(date)}
+                    style={({ pressed }) => [
+                      styles.dateItem,
+                      selected && [
+                        styles.dateItemSelected,
+                        { backgroundColor: CalendarColors.primary },
+                      ],
+                      pressed && !selected && { opacity: 0.7 },
                     ]}
                   >
-                    {date.getDate()}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.dateDay,
-                      {
-                        color: selected
-                          ? "rgba(255,255,255,0.8)"
-                          : theme.textTertiary,
-                      },
-                      today && !selected && { color: CalendarColors.primary },
-                    ]}
-                  >
-                    {date
-                      .toLocaleDateString("en-US", { weekday: "short" })
-                      .toUpperCase()}
-                  </Text>
-                  {/* Availability indicator */}
-                  <View style={styles.dateIndicators}>
-                    {dayInfo.status !== "available" && (
-                      <View
-                        style={[
-                          styles.statusDot,
-                          {
-                            backgroundColor: selected
-                              ? "rgba(255,255,255,0.9)"
-                              : getStatusColor(dayInfo.status),
-                          },
-                        ]}
-                      />
-                    )}
-                    {dayInfo.eventCount > 0 && (
-                      <View style={styles.eventDots}>
-                        {Array.from({
-                          length: Math.min(dayInfo.eventCount, 3),
-                        }).map((_, i) => (
-                          <View
-                            key={i}
-                            style={[
-                              styles.eventDot,
-                              {
-                                backgroundColor: selected
-                                  ? "rgba(255,255,255,0.7)"
-                                  : CalendarColors.primary,
-                              },
-                            ]}
-                          />
-                        ))}
-                      </View>
-                    )}
-                  </View>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
+                    <Text
+                      style={[
+                        styles.dateNumber,
+                        { color: selected ? "#FFFFFF" : theme.text },
+                        today && !selected && { color: CalendarColors.primary },
+                      ]}
+                    >
+                      {date.getDate()}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.dateDay,
+                        {
+                          color: selected
+                            ? "rgba(255,255,255,0.8)"
+                            : theme.textTertiary,
+                        },
+                        today && !selected && { color: CalendarColors.primary },
+                      ]}
+                    >
+                      {date
+                        .toLocaleDateString("en-US", { weekday: "short" })
+                        .toUpperCase()}
+                    </Text>
+                    {/* Availability indicator */}
+                    <View style={styles.dateIndicators}>
+                      {dayInfo.status !== "available" && (
+                        <View
+                          style={[
+                            styles.statusDot,
+                            {
+                              backgroundColor: selected
+                                ? "rgba(255,255,255,0.9)"
+                                : getStatusColor(dayInfo.status),
+                            },
+                          ]}
+                        />
+                      )}
+                      {dayInfo.eventCount > 0 && (
+                        <View style={styles.eventDots}>
+                          {Array.from({
+                            length: Math.min(dayInfo.eventCount, 3),
+                          }).map((_, i) => (
+                            <View
+                              key={i}
+                              style={[
+                                styles.eventDot,
+                                {
+                                  backgroundColor: selected
+                                    ? "rgba(255,255,255,0.7)"
+                                    : CalendarColors.primary,
+                                },
+                              ]}
+                            />
+                          ))}
+                        </View>
+                      )}
+                    </View>
+                  </Pressable>
+                );
+              })}
+            </Animated.View>
+          </GestureDetector>
         </Animated.View>
 
         {/* Schedule Section */}
@@ -907,19 +987,21 @@ const styles = StyleSheet.create({
   dateStripContainer: {
     marginHorizontal: -Spacing.screenHorizontal,
     marginBottom: Spacing.lg,
+    overflow: "hidden",
   },
   dateStripContent: {
+    flexDirection: "row",
     paddingHorizontal: Spacing.screenHorizontal,
-    gap: 12,
+    justifyContent: "space-between",
   },
   dateItem: {
-    width: 48,
+    flex: 1,
     height: 76,
-    borderRadius: 24,
+    borderRadius: BorderRadius.md,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 6,
-    paddingBottom: 4,
+    paddingVertical: Spacing.sm,
+    marginHorizontal: 2,
   },
   dateItemSelected: {
     ...Shadows.sm,

@@ -1,134 +1,158 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Pressable, Linking, Alert } from "react-native";
+import React, { useState, useCallback, useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  Linking,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import { useRoute, RouteProp } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { Avatar } from "@/components/Avatar";
 import { Badge } from "@/components/Badge";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { useTheme } from "@/hooks/useTheme";
-import { Spacing, Typography } from "@/constants/theme";
+import { useAuth } from "@/contexts/AuthContext";
+import { Spacing, Typography, BorderRadius } from "@/constants/theme";
+import {
+  projectsApi,
+  stagesApi,
+  Project,
+  Stage,
+  createTenantContext,
+} from "@/services/api";
+import { ProjectsStackParamList } from "@/navigation/ProjectsStackNavigator";
 
-const MOCK_PROJECT = {
-  title: "Sarah & Mike Wedding",
-  clientName: "Sarah Johnson",
-  clientEmail: "sarah.johnson@example.com",
-  clientPhone: "+1 (555) 123-4567",
-  eventDate: "June 15, 2025",
-  stageName: "Booked",
-  stageColor: "#3B82F6",
-  location: "The Grand Ballroom, San Francisco",
-  package: "Premium Wedding Package",
-  totalAmount: 4500,
-  notes: [
-    {
-      id: "1",
-      text: "Initial consultation completed - discussed venue and timeline",
-      date: "Nov 10, 2024",
-      type: "note",
-    },
-    {
-      id: "2",
-      text: "Contract signed and deposit received",
-      date: "Nov 15, 2024",
-      type: "milestone",
-    },
-    {
-      id: "3",
-      text: "Scheduled engagement shoot for Dec 5th",
-      date: "Nov 20, 2024",
-      type: "note",
-    },
-  ],
-  payments: [
-    {
-      id: "1",
-      amount: 1500,
-      date: "Nov 15, 2024",
-      description: "Deposit payment",
-      status: "Paid",
-    },
-    {
-      id: "2",
-      amount: 1500,
-      date: "Jan 15, 2025",
-      description: "Second installment",
-      status: "Pending",
-    },
-    {
-      id: "3",
-      amount: 1500,
-      date: "May 15, 2025",
-      description: "Final payment",
-      status: "Pending",
-    },
-  ],
-  contacts: [
-    {
-      id: "1",
-      name: "Sarah Johnson",
-      role: "Bride",
-      email: "sarah.johnson@example.com",
-      phone: "+1 (555) 123-4567",
-      isPrimary: true,
-    },
-    {
-      id: "2",
-      name: "Mike Chen",
-      role: "Groom",
-      email: "mike.chen@example.com",
-      phone: "+1 (555) 234-5678",
-      isPrimary: false,
-    },
-    {
-      id: "3",
-      name: "Jennifer Mills",
-      role: "Wedding Planner",
-      email: "jennifer@weddingmagic.com",
-      phone: "+1 (555) 345-6789",
-      isPrimary: false,
-    },
-    {
-      id: "4",
-      name: "Robert Johnson",
-      role: "Father of Bride",
-      email: "robert.j@example.com",
-      phone: "+1 (555) 456-7890",
-      isPrimary: false,
-    },
-  ],
-};
+type ProjectDetailRouteProp = RouteProp<ProjectsStackParamList, "ProjectDetail">;
 
 type TabType = "activity" | "payments" | "files" | "details";
 
 export default function ProjectDetailScreen() {
   const { theme } = useTheme();
+  const { token, user } = useAuth();
+  const route = useRoute<ProjectDetailRouteProp>();
+  const { projectId } = route.params;
+
   const [activeTab, setActiveTab] = useState<TabType>("activity");
+  const [project, setProject] = useState<Project | null>(null);
+  const [stages, setStages] = useState<Stage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadProject = useCallback(async () => {
+    if (!token) {
+      setLoading(false);
+      setError("Not authenticated");
+      return;
+    }
+
+    try {
+      setError(null);
+      const tenant = createTenantContext(user);
+      const [projectResult, stagesResult] = await Promise.all([
+        projectsApi.getById(token, projectId, tenant),
+        stagesApi.getAll(token, tenant),
+      ]);
+      setProject(projectResult);
+      setStages(stagesResult);
+    } catch (err) {
+      console.error("Failed to load project:", err);
+      setError("Failed to load project details");
+    } finally {
+      setLoading(false);
+    }
+  }, [token, user, projectId]);
+
+  useEffect(() => {
+    loadProject();
+  }, [loadProject]);
+
+  // Computed values from project data
+  const clientName = project?.client
+    ? `${project.client.firstName} ${project.client.lastName}`.trim()
+    : "Unknown Client";
+
+  const clientEmail = project?.client?.email || null;
+  const clientPhone = project?.client?.phone || null;
+
+  const stageColor = project?.stage?.color || "#6B7280";
+  const stageName = project?.stage?.name || "Unknown";
+
+  const eventDate = project?.eventDate
+    ? new Date(project.eventDate).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    : "No date set";
 
   const handleCall = () => {
-    Linking.openURL(`tel:${MOCK_PROJECT.clientPhone}`);
+    if (clientPhone) {
+      Linking.openURL(`tel:${clientPhone}`);
+    } else {
+      Alert.alert("No Phone", "No phone number available for this client");
+    }
   };
 
   const handleText = () => {
-    Linking.openURL(`sms:${MOCK_PROJECT.clientPhone}`);
+    if (clientPhone) {
+      Linking.openURL(`sms:${clientPhone}`);
+    } else {
+      Alert.alert("No Phone", "No phone number available for this client");
+    }
   };
 
   const handleEmail = () => {
-    Linking.openURL(`mailto:${MOCK_PROJECT.clientEmail}`);
+    if (clientEmail) {
+      Linking.openURL(`mailto:${clientEmail}`);
+    } else {
+      Alert.alert("No Email", "No email address available for this client");
+    }
   };
 
   const handleSendLink = () => {
-    Alert.alert(
-      "Magic Link Sent",
-      `A secure login link has been sent to ${MOCK_PROJECT.clientEmail}`,
-    );
+    if (clientEmail) {
+      Alert.alert(
+        "Magic Link Sent",
+        `A secure login link has been sent to ${clientEmail}`,
+      );
+    } else {
+      Alert.alert("No Email", "No email address available for this client");
+    }
   };
 
-  const totalPaid = MOCK_PROJECT.payments
-    .filter((p) => p.status === "Paid")
-    .reduce((sum, p) => sum + p.amount, 0);
-  const totalPending = MOCK_PROJECT.payments
-    .filter((p) => p.status === "Pending")
-    .reduce((sum, p) => sum + p.amount, 0);
+  // Loading state
+  if (loading) {
+    return (
+      <View
+        style={[styles.centered, { backgroundColor: theme.backgroundRoot }]}
+      >
+        <ActivityIndicator size="large" color={theme.primary} />
+      </View>
+    );
+  }
+
+  // Error state
+  if (error || !project) {
+    return (
+      <View
+        style={[styles.centered, { backgroundColor: theme.backgroundRoot }]}
+      >
+        <Feather name="alert-circle" size={48} color={theme.textSecondary} />
+        <ThemedText style={[styles.errorText, { color: theme.textSecondary }]}>
+          {error || "Project not found"}
+        </ThemedText>
+        <Pressable
+          onPress={loadProject}
+          style={[styles.retryButton, { backgroundColor: theme.primary }]}
+        >
+          <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
+        </Pressable>
+      </View>
+    );
+  }
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -146,9 +170,8 @@ export default function ProjectDetailScreen() {
             >
               Activity Timeline
             </ThemedText>
-            {MOCK_PROJECT.notes.map((note) => (
+            {project.notes ? (
               <View
-                key={note.id}
                 style={[
                   styles.activityCard,
                   { backgroundColor: theme.backgroundCard },
@@ -158,25 +181,18 @@ export default function ProjectDetailScreen() {
                   <View
                     style={[
                       styles.activityIcon,
-                      {
-                        backgroundColor:
-                          note.type === "milestone"
-                            ? theme.primary
-                            : theme.border,
-                      },
+                      { backgroundColor: theme.border },
                     ]}
                   >
                     <Feather
-                      name={note.type === "milestone" ? "check" : "edit-3"}
+                      name="file-text"
                       size={14}
-                      color={
-                        note.type === "milestone" ? "#fff" : theme.textSecondary
-                      }
+                      color={theme.textSecondary}
                     />
                   </View>
                   <View style={styles.activityContent}>
                     <ThemedText style={styles.activityText}>
-                      {note.text}
+                      {project.notes}
                     </ThemedText>
                     <ThemedText
                       style={[
@@ -184,12 +200,38 @@ export default function ProjectDetailScreen() {
                         { color: theme.textSecondary },
                       ]}
                     >
-                      {note.date}
+                      Project Notes
                     </ThemedText>
                   </View>
                 </View>
               </View>
-            ))}
+            ) : (
+              <View
+                style={[
+                  styles.emptyState,
+                  { backgroundColor: theme.backgroundCard },
+                ]}
+              >
+                <Feather
+                  name="activity"
+                  size={48}
+                  color={theme.textSecondary}
+                />
+                <ThemedText
+                  style={[styles.emptyStateText, { color: theme.textSecondary }]}
+                >
+                  No activity yet
+                </ThemedText>
+                <ThemedText
+                  style={[
+                    styles.emptyStateSubtext,
+                    { color: theme.textSecondary },
+                  ]}
+                >
+                  Activity tracking coming soon
+                </ThemedText>
+              </View>
+            )}
           </View>
         );
 
@@ -207,102 +249,31 @@ export default function ProjectDetailScreen() {
             >
               Payment Schedule
             </ThemedText>
-
             <View
               style={[
-                styles.paymentSummary,
+                styles.emptyState,
                 { backgroundColor: theme.backgroundCard },
               ]}
             >
-              <View style={styles.paymentSummaryRow}>
-                <ThemedText
-                  style={[
-                    styles.paymentSummaryLabel,
-                    { color: theme.textSecondary },
-                  ]}
-                >
-                  Total Contract
-                </ThemedText>
-                <ThemedText style={styles.paymentSummaryValue}>
-                  ${MOCK_PROJECT.totalAmount.toLocaleString()}
-                </ThemedText>
-              </View>
-              <View style={styles.paymentSummaryRow}>
-                <ThemedText
-                  style={[styles.paymentSummaryLabel, { color: theme.success }]}
-                >
-                  Paid
-                </ThemedText>
-                <ThemedText
-                  style={[styles.paymentSummaryValue, { color: theme.success }]}
-                >
-                  ${totalPaid.toLocaleString()}
-                </ThemedText>
-              </View>
-              <View style={styles.paymentSummaryRow}>
-                <ThemedText
-                  style={[
-                    styles.paymentSummaryLabel,
-                    { color: theme.textSecondary },
-                  ]}
-                >
-                  Pending
-                </ThemedText>
-                <ThemedText
-                  style={[
-                    styles.paymentSummaryValue,
-                    { color: theme.textSecondary },
-                  ]}
-                >
-                  ${totalPending.toLocaleString()}
-                </ThemedText>
-              </View>
-            </View>
-
-            {MOCK_PROJECT.payments.map((payment) => (
-              <View
-                key={payment.id}
+              <Feather
+                name="credit-card"
+                size={48}
+                color={theme.textSecondary}
+              />
+              <ThemedText
+                style={[styles.emptyStateText, { color: theme.textSecondary }]}
+              >
+                No payments recorded
+              </ThemedText>
+              <ThemedText
                 style={[
-                  styles.paymentCard,
-                  { backgroundColor: theme.backgroundCard },
+                  styles.emptyStateSubtext,
+                  { color: theme.textSecondary },
                 ]}
               >
-                <View style={styles.paymentHeader}>
-                  <ThemedText style={styles.paymentDescription}>
-                    {payment.description}
-                  </ThemedText>
-                  <Badge
-                    label={payment.status}
-                    backgroundColor={
-                      payment.status === "Paid"
-                        ? theme.success
-                        : theme.warningDark
-                    }
-                    color="#FFFFFF"
-                  />
-                </View>
-                <View style={styles.paymentFooter}>
-                  <ThemedText
-                    style={[styles.paymentDate, { color: theme.textSecondary }]}
-                  >
-                    {payment.date}
-                  </ThemedText>
-                  <ThemedText
-                    style={[
-                      styles.paymentAmount,
-                      {
-                        color:
-                          payment.status === "Paid"
-                            ? theme.success
-                            : theme.text,
-                      },
-                    ]}
-                  >
-                    ${payment.amount.toLocaleString()}
-                  </ThemedText>
-                </View>
-              </View>
-            ))}
+                Payment tracking coming soon
+              </ThemedText>
+            </View>
           </View>
         );
 
@@ -388,8 +359,29 @@ export default function ProjectDetailScreen() {
                   >
                     Event Date
                   </ThemedText>
+                  <ThemedText style={styles.detailValue}>{eventDate}</ThemedText>
+                </View>
+              </View>
+
+              <View
+                style={[
+                  styles.detailRow,
+                  styles.detailRowBorder,
+                  { borderTopColor: theme.border },
+                ]}
+              >
+                <Feather name="camera" size={18} color={theme.primary} />
+                <View style={styles.detailContent}>
+                  <ThemedText
+                    style={[styles.detailLabel, { color: theme.textSecondary }]}
+                  >
+                    Project Type
+                  </ThemedText>
                   <ThemedText style={styles.detailValue}>
-                    {MOCK_PROJECT.eventDate}
+                    {project.projectType
+                      ? project.projectType.charAt(0) +
+                        project.projectType.slice(1).toLowerCase()
+                      : "Not specified"}
                   </ThemedText>
                 </View>
               </View>
@@ -401,35 +393,18 @@ export default function ProjectDetailScreen() {
                   { borderTopColor: theme.border },
                 ]}
               >
-                <Feather name="map-pin" size={18} color={theme.primary} />
+                <Feather name="flag" size={18} color={theme.primary} />
                 <View style={styles.detailContent}>
                   <ThemedText
                     style={[styles.detailLabel, { color: theme.textSecondary }]}
                   >
-                    Location
+                    Status
                   </ThemedText>
                   <ThemedText style={styles.detailValue}>
-                    {MOCK_PROJECT.location}
-                  </ThemedText>
-                </View>
-              </View>
-
-              <View
-                style={[
-                  styles.detailRow,
-                  styles.detailRowBorder,
-                  { borderTopColor: theme.border },
-                ]}
-              >
-                <Feather name="package" size={18} color={theme.primary} />
-                <View style={styles.detailContent}>
-                  <ThemedText
-                    style={[styles.detailLabel, { color: theme.textSecondary }]}
-                  >
-                    Package
-                  </ThemedText>
-                  <ThemedText style={styles.detailValue}>
-                    {MOCK_PROJECT.package}
+                    {project.status
+                      ? project.status.charAt(0) +
+                        project.status.slice(1).toLowerCase()
+                      : "Active"}
                   </ThemedText>
                 </View>
               </View>
@@ -448,29 +423,26 @@ export default function ProjectDetailScreen() {
               Contacts
             </ThemedText>
 
-            {MOCK_PROJECT.contacts.map((contact, index) => (
+            {project.client ? (
               <View
-                key={contact.id}
                 style={[
                   styles.contactCard,
                   { backgroundColor: theme.backgroundCard },
-                  index === 0 && { marginTop: 0 },
+                  { marginTop: 0 },
                 ]}
               >
                 <View style={styles.contactHeader}>
-                  <Avatar name={contact.name} size={40} />
+                  <Avatar name={clientName} size={40} />
                   <View style={styles.contactInfo}>
                     <View style={styles.contactNameRow}>
                       <ThemedText style={styles.contactName}>
-                        {contact.name}
+                        {clientName}
                       </ThemedText>
-                      {contact.isPrimary ? (
-                        <Badge
-                          label="Primary"
-                          backgroundColor={theme.primary}
-                          color="#FFFFFF"
-                        />
-                      ) : null}
+                      <Badge
+                        label="Primary"
+                        backgroundColor={theme.primary}
+                        color="#FFFFFF"
+                      />
                     </View>
                     <ThemedText
                       style={[
@@ -478,12 +450,12 @@ export default function ProjectDetailScreen() {
                         { color: theme.textSecondary },
                       ]}
                     >
-                      {contact.role}
+                      Client
                     </ThemedText>
                   </View>
                 </View>
                 <View style={styles.contactDetails}>
-                  {contact.email ? (
+                  {clientEmail ? (
                     <View style={styles.contactDetailRow}>
                       <Feather
                         name="mail"
@@ -496,11 +468,11 @@ export default function ProjectDetailScreen() {
                           { color: theme.textSecondary },
                         ]}
                       >
-                        {contact.email}
+                        {clientEmail}
                       </ThemedText>
                     </View>
                   ) : null}
-                  {contact.phone ? (
+                  {clientPhone ? (
                     <View style={styles.contactDetailRow}>
                       <Feather
                         name="phone"
@@ -513,13 +485,27 @@ export default function ProjectDetailScreen() {
                           { color: theme.textSecondary },
                         ]}
                       >
-                        {contact.phone}
+                        {clientPhone}
                       </ThemedText>
                     </View>
                   ) : null}
                 </View>
               </View>
-            ))}
+            ) : (
+              <View
+                style={[
+                  styles.emptyState,
+                  { backgroundColor: theme.backgroundCard },
+                ]}
+              >
+                <Feather name="users" size={48} color={theme.textSecondary} />
+                <ThemedText
+                  style={[styles.emptyStateText, { color: theme.textSecondary }]}
+                >
+                  No contacts linked
+                </ThemedText>
+              </View>
+            )}
           </View>
         );
 
@@ -531,7 +517,7 @@ export default function ProjectDetailScreen() {
   return (
     <ScreenScrollView contentContainerStyle={{ paddingTop: Spacing.md }}>
       <View style={[styles.hero, { backgroundColor: theme.backgroundCard }]}>
-        <Avatar name={MOCK_PROJECT.clientName} size={64} />
+        <Avatar name={clientName} size={64} />
         <ThemedText
           style={[
             styles.heroTitle,
@@ -541,21 +527,18 @@ export default function ProjectDetailScreen() {
             },
           ]}
         >
-          {MOCK_PROJECT.title}
+          {project.title}
         </ThemedText>
         <ThemedText
           style={[styles.heroSubtitle, { color: theme.textSecondary }]}
         >
-          {MOCK_PROJECT.clientName}
+          {clientName}
         </ThemedText>
         <View style={styles.heroBadge}>
-          <Badge
-            label={MOCK_PROJECT.stageName}
-            backgroundColor={MOCK_PROJECT.stageColor}
-          />
+          <Badge label={stageName} backgroundColor={stageColor} />
         </View>
         <ThemedText style={[styles.heroDate, { color: theme.textSecondary }]}>
-          Event Date: {MOCK_PROJECT.eventDate}
+          Event Date: {eventDate}
         </ThemedText>
       </View>
 
@@ -749,6 +732,25 @@ export default function ProjectDetailScreen() {
 }
 
 const styles = StyleSheet.create({
+  centered: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.md,
+  },
+  errorText: {
+    fontSize: 16,
+    textAlign: "center",
+  },
+  retryButton: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+  },
+  retryButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+  },
   hero: {
     padding: Spacing.xl,
     alignItems: "center",
@@ -860,63 +862,6 @@ const styles = StyleSheet.create({
   activityDate: {
     fontSize: 12,
   },
-  paymentSummary: {
-    padding: Spacing.md,
-    borderRadius: 8,
-    marginBottom: Spacing.lg,
-    gap: Spacing.sm,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 1,
-  },
-  paymentSummaryRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  paymentSummaryLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  paymentSummaryValue: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  paymentCard: {
-    padding: Spacing.md,
-    borderRadius: 8,
-    marginBottom: Spacing.md,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 1,
-  },
-  paymentHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: Spacing.sm,
-  },
-  paymentDescription: {
-    fontSize: 14,
-    fontWeight: "500",
-    flex: 1,
-  },
-  paymentFooter: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  paymentDate: {
-    fontSize: 12,
-  },
-  paymentAmount: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
   emptyState: {
     padding: Spacing.xl,
     borderRadius: 8,
@@ -977,10 +922,6 @@ const styles = StyleSheet.create({
   detailValue: {
     fontSize: 14,
     fontWeight: "500",
-  },
-  detailSubvalue: {
-    fontSize: 14,
-    marginTop: 2,
   },
   contactCard: {
     padding: Spacing.md,

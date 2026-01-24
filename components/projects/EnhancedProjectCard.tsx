@@ -17,7 +17,6 @@ import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
 
 const SWIPE_THRESHOLD = 100;
 
-
 // Parse date string to extract day and month
 const parseDateParts = (
   dateString?: string,
