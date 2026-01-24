@@ -6,6 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 thePhotoCRM is a React Native mobile app (iOS/Android/Web) for photographers to manage their wedding photography business. Built with Expo SDK 54 and TypeScript.
 
+## IMPORTANT: Deprecated Folders
+
+**DO NOT USE the `desktop-app/` folder.** It is deprecated and dead code. Never read, reference, or modify anything in this folder.
+
+The production backend is in a separate repository: https://github.com/thephotocrm/thephotocrm
+
+When checking backend functionality, API routes, or server-side code, you must check the production repo above, NOT the local desktop-app folder.
+
 ## Commands
 
 ```bash
