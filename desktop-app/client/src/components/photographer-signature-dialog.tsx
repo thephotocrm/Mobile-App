@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileSignature, Loader2 } from "lucide-react";
@@ -37,7 +43,7 @@ export function PhotographerSignatureDialog({
   projectSmartFileId,
   contractPage,
   projectData,
-  onSignatureComplete
+  onSignatureComplete,
 }: PhotographerSignatureDialogProps) {
   const { toast } = useToast();
   const [showSignaturePad, setShowSignaturePad] = useState(false);
@@ -47,11 +53,13 @@ export function PhotographerSignatureDialog({
       await apiRequest(
         "POST",
         `/api/projects/${projectId}/smart-files/${projectSmartFileId}/photographer-sign`,
-        { photographerSignatureUrl: signatureDataUrl }
+        { photographerSignatureUrl: signatureDataUrl },
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/projects", projectId, "smart-files"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/projects", projectId, "smart-files"],
+      });
       toast({
         title: "Contract Signed",
         description: "Your signature has been saved successfully.",
@@ -62,25 +70,26 @@ export function PhotographerSignatureDialog({
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to save signature. Please try again.",
-        variant: "destructive"
+        description:
+          error.message || "Failed to save signature. Please try again.",
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const parsedContract = parseContractVariables(
-    contractPage?.content?.contractTemplate || '',
+    contractPage?.content?.contractTemplate || "",
     {
       client_name: projectData.clientName,
       photographer_name: projectData.photographerName,
-      project_date: projectData.eventDate || 'TBD',
+      project_date: projectData.eventDate || "TBD",
       project_type: projectData.projectType,
-      selected_packages: projectData.selectedPackages || 'Not selected',
-      selected_addons: projectData.selectedAddOns || 'None',
-      total_amount: projectData.totalAmount || '$0.00',
-      deposit_amount: projectData.depositAmount || '$0.00',
-      deposit_percent: projectData.depositPercent || '50%',
-    }
+      selected_packages: projectData.selectedPackages || "Not selected",
+      selected_addons: projectData.selectedAddOns || "None",
+      total_amount: projectData.totalAmount || "$0.00",
+      deposit_amount: projectData.depositAmount || "$0.00",
+      deposit_percent: projectData.depositPercent || "50%",
+    },
   );
 
   return (
@@ -92,7 +101,8 @@ export function PhotographerSignatureDialog({
             <div>
               <DialogTitle>Sign Contract Before Sending</DialogTitle>
               <DialogDescription>
-                This Smart File requires your signature before it can be sent to the client.
+                This Smart File requires your signature before it can be sent to
+                the client.
               </DialogDescription>
             </div>
           </div>

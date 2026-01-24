@@ -1,6 +1,19 @@
 import { SiPinterest } from "react-icons/si";
-import { TrendingUp, Target, DollarSign, Search, BarChart3, Image } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  TrendingUp,
+  Target,
+  DollarSign,
+  Search,
+  BarChart3,
+  Image,
+} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function PinterestAds() {
   return (
@@ -13,7 +26,10 @@ export default function PinterestAds() {
           </div>
           <div>
             <h1 className="text-3xl font-bold">Pinterest Ads</h1>
-            <p className="text-muted-foreground">Capture couples in the inspiration phase with Pinterest advertising</p>
+            <p className="text-muted-foreground">
+              Capture couples in the inspiration phase with Pinterest
+              advertising
+            </p>
           </div>
         </div>
       </div>
@@ -27,7 +43,8 @@ export default function PinterestAds() {
             </div>
             <CardTitle className="text-lg">Intent-Based Discovery</CardTitle>
             <CardDescription>
-              Reach couples actively searching for wedding inspiration and photographer portfolios
+              Reach couples actively searching for wedding inspiration and
+              photographer portfolios
             </CardDescription>
           </CardHeader>
         </Card>
@@ -39,7 +56,8 @@ export default function PinterestAds() {
             </div>
             <CardTitle className="text-lg">Visual Portfolio Ads</CardTitle>
             <CardDescription>
-              Showcase your best wedding photography work where couples are planning their big day
+              Showcase your best wedding photography work where couples are
+              planning their big day
             </CardDescription>
           </CardHeader>
         </Card>
@@ -51,7 +69,8 @@ export default function PinterestAds() {
             </div>
             <CardTitle className="text-lg">Long-Lasting Visibility</CardTitle>
             <CardDescription>
-              Pins continue driving traffic for months, giving you extended value from each ad
+              Pins continue driving traffic for months, giving you extended
+              value from each ad
             </CardDescription>
           </CardHeader>
         </Card>
@@ -63,7 +82,8 @@ export default function PinterestAds() {
             </div>
             <CardTitle className="text-lg">High ROI Platform</CardTitle>
             <CardDescription>
-              Pinterest users are 85% more likely to make purchases than other social platforms
+              Pinterest users are 85% more likely to make purchases than other
+              social platforms
             </CardDescription>
           </CardHeader>
         </Card>
@@ -75,7 +95,8 @@ export default function PinterestAds() {
             </div>
             <CardTitle className="text-lg">Shopping Features</CardTitle>
             <CardDescription>
-              Use shoppable pins to drive traffic directly to your packages and pricing pages
+              Use shoppable pins to drive traffic directly to your packages and
+              pricing pages
             </CardDescription>
           </CardHeader>
         </Card>
@@ -87,7 +108,8 @@ export default function PinterestAds() {
             </div>
             <CardTitle className="text-lg">Detailed Analytics</CardTitle>
             <CardDescription>
-              Track saves, clicks, and outbound traffic to measure ad performance and optimize
+              Track saves, clicks, and outbound traffic to measure ad
+              performance and optimize
             </CardDescription>
           </CardHeader>
         </Card>
@@ -102,7 +124,9 @@ export default function PinterestAds() {
             </div>
             <h2 className="text-2xl font-bold mb-3">Coming Soon</h2>
             <p className="text-muted-foreground max-w-md mx-auto mb-6">
-              We're building an amazing Pinterest Ads integration that will help you reach couples during their wedding planning journey. Stay tuned!
+              We're building an amazing Pinterest Ads integration that will help
+              you reach couples during their wedding planning journey. Stay
+              tuned!
             </p>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />

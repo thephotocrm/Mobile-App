@@ -1,6 +1,12 @@
 import { SiFacebook } from "react-icons/si";
 import { TrendingUp, Target, DollarSign, Users, BarChart3 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function FacebookAds() {
   return (
@@ -13,7 +19,9 @@ export default function FacebookAds() {
           </div>
           <div>
             <h1 className="text-3xl font-bold">Facebook Ads</h1>
-            <p className="text-muted-foreground">Run targeted ad campaigns to attract your ideal clients</p>
+            <p className="text-muted-foreground">
+              Run targeted ad campaigns to attract your ideal clients
+            </p>
           </div>
         </div>
       </div>
@@ -27,7 +35,8 @@ export default function FacebookAds() {
             </div>
             <CardTitle className="text-lg">Precise Targeting</CardTitle>
             <CardDescription>
-              Reach couples planning weddings in your area with advanced demographic and interest-based targeting
+              Reach couples planning weddings in your area with advanced
+              demographic and interest-based targeting
             </CardDescription>
           </CardHeader>
         </Card>
@@ -39,7 +48,8 @@ export default function FacebookAds() {
             </div>
             <CardTitle className="text-lg">Budget Control</CardTitle>
             <CardDescription>
-              Set daily and lifetime budgets to control your ad spend and maximize ROI
+              Set daily and lifetime budgets to control your ad spend and
+              maximize ROI
             </CardDescription>
           </CardHeader>
         </Card>
@@ -51,7 +61,8 @@ export default function FacebookAds() {
             </div>
             <CardTitle className="text-lg">Real-Time Analytics</CardTitle>
             <CardDescription>
-              Track impressions, clicks, and lead conversions with comprehensive analytics dashboard
+              Track impressions, clicks, and lead conversions with comprehensive
+              analytics dashboard
             </CardDescription>
           </CardHeader>
         </Card>
@@ -63,7 +74,8 @@ export default function FacebookAds() {
             </div>
             <CardTitle className="text-lg">Campaign Optimization</CardTitle>
             <CardDescription>
-              A/B test ad creatives and automatically optimize for best performance
+              A/B test ad creatives and automatically optimize for best
+              performance
             </CardDescription>
           </CardHeader>
         </Card>
@@ -75,7 +87,8 @@ export default function FacebookAds() {
             </div>
             <CardTitle className="text-lg">Lead Integration</CardTitle>
             <CardDescription>
-              Automatically capture leads from Facebook ads and add them to your CRM pipeline
+              Automatically capture leads from Facebook ads and add them to your
+              CRM pipeline
             </CardDescription>
           </CardHeader>
         </Card>
@@ -87,7 +100,8 @@ export default function FacebookAds() {
             </div>
             <CardTitle className="text-lg">Retargeting</CardTitle>
             <CardDescription>
-              Re-engage website visitors and past clients with custom retargeting campaigns
+              Re-engage website visitors and past clients with custom
+              retargeting campaigns
             </CardDescription>
           </CardHeader>
         </Card>
@@ -102,7 +116,9 @@ export default function FacebookAds() {
             </div>
             <h2 className="text-2xl font-bold mb-3">Coming Soon</h2>
             <p className="text-muted-foreground max-w-md mx-auto mb-6">
-              We're building an amazing Facebook Ads integration that will help you generate quality leads and grow your photography business. Stay tuned!
+              We're building an amazing Facebook Ads integration that will help
+              you generate quality leads and grow your photography business.
+              Stay tuned!
             </p>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />

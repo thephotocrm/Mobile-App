@@ -1,10 +1,10 @@
-import { useMutation } from '@tanstack/react-query';
-import { useLocation } from 'wouter';
-import { queryClient, apiRequest } from '@/lib/queryClient';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/use-auth';
-import { Shield, LogOut } from 'lucide-react';
+import { useMutation } from "@tanstack/react-query";
+import { useLocation } from "wouter";
+import { queryClient, apiRequest } from "@/lib/queryClient";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
+import { Shield, LogOut } from "lucide-react";
 
 interface AdminHeaderProps {
   isImpersonating?: boolean;
@@ -12,31 +12,38 @@ interface AdminHeaderProps {
   photographerEmail?: string;
 }
 
-export function AdminHeader({ isImpersonating, photographerName, photographerEmail }: AdminHeaderProps) {
+export function AdminHeader({
+  isImpersonating,
+  photographerName,
+  photographerEmail,
+}: AdminHeaderProps) {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const { refetchUser } = useAuth();
 
   const exitImpersonationMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('POST', '/api/admin/exit-impersonation');
+      return await apiRequest("POST", "/api/admin/exit-impersonation");
     },
     onSuccess: async () => {
       // Force a full page reload to pick up new cookies properly
       // SPA navigation (setLocation) doesn't refresh auth state correctly
-      window.location.href = '/admin/dashboard';
+      window.location.href = "/admin/dashboard";
     },
     onError: (error: any) => {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to exit impersonation',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to exit impersonation",
+        variant: "destructive",
       });
     },
   });
 
   return (
-    <div className="bg-yellow-400 text-yellow-950 px-4 py-2 shadow-md border-b border-yellow-500" data-testid="header-admin">
+    <div
+      className="bg-yellow-400 text-yellow-950 px-4 py-2 shadow-md border-b border-yellow-500"
+      data-testid="header-admin"
+    >
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Shield className="h-5 w-5" />
@@ -47,7 +54,9 @@ export function AdminHeader({ isImpersonating, photographerName, photographerEma
                 <span className="ml-2">
                   {photographerName}
                   {photographerEmail && (
-                    <span className="ml-1 text-yellow-800">({photographerEmail})</span>
+                    <span className="ml-1 text-yellow-800">
+                      ({photographerEmail})
+                    </span>
                   )}
                 </span>
               )}

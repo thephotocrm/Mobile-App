@@ -248,7 +248,10 @@ interface AutomationCardProps {
   showNextRun?: boolean;
 }
 
-function AutomationCard({ automation, showNextRun = false }: AutomationCardProps) {
+function AutomationCard({
+  automation,
+  showNextRun = false,
+}: AutomationCardProps) {
   return (
     <div
       className="
@@ -279,7 +282,7 @@ function AutomationCard({ automation, showNextRun = false }: AutomationCardProps
         <span
           className={cn(
             "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium",
-            triggerColors[automation.triggerType]
+            triggerColors[automation.triggerType],
           )}
         >
           <TriggerIcon type={automation.triggerType} />
@@ -288,7 +291,7 @@ function AutomationCard({ automation, showNextRun = false }: AutomationCardProps
         <span
           className={cn(
             "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium",
-            actionColors[automation.actionType]
+            actionColors[automation.actionType],
           )}
         >
           <ActionIcon type={automation.actionType} />
@@ -304,7 +307,7 @@ function AutomationCard({ automation, showNextRun = false }: AutomationCardProps
       {/* Metadata Row */}
       <div className="flex items-center justify-between pt-2 border-t border-gray-100">
         <span className="text-xs text-gray-400">
-          {automation.lastRun ? `Last run: ${automation.lastRun}` : 'Never run'}
+          {automation.lastRun ? `Last run: ${automation.lastRun}` : "Never run"}
         </span>
         <span className="flex items-center gap-1 text-xs text-gray-400">
           <Play className="w-3 h-3" />
@@ -363,9 +366,7 @@ function KanbanColumn({
 
         {/* Add Button - inside cards container, right after last card */}
         {showAddButton && (
-          <button
-            className="w-full py-2 text-sm font-medium text-gray-700 hover:text-gray-900 bg-transparent hover:bg-gray-100 rounded-lg border border-gray-300 hover:border-gray-400 transition-all"
-          >
+          <button className="w-full py-2 text-sm font-medium text-gray-700 hover:text-gray-900 bg-transparent hover:bg-gray-100 rounded-lg border border-gray-300 hover:border-gray-400 transition-all">
             <Plus className="w-4 h-4 inline mr-1.5" />
             Add Automation
           </button>
@@ -469,7 +470,7 @@ export default function AutomationsPreview() {
                   "p-1.5 rounded-md transition-colors",
                   viewMode === "kanban"
                     ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
+                    : "text-gray-500 hover:text-gray-700",
                 )}
               >
                 <LayoutGrid className="w-4 h-4" />
@@ -480,7 +481,7 @@ export default function AutomationsPreview() {
                   "p-1.5 rounded-md transition-colors",
                   viewMode === "list"
                     ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
+                    : "text-gray-500 hover:text-gray-700",
                 )}
               >
                 <List className="w-4 h-4" />

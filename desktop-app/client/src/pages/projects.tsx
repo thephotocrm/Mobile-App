@@ -1,5 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
-import { useQuery, useMutation, useQueryClient, type UseMutationResult } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  type UseMutationResult,
+} from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
@@ -10,7 +15,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Search, Calendar, ChevronRight, MoreVertical, Settings, Zap, X, Edit2, Trash2, Loader2, GripVertical, Archive, ArchiveRestore, FolderOpen, Camera } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Calendar,
+  ChevronRight,
+  MoreVertical,
+  Settings,
+  Zap,
+  X,
+  Edit2,
+  Trash2,
+  Loader2,
+  GripVertical,
+  Archive,
+  ArchiveRestore,
+  FolderOpen,
+  Camera,
+} from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   DndContext,
@@ -87,8 +109,16 @@ type Stage = {
 };
 
 const STAGE_COLORS = [
-  "#64748b", "#6366f1", "#8b5cf6", "#ec4899", "#ef4444",
-  "#f97316", "#eab308", "#22c55e", "#14b8a6", "#0ea5e9"
+  "#64748b",
+  "#6366f1",
+  "#8b5cf6",
+  "#ec4899",
+  "#ef4444",
+  "#f97316",
+  "#eab308",
+  "#22c55e",
+  "#14b8a6",
+  "#0ea5e9",
 ];
 
 function SortableStageCard({
@@ -113,7 +143,11 @@ function SortableStageCard({
   setEditColor: (color: string) => void;
   handleSaveEdit: () => void;
   handleStartDelete: (stage: Stage) => void;
-  updateStageMutation: UseMutationResult<unknown, Error, { id: string; name?: string; color?: string }>;
+  updateStageMutation: UseMutationResult<
+    unknown,
+    Error,
+    { id: string; name?: string; color?: string }
+  >;
   stages: Stage[];
 }) {
   const {
@@ -137,7 +171,7 @@ function SortableStageCard({
       style={style}
       className={cn(
         "flex-shrink-0 w-[140px] h-[100px] border rounded-lg p-3 relative group hover:border-primary transition-colors bg-background",
-        isDragging && "shadow-lg ring-2 ring-primary"
+        isDragging && "shadow-lg ring-2 ring-primary",
       )}
       data-testid={`stage-card-${stage.id}`}
     >
@@ -157,7 +191,9 @@ function SortableStageCard({
                 type="button"
                 className={cn(
                   "w-4 h-4 rounded-full border-2",
-                  editColor === color ? "border-foreground" : "border-transparent"
+                  editColor === color
+                    ? "border-foreground"
+                    : "border-transparent",
                 )}
                 style={{ backgroundColor: color }}
                 onClick={() => setEditColor(color)}
@@ -165,17 +201,21 @@ function SortableStageCard({
             ))}
           </div>
           <div className="flex gap-1 mt-auto">
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               className="h-6 flex-1 text-xs"
               onClick={handleSaveEdit}
               disabled={updateStageMutation.isPending}
             >
-              {updateStageMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : "Save"}
+              {updateStageMutation.isPending ? (
+                <Loader2 className="w-3 h-3 animate-spin" />
+              ) : (
+                "Save"
+              )}
             </Button>
-            <Button 
-              size="sm" 
-              variant="ghost" 
+            <Button
+              size="sm"
+              variant="ghost"
               className="h-6 px-2"
               onClick={() => setEditingStage(null)}
             >
@@ -194,14 +234,17 @@ function SortableStageCard({
             >
               <GripVertical className="w-4 h-4 text-muted-foreground" />
             </div>
-            <div 
-              className="w-3 h-3 rounded-full" 
+            <div
+              className="w-3 h-3 rounded-full"
               style={{ backgroundColor: stage.color || "#64748b" }}
             />
           </div>
           <p className="text-sm font-medium line-clamp-2">{stage.name}</p>
           {stage.isDefault && (
-            <Badge variant="secondary" className="absolute bottom-2 left-2 text-[10px] px-1 py-0">
+            <Badge
+              variant="secondary"
+              className="absolute bottom-2 left-2 text-[10px] px-1 py-0"
+            >
               Default
             </Badge>
           )}
@@ -235,7 +278,7 @@ function SortableStageCard({
 
 function PipelineCustomizeModal({
   open,
-  onOpenChange
+  onOpenChange,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -251,21 +294,29 @@ function PipelineCustomizeModal({
   const [newStageColor, setNewStageColor] = useState("#64748b");
   const [deleteStage, setDeleteStage] = useState<Stage | null>(null);
   const [reassignToStageId, setReassignToStageId] = useState("");
-  const [deleteStats, setDeleteStats] = useState<{ projectCount: number; automationCount: number; campaignCount: number } | null>(null);
+  const [deleteStats, setDeleteStats] = useState<{
+    projectCount: number;
+    automationCount: number;
+    campaignCount: number;
+  } | null>(null);
 
   // Stages are now unified per photographer (no project type filter)
   const { data: stages = [], isLoading } = useQuery<Stage[]>({
     queryKey: ["/api/stages"],
     queryFn: async () => {
-      const response = await fetch(`/api/stages`, { credentials: 'include' });
-      if (!response.ok) throw new Error('Failed to fetch stages');
+      const response = await fetch(`/api/stages`, { credentials: "include" });
+      if (!response.ok) throw new Error("Failed to fetch stages");
       return response.json();
     },
-    enabled: open
+    enabled: open,
   });
 
   const createStageMutation = useMutation({
-    mutationFn: async (data: { name: string; color: string; orderIndex: number }) => {
+    mutationFn: async (data: {
+      name: string;
+      color: string;
+      orderIndex: number;
+    }) => {
       return apiRequest("POST", "/api/stages", data);
     },
     onSuccess: () => {
@@ -276,12 +327,23 @@ function PipelineCustomizeModal({
       toast({ title: "Stage created successfully" });
     },
     onError: (error: any) => {
-      toast({ title: "Failed to create stage", description: error.message, variant: "destructive" });
-    }
+      toast({
+        title: "Failed to create stage",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
 
   const updateStageMutation = useMutation({
-    mutationFn: async ({ id, ...data }: { id: string; name?: string; color?: string }) => {
+    mutationFn: async ({
+      id,
+      ...data
+    }: {
+      id: string;
+      name?: string;
+      color?: string;
+    }) => {
       return apiRequest("PATCH", `/api/stages/${id}`, data);
     },
     onSuccess: () => {
@@ -290,12 +352,22 @@ function PipelineCustomizeModal({
       toast({ title: "Stage updated successfully" });
     },
     onError: (error: any) => {
-      toast({ title: "Failed to update stage", description: error.message, variant: "destructive" });
-    }
+      toast({
+        title: "Failed to update stage",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
 
   const deleteStageMutation = useMutation({
-    mutationFn: async ({ id, reassignToStageId }: { id: string; reassignToStageId?: string }) => {
+    mutationFn: async ({
+      id,
+      reassignToStageId,
+    }: {
+      id: string;
+      reassignToStageId?: string;
+    }) => {
       return apiRequest("DELETE", `/api/stages/${id}`, { reassignToStageId });
     },
     onSuccess: () => {
@@ -306,8 +378,12 @@ function PipelineCustomizeModal({
       toast({ title: "Stage deleted successfully" });
     },
     onError: (error: any) => {
-      toast({ title: "Failed to delete stage", description: error.message, variant: "destructive" });
-    }
+      toast({
+        title: "Failed to delete stage",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
 
   const reorderStagesMutation = useMutation({
@@ -318,43 +394,54 @@ function PipelineCustomizeModal({
       queryClient.invalidateQueries({ queryKey: ["/api/stages"] });
     },
     onError: (error: any) => {
-      toast({ title: "Failed to reorder stages", description: error.message, variant: "destructive" });
-    }
+      toast({
+        title: "Failed to reorder stages",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-    
+
     // Prevent concurrent reorder operations
     if (reorderStagesMutation.isPending) return;
 
     const oldIndex = stages.findIndex((s) => s.id === active.id);
     const newIndex = stages.findIndex((s) => s.id === over.id);
-    
+
     const newStages = arrayMove(stages, oldIndex, newIndex);
-    const stageOrders = newStages.map((s, index) => ({ id: s.id, orderIndex: index }));
-    
+    const stageOrders = newStages.map((s, index) => ({
+      id: s.id,
+      orderIndex: index,
+    }));
+
     // Optimistically update the cache
-    queryClient.setQueryData(["/api/stages"], newStages.map((s, idx) => ({ ...s, orderIndex: idx })));
+    queryClient.setQueryData(
+      ["/api/stages"],
+      newStages.map((s, idx) => ({ ...s, orderIndex: idx })),
+    );
 
     reorderStagesMutation.mutate(stageOrders);
   };
 
   const handleAddStage = () => {
     if (!newStageName.trim()) return;
-    const maxOrder = stages.length > 0 ? Math.max(...stages.map(s => s.orderIndex)) : 0;
+    const maxOrder =
+      stages.length > 0 ? Math.max(...stages.map((s) => s.orderIndex)) : 0;
     createStageMutation.mutate({
       name: newStageName.trim(),
       color: newStageColor,
-      orderIndex: maxOrder + 1
+      orderIndex: maxOrder + 1,
     });
   };
 
@@ -363,22 +450,25 @@ function PipelineCustomizeModal({
     updateStageMutation.mutate({
       id: editingStage.id,
       name: editName.trim(),
-      color: editColor
+      color: editColor,
     });
   };
 
   const handleStartDelete = async (stage: Stage) => {
     setDeleteStage(stage);
     try {
-      const response = await fetch(`/api/stages/${stage.id}/usage`, { credentials: 'include' });
+      const response = await fetch(`/api/stages/${stage.id}/usage`, {
+        credentials: "include",
+      });
       if (response.ok) {
         const data = await response.json();
         setDeleteStats(data.stats);
       } else {
         toast({
           title: "Warning",
-          description: "Could not fetch stage usage data. Proceed with caution.",
-          variant: "destructive"
+          description:
+            "Could not fetch stage usage data. Proceed with caution.",
+          variant: "destructive",
         });
       }
     } catch (error) {
@@ -386,20 +476,27 @@ function PipelineCustomizeModal({
       toast({
         title: "Warning",
         description: "Could not fetch stage usage data. Proceed with caution.",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
 
   const handleConfirmDelete = () => {
     if (!deleteStage) return;
-    if (deleteStats?.projectCount && deleteStats.projectCount > 0 && !reassignToStageId) {
-      toast({ title: "Select a stage to reassign projects", variant: "destructive" });
+    if (
+      deleteStats?.projectCount &&
+      deleteStats.projectCount > 0 &&
+      !reassignToStageId
+    ) {
+      toast({
+        title: "Select a stage to reassign projects",
+        variant: "destructive",
+      });
       return;
     }
-    deleteStageMutation.mutate({ 
-      id: deleteStage.id, 
-      reassignToStageId: reassignToStageId || undefined 
+    deleteStageMutation.mutate({
+      id: deleteStage.id,
+      reassignToStageId: reassignToStageId || undefined,
     });
   };
 
@@ -417,7 +514,7 @@ function PipelineCustomizeModal({
               </DialogDescription>
             </DialogHeader>
           </div>
-          
+
           <div className="p-6 overflow-hidden">
             <ScrollArea className="w-full" type="always">
               <div className="flex gap-3 pb-4">
@@ -439,7 +536,9 @@ function PipelineCustomizeModal({
                           type="button"
                           className={cn(
                             "w-5 h-5 rounded-full border-2",
-                            newStageColor === color ? "border-foreground" : "border-transparent"
+                            newStageColor === color
+                              ? "border-foreground"
+                              : "border-transparent",
                           )}
                           style={{ backgroundColor: color }}
                           onClick={() => setNewStageColor(color)}
@@ -447,20 +546,27 @@ function PipelineCustomizeModal({
                       ))}
                     </div>
                     <div className="flex gap-1">
-                      <Button 
-                        size="sm" 
+                      <Button
+                        size="sm"
                         className="h-7 flex-1 text-xs"
                         onClick={handleAddStage}
                         disabled={createStageMutation.isPending}
                         data-testid="button-save-new-stage"
                       >
-                        {createStageMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : "Add"}
+                        {createStageMutation.isPending ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          "Add"
+                        )}
                       </Button>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
+                      <Button
+                        size="sm"
+                        variant="ghost"
                         className="h-7 px-2"
-                        onClick={() => { setIsAddingStage(false); setNewStageName(""); }}
+                        onClick={() => {
+                          setIsAddingStage(false);
+                          setNewStageName("");
+                        }}
                       >
                         <X className="w-3 h-3" />
                       </Button>
@@ -490,7 +596,7 @@ function PipelineCustomizeModal({
                     onDragEnd={handleDragEnd}
                   >
                     <SortableContext
-                      items={stages.map(s => s.id)}
+                      items={stages.map((s) => s.id)}
                       strategy={horizontalListSortingStrategy}
                     >
                       {stages.map((stage) => (
@@ -526,33 +632,48 @@ function PipelineCustomizeModal({
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteStage} onOpenChange={(open) => !open && setDeleteStage(null)}>
+      <AlertDialog
+        open={!!deleteStage}
+        onOpenChange={(open) => !open && setDeleteStage(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete "{deleteStage?.name}" stage?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Delete "{deleteStage?.name}" stage?
+            </AlertDialogTitle>
             <AlertDialogDescription>
               {deleteStats && deleteStats.projectCount > 0 ? (
                 <div className="space-y-3">
-                  <p>This stage has {deleteStats.projectCount} project(s) assigned to it.</p>
+                  <p>
+                    This stage has {deleteStats.projectCount} project(s)
+                    assigned to it.
+                  </p>
                   <div>
                     <Label className="text-sm">Reassign projects to:</Label>
-                    <Select value={reassignToStageId} onValueChange={setReassignToStageId}>
+                    <Select
+                      value={reassignToStageId}
+                      onValueChange={setReassignToStageId}
+                    >
                       <SelectTrigger className="mt-1">
                         <SelectValue placeholder="Select a stage" />
                       </SelectTrigger>
                       <SelectContent>
-                        {stages.filter(s => s.id !== deleteStage?.id).map((stage) => (
-                          <SelectItem key={stage.id} value={stage.id}>
-                            {stage.name}
-                          </SelectItem>
-                        ))}
+                        {stages
+                          .filter((s) => s.id !== deleteStage?.id)
+                          .map((stage) => (
+                            <SelectItem key={stage.id} value={stage.id}>
+                              {stage.name}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                   </div>
-                  {(deleteStats.automationCount > 0 || deleteStats.campaignCount > 0) && (
+                  {(deleteStats.automationCount > 0 ||
+                    deleteStats.campaignCount > 0) && (
                     <p className="text-sm text-amber-600">
-                      Note: {deleteStats.automationCount} automation(s) and {deleteStats.campaignCount} campaign(s) 
-                      reference this stage and may need manual updates.
+                      Note: {deleteStats.automationCount} automation(s) and{" "}
+                      {deleteStats.campaignCount} campaign(s) reference this
+                      stage and may need manual updates.
                     </p>
                   )}
                 </div>
@@ -562,15 +683,30 @@ function PipelineCustomizeModal({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => { setDeleteStage(null); setDeleteStats(null); setReassignToStageId(""); }}>
+            <AlertDialogCancel
+              onClick={() => {
+                setDeleteStage(null);
+                setDeleteStats(null);
+                setReassignToStageId("");
+              }}
+            >
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
-              disabled={deleteStageMutation.isPending || Boolean(deleteStats?.projectCount && deleteStats.projectCount > 0 && !reassignToStageId)}
+              disabled={
+                deleteStageMutation.isPending ||
+                Boolean(
+                  deleteStats?.projectCount &&
+                    deleteStats.projectCount > 0 &&
+                    !reassignToStageId,
+                )
+              }
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleteStageMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              {deleteStageMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : null}
               Delete Stage
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -585,18 +721,22 @@ export default function Projects() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
+
   // Fetch project types from API
-  const { projectTypes: apiProjectTypes, isLoading: projectTypesLoading } = useProjectTypes();
-  
+  const { projectTypes: apiProjectTypes, isLoading: projectTypesLoading } =
+    useProjectTypes();
+
   // Transform API project types to dropdown format - memoized with "All Types" option
-  const PROJECT_TYPES = useMemo(() => [
-    { value: "ALL", label: "All Types" },
-    ...apiProjectTypes.map(pt => ({
-      value: pt.slug,
-      label: pt.name
-    }))
-  ], [apiProjectTypes]);
+  const PROJECT_TYPES = useMemo(
+    () => [
+      { value: "ALL", label: "All Types" },
+      ...apiProjectTypes.map((pt) => ({
+        value: pt.slug,
+        label: pt.name,
+      })),
+    ],
+    [apiProjectTypes],
+  );
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isManageStagesOpen, setIsManageStagesOpen] = useState(false);
@@ -611,55 +751,62 @@ export default function Projects() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStage, setSelectedStage] = useState<string>("ALL");
   const [activeProjectType, setActiveProjectType] = useState<string>("ALL"); // Default to "All Types"
-  const [activeTab, setActiveTab] = useState<"all" | "active" | "archived">("active");
+  const [activeTab, setActiveTab] = useState<"all" | "active" | "archived">(
+    "active",
+  );
 
   // Handle query parameters to pre-select client or auto-open dialog
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const clientIdParam = urlParams.get('clientId');
-    const newParam = urlParams.get('new');
+    const clientIdParam = urlParams.get("clientId");
+    const newParam = urlParams.get("new");
     if (clientIdParam) {
       setClientId(clientIdParam);
       setIsDialogOpen(true);
-    } else if (newParam === 'true') {
+    } else if (newParam === "true") {
       setIsDialogOpen(true);
       // Clear the query param from URL
-      window.history.replaceState({}, '', window.location.pathname);
+      window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);
 
   // Fetch projects with auto-refresh - fetch all when "ALL" is selected
-  const { data: projects, isLoading: projectsLoading, isError: projectsError } = useQuery<ProjectWithClientAndStage[]>({
+  const {
+    data: projects,
+    isLoading: projectsLoading,
+    isError: projectsError,
+  } = useQuery<ProjectWithClientAndStage[]>({
     queryKey: ["/api/projects", activeProjectType],
     queryFn: async () => {
-      const url = activeProjectType === "ALL"
-        ? `/api/projects`
-        : `/api/projects?projectType=${activeProjectType}`;
-      const response = await fetch(url, { credentials: 'include' });
-      if (!response.ok) throw new Error('Failed to fetch projects');
+      const url =
+        activeProjectType === "ALL"
+          ? `/api/projects`
+          : `/api/projects?projectType=${activeProjectType}`;
+      const response = await fetch(url, { credentials: "include" });
+      if (!response.ok) throw new Error("Failed to fetch projects");
       return response.json();
     },
     enabled: !!user,
     refetchInterval: 30000,
-    retry: 2
+    retry: 2,
   });
 
   // Fetch stages - unified pipeline (no project type filter)
   const { data: stages, isLoading: stagesLoading } = useQuery<Stage[]>({
     queryKey: ["/api/stages"],
     queryFn: async () => {
-      const response = await fetch(`/api/stages`, { credentials: 'include' });
-      if (!response.ok) throw new Error('Failed to fetch stages');
+      const response = await fetch(`/api/stages`, { credentials: "include" });
+      if (!response.ok) throw new Error("Failed to fetch stages");
       return response.json();
     },
     enabled: !!user,
-    retry: 2
+    retry: 2,
   });
 
   // Fetch clients for the dropdown
   const { data: clients, isLoading: clientsLoading } = useQuery<Contact[]>({
     queryKey: ["/api/contacts"],
-    enabled: !!user
+    enabled: !!user,
   });
 
   const createProjectMutation = useMutation({
@@ -688,14 +835,22 @@ export default function Projects() {
       toast({
         title: "Error",
         description: "Failed to create project. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const archiveProjectMutation = useMutation({
-    mutationFn: async ({ projectId, archive }: { projectId: string; archive: boolean }) => {
-      await apiRequest("PATCH", `/api/projects/${projectId}/archive`, { archive });
+    mutationFn: async ({
+      projectId,
+      archive,
+    }: {
+      projectId: string;
+      archive: boolean;
+    }) => {
+      await apiRequest("PATCH", `/api/projects/${projectId}/archive`, {
+        archive,
+      });
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
@@ -710,9 +865,9 @@ export default function Projects() {
       toast({
         title: "Error",
         description: "Failed to update project. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const resetForm = () => {
@@ -728,12 +883,12 @@ export default function Projects() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!title || !projectType || !clientId) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -745,59 +900,73 @@ export default function Projects() {
       eventDate: eventDate ? new Date(eventDate) : undefined,
       notes: notes || undefined,
       enableAutomations,
-      enableDripCampaigns
+      enableDripCampaigns,
     });
   };
 
   // Split projects into active and archived
-  const activeProjects = projects?.filter((project: ProjectWithClientAndStage) =>
-    project.status === 'ACTIVE' || !project.status
-  ) || [];
+  const activeProjects =
+    projects?.filter(
+      (project: ProjectWithClientAndStage) =>
+        project.status === "ACTIVE" || !project.status,
+    ) || [];
 
-  const archivedProjects = projects?.filter((project: ProjectWithClientAndStage) =>
-    project.status === 'ARCHIVED'
-  ) || [];
+  const archivedProjects =
+    projects?.filter(
+      (project: ProjectWithClientAndStage) => project.status === "ARCHIVED",
+    ) || [];
 
   // Get the projects to show based on active tab
-  const projectsToShow = activeTab === 'all'
-    ? projects
-    : activeTab === 'active'
-      ? activeProjects
-      : archivedProjects;
+  const projectsToShow =
+    activeTab === "all"
+      ? projects
+      : activeTab === "active"
+        ? activeProjects
+        : archivedProjects;
 
   // Filter projects by stage and search
-  const filteredProjects = projectsToShow.filter((project: ProjectWithClientAndStage) => {
-    const matchesStage = selectedStage === "ALL" || project.stageId === selectedStage;
-    const matchesSearch = (project.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      `${project.client?.firstName || ''} ${project.client?.lastName || ''}`.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredProjects = projectsToShow.filter(
+    (project: ProjectWithClientAndStage) => {
+      const matchesStage =
+        selectedStage === "ALL" || project.stageId === selectedStage;
+      const matchesSearch =
+        (project.title || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        `${project.client?.firstName || ""} ${project.client?.lastName || ""}`
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
 
-    return matchesStage && matchesSearch;
-  });
+      return matchesStage && matchesSearch;
+    },
+  );
 
   // Calculate stage counts (only for current tab's projects) - memoized
   const stageCounts = useMemo(() => {
     const counts: Record<string, number> = { ALL: projectsToShow.length };
 
     stages?.forEach((stage) => {
-      counts[stage.id] = projectsToShow.filter((p) => p.stageId === stage.id).length;
+      counts[stage.id] = projectsToShow.filter(
+        (p) => p.stageId === stage.id,
+      ).length;
     });
 
     return counts;
   }, [stages, projectsToShow]);
 
   const formatDate = (date: string | Date | null | undefined) => {
-    if (!date) return 'TBD';
+    if (!date) return "TBD";
     // Extract YYYY-MM-DD and parse as local date (not UTC) to avoid timezone shift
-    const dateStr = typeof date === 'string' ? date : date.toISOString();
-    const datePart = dateStr.split('T')[0];
-    const [year, month, day] = datePart.split('-').map(Number);
-    if (isNaN(year) || isNaN(month) || isNaN(day)) return 'TBD';
+    const dateStr = typeof date === "string" ? date : date.toISOString();
+    const datePart = dateStr.split("T")[0];
+    const [year, month, day] = datePart.split("-").map(Number);
+    if (isNaN(year) || isNaN(month) || isNaN(day)) return "TBD";
     const localDate = new Date(year, month - 1, day);
     return localDate.toLocaleDateString();
   };
 
   const getProjectTypeLabel = (type: string) => {
-    return PROJECT_TYPES.find(t => t.value === type)?.label || type;
+    return PROJECT_TYPES.find((t) => t.value === type)?.label || type;
   };
 
   return (
@@ -832,171 +1001,192 @@ export default function Projects() {
                     New Project
                   </Button>
                 </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Add New Project</DialogTitle>
-                  <DialogDescription>
-                    Create a new photography project and assign it to a client.
-                  </DialogDescription>
-                </DialogHeader>
-                
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Project Title *</Label>
-                    <Input
-                      id="title"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      placeholder="Enter project title"
-                      required
-                      data-testid="input-project-title"
-                    />
-                  </div>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Add New Project</DialogTitle>
+                    <DialogDescription>
+                      Create a new photography project and assign it to a
+                      client.
+                    </DialogDescription>
+                  </DialogHeader>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="projectType">Project Type *</Label>
-                    <Select value={projectType} onValueChange={setProjectType}>
-                      <SelectTrigger data-testid="select-project-type">
-                        <SelectValue placeholder="Select project type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {PROJECT_TYPES.map((type) => (
-                          <SelectItem key={type.value} value={type.value}>
-                            {type.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="title">Project Title *</Label>
+                      <Input
+                        id="title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="Enter project title"
+                        required
+                        data-testid="input-project-title"
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="clientId">Contact *</Label>
-                    <Select value={clientId} onValueChange={setClientId}>
-                      <SelectTrigger data-testid="select-client">
-                        <SelectValue placeholder="Select client" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {clients?.map((client) => (
-                          <SelectItem key={client.id} value={client.id}>
-                            {client.firstName} {client.lastName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="projectType">Project Type *</Label>
+                      <Select
+                        value={projectType}
+                        onValueChange={setProjectType}
+                      >
+                        <SelectTrigger data-testid="select-project-type">
+                          <SelectValue placeholder="Select project type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {PROJECT_TYPES.map((type) => (
+                            <SelectItem key={type.value} value={type.value}>
+                              {type.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="eventDate">Event Date</Label>
-                    <Input
-                      id="eventDate"
-                      type="date"
-                      value={eventDate}
-                      onChange={(e) => {
-                        setEventDate(e.target.value);
-                        if (e.target.value) {
-                          setNoDateYet(false);
-                        }
-                      }}
-                      disabled={noDateYet}
-                      data-testid="input-event-date"
-                    />
-                    <div className="flex items-center space-x-2 mt-2">
-                      <input
-                        type="checkbox"
-                        id="noDateYet"
-                        checked={noDateYet}
+                    <div className="space-y-2">
+                      <Label htmlFor="clientId">Contact *</Label>
+                      <Select value={clientId} onValueChange={setClientId}>
+                        <SelectTrigger data-testid="select-client">
+                          <SelectValue placeholder="Select client" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {clients?.map((client) => (
+                            <SelectItem key={client.id} value={client.id}>
+                              {client.firstName} {client.lastName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="eventDate">Event Date</Label>
+                      <Input
+                        id="eventDate"
+                        type="date"
+                        value={eventDate}
                         onChange={(e) => {
-                          setNoDateYet(e.target.checked);
-                          if (e.target.checked) {
-                            setEventDate("");
+                          setEventDate(e.target.value);
+                          if (e.target.value) {
+                            setNoDateYet(false);
                           }
                         }}
-                        data-testid="checkbox-no-date-yet"
-                        className="rounded border-gray-300"
+                        disabled={noDateYet}
+                        data-testid="input-event-date"
                       />
-                      <Label htmlFor="noDateYet" className="text-sm font-normal cursor-pointer">
-                        I don't have a date yet
-                      </Label>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="notes">Notes</Label>
-                    <Textarea
-                      id="notes"
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      placeholder="Additional project notes..."
-                      rows={3}
-                      data-testid="textarea-project-notes"
-                    />
-                  </div>
-
-                  <div className="space-y-3 pt-2 border-t">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <Label htmlFor="enableAutomations" className="text-sm font-medium">
-                          Enable Automations
+                      <div className="flex items-center space-x-2 mt-2">
+                        <input
+                          type="checkbox"
+                          id="noDateYet"
+                          checked={noDateYet}
+                          onChange={(e) => {
+                            setNoDateYet(e.target.checked);
+                            if (e.target.checked) {
+                              setEventDate("");
+                            }
+                          }}
+                          data-testid="checkbox-no-date-yet"
+                          className="rounded border-gray-300"
+                        />
+                        <Label
+                          htmlFor="noDateYet"
+                          className="text-sm font-normal cursor-pointer"
+                        >
+                          I don't have a date yet
                         </Label>
-                        <p className="text-xs text-muted-foreground">
-                          Run stage-based and business trigger automations
-                        </p>
                       </div>
-                      <Switch
-                        id="enableAutomations"
-                        checked={enableAutomations}
-                        onCheckedChange={setEnableAutomations}
-                        data-testid="switch-enable-automations"
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="notes">Notes</Label>
+                      <Textarea
+                        id="notes"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        placeholder="Additional project notes..."
+                        rows={3}
+                        data-testid="textarea-project-notes"
                       />
                     </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <Label htmlFor="enableDripCampaigns" className="text-sm font-medium">
-                          Enable Drip Campaigns
-                        </Label>
-                        <p className="text-xs text-muted-foreground">
-                          Subscribe to email drip sequences
-                        </p>
+
+                    <div className="space-y-3 pt-2 border-t">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label
+                            htmlFor="enableAutomations"
+                            className="text-sm font-medium"
+                          >
+                            Enable Automations
+                          </Label>
+                          <p className="text-xs text-muted-foreground">
+                            Run stage-based and business trigger automations
+                          </p>
+                        </div>
+                        <Switch
+                          id="enableAutomations"
+                          checked={enableAutomations}
+                          onCheckedChange={setEnableAutomations}
+                          data-testid="switch-enable-automations"
+                        />
                       </div>
-                      <Switch
-                        id="enableDripCampaigns"
-                        checked={enableDripCampaigns}
-                        onCheckedChange={setEnableDripCampaigns}
-                        data-testid="switch-enable-drip-campaigns"
-                      />
+
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label
+                            htmlFor="enableDripCampaigns"
+                            className="text-sm font-medium"
+                          >
+                            Enable Drip Campaigns
+                          </Label>
+                          <p className="text-xs text-muted-foreground">
+                            Subscribe to email drip sequences
+                          </p>
+                        </div>
+                        <Switch
+                          id="enableDripCampaigns"
+                          checked={enableDripCampaigns}
+                          onCheckedChange={setEnableDripCampaigns}
+                          data-testid="switch-enable-drip-campaigns"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex justify-end space-x-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setIsDialogOpen(false)}
-                      data-testid="button-cancel"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      type="submit"
-                      disabled={createProjectMutation.isPending}
-                      data-testid="button-create-project"
-                    >
-                      {createProjectMutation.isPending ? "Creating..." : "Create Project"}
-                    </Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
+
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setIsDialogOpen(false)}
+                        data-testid="button-cancel"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                        disabled={createProjectMutation.isPending}
+                        data-testid="button-create-project"
+                      >
+                        {createProjectMutation.isPending
+                          ? "Creating..."
+                          : "Create Project"}
+                      </Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
 
           {/* Project Type Filter and Active/Archived Tabs */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-2 text-sm">
               <span className="text-muted-foreground">View:</span>
-              <Select value={activeProjectType} onValueChange={setActiveProjectType}>
-                <SelectTrigger className="w-48" data-testid="select-project-type-filter">
+              <Select
+                value={activeProjectType}
+                onValueChange={setActiveProjectType}
+              >
+                <SelectTrigger
+                  className="w-48"
+                  data-testid="select-project-type-filter"
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1010,7 +1200,12 @@ export default function Projects() {
             </div>
 
             {/* Active/Archived Tabs */}
-            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "all" | "active" | "archived")}>
+            <Tabs
+              value={activeTab}
+              onValueChange={(v) =>
+                setActiveTab(v as "all" | "active" | "archived")
+              }
+            >
               <TabsList>
                 <TabsTrigger value="all" data-testid="tab-all-projects">
                   All ({projects?.length || 0})
@@ -1018,7 +1213,10 @@ export default function Projects() {
                 <TabsTrigger value="active" data-testid="tab-active-projects">
                   Active ({activeProjects.length})
                 </TabsTrigger>
-                <TabsTrigger value="archived" data-testid="tab-archived-projects">
+                <TabsTrigger
+                  value="archived"
+                  data-testid="tab-archived-projects"
+                >
                   Archived ({archivedProjects.length})
                 </TabsTrigger>
               </TabsList>
@@ -1035,7 +1233,9 @@ export default function Projects() {
                 data-testid="button-stage-all"
               >
                 <div className="flex flex-col items-center gap-1 w-full">
-                  <span className="text-2xl font-semibold leading-tight">{stageCounts.ALL || 0}</span>
+                  <span className="text-2xl font-semibold leading-tight">
+                    {stageCounts.ALL || 0}
+                  </span>
                   <span className="text-xs whitespace-nowrap">All Stages</span>
                 </div>
               </Button>
@@ -1046,19 +1246,23 @@ export default function Projects() {
                   variant={selectedStage === stage.id ? "default" : "outline"}
                   className={cn(
                     "shrink-0 rounded-lg transition-all min-w-[100px] max-w-[160px] px-4 py-3 h-auto relative overflow-hidden",
-                    selectedStage !== stage.id && "hover:border-primary/50"
+                    selectedStage !== stage.id && "hover:border-primary/50",
                   )}
                   onClick={() => setSelectedStage(stage.id)}
-                  data-testid={`button-stage-${stage.name.toLowerCase().replace(/\s+/g, '-')}`}
+                  data-testid={`button-stage-${stage.name.toLowerCase().replace(/\s+/g, "-")}`}
                 >
                   {/* Stage color indicator bar */}
                   <div
                     className="absolute top-0 left-0 right-0 h-1 transition-opacity"
-                    style={{ backgroundColor: stage.color || '#64748b' }}
+                    style={{ backgroundColor: stage.color || "#64748b" }}
                   />
                   <div className="flex flex-col items-center gap-1 w-full overflow-hidden pt-1">
-                    <span className="text-2xl font-semibold leading-tight">{stageCounts[stage.id] || 0}</span>
-                    <span className="text-xs text-center leading-tight break-words w-full px-1">{stage.name}</span>
+                    <span className="text-2xl font-semibold leading-tight">
+                      {stageCounts[stage.id] || 0}
+                    </span>
+                    <span className="text-xs text-center leading-tight break-words w-full px-1">
+                      {stage.name}
+                    </span>
                   </div>
                 </Button>
               ))}
@@ -1117,12 +1321,24 @@ export default function Projects() {
                   <TableBody>
                     {[1, 2, 3, 4, 5].map((i) => (
                       <TableRow key={i}>
-                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-28" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                        <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
-                        <TableCell><Skeleton className="h-8 w-8 rounded" /></TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-32" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-28" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-20" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-24" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-5 w-20 rounded-full" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-8 w-8 rounded" />
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -1132,7 +1348,9 @@ export default function Projects() {
           ) : projectsError ? (
             <Card className="p-8 border-destructive/50">
               <div className="text-center">
-                <p className="text-destructive font-medium">Failed to load projects</p>
+                <p className="text-destructive font-medium">
+                  Failed to load projects
+                </p>
                 <p className="text-sm text-muted-foreground mt-1">
                   Please check your connection and try again.
                 </p>
@@ -1152,20 +1370,21 @@ export default function Projects() {
                   <p className="font-medium text-lg">
                     {searchTerm || selectedStage !== "ALL"
                       ? "No matching projects"
-                      : "Ready to capture your first project?"
-                    }
+                      : "Ready to capture your first project?"}
                   </p>
                   <p className="text-sm text-muted-foreground mt-1">
                     {searchTerm
                       ? `No projects found for "${searchTerm}"`
                       : selectedStage !== "ALL"
                         ? "No projects in this stage yet"
-                        : "Create a project to start organizing your photography work"
-                    }
+                        : "Create a project to start organizing your photography work"}
                   </p>
                 </div>
                 {!searchTerm && selectedStage === "ALL" && (
-                  <Button onClick={() => setIsDialogOpen(true)} className="mt-2">
+                  <Button
+                    onClick={() => setIsDialogOpen(true)}
+                    className="mt-2"
+                  >
                     <Plus className="w-4 h-4 mr-2" />
                     Create Your First Project
                   </Button>
@@ -1173,7 +1392,10 @@ export default function Projects() {
                 {(searchTerm || selectedStage !== "ALL") && (
                   <Button
                     variant="outline"
-                    onClick={() => { setSearchTerm(""); setSelectedStage("ALL"); }}
+                    onClick={() => {
+                      setSearchTerm("");
+                      setSelectedStage("ALL");
+                    }}
                     className="mt-2"
                   >
                     Clear Filters
@@ -1195,7 +1417,9 @@ export default function Projects() {
                     {/* Stage color indicator */}
                     <div
                       className="h-1 w-full"
-                      style={{ backgroundColor: project.stage?.color || '#e5e7eb' }}
+                      style={{
+                        backgroundColor: project.stage?.color || "#e5e7eb",
+                      }}
                     />
                     <div className="p-4 space-y-3">
                       {/* Header section */}
@@ -1209,11 +1433,19 @@ export default function Projects() {
                             {project.title}
                           </h3>
                           <p className="text-sm text-muted-foreground mt-0.5">
-                            {[project.client?.firstName, project.client?.lastName].filter(Boolean).join(' ') || 'No client assigned'}
+                            {[
+                              project.client?.firstName,
+                              project.client?.lastName,
+                            ]
+                              .filter(Boolean)
+                              .join(" ") || "No client assigned"}
                           </p>
                         </div>
                         <DropdownMenu>
-                          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                          <DropdownMenuTrigger
+                            asChild
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <Button
                               variant="ghost"
                               size="sm"
@@ -1229,10 +1461,12 @@ export default function Projects() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={(e) => {
-                              e.stopPropagation();
-                              setLocation(`/projects/${project.id}`);
-                            }}>
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setLocation(`/projects/${project.id}`);
+                              }}
+                            >
                               <ChevronRight className="w-4 h-4 mr-2" />
                               View Details
                             </DropdownMenuItem>
@@ -1241,12 +1475,12 @@ export default function Projects() {
                                 e.stopPropagation();
                                 archiveProjectMutation.mutate({
                                   projectId: project.id,
-                                  archive: activeTab === 'active'
+                                  archive: activeTab === "active",
                                 });
                               }}
                               disabled={archiveProjectMutation.isPending}
                             >
-                              {activeTab === 'active' ? (
+                              {activeTab === "active" ? (
                                 <>
                                   <Archive className="w-4 h-4 mr-2" />
                                   Archive Project
@@ -1275,7 +1509,7 @@ export default function Projects() {
                               style={{
                                 borderColor: project.stage.color,
                                 color: project.stage.color,
-                                backgroundColor: `${project.stage.color}10`
+                                backgroundColor: `${project.stage.color}10`,
                               }}
                             >
                               {project.stage.name}
@@ -1284,7 +1518,11 @@ export default function Projects() {
                         </div>
                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                           <Calendar className="w-3 h-3" />
-                          <span>{project.hasEventDate ? formatDate(project.eventDate) : 'TBD'}</span>
+                          <span>
+                            {project.hasEventDate
+                              ? formatDate(project.eventDate)
+                              : "TBD"}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -1321,11 +1559,17 @@ export default function Projects() {
                           {project.title}
                         </TableCell>
                         <TableCell className="max-w-[150px] truncate">
-                          {[project.client?.firstName, project.client?.lastName].filter(Boolean).join(' ') || 'No client'}
+                          {[project.client?.firstName, project.client?.lastName]
+                            .filter(Boolean)
+                            .join(" ") || "No client"}
                         </TableCell>
-                        <TableCell>{getProjectTypeLabel(project.projectType)}</TableCell>
                         <TableCell>
-                          {project.hasEventDate ? formatDate(project.eventDate) : 'TBD'}
+                          {getProjectTypeLabel(project.projectType)}
+                        </TableCell>
+                        <TableCell>
+                          {project.hasEventDate
+                            ? formatDate(project.eventDate)
+                            : "TBD"}
                         </TableCell>
                         <TableCell>
                           {project.stage && (
@@ -1334,7 +1578,7 @@ export default function Projects() {
                               style={{
                                 borderColor: project.stage.color,
                                 color: project.stage.color,
-                                backgroundColor: `${project.stage.color}10`
+                                backgroundColor: `${project.stage.color}10`,
                               }}
                             >
                               {project.stage.name}
@@ -1343,7 +1587,10 @@ export default function Projects() {
                         </TableCell>
                         <TableCell>
                           <DropdownMenu>
-                            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                            <DropdownMenuTrigger
+                              asChild
+                              onClick={(e) => e.stopPropagation()}
+                            >
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -1359,10 +1606,12 @@ export default function Projects() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={(e) => {
-                                e.stopPropagation();
-                                setLocation(`/projects/${project.id}`);
-                              }}>
+                              <DropdownMenuItem
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setLocation(`/projects/${project.id}`);
+                                }}
+                              >
                                 <ChevronRight className="w-4 h-4 mr-2" />
                                 View Details
                               </DropdownMenuItem>
@@ -1371,12 +1620,12 @@ export default function Projects() {
                                   e.stopPropagation();
                                   archiveProjectMutation.mutate({
                                     projectId: project.id,
-                                    archive: activeTab === 'active'
+                                    archive: activeTab === "active",
                                   });
                                 }}
                                 disabled={archiveProjectMutation.isPending}
                               >
-                                {activeTab === 'active' ? (
+                                {activeTab === "active" ? (
                                   <>
                                     <Archive className="w-4 h-4 mr-2" />
                                     Archive Project

@@ -5,26 +5,37 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { 
-  Heart, Download, X, ChevronLeft, ChevronRight, 
-  Filter, Grid3x3, Calendar, User, Loader2
+import {
+  Heart,
+  Download,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  Grid3x3,
+  Calendar,
+  User,
+  Loader2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { format } from "date-fns";
 
-
 export default function ClientGalleryView() {
   const { galleryId } = useParams();
   const { toast } = useToast();
-  
+
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
   // Fetch gallery (public endpoint)
-  const { data: gallery, isLoading, error } = useQuery<any>({
+  const {
+    data: gallery,
+    isLoading,
+    error,
+  } = useQuery<any>({
     queryKey: ["/api/galleries", galleryId, "view"],
     enabled: !!galleryId,
     retry: false, // Don't retry on 403 errors
@@ -35,7 +46,7 @@ export default function ClientGalleryView() {
     if (error && (error as any)?.isPrivate) {
       return {
         photographerSlug: (error as any).photographerSlug,
-        galleryName: (error as any).galleryName || 'Gallery'
+        galleryName: (error as any).galleryName || "Gallery",
       };
     }
     return null;
@@ -53,8 +64,8 @@ export default function ClientGalleryView() {
     if (galleryId && gallery && !privateGalleryInfo) {
       // Track view - fire and forget
       fetch(`/api/galleries/${galleryId}/view`, {
-        method: 'GET',
-        credentials: 'include',
+        method: "GET",
+        credentials: "include",
       }).catch(console.error);
     }
   }, [galleryId, gallery, privateGalleryInfo]);
@@ -62,10 +73,16 @@ export default function ClientGalleryView() {
   // Toggle favorite mutation
   const toggleFavoriteMutation = useMutation({
     mutationFn: async (imageId: string) => {
-      return apiRequest("POST", `/api/galleries/${galleryId}/favorites/${imageId}`, {});
+      return apiRequest(
+        "POST",
+        `/api/galleries/${galleryId}/favorites/${imageId}`,
+        {},
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/galleries", galleryId, "favorites"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/galleries", galleryId, "favorites"],
+      });
     },
     onError: (error: any) => {
       toast({
@@ -82,14 +99,14 @@ export default function ClientGalleryView() {
       const response = await fetch(image.originalUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = `image-${image.id}.${image.format || 'jpg'}`;
+      a.download = `image-${image.id}.${image.format || "jpg"}`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      
+
       toast({
         title: "Success",
         description: "Image downloaded",
@@ -104,26 +121,35 @@ export default function ClientGalleryView() {
   };
 
   // Request download all/favorites
-  const handleBulkDownload = async (scope: 'ALL' | 'FAVORITES') => {
+  const handleBulkDownload = async (scope: "ALL" | "FAVORITES") => {
     try {
-      const response = await apiRequest("POST", `/api/galleries/${galleryId}/downloads`, { scope });
-      
+      const response = await apiRequest(
+        "POST",
+        `/api/galleries/${galleryId}/downloads`,
+        { scope },
+      );
+
       toast({
         title: "Download Requested",
-        description: "We're preparing your download. This may take a few minutes.",
+        description:
+          "We're preparing your download. This may take a few minutes.",
       });
 
       // Poll for download completion
       const checkDownload = async () => {
-        const download = await apiRequest("GET", `/api/galleries/downloads/${response.id}`, {});
-        
-        if (download.status === 'READY' && download.zipUrl) {
+        const download = await apiRequest(
+          "GET",
+          `/api/galleries/downloads/${response.id}`,
+          {},
+        );
+
+        if (download.status === "READY" && download.zipUrl) {
           window.location.href = download.zipUrl;
           toast({
             title: "Download Ready",
             description: "Your download has started",
           });
-        } else if (download.status === 'FAILED') {
+        } else if (download.status === "FAILED") {
           toast({
             title: "Error",
             description: "Download preparation failed",
@@ -153,16 +179,20 @@ export default function ClientGalleryView() {
 
   // Navigate lightbox
   const goToPrevious = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? displayedImages.length - 1 : prev - 1));
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? displayedImages.length - 1 : prev - 1,
+    );
   };
 
   const goToNext = () => {
-    setCurrentImageIndex((prev) => (prev === displayedImages.length - 1 ? 0 : prev + 1));
+    setCurrentImageIndex((prev) =>
+      prev === displayedImages.length - 1 ? 0 : prev + 1,
+    );
   };
 
   // Prepare image data before early returns (hooks must be called unconditionally)
   const allImages = gallery?.images || [];
-  const displayedImages = showFavoritesOnly 
+  const displayedImages = showFavoritesOnly
     ? allImages.filter((img: any) => favoriteIds.includes(img.id))
     : allImages;
 
@@ -171,13 +201,13 @@ export default function ClientGalleryView() {
   // Calculate grid spans based on orientation (CSS Grid dense layout)
   const imagesWithLayout = useMemo(() => {
     let landscapeCount = 0;
-    
+
     return displayedImages.map((img: any) => {
       const width = img.width || 1;
       const height = img.height || 1;
       const isPortrait = height > width; // Portrait: taller than wide
       const isLandscape = width > height; // Landscape: wider than tall
-      
+
       // Determine if this landscape image should be featured (enlarged to 2x2)
       let isFeatured = false;
       if (isLandscape) {
@@ -187,29 +217,29 @@ export default function ClientGalleryView() {
           isFeatured = true;
         }
       }
-      
+
       // Assign CSS Grid span classes
-      let colSpan = 'col-span-1';
-      let rowSpan = 'row-span-1';
-      
+      let colSpan = "col-span-1";
+      let rowSpan = "row-span-1";
+
       if (isPortrait) {
         // Portrait photos: 1 column × 2 rows (tall)
-        colSpan = 'col-span-1';
-        rowSpan = 'row-span-2';
+        colSpan = "col-span-1";
+        rowSpan = "row-span-2";
       } else if (isFeatured) {
         // Featured landscape: 2 columns × 2 rows (large)
-        colSpan = 'col-span-2';
-        rowSpan = 'row-span-2';
+        colSpan = "col-span-2";
+        rowSpan = "row-span-2";
       }
       // Regular landscape: already default 1×1
-      
-      return { 
-        ...img, 
-        isPortrait, 
-        isLandscape, 
-        isFeatured, 
-        colSpan, 
-        rowSpan 
+
+      return {
+        ...img,
+        isPortrait,
+        isLandscape,
+        isFeatured,
+        colSpan,
+        rowSpan,
       };
     });
   }, [displayedImages]);
@@ -218,14 +248,14 @@ export default function ClientGalleryView() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!lightboxOpen) return;
-      
-      if (e.key === 'ArrowLeft') goToPrevious();
-      if (e.key === 'ArrowRight') goToNext();
-      if (e.key === 'Escape') setLightboxOpen(false);
+
+      if (e.key === "ArrowLeft") goToPrevious();
+      if (e.key === "ArrowRight") goToNext();
+      if (e.key === "Escape") setLightboxOpen(false);
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [lightboxOpen]);
 
   // Reset loading state when image changes
@@ -243,7 +273,7 @@ export default function ClientGalleryView() {
     };
 
     const totalImages = displayedImages.length;
-    
+
     // Preload next 3 images (sequential priority - most users navigate forward)
     for (let i = 1; i <= 3; i++) {
       const nextIndex = (currentImageIndex + i) % totalImages;
@@ -253,7 +283,8 @@ export default function ClientGalleryView() {
     }
 
     // Preload 1 previous image
-    const prevIndex = currentImageIndex === 0 ? totalImages - 1 : currentImageIndex - 1;
+    const prevIndex =
+      currentImageIndex === 0 ? totalImages - 1 : currentImageIndex - 1;
     if (displayedImages[prevIndex]?.webUrl) {
       preloadImage(displayedImages[prevIndex].webUrl);
     }
@@ -270,21 +301,22 @@ export default function ClientGalleryView() {
   if (!gallery) {
     // Check if this is a private gallery with login option
     if (privateGalleryInfo) {
-      const portalUrl = privateGalleryInfo.photographerSlug 
+      const portalUrl = privateGalleryInfo.photographerSlug
         ? `https://${privateGalleryInfo.photographerSlug}.tpcportal.co`
         : null;
-      
+
       return (
         <div className="flex flex-col items-center justify-center h-screen bg-gray-50 dark:bg-gray-900 gap-6">
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-bold">This gallery is private</h1>
             <p className="text-muted-foreground">
-              You need to be logged in to view "{privateGalleryInfo.galleryName}"
+              You need to be logged in to view "{privateGalleryInfo.galleryName}
+              "
             </p>
           </div>
           {portalUrl && (
             <Button
-              onClick={() => window.location.href = portalUrl}
+              onClick={() => (window.location.href = portalUrl)}
               className="gap-2"
               data-testid="button-login-to-view"
             >
@@ -295,11 +327,13 @@ export default function ClientGalleryView() {
         </div>
       );
     }
-    
+
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-50 dark:bg-gray-900 gap-4">
         <h1 className="text-2xl font-bold">Gallery not found</h1>
-        <p className="text-muted-foreground">This gallery may be private or no longer available</p>
+        <p className="text-muted-foreground">
+          This gallery may be private or no longer available
+        </p>
       </div>
     );
   }
@@ -307,94 +341,108 @@ export default function ClientGalleryView() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Cover Photo Hero - FIRST THING VISITORS SEE */}
-      {gallery.coverImageId && (() => {
-        const coverImage = allImages.find((img: any) => img.id === gallery.coverImageId);
-        if (coverImage) {
-          return (
-            <div className="w-full bg-white dark:bg-gray-900">
-              {/* Desktop: Full-height cover photo with branding */}
-              <div className="hidden lg:flex lg:flex-col lg:min-h-screen lg:justify-center lg:items-center lg:py-16">
-                <div className="w-full px-4 sm:px-6">
-                  {/* Photographer Branding - Top Center */}
-                  <div className="text-center mb-12">
-                    {gallery.photographer?.logoUrl && (
-                      <img 
-                        src={gallery.photographer.logoUrl} 
-                        alt="Logo" 
-                        className="h-12 mx-auto mb-4 object-contain"
-                        data-testid="photographer-logo"
-                      />
-                    )}
-                    <h1 className="text-xl sm:text-2xl font-semibold tracking-wide uppercase">
-                      {gallery.photographer?.businessName || gallery.photographer?.photographerName || 'Gallery'}
-                    </h1>
-                    <p className="text-xs text-muted-foreground mt-2 tracking-wide">
-                      Photo & Video
-                    </p>
-                  </div>
+      {gallery.coverImageId &&
+        (() => {
+          const coverImage = allImages.find(
+            (img: any) => img.id === gallery.coverImageId,
+          );
+          if (coverImage) {
+            return (
+              <div className="w-full bg-white dark:bg-gray-900">
+                {/* Desktop: Full-height cover photo with branding */}
+                <div className="hidden lg:flex lg:flex-col lg:min-h-screen lg:justify-center lg:items-center lg:py-16">
+                  <div className="w-full px-4 sm:px-6">
+                    {/* Photographer Branding - Top Center */}
+                    <div className="text-center mb-12">
+                      {gallery.photographer?.logoUrl && (
+                        <img
+                          src={gallery.photographer.logoUrl}
+                          alt="Logo"
+                          className="h-12 mx-auto mb-4 object-contain"
+                          data-testid="photographer-logo"
+                        />
+                      )}
+                      <h1 className="text-xl sm:text-2xl font-semibold tracking-wide uppercase">
+                        {gallery.photographer?.businessName ||
+                          gallery.photographer?.photographerName ||
+                          "Gallery"}
+                      </h1>
+                      <p className="text-xs text-muted-foreground mt-2 tracking-wide">
+                        Photo & Video
+                      </p>
+                    </div>
 
-                  {/* Cover Image - Centered, with text on left and gallery info on right */}
-                  <div className="flex justify-center items-center">
-                    {/* Cover Image with relative positioning for absolute children */}
-                    <div className="relative max-w-[900px] w-fit overflow-visible">
-                      <img
-                        src={coverImage.webUrl}
-                        alt={gallery.title}
-                        className="w-full h-auto max-h-[75vh] object-contain"
-                        data-testid="cover-photo"
-                      />
-                      
-                      {/* "Photos by" - Vertical text positioned right next to left edge of photo */}
-                      <div className="absolute right-[calc(100%+1.5rem)] top-1/2 -translate-y-1/2 flex flex-col items-center gap-2">
-                        <p className="text-xs tracking-wider uppercase text-muted-foreground [writing-mode:vertical-rl] rotate-180">
-                          Photos by {gallery.photographer?.businessName || gallery.photographer?.photographerName || 'Photographer'} Photo & Video
-                        </p>
-                      </div>
-                      
-                      {/* Gallery Info - Positioned right next to right edge of photo */}
-                      <div className="absolute left-[calc(100%+1.5rem)] top-1/2 -translate-y-1/2 text-left">
-                        <h2 className="text-3xl font-semibold tracking-wide mb-3 whitespace-nowrap">
-                          {gallery.title}
-                        </h2>
-                        <div className="w-16 h-px bg-foreground mb-3"></div>
-                        <p className="text-sm text-muted-foreground tracking-wide whitespace-nowrap">
-                          {format(new Date(gallery.createdAt), 'MMMM d, yyyy')}
-                        </p>
+                    {/* Cover Image - Centered, with text on left and gallery info on right */}
+                    <div className="flex justify-center items-center">
+                      {/* Cover Image with relative positioning for absolute children */}
+                      <div className="relative max-w-[900px] w-fit overflow-visible">
+                        <img
+                          src={coverImage.webUrl}
+                          alt={gallery.title}
+                          className="w-full h-auto max-h-[75vh] object-contain"
+                          data-testid="cover-photo"
+                        />
+
+                        {/* "Photos by" - Vertical text positioned right next to left edge of photo */}
+                        <div className="absolute right-[calc(100%+1.5rem)] top-1/2 -translate-y-1/2 flex flex-col items-center gap-2">
+                          <p className="text-xs tracking-wider uppercase text-muted-foreground [writing-mode:vertical-rl] rotate-180">
+                            Photos by{" "}
+                            {gallery.photographer?.businessName ||
+                              gallery.photographer?.photographerName ||
+                              "Photographer"}{" "}
+                            Photo & Video
+                          </p>
+                        </div>
+
+                        {/* Gallery Info - Positioned right next to right edge of photo */}
+                        <div className="absolute left-[calc(100%+1.5rem)] top-1/2 -translate-y-1/2 text-left">
+                          <h2 className="text-3xl font-semibold tracking-wide mb-3 whitespace-nowrap">
+                            {gallery.title}
+                          </h2>
+                          <div className="w-16 h-px bg-foreground mb-3"></div>
+                          <p className="text-sm text-muted-foreground tracking-wide whitespace-nowrap">
+                            {format(
+                              new Date(gallery.createdAt),
+                              "MMMM d, yyyy",
+                            )}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Mobile: Full-height cover photo with title/branding overlay */}
-              <div className="lg:hidden min-h-screen flex flex-col">
-                {/* Full-height cover photo */}
-                <div className="relative flex-1 min-h-screen flex items-center justify-center bg-black">
-                  <img
-                    src={coverImage.webUrl}
-                    alt={gallery.title}
-                    className="w-full h-full object-contain"
-                    data-testid="cover-photo-mobile"
-                  />
-                  
-                  {/* Title and branding overlay at bottom */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent py-12 px-6 text-center text-white">
-                    <h2 className="text-2xl sm:text-3xl font-semibold tracking-wide mb-2">
-                      {gallery.title}
-                    </h2>
-                    <h3 className="text-sm sm:text-base font-medium tracking-widest uppercase mb-1">
-                      {gallery.photographer?.businessName || gallery.photographer?.photographerName || 'Gallery'}
-                    </h3>
-                    <p className="text-xs text-white/80 tracking-wide">
-                      Photo & Video
-                    </p>
+                {/* Mobile: Full-height cover photo with title/branding overlay */}
+                <div className="lg:hidden min-h-screen flex flex-col">
+                  {/* Full-height cover photo */}
+                  <div className="relative flex-1 min-h-screen flex items-center justify-center bg-black">
+                    <img
+                      src={coverImage.webUrl}
+                      alt={gallery.title}
+                      className="w-full h-full object-contain"
+                      data-testid="cover-photo-mobile"
+                    />
+
+                    {/* Title and branding overlay at bottom */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent py-12 px-6 text-center text-white">
+                      <h2 className="text-2xl sm:text-3xl font-semibold tracking-wide mb-2">
+                        {gallery.title}
+                      </h2>
+                      <h3 className="text-sm sm:text-base font-medium tracking-widest uppercase mb-1">
+                        {gallery.photographer?.businessName ||
+                          gallery.photographer?.photographerName ||
+                          "Gallery"}
+                      </h3>
+                      <p className="text-xs text-white/80 tracking-wide">
+                        Photo & Video
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        }
-      })()}
+            );
+          }
+        })()}
 
       {/* Header with Favorites Bar - BELOW COVER PHOTO */}
       <header className="bg-white dark:bg-gray-950 border-b sticky top-0 z-10">
@@ -406,14 +454,16 @@ export default function ClientGalleryView() {
                   <div className="flex items-center gap-1">
                     <User className="w-4 h-4" />
                     <span>
-                      {gallery.project.client.firstName} {gallery.project.client.lastName}
+                      {gallery.project.client.firstName}{" "}
+                      {gallery.project.client.lastName}
                     </span>
                   </div>
                 )}
                 <div className="flex items-center gap-1">
                   <Grid3x3 className="w-4 h-4" />
                   <span data-testid="text-image-count">
-                    {displayedImages.length} {displayedImages.length === 1 ? 'image' : 'images'}
+                    {displayedImages.length}{" "}
+                    {displayedImages.length === 1 ? "image" : "images"}
                   </span>
                 </div>
               </div>
@@ -426,7 +476,9 @@ export default function ClientGalleryView() {
                 onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
                 data-testid="button-toggle-favorites"
               >
-                <Heart className={`w-4 h-4 mr-2 ${showFavoritesOnly ? 'fill-current' : ''}`} />
+                <Heart
+                  className={`w-4 h-4 mr-2 ${showFavoritesOnly ? "fill-current" : ""}`}
+                />
                 My Favorites ({favoriteIds.length})
               </Button>
 
@@ -436,7 +488,7 @@ export default function ClientGalleryView() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleBulkDownload('FAVORITES')}
+                    onClick={() => handleBulkDownload("FAVORITES")}
                     disabled={favoriteIds.length === 0}
                     data-testid="button-download-favorites"
                   >
@@ -446,7 +498,7 @@ export default function ClientGalleryView() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleBulkDownload('ALL')}
+                    onClick={() => handleBulkDownload("ALL")}
                     data-testid="button-download-all"
                   >
                     <Download className="w-4 h-4 mr-2" />
@@ -472,29 +524,35 @@ export default function ClientGalleryView() {
           <Card className="p-12 text-center mx-4">
             <Heart className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
             <h3 className="text-lg font-semibold mb-2">
-              {showFavoritesOnly ? "No favorites yet" : "No images in this gallery"}
+              {showFavoritesOnly
+                ? "No favorites yet"
+                : "No images in this gallery"}
             </h3>
             <p className="text-sm text-muted-foreground">
-              {showFavoritesOnly 
-                ? "Click the heart icon on images to add them to your favorites" 
+              {showFavoritesOnly
+                ? "Click the heart icon on images to add them to your favorites"
                 : "Check back later for photos"}
             </p>
           </Card>
         ) : (
-          <div 
-            className="grid grid-cols-2 md:grid-cols-3 gap-2 lg:gap-4" 
-            style={{ 
-              gridAutoFlow: 'dense',
-              gridAutoRows: 'clamp(160px, 18vw, 220px)'
+          <div
+            className="grid grid-cols-2 md:grid-cols-3 gap-2 lg:gap-4"
+            style={{
+              gridAutoFlow: "dense",
+              gridAutoRows: "clamp(160px, 18vw, 220px)",
             }}
           >
             {imagesWithLayout.map((image: any, index: number) => {
               const isFavorited = favoriteIds.includes(image.id);
               // Use webUrl with Cloudinary transformation for performance
-              const displayUrl = image.webUrl?.replace('/upload/', '/upload/q_auto,f_auto,w_1200/') || image.thumbnailUrl;
-              
+              const displayUrl =
+                image.webUrl?.replace(
+                  "/upload/",
+                  "/upload/q_auto,f_auto,w_1200/",
+                ) || image.thumbnailUrl;
+
               return (
-                <Card 
+                <Card
                   key={image.id}
                   className={`border-0 overflow-hidden group cursor-pointer hover:shadow-xl transition-all duration-300 rounded-none ${image.colSpan} ${image.rowSpan}`}
                   onClick={() => openLightbox(index)}
@@ -507,7 +565,7 @@ export default function ClientGalleryView() {
                       className="w-full h-full object-cover"
                       loading="lazy"
                     />
-                    
+
                     {/* Overlay on hover */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
                       <Button
@@ -519,7 +577,9 @@ export default function ClientGalleryView() {
                         }}
                         data-testid={`button-favorite-${index}`}
                       >
-                        <Heart className={`w-5 h-5 ${isFavorited ? 'fill-red-500 text-red-500' : ''}`} />
+                        <Heart
+                          className={`w-5 h-5 ${isFavorited ? "fill-red-500 text-red-500" : ""}`}
+                        />
                       </Button>
                     </div>
 
@@ -549,7 +609,7 @@ export default function ClientGalleryView() {
 
       {/* Lightbox Dialog */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent 
+        <DialogContent
           className="max-w-screen-xl w-full h-[90vh] p-0 bg-black/95 border-0"
           data-testid="dialog-lightbox"
         >
@@ -594,18 +654,20 @@ export default function ClientGalleryView() {
                   {/* Thumbnail shown immediately (blurred placeholder) */}
                   <img
                     src={currentImage.thumbnailUrl || currentImage.webUrl}
-                    alt={currentImage.caption || 'Gallery image'}
+                    alt={currentImage.caption || "Gallery image"}
                     className={`max-w-full max-h-[calc(90vh-120px)] object-contain transition-opacity duration-300 ${
-                      imageLoaded ? 'opacity-0 absolute inset-0' : 'opacity-100 blur-sm scale-[1.02]'
+                      imageLoaded
+                        ? "opacity-0 absolute inset-0"
+                        : "opacity-100 blur-sm scale-[1.02]"
                     }`}
                     data-testid="lightbox-thumbnail"
                   />
                   {/* Full resolution image loads on top */}
                   <img
                     src={currentImage.webUrl}
-                    alt={currentImage.caption || 'Gallery image'}
+                    alt={currentImage.caption || "Gallery image"}
                     className={`max-w-full max-h-[calc(90vh-120px)] object-contain transition-opacity duration-300 ${
-                      imageLoaded ? 'opacity-100' : 'opacity-0 absolute inset-0'
+                      imageLoaded ? "opacity-100" : "opacity-0 absolute inset-0"
                     }`}
                     onLoad={() => setImageLoaded(true)}
                     data-testid="lightbox-image"
@@ -619,16 +681,19 @@ export default function ClientGalleryView() {
                     </div>
                   )}
                 </div>
-                
+
                 {/* Image Info Bar */}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
                   <div className="flex items-center justify-between text-white">
                     <div className="flex-1">
                       {currentImage.caption && (
-                        <p className="text-sm sm:text-base mb-2">{currentImage.caption}</p>
+                        <p className="text-sm sm:text-base mb-2">
+                          {currentImage.caption}
+                        </p>
                       )}
                       <p className="text-xs sm:text-sm text-gray-300">
-                        Image {currentImageIndex + 1} of {displayedImages.length}
+                        Image {currentImageIndex + 1} of{" "}
+                        {displayedImages.length}
                       </p>
                     </div>
 
@@ -643,12 +708,12 @@ export default function ClientGalleryView() {
                         }}
                         data-testid="button-favorite-lightbox"
                       >
-                        <Heart 
+                        <Heart
                           className={`w-5 h-5 ${
-                            favoriteIds.includes(currentImage.id) 
-                              ? 'fill-red-500 text-red-500' 
-                              : ''
-                          }`} 
+                            favoriteIds.includes(currentImage.id)
+                              ? "fill-red-500 text-red-500"
+                              : ""
+                          }`}
                         />
                       </Button>
 

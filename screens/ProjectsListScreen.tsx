@@ -1,31 +1,36 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import {
   View,
   StyleSheet,
   Pressable,
-  ActivityIndicator,
-  Alert,
+  RefreshControl,
   Text,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import * as Haptics from "expo-haptics";
+import Animated, {
+  FadeInUp,
+  FadeInRight,
+  Easing,
+} from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
 import { Input } from "@/components/Input";
-import { ProjectCard } from "@/components/ProjectCard";
+import { Skeleton } from "@/components/Skeleton";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
+import {
+  FloatingActionButton,
+  FABAction,
+} from "@/components/home/FloatingActionButton";
+import { EnhancedProjectCard } from "@/components/projects/EnhancedProjectCard";
+import { ProjectEmptyState } from "@/components/projects/ProjectEmptyState";
 import { ProjectsStackParamList } from "@/navigation/ProjectsStackNavigator";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  Spacing,
-  BorderRadius,
-  Typography,
-  Shadows,
-  BlysColors,
-} from "@/constants/theme";
+import { Spacing, BorderRadius, BlysColors } from "@/constants/theme";
 import {
   projectsApi,
   stagesApi,
@@ -40,63 +45,15 @@ type NavigationProp = NativeStackNavigationProp<
   "ProjectsList"
 >;
 
-// Sort options
-const SORT_OPTIONS = [
-  { id: "date_asc", name: "Date (soonest first)", icon: "arrow-up" as const },
-  { id: "date_desc", name: "Date (latest first)", icon: "arrow-down" as const },
-  { id: "client_asc", name: "Client (A-Z)", icon: "arrow-up" as const },
-  { id: "client_desc", name: "Client (Z-A)", icon: "arrow-down" as const },
-  { id: "stage", name: "By Stage", icon: "layers" as const },
+// Quick filter options
+const QUICK_FILTERS = [
+  { id: "all", name: "All", icon: "grid" as const },
+  { id: "wedding", name: "Weddings", icon: "heart" as const },
+  { id: "editing", name: "Editing", icon: "edit-3" as const },
+  { id: "delivered", name: "Delivered", icon: "check-circle" as const },
 ];
 
-// Stage priority for sorting
-const STAGE_PRIORITY: Record<string, number> = {
-  inquiry: 1,
-  lead: 1,
-  booked: 2,
-  "contract sent": 3,
-  "deposit paid": 4,
-  active: 5,
-  "shoot complete": 6,
-  editing: 7,
-  delivered: 8,
-  completed: 8,
-  cancelled: 9,
-  archived: 10,
-};
-
-const getStageColor = (stageName?: string): string => {
-  if (!stageName) return "#6B7280";
-  const normalizedStage = stageName.toLowerCase();
-  const stageColors: Record<string, string> = {
-    inquiry: "#F59E0B",
-    lead: "#F59E0B",
-    booked: "#3B82F6",
-    "contract sent": "#8B5CF6",
-    "deposit paid": "#10B981",
-    active: BlysColors.primary,
-    "shoot complete": "#14B8A6",
-    editing: "#EC4899",
-    delivered: "#22C55E",
-    completed: "#22C55E",
-    cancelled: "#EF4444",
-    archived: "#6B7280",
-  };
-  return stageColors[normalizedStage] || "#6B7280";
-};
-
-const formatEventDate = (dateString?: string): string => {
-  if (!dateString) return "No date set";
-
-  const date = new Date(dateString);
-  const month = date.toLocaleDateString("en-US", { month: "short" });
-  const day = date.getDate();
-  const year = date.getFullYear();
-
-  return `${month} ${day}, ${year}`;
-};
-
-// Format project type from API enum to display-friendly name
+// Format project type from API enum
 const formatProjectType = (type?: ProjectType): string => {
   if (!type) return "Event";
   const typeNames: Record<ProjectType, string> = {
@@ -115,19 +72,28 @@ const formatProjectType = (type?: ProjectType): string => {
   return typeNames[type] || "Event";
 };
 
+// Format event date for display
+const formatEventDate = (dateString?: string): string => {
+  if (!dateString) return "No date set";
+  const date = new Date(dateString);
+  const month = date.toLocaleDateString("en-US", { month: "short" });
+  const day = date.getDate();
+  const year = date.getFullYear();
+  return `${month} ${day}, ${year}`;
+};
+
 export default function ProjectsListScreen() {
   const { theme, isDark } = useTheme();
   const { token, user } = useAuth();
   const navigation = useNavigation<NavigationProp>();
   const tabBarHeight = useBottomTabBarHeight();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedStage, setSelectedStage] = useState("all");
-  const [selectedSort, setSelectedSort] = useState("date_asc");
-  const [showSortMenu, setShowSortMenu] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState("all");
+  const [selectedStage, setSelectedStage] = useState<string | null>(null);
   const [projects, setProjects] = useState<ApiProject[]>([]);
   const [stages, setStages] = useState<Stage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const loadProjects = async () => {
     if (!token) {
@@ -136,9 +102,6 @@ export default function ProjectsListScreen() {
     }
 
     try {
-      setLoading(true);
-      setError(null);
-
       const tenant = createTenantContext(user);
       const [projectsResult, stagesResult] = await Promise.all([
         projectsApi.getAll(token, tenant),
@@ -148,7 +111,6 @@ export default function ProjectsListScreen() {
       setStages(stagesResult);
     } catch (err) {
       console.error("Error loading projects:", err);
-      setError("Failed to load projects. Please try again.");
       setProjects([]);
     } finally {
       setLoading(false);
@@ -156,35 +118,47 @@ export default function ProjectsListScreen() {
   };
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       loadProjects();
     }, [token, user]),
   );
 
-  // Build dynamic stage filter options from API stages
-  const stageFilters = useMemo(() => {
-    const allOption = {
-      id: "all",
-      name: "All",
-      icon: "grid" as const,
-      color: undefined as string | undefined,
-    };
-    const stageOptions = stages.map((stage) => ({
-      id: stage.id,
-      name: stage.name,
-      icon: "circle" as const,
-      color: stage.color,
-    }));
-    return [allOption, ...stageOptions];
-  }, [stages]);
+  // Pull-to-refresh handler
+  const onRefresh = useCallback(async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setRefreshing(true);
+    await loadProjects();
+    setRefreshing(false);
+  }, [token, user]);
 
   // Filter and sort projects
   const filteredProjects = useMemo(() => {
     let result = [...projects];
 
-    // Filter by stage (using stageId for dynamic stages)
-    if (selectedStage !== "all") {
-      result = result.filter((p) => p.stageId === selectedStage);
+    // Apply stage filter first
+    if (selectedStage) {
+      result = result.filter((p) => p.stage?.id === selectedStage);
+    }
+
+    // Apply quick filter
+    if (selectedFilter !== "all") {
+      if (selectedFilter === "wedding") {
+        result = result.filter(
+          (p) => p.projectType === "WEDDING" || p.projectType === "ENGAGEMENT",
+        );
+      } else if (selectedFilter === "editing") {
+        result = result.filter((p) => {
+          const stageName = p.stage?.name?.toLowerCase() || "";
+          return stageName.includes("editing") || stageName.includes("edit");
+        });
+      } else if (selectedFilter === "delivered") {
+        result = result.filter((p) => {
+          const stageName = p.stage?.name?.toLowerCase() || "";
+          return (
+            stageName.includes("delivered") || stageName.includes("completed")
+          );
+        });
+      }
     }
 
     // Filter by search query
@@ -198,63 +172,21 @@ export default function ProjectsListScreen() {
       );
     }
 
-    // Sort
+    // Sort by most recently added (newest first) - using createdAt or id
     result.sort((a, b) => {
-      switch (selectedSort) {
-        case "date_asc":
-          return (
-            new Date(a.eventDate || "2099-01-01").getTime() -
-            new Date(b.eventDate || "2099-01-01").getTime()
-          );
-        case "date_desc":
-          return (
-            new Date(b.eventDate || "1970-01-01").getTime() -
-            new Date(a.eventDate || "1970-01-01").getTime()
-          );
-        case "client_asc":
-          return (a.client?.lastName || "").localeCompare(
-            b.client?.lastName || "",
-          );
-        case "client_desc":
-          return (b.client?.lastName || "").localeCompare(
-            a.client?.lastName || "",
-          );
-        case "stage":
-          return (
-            (STAGE_PRIORITY[a.stage?.name?.toLowerCase() || "inquiry"] || 5) -
-            (STAGE_PRIORITY[b.stage?.name?.toLowerCase() || "inquiry"] || 5)
-          );
-        default:
-          return 0;
+      if (a.createdAt && b.createdAt) {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
       }
+      return (
+        new Date(a.eventDate || "2099-01-01").getTime() -
+        new Date(b.eventDate || "2099-01-01").getTime()
+      );
     });
 
     return result;
-  }, [projects, selectedStage, searchQuery, selectedSort]);
-
-  // Calculate summary stats
-  const stats = useMemo(() => {
-    // Check for stages that indicate follow-up needed (inquiry, lead)
-    const needsFollowUp = projects.filter((p) => {
-      const stageName = p.stage?.name?.toLowerCase() || "";
-      return stageName.includes("inquiry") || stageName.includes("lead");
-    }).length;
-    const upcomingShoots = projects.filter((p) => {
-      const eventDate = p.eventDate ? new Date(p.eventDate) : null;
-      const now = new Date();
-      const thirtyDaysFromNow = new Date(
-        now.getTime() + 30 * 24 * 60 * 60 * 1000,
-      );
-      return eventDate && eventDate >= now && eventDate <= thirtyDaysFromNow;
-    }).length;
-    // Check for stages that indicate editing phase
-    const inEditing = projects.filter((p) => {
-      const stageName = p.stage?.name?.toLowerCase() || "";
-      return stageName.includes("editing") || stageName.includes("edit");
-    }).length;
-
-    return { total: projects.length, needsFollowUp, upcomingShoots, inEditing };
-  }, [projects]);
+  }, [projects, selectedFilter, selectedStage, searchQuery]);
 
   const getClientName = (project: ApiProject): string => {
     if (project.client) {
@@ -265,441 +197,434 @@ export default function ProjectsListScreen() {
     return "Unknown Couple";
   };
 
-  const currentSortOption = SORT_OPTIONS.find((s) => s.id === selectedSort);
+  const handleArchiveProject = (projectId: string) => {
+    Alert.alert(
+      "Archive Project",
+      "Are you sure you want to archive this project?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Archive",
+          onPress: () => {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            console.log("Archive project:", projectId);
+          },
+        },
+      ],
+    );
+  };
+
+  const handleFilterPress = (filterId: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSelectedFilter(filterId);
+  };
+
+  const handleStagePress = (stageId: string | null) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSelectedStage(stageId === selectedStage ? null : stageId);
+  };
+
+  // Count projects per stage for badges
+  const stageCountsMap = useMemo(() => {
+    const counts = new Map<string, number>();
+    projects.forEach((p) => {
+      if (p.stage?.id) {
+        counts.set(p.stage.id, (counts.get(p.stage.id) || 0) + 1);
+      }
+    });
+    return counts;
+  }, [projects]);
+
+  // FAB actions
+  const fabActions: FABAction[] = [
+    {
+      icon: "calendar",
+      label: "Wedding",
+      color: "#EC4899",
+      onPress: () => console.log("Create wedding project"),
+    },
+    {
+      icon: "gift",
+      label: "Engagement",
+      color: "#8B5CF6",
+      onPress: () => console.log("Create engagement project"),
+    },
+    {
+      icon: "user",
+      label: "Portrait",
+      color: "#3B82F6",
+      onPress: () => console.log("Create portrait project"),
+    },
+  ];
+
+  // Determine empty state variant
+  const getEmptyStateVariant = ():
+    | "no-projects"
+    | "no-results"
+    | "no-search" => {
+    if (projects.length === 0) return "no-projects";
+    if (searchQuery.trim()) return "no-search";
+    if (selectedFilter !== "all" || selectedStage) return "no-results";
+    return "no-results";
+  };
+
+  const handleEmptyStateAction = () => {
+    if (projects.length === 0) {
+      Alert.alert("New Project", "Create your first project to get started!");
+    } else if (searchQuery.trim()) {
+      setSearchQuery("");
+    } else {
+      setSelectedFilter("all");
+      setSelectedStage(null);
+    }
+  };
+
+  // Loading skeleton
+  if (loading) {
+    return (
+      <ScreenScrollView style={{ backgroundColor: theme.backgroundRoot }}>
+        <View
+          style={[styles.container, { backgroundColor: theme.backgroundRoot }]}
+        >
+          {/* Filter chips skeleton */}
+          <View style={[styles.filterChipsRow, { marginTop: Spacing.sm }]}>
+            {[...Array(4)].map((_, i) => (
+              <Skeleton
+                key={i}
+                width={80}
+                height={36}
+                borderRadius={BorderRadius.chip}
+                style={{ marginRight: Spacing.sm }}
+              />
+            ))}
+          </View>
+
+          {/* Search skeleton */}
+          <Skeleton
+            width="100%"
+            height={44}
+            borderRadius={BorderRadius.input}
+            style={{ marginBottom: Spacing.md }}
+          />
+
+          {/* Project cards skeleton */}
+          {[...Array(5)].map((_, i) => (
+            <Skeleton
+              key={i}
+              width="100%"
+              height={100}
+              borderRadius={BorderRadius.md}
+              style={{ marginBottom: Spacing.sm }}
+            />
+          ))}
+        </View>
+      </ScreenScrollView>
+    );
+  }
 
   return (
-    <View style={styles.screenContainer}>
-      <ScreenScrollView>
-        {/* Summary Stats Banner */}
-        <View style={styles.summaryContainer}>
-          <View
-            style={[
-              styles.summaryBanner,
-              {
-                backgroundColor: isDark ? theme.backgroundSecondary : "#F5F3FF",
-                borderColor: isDark ? theme.border : "#E9E3FF",
-              },
-            ]}
+    <View style={{ flex: 1, backgroundColor: theme.backgroundRoot }}>
+      <ScreenScrollView
+        style={{ backgroundColor: theme.backgroundRoot }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={BlysColors.primary}
+            colors={[BlysColors.primary]}
+          />
+        }
+      >
+        <View
+          style={[styles.container, { backgroundColor: theme.backgroundRoot }]}
+        >
+          {/* Quick Filter Chips */}
+          <Animated.View
+            entering={FadeInUp.delay(50)
+              .duration(400)
+              .easing(Easing.out(Easing.cubic))}
           >
-            <View style={styles.summaryRow}>
-              <View style={styles.summaryItem}>
-                <Text
-                  style={[styles.summaryNumber, { color: BlysColors.primary }]}
-                >
-                  {stats.total}
-                </Text>
-                <Text
-                  style={[styles.summaryLabel, { color: theme.textSecondary }]}
-                >
-                  Total Projects
-                </Text>
-              </View>
-              <View
-                style={[
-                  styles.summaryDivider,
-                  { backgroundColor: isDark ? theme.border : "#E9E3FF" },
-                ]}
-              />
-              <View style={styles.summaryItem}>
-                <Text style={[styles.summaryNumber, { color: "#F59E0B" }]}>
-                  {stats.needsFollowUp}
-                </Text>
-                <Text
-                  style={[styles.summaryLabel, { color: theme.textSecondary }]}
-                >
-                  Need Follow-up
-                </Text>
-              </View>
-              <View
-                style={[
-                  styles.summaryDivider,
-                  { backgroundColor: isDark ? theme.border : "#E9E3FF" },
-                ]}
-              />
-              <View style={styles.summaryItem}>
-                <Text style={[styles.summaryNumber, { color: "#3B82F6" }]}>
-                  {stats.upcomingShoots}
-                </Text>
-                <Text
-                  style={[styles.summaryLabel, { color: theme.textSecondary }]}
-                >
-                  Next 30 Days
-                </Text>
-              </View>
-              <View
-                style={[
-                  styles.summaryDivider,
-                  { backgroundColor: isDark ? theme.border : "#E9E3FF" },
-                ]}
-              />
-              <View style={styles.summaryItem}>
-                <Text style={[styles.summaryNumber, { color: "#EC4899" }]}>
-                  {stats.inEditing}
-                </Text>
-                <Text
-                  style={[styles.summaryLabel, { color: theme.textSecondary }]}
-                >
-                  In Editing
-                </Text>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        {/* Stage Filter Chips - Horizontal Scroll */}
-        <View style={styles.filterSection}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.filterChipsContainer}
-          >
-            {stageFilters.map((filter) => {
-              const isActive = selectedStage === filter.id;
-              return (
-                <Pressable
-                  key={filter.id}
-                  onPress={() => setSelectedStage(filter.id)}
-                  style={[
-                    styles.filterChip,
-                    {
-                      backgroundColor: isActive
-                        ? BlysColors.primary
-                        : isDark
-                          ? theme.backgroundSecondary
-                          : "#F5F5F7",
-                      borderColor: isActive
-                        ? BlysColors.primary
-                        : isDark
-                          ? theme.border
-                          : "#E5E7EB",
-                    },
-                  ]}
-                >
-                  <Feather
-                    name={filter.icon}
-                    size={14}
-                    color={isActive ? "#FFFFFF" : theme.textSecondary}
-                    style={styles.filterChipIcon}
-                  />
-                  <Text
-                    style={[
-                      styles.filterChipText,
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filterChipsContainer}
+              style={styles.filterChipsScroll}
+            >
+              {QUICK_FILTERS.map((filter) => {
+                const isActive = selectedFilter === filter.id;
+                return (
+                  <Pressable
+                    key={filter.id}
+                    onPress={() => handleFilterPress(filter.id)}
+                    style={({ pressed }) => [
+                      styles.filterChip,
                       {
-                        color: isActive ? "#FFFFFF" : theme.text,
+                        backgroundColor: isActive
+                          ? BlysColors.primary
+                          : isDark
+                            ? theme.backgroundSecondary
+                            : "#F5F5F7",
+                        borderColor: isActive
+                          ? BlysColors.primary
+                          : isDark
+                            ? theme.border
+                            : "#E5E7EB",
                       },
+                      pressed && { opacity: 0.8 },
                     ]}
                   >
-                    {filter.name}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        </View>
+                    <Feather
+                      name={filter.icon}
+                      size={14}
+                      color={isActive ? "#FFFFFF" : theme.textSecondary}
+                      style={styles.filterChipIcon}
+                    />
+                    <Text
+                      style={[
+                        styles.filterChipText,
+                        { color: isActive ? "#FFFFFF" : theme.text },
+                      ]}
+                    >
+                      {filter.name}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </Animated.View>
 
-        {/* Search and Sort Row */}
-        <View style={styles.searchSortRow}>
-          <View
-            style={[
-              styles.searchWrapper,
-              {
-                backgroundColor: isDark ? theme.backgroundSecondary : "#F5F5F7",
-                flex: 1,
-              },
-            ]}
+          {/* Stage Filter */}
+          {stages.length > 0 && (
+            <Animated.View
+              entering={FadeInUp.delay(75)
+                .duration(400)
+                .easing(Easing.out(Easing.cubic))}
+            >
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.stageFilterContainer}
+                style={styles.stageFilterScroll}
+              >
+                {stages.map((stage) => {
+                  const isActive = selectedStage === stage.id;
+                  const count = stageCountsMap.get(stage.id) || 0;
+                  const stageColor = stage.color || BlysColors.primary;
+
+                  return (
+                    <Pressable
+                      key={stage.id}
+                      onPress={() => handleStagePress(stage.id)}
+                      style={({ pressed }) => [
+                        styles.stageChip,
+                        {
+                          backgroundColor: isActive
+                            ? stageColor
+                            : isDark
+                              ? theme.backgroundSecondary
+                              : "#F5F5F7",
+                          borderColor: isActive
+                            ? stageColor
+                            : isDark
+                              ? theme.border
+                              : "#E5E7EB",
+                        },
+                        pressed && { opacity: 0.8 },
+                      ]}
+                    >
+                      <View
+                        style={[
+                          styles.stageDot,
+                          {
+                            backgroundColor: isActive ? "#FFFFFF" : stageColor,
+                          },
+                        ]}
+                      />
+                      <Text
+                        style={[
+                          styles.stageChipText,
+                          { color: isActive ? "#FFFFFF" : theme.text },
+                        ]}
+                      >
+                        {stage.name}
+                      </Text>
+                      {count > 0 && (
+                        <View
+                          style={[
+                            styles.stageCountBadge,
+                            {
+                              backgroundColor: isActive
+                                ? "rgba(255,255,255,0.3)"
+                                : `${stageColor}20`,
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.stageCountText,
+                              { color: isActive ? "#FFFFFF" : stageColor },
+                            ]}
+                          >
+                            {count}
+                          </Text>
+                        </View>
+                      )}
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
+            </Animated.View>
+          )}
+
+          {/* Search Bar */}
+          <Animated.View
+            entering={FadeInUp.delay(100)
+              .duration(400)
+              .easing(Easing.out(Easing.cubic))}
+            style={styles.searchSection}
           >
-            <Feather
-              name="search"
-              size={18}
-              color={theme.textTertiary}
-              style={styles.searchIcon}
-            />
-            <Input
-              placeholder="Search projects..."
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              variant="search"
+            <View
               style={[
-                styles.searchInput,
+                styles.searchWrapper,
                 {
-                  backgroundColor: "transparent",
+                  backgroundColor: isDark
+                    ? theme.backgroundSecondary
+                    : "#F5F5F7",
                 },
               ]}
-            />
-          </View>
-
-          {/* Sort Button */}
-          <Pressable
-            style={[
-              styles.sortButton,
-              {
-                backgroundColor: isDark ? theme.backgroundSecondary : "#F5F5F7",
-                borderColor: isDark ? theme.border : "#E5E7EB",
-              },
-            ]}
-            onPress={() => setShowSortMenu(!showSortMenu)}
-          >
-            <Feather name="sliders" size={18} color={BlysColors.primary} />
-          </Pressable>
-        </View>
-
-        {/* Sort Menu Dropdown */}
-        {showSortMenu && (
-          <View
-            style={[
-              styles.sortMenu,
-              {
-                backgroundColor: theme.backgroundCard,
-                borderColor: isDark ? theme.border : "#E5E7EB",
-                ...(isDark ? Shadows.dark.md : Shadows.md),
-              },
-            ]}
-          >
-            <Text
-              style={[styles.sortMenuTitle, { color: theme.textSecondary }]}
             >
-              Sort by
-            </Text>
-            {SORT_OPTIONS.map((option) => {
-              const isSelected = selectedSort === option.id;
-              return (
+              <Feather
+                name="search"
+                size={18}
+                color={theme.textTertiary}
+                style={styles.searchIcon}
+              />
+              <Input
+                placeholder="Search projects..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                variant="search"
+                style={[styles.searchInput, { backgroundColor: "transparent" }]}
+              />
+              {searchQuery.length > 0 && (
                 <Pressable
-                  key={option.id}
-                  style={[
-                    styles.sortMenuItem,
-                    isSelected && {
-                      backgroundColor: isDark ? "#1E1E3F" : "#F5F3FF",
-                    },
-                  ]}
-                  onPress={() => {
-                    setSelectedSort(option.id);
-                    setShowSortMenu(false);
-                  }}
+                  onPress={() => setSearchQuery("")}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 >
-                  <Feather
-                    name={option.icon}
-                    size={16}
-                    color={
-                      isSelected ? BlysColors.primary : theme.textSecondary
-                    }
-                  />
-                  <Text
-                    style={[
-                      styles.sortMenuItemText,
-                      {
-                        color: isSelected ? BlysColors.primary : theme.text,
-                        fontWeight: isSelected ? "600" : "400",
-                      },
-                    ]}
-                  >
-                    {option.name}
-                  </Text>
-                  {isSelected && (
-                    <Feather
-                      name="check"
-                      size={16}
-                      color={BlysColors.primary}
-                      style={styles.sortMenuCheck}
-                    />
-                  )}
+                  <Feather name="x" size={16} color={theme.textTertiary} />
                 </Pressable>
-              );
-            })}
-          </View>
-        )}
+              )}
+            </View>
+          </Animated.View>
 
-        {/* Current Sort Indicator */}
-        <View style={styles.sortIndicator}>
-          <Text
-            style={[styles.sortIndicatorText, { color: theme.textSecondary }]}
-          >
-            Sorted by: {currentSortOption?.name}
-          </Text>
-          <Text style={[styles.resultsCount, { color: theme.textTertiary }]}>
-            {filteredProjects.length}{" "}
-            {filteredProjects.length === 1 ? "project" : "projects"}
-          </Text>
-        </View>
+          {/* Results count */}
+          <View style={styles.resultsRow}>
+            <Text style={[styles.resultsCount, { color: theme.textSecondary }]}>
+              {filteredProjects.length}{" "}
+              {filteredProjects.length === 1 ? "project" : "projects"}
+            </Text>
+            {(selectedFilter !== "all" || selectedStage) && (
+              <Pressable
+                onPress={() => {
+                  setSelectedFilter("all");
+                  setSelectedStage(null);
+                }}
+                style={styles.clearFilterButton}
+              >
+                <Text
+                  style={[
+                    styles.clearFilterText,
+                    { color: BlysColors.primary },
+                  ]}
+                >
+                  Clear filters
+                </Text>
+              </Pressable>
+            )}
+          </View>
 
-        {loading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={BlysColors.primary} />
-          </View>
-        ) : error ? (
-          <View style={styles.errorContainer}>
-            <Feather
-              name="alert-circle"
-              size={48}
-              color={theme.textSecondary}
-            />
-            <ThemedText
-              style={[styles.errorText, { color: theme.textSecondary }]}
-            >
-              {error}
-            </ThemedText>
-            <Pressable
-              style={[
-                styles.retryButton,
-                { backgroundColor: BlysColors.primary },
-              ]}
-              onPress={loadProjects}
-            >
-              <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
-            </Pressable>
-          </View>
-        ) : (
+          {/* Project List */}
           <View style={styles.projectList}>
             {filteredProjects.length === 0 ? (
-              <View style={styles.emptyContainer}>
-                <View
-                  style={[
-                    styles.emptyIconContainer,
-                    {
-                      backgroundColor: isDark
-                        ? theme.backgroundSecondary
-                        : "#F5F3FF",
-                    },
-                  ]}
-                >
-                  <Feather name="folder" size={32} color={BlysColors.primary} />
-                </View>
-                <ThemedText style={[styles.emptyTitle, { color: theme.text }]}>
-                  {searchQuery
-                    ? "No projects found"
-                    : selectedStage !== "all"
-                      ? `No ${stageFilters.find((f) => f.id === selectedStage)?.name.toLowerCase()} projects`
-                      : "No projects yet"}
-                </ThemedText>
-                <ThemedText
-                  style={[styles.emptyText, { color: theme.textSecondary }]}
-                >
-                  {searchQuery
-                    ? "Try a different search term"
-                    : selectedStage !== "all"
-                      ? "Projects in this stage will appear here"
-                      : "Add your first project to get started"}
-                </ThemedText>
-              </View>
+              <ProjectEmptyState
+                variant={getEmptyStateVariant()}
+                onAction={handleEmptyStateAction}
+                searchQuery={searchQuery}
+                filterName={
+                  QUICK_FILTERS.find((f) => f.id === selectedFilter)?.name
+                }
+              />
             ) : (
-              filteredProjects.map((project) => (
-                <ProjectCard
+              filteredProjects.map((project, index) => (
+                <Animated.View
                   key={project.id}
-                  projectTitle={project.title}
-                  clientName={getClientName(project)}
-                  stageName={project.stage?.name || "Unknown"}
-                  stageColor={
-                    project.stage?.color || getStageColor(project.stage?.name)
-                  }
-                  eventDate={formatEventDate(project.eventDate)}
-                  eventType={formatProjectType(project.projectType)}
-                  onPress={() =>
-                    navigation.navigate("ProjectDetail", {
-                      projectId: project.id,
-                    })
-                  }
-                />
+                  entering={FadeInRight.delay(150 + index * 50)
+                    .duration(400)
+                    .easing(Easing.out(Easing.cubic))}
+                >
+                  <EnhancedProjectCard
+                    project={{
+                      id: project.id,
+                      title: project.title,
+                      clientName: getClientName(project),
+                      stageName: project.stage?.name || "Unknown",
+                      stageColor: project.stage?.color,
+                      eventDate: formatEventDate(project.eventDate),
+                      eventType: formatProjectType(project.projectType),
+                    }}
+                    onPress={() =>
+                      navigation.navigate("ProjectDetail", {
+                        projectId: project.id,
+                      })
+                    }
+                    onArchive={() => handleArchiveProject(project.id)}
+                    isUrgent={
+                      project.stage?.name?.toLowerCase().includes("inquiry") ||
+                      project.stage?.name?.toLowerCase().includes("lead")
+                    }
+                  />
+                </Animated.View>
               ))
             )}
           </View>
-        )}
+
+          {/* Bottom spacing for FAB */}
+          <View style={{ height: tabBarHeight + 80 }} />
+        </View>
       </ScreenScrollView>
 
-      {/* Backdrop for sort menu */}
-      {showSortMenu && (
-        <Pressable
-          style={styles.sortMenuBackdrop}
-          onPress={() => setShowSortMenu(false)}
-        />
-      )}
-
-      {/* FAB for creating new project */}
-      <Pressable
-        style={({ pressed }) => [
-          styles.fab,
-          {
-            backgroundColor: BlysColors.primary,
-            bottom: tabBarHeight + Spacing.md,
-          },
-          pressed && { opacity: 0.9, transform: [{ scale: 0.95 }] },
-        ]}
-        onPress={() =>
-          Alert.alert(
-            "New Project",
-            "What type of shoot would you like to add?",
-            [
-              { text: "Cancel", style: "cancel" },
-              {
-                text: "Wedding",
-                onPress: () => console.log("Create wedding project"),
-              },
-              {
-                text: "Engagement",
-                onPress: () => console.log("Create engagement project"),
-              },
-              {
-                text: "Portrait",
-                onPress: () => console.log("Create portrait project"),
-              },
-            ],
-          )
-        }
-      >
-        <Feather name="plus" size={24} color="#FFFFFF" />
-      </Pressable>
+      {/* Floating Action Button */}
+      <FloatingActionButton
+        actions={fabActions}
+        bottomOffset={tabBarHeight + 16}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screenContainer: {
+  container: {
     flex: 1,
-  },
-  summaryContainer: {
     paddingHorizontal: Spacing.screenHorizontal,
-    paddingTop: Spacing.sm,
-    paddingBottom: Spacing.md,
   },
-  summaryBanner: {
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    padding: Spacing.md,
-  },
-  summaryRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  summaryItem: {
-    flex: 1,
-    alignItems: "center",
-  },
-  summaryDivider: {
-    width: 1,
-    height: 32,
-  },
-  summaryNumber: {
-    fontSize: 20,
-    fontWeight: "700",
-    lineHeight: 24,
-  },
-  summaryLabel: {
-    fontSize: 11,
-    fontWeight: "500",
-    marginTop: 2,
-    textAlign: "center",
-  },
-  filterSection: {
-    marginBottom: Spacing.sm,
+  filterChipsScroll: {
+    marginHorizontal: -Spacing.screenHorizontal,
+    marginBottom: Spacing.md,
+    marginTop: Spacing.sm,
   },
   filterChipsContainer: {
     paddingHorizontal: Spacing.screenHorizontal,
     gap: Spacing.sm,
   },
+  filterChipsRow: {
+    flexDirection: "row",
+    marginBottom: Spacing.md,
+  },
   filterChip: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: BorderRadius.chip,
     borderWidth: 1,
   },
@@ -708,19 +633,54 @@ const styles = StyleSheet.create({
   },
   filterChipText: {
     fontSize: 13,
+    fontWeight: "600",
+  },
+  stageFilterScroll: {
+    marginHorizontal: -Spacing.screenHorizontal,
+    marginBottom: Spacing.md,
+  },
+  stageFilterContainer: {
+    paddingHorizontal: Spacing.screenHorizontal,
+    gap: Spacing.xs,
+  },
+  stageChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    borderWidth: 1,
+    gap: 6,
+  },
+  stageDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  stageChipText: {
+    fontSize: 13,
     fontWeight: "500",
   },
-  searchSortRow: {
-    flexDirection: "row",
-    paddingHorizontal: Spacing.screenHorizontal,
-    marginBottom: Spacing.xs,
-    gap: Spacing.sm,
+  stageCountBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 10,
+    minWidth: 20,
+    alignItems: "center",
+  },
+  stageCountText: {
+    fontSize: 11,
+    fontWeight: "600",
+  },
+  searchSection: {
+    marginBottom: Spacing.sm,
   },
   searchWrapper: {
     flexDirection: "row",
     alignItems: "center",
     borderRadius: BorderRadius.input,
     paddingHorizontal: Spacing.sm,
+    height: 44,
   },
   searchIcon: {
     marginRight: Spacing.xs,
@@ -729,132 +689,26 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 0,
     borderWidth: 0,
-  },
-  sortButton: {
-    width: 44,
     height: 44,
-    borderRadius: BorderRadius.input,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
   },
-  sortMenu: {
-    position: "absolute",
-    top: 200,
-    right: Spacing.screenHorizontal,
-    width: 220,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-    zIndex: 100,
-    paddingVertical: Spacing.xs,
-  },
-  sortMenuBackdrop: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 99,
-  },
-  sortMenuTitle: {
-    fontSize: 11,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-  },
-  sortMenuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 10,
-    gap: Spacing.sm,
-  },
-  sortMenuItemText: {
-    fontSize: 14,
-    flex: 1,
-  },
-  sortMenuCheck: {
-    marginLeft: "auto",
-  },
-  sortIndicator: {
+  resultsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: Spacing.screenHorizontal,
-    paddingVertical: Spacing.xs,
-  },
-  sortIndicatorText: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  resultsCount: {
-    fontSize: 12,
-  },
-  projectList: {
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.screenHorizontal,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: Spacing.xxl,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: Spacing.xxl * 2,
-    gap: Spacing.sm,
-  },
-  emptyIconContainer: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    alignItems: "center",
-    justifyContent: "center",
     marginBottom: Spacing.sm,
   },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    textAlign: "center",
+  resultsCount: {
+    fontSize: 13,
+    fontWeight: "500",
   },
-  emptyText: {
-    ...Typography.body,
-    textAlign: "center",
+  clearFilterButton: {
+    padding: Spacing.xs,
   },
-  errorContainer: {
+  clearFilterText: {
+    fontSize: 13,
+    fontWeight: "500",
+  },
+  projectList: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: Spacing.xxl,
-    gap: Spacing.md,
-  },
-  errorText: {
-    ...Typography.body,
-    textAlign: "center",
-  },
-  retryButton: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: 10,
-    borderRadius: BorderRadius.button,
-    marginTop: Spacing.sm,
-  },
-  retryButtonText: {
-    color: "#FFFFFF",
-    ...Typography.button,
-  },
-  fab: {
-    position: "absolute",
-    right: Spacing.screenHorizontal,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    ...Shadows.lg,
   },
 });

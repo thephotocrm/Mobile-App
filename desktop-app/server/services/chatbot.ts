@@ -539,62 +539,65 @@ const CHATBOT_TOOLS = [
     type: "function" as const,
     function: {
       name: "create_lead_form",
-      description: "Creates a new lead capture form for the photographer. Use this when the user confirms they want a form created.",
+      description:
+        "Creates a new lead capture form for the photographer. Use this when the user confirms they want a form created.",
       parameters: {
         type: "object",
         properties: {
           name: {
             type: "string",
-            description: "Name of the lead form (e.g., 'Wedding Inquiry Form')"
+            description: "Name of the lead form (e.g., 'Wedding Inquiry Form')",
           },
           description: {
             type: "string",
-            description: "Brief description of the form's purpose"
+            description: "Brief description of the form's purpose",
           },
           projectType: {
             type: "string",
             enum: ["WEDDING", "PORTRAIT", "COMMERCIAL"],
-            description: "Type of photography project this form is for"
-          }
+            description: "Type of photography project this form is for",
+          },
         },
-        required: ["name"]
-      }
-    }
+        required: ["name"],
+      },
+    },
   },
   {
     type: "function" as const,
     function: {
       name: "create_contact",
-      description: "Adds a new contact to the photographer's CRM. Use this when the user confirms they want to add a contact.",
+      description:
+        "Adds a new contact to the photographer's CRM. Use this when the user confirms they want to add a contact.",
       parameters: {
         type: "object",
         properties: {
           firstName: {
             type: "string",
-            description: "Contact's first name"
+            description: "Contact's first name",
           },
           lastName: {
             type: "string",
-            description: "Contact's last name"
+            description: "Contact's last name",
           },
           email: {
             type: "string",
-            description: "Contact's email address"
+            description: "Contact's email address",
           },
           phone: {
             type: "string",
-            description: "Contact's phone number (with country code, e.g., +15551234567)"
+            description:
+              "Contact's phone number (with country code, e.g., +15551234567)",
           },
           projectType: {
             type: "string",
             enum: ["WEDDING", "PORTRAIT", "COMMERCIAL"],
-            description: "Type of photography project"
-          }
+            description: "Type of photography project",
+          },
         },
-        required: ["firstName", "email"]
-      }
-    }
-  }
+        required: ["firstName", "email"],
+      },
+    },
+  },
 ];
 
 // Response type with optional action buttons
@@ -612,30 +615,38 @@ export interface ChatbotResponseWithActions {
 // Helper to build contextual prompt for navigation follow-ups
 function buildNavigationFollowUpPrompt(navContext: NavigationContext): string {
   const pageDescriptions: Record<string, string> = {
-    '/automations': 'the Automations page where they can create automated email/SMS sequences triggered by pipeline stages',
-    '/smart-files': 'the Smart Files page where they manage proposals, contracts, and invoices',
-    '/templates': 'the Email Templates page for creating reusable email content',
-    '/projects': 'the Projects page showing all their client projects',
-    '/contacts': 'the Contacts page with their client database',
-    '/galleries': 'the Galleries page for sharing photos with clients',
-    '/scheduling': 'the Scheduling page for managing availability and online bookings',
-    '/settings': 'the Settings page for account configuration',
-    '/lead-forms': 'the Lead Forms page for creating inquiry capture forms',
-    '/packages': 'the Packages page for defining pricing packages',
-    '/add-ons': 'the Add-ons page for optional service extras',
-    '/drip-campaigns': 'the Drip Campaigns page for multi-email nurture sequences',
-    '/questionnaires': 'the Questionnaires page for collecting client information',
-    '/inbox': 'the Inbox for viewing all client messages',
-    '/reports': 'the Reports page for business analytics',
-    '/earnings': 'the Earnings page for tracking payments and payouts',
+    "/automations":
+      "the Automations page where they can create automated email/SMS sequences triggered by pipeline stages",
+    "/smart-files":
+      "the Smart Files page where they manage proposals, contracts, and invoices",
+    "/templates":
+      "the Email Templates page for creating reusable email content",
+    "/projects": "the Projects page showing all their client projects",
+    "/contacts": "the Contacts page with their client database",
+    "/galleries": "the Galleries page for sharing photos with clients",
+    "/scheduling":
+      "the Scheduling page for managing availability and online bookings",
+    "/settings": "the Settings page for account configuration",
+    "/lead-forms": "the Lead Forms page for creating inquiry capture forms",
+    "/packages": "the Packages page for defining pricing packages",
+    "/add-ons": "the Add-ons page for optional service extras",
+    "/drip-campaigns":
+      "the Drip Campaigns page for multi-email nurture sequences",
+    "/questionnaires":
+      "the Questionnaires page for collecting client information",
+    "/inbox": "the Inbox for viewing all client messages",
+    "/reports": "the Reports page for business analytics",
+    "/earnings": "the Earnings page for tracking payments and payouts",
   };
 
-  const targetPath = navContext.navigatedTo.split('?')[0];
-  const pageDescription = pageDescriptions[targetPath] || `the ${navContext.actionLabel.replace('Go to ', '')} page`;
+  const targetPath = navContext.navigatedTo.split("?")[0];
+  const pageDescription =
+    pageDescriptions[targetPath] ||
+    `the ${navContext.actionLabel.replace("Go to ", "")} page`;
 
   return `**Navigation Follow-Up Context:**
 - User originally asked: "${navContext.originalUserQuestion}"
-- User was on: ${navContext.previousPage || 'the previous page'}
+- User was on: ${navContext.previousPage || "the previous page"}
 - User clicked: "${navContext.actionLabel}" button
 - User is now on: ${pageDescription}
 
@@ -648,7 +659,7 @@ export async function getChatbotResponse(
   photographerName?: string,
   history: ChatMessage[] = [],
   photographerId?: string,
-  navigationContext?: NavigationContext
+  navigationContext?: NavigationContext,
 ): Promise<ChatbotResponseWithActions> {
   try {
     // Handle navigation follow-up (special case when user clicks action button)
@@ -680,23 +691,30 @@ ${followUpPrompt}
       const followUpMessages: ChatMessage[] = [
         { role: "system", content: followUpSystemMessage },
         ...history.slice(-6), // Less history for follow-ups
-        { role: "user", content: `[User navigated to ${navigationContext.navigatedTo}]` }
+        {
+          role: "user",
+          content: `[User navigated to ${navigationContext.navigatedTo}]`,
+        },
       ];
 
       const followUpResponse = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: followUpMessages as any,
         max_tokens: 200, // Shorter responses for follow-ups
-        response_format: { type: "json_object" }
+        response_format: { type: "json_object" },
       });
 
-      const followUpContent = followUpResponse.choices[0]?.message?.content || "";
+      const followUpContent =
+        followUpResponse.choices[0]?.message?.content || "";
 
       try {
         const parsed = JSON.parse(followUpContent);
         return { message: parsed.message || followUpContent };
       } catch {
-        return { message: followUpContent || "Here we are! How can I help you from here?" };
+        return {
+          message:
+            followUpContent || "Here we are! How can I help you from here?",
+        };
       }
     }
 
@@ -716,27 +734,38 @@ ${followUpPrompt}
     const messages: ChatMessage[] = [
       { role: "system", content: systemMessage },
       ...history.slice(-10), // Keep last 10 messages for context
-      { role: "user", content: message }
+      { role: "user", content: message },
     ];
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: messages as any,
       max_tokens: 800,
-      response_format: { type: "json_object" }
+      response_format: { type: "json_object" },
     });
 
-    if (!response.choices || !response.choices[0] || !response.choices[0].message) {
+    if (
+      !response.choices ||
+      !response.choices[0] ||
+      !response.choices[0].message
+    ) {
       console.error("Invalid OpenAI response structure:", response);
-      return { message: "I'm sorry, I couldn't generate a response. Please try again." };
+      return {
+        message: "I'm sorry, I couldn't generate a response. Please try again.",
+      };
     }
 
     const aiResponse = response.choices[0].message.content || "";
 
     // Log raw response for debugging
     if (!aiResponse) {
-      console.error("OpenAI returned empty response. Full response:", JSON.stringify(response, null, 2));
-      return { message: "I'm sorry, I couldn't generate a response. Please try again." };
+      console.error(
+        "OpenAI returned empty response. Full response:",
+        JSON.stringify(response, null, 2),
+      );
+      return {
+        message: "I'm sorry, I couldn't generate a response. Please try again.",
+      };
     }
 
     // Parse JSON response
@@ -744,33 +773,45 @@ ${followUpPrompt}
       const parsed = JSON.parse(aiResponse);
       return {
         message: parsed.message || aiResponse,
-        actions: parsed.actions || undefined
+        actions: parsed.actions || undefined,
       };
     } catch (parseError) {
       // Fallback: if AI doesn't return valid JSON, use raw response as message
-      console.warn("Chatbot response was not valid JSON, using as plain text. Raw:", aiResponse.substring(0, 200));
+      console.warn(
+        "Chatbot response was not valid JSON, using as plain text. Raw:",
+        aiResponse.substring(0, 200),
+      );
       return { message: aiResponse };
     }
   } catch (error: any) {
     console.error("Chatbot error details:", {
       message: error.message,
       stack: error.stack,
-      response: error.response?.data
+      response: error.response?.data,
     });
     throw new Error("Failed to get chatbot response");
   }
 }
 
-async function executeAction(action: any, photographerId: string): Promise<string> {
+async function executeAction(
+  action: any,
+  photographerId: string,
+): Promise<string> {
   const { storage } = await import("../storage");
-  
+
   switch (action.type) {
     case "CREATE_LEAD_FORM": {
-      const { name, description, projectType = "WEDDING", fields = [] } = action.params;
-      
+      const {
+        name,
+        description,
+        projectType = "WEDDING",
+        fields = [],
+      } = action.params;
+
       const defaultConfig = {
         title: name || "Wedding Inquiry Form",
-        description: description || "Let's discuss your wedding photography needs",
+        description:
+          description || "Let's discuss your wedding photography needs",
         primaryColor: "#3b82f6",
         backgroundColor: "#ffffff",
         buttonText: "Send Inquiry",
@@ -779,16 +820,82 @@ async function executeAction(action: any, photographerId: string): Promise<strin
         showMessage: true,
         showEventDate: true,
         redirectUrl: "",
-        customFields: fields.length > 0 ? fields : [
-          { id: "firstName", type: "text", label: "First Name", placeholder: "Jane", required: true, isSystem: true, width: "half" },
-          { id: "lastName", type: "text", label: "Last Name", placeholder: "Smith", required: true, isSystem: true, width: "half" },
-          { id: "email", type: "email", label: "Email", placeholder: "jane@example.com", required: true, isSystem: true, width: "full" },
-          { id: "phone", type: "phone", label: "Phone", placeholder: "(555) 123-4567", required: true, isSystem: false, width: "full" },
-          { id: "eventDate", type: "date", label: "Wedding Date", required: false, isSystem: false, width: "half" },
-          { id: "venue", type: "text", label: "Venue Name", placeholder: "e.g. The Grand Hotel", required: false, isSystem: false, width: "half" },
-          { id: "message", type: "textarea", label: "Tell us about your wedding", placeholder: "Share any details...", required: false, isSystem: false, width: "full" },
-          { id: "optInSms", type: "checkbox", label: "I agree to receive SMS updates", required: false, options: ["Yes, text me updates"], isSystem: false, width: "full" }
-        ]
+        customFields:
+          fields.length > 0
+            ? fields
+            : [
+                {
+                  id: "firstName",
+                  type: "text",
+                  label: "First Name",
+                  placeholder: "Jane",
+                  required: true,
+                  isSystem: true,
+                  width: "half",
+                },
+                {
+                  id: "lastName",
+                  type: "text",
+                  label: "Last Name",
+                  placeholder: "Smith",
+                  required: true,
+                  isSystem: true,
+                  width: "half",
+                },
+                {
+                  id: "email",
+                  type: "email",
+                  label: "Email",
+                  placeholder: "jane@example.com",
+                  required: true,
+                  isSystem: true,
+                  width: "full",
+                },
+                {
+                  id: "phone",
+                  type: "phone",
+                  label: "Phone",
+                  placeholder: "(555) 123-4567",
+                  required: true,
+                  isSystem: false,
+                  width: "full",
+                },
+                {
+                  id: "eventDate",
+                  type: "date",
+                  label: "Wedding Date",
+                  required: false,
+                  isSystem: false,
+                  width: "half",
+                },
+                {
+                  id: "venue",
+                  type: "text",
+                  label: "Venue Name",
+                  placeholder: "e.g. The Grand Hotel",
+                  required: false,
+                  isSystem: false,
+                  width: "half",
+                },
+                {
+                  id: "message",
+                  type: "textarea",
+                  label: "Tell us about your wedding",
+                  placeholder: "Share any details...",
+                  required: false,
+                  isSystem: false,
+                  width: "full",
+                },
+                {
+                  id: "optInSms",
+                  type: "checkbox",
+                  label: "I agree to receive SMS updates",
+                  required: false,
+                  options: ["Yes, text me updates"],
+                  isSystem: false,
+                  width: "full",
+                },
+              ],
       };
 
       const leadForm = await storage.createLeadForm({
@@ -797,22 +904,28 @@ async function executeAction(action: any, photographerId: string): Promise<strin
         description: description || "AI-generated wedding inquiry form",
         projectType: projectType as any,
         config: defaultConfig,
-        status: "ACTIVE"
+        status: "ACTIVE",
       });
 
-      const domain = process.env.REPLIT_DOMAINS?.split(',')[0] || '';
+      const domain = process.env.REPLIT_DOMAINS?.split(",")[0] || "";
       return `✅ Done! I created "${leadForm.name}" for you. View it in Marketing → Lead Forms, or share this link: ${domain}/f/${leadForm.publicToken}`;
     }
 
     case "CREATE_CONTACT": {
-      const { firstName, lastName, email, phone, projectType = "WEDDING" } = action.params;
-      
+      const {
+        firstName,
+        lastName,
+        email,
+        phone,
+        projectType = "WEDDING",
+      } = action.params;
+
       if (!firstName || !email) {
         return "❌ I need at least a first name and email to create a contact.";
       }
 
       const stages = await storage.getStagesByPhotographer(photographerId);
-      const firstStage = stages.find(s => s.orderIndex === 1) || stages[0];
+      const firstStage = stages.find((s) => s.orderIndex === 1) || stages[0];
 
       if (!firstStage) {
         return "❌ You need to set up your pipeline stages first before I can add contacts.";
@@ -826,10 +939,10 @@ async function executeAction(action: any, photographerId: string): Promise<strin
         phone: phone || null,
         stageId: firstStage.id,
         projectType: projectType as any,
-        leadSource: "AI_ASSISTANT"
+        leadSource: "AI_ASSISTANT",
       });
 
-      return `✅ Added ${firstName} ${lastName || ''} to your ${firstStage.name} stage! View in Contacts page.`;
+      return `✅ Added ${firstName} ${lastName || ""} to your ${firstStage.name} stage! View in Contacts page.`;
     }
 
     default:
@@ -845,27 +958,41 @@ const AutomationStep = z.object({
   subject: z.string().nullish(),
   content: z.string(),
   recipientType: z.enum(["CONTACT", "PHOTOGRAPHER"]),
-  smartFileTemplateName: z.string().nullish().describe("Name of the smart file template to send (for SMART_FILE type)")
+  smartFileTemplateName: z
+    .string()
+    .nullish()
+    .describe("Name of the smart file template to send (for SMART_FILE type)"),
 });
 
 const AutomationExtraction = z.object({
   name: z.string().describe("A short descriptive name for this automation"),
-  description: z.string().describe("A brief description of what this automation does"),
-  triggerType: z.enum(["STAGE_CHANGE", "SPECIFIC_STAGE"]).describe("What triggers this automation"),
-  triggerStageId: z.string().nullish().describe("The stage ID if trigger is SPECIFIC_STAGE"),
+  description: z
+    .string()
+    .describe("A brief description of what this automation does"),
+  triggerType: z
+    .enum(["STAGE_CHANGE", "SPECIFIC_STAGE"])
+    .describe("What triggers this automation"),
+  triggerStageId: z
+    .string()
+    .nullish()
+    .describe("The stage ID if trigger is SPECIFIC_STAGE"),
   projectType: z.enum(["WEDDING", "PORTRAIT", "COMMERCIAL"]).default("WEDDING"),
-  steps: z.array(AutomationStep).min(1).max(10).describe("The sequence of actions to take")
+  steps: z
+    .array(AutomationStep)
+    .min(1)
+    .max(10)
+    .describe("The sequence of actions to take"),
 });
 
 export async function extractAutomationFromDescription(
   description: string,
-  photographerId: string
+  photographerId: string,
 ): Promise<z.infer<typeof AutomationExtraction>> {
   const { storage } = await import("../storage");
-  
+
   // Get photographer's stages for context
   const stages = await storage.getStagesByPhotographer(photographerId);
-  const stagesList = stages.map(s => `${s.name} (ID: ${s.id})`).join(", ");
+  const stagesList = stages.map((s) => `${s.name} (ID: ${s.id})`).join(", ");
 
   const systemPrompt = `You are an expert at understanding photographer workflow automation requests.
 
@@ -912,19 +1039,19 @@ GOOD message (with business name): "Looking forward to capturing your special da
     model: "gpt-4o-mini",
     messages: [
       { role: "system", content: systemPrompt },
-      { role: "user", content: description }
+      { role: "user", content: description },
     ],
     response_format: zodResponseFormat(AutomationExtraction, "automation"),
-    max_completion_tokens: 2000
+    max_completion_tokens: 2000,
   });
 
   const content = response.choices[0].message.content;
   if (!content) {
     throw new Error("No content in OpenAI response");
   }
-  
+
   const extracted = JSON.parse(content) as z.infer<typeof AutomationExtraction>;
-  
+
   if (!extracted) {
     throw new Error("Failed to extract automation parameters");
   }
@@ -934,15 +1061,38 @@ GOOD message (with business name): "Looking forward to capturing your special da
 
 // Schema for detecting multiple automations in one request
 const MultiAutomationDetection = z.object({
-  isMultiAutomation: z.boolean().describe("True if the request contains multiple separate automation requests"),
-  automationCount: z.number().describe("Number of separate automations detected"),
-  automations: z.array(z.object({
-    summary: z.string().describe("Brief summary of this automation (e.g., 'SMS 5 min after inquiry')"),
-    triggerStage: z.string().nullable().describe("Stage name that triggers this"),
-    actionType: z.enum(["EMAIL", "SMS", "SMART_FILE"]).describe("Type of action"),
-    timing: z.string().describe("When it should trigger (e.g., '5 minutes', '1 day at 6pm')"),
-    purpose: z.string().describe("What this automation does")
-  })).describe("List of detected automations")
+  isMultiAutomation: z
+    .boolean()
+    .describe(
+      "True if the request contains multiple separate automation requests",
+    ),
+  automationCount: z
+    .number()
+    .describe("Number of separate automations detected"),
+  automations: z
+    .array(
+      z.object({
+        summary: z
+          .string()
+          .describe(
+            "Brief summary of this automation (e.g., 'SMS 5 min after inquiry')",
+          ),
+        triggerStage: z
+          .string()
+          .nullable()
+          .describe("Stage name that triggers this"),
+        actionType: z
+          .enum(["EMAIL", "SMS", "SMART_FILE"])
+          .describe("Type of action"),
+        timing: z
+          .string()
+          .describe(
+            "When it should trigger (e.g., '5 minutes', '1 day at 6pm')",
+          ),
+        purpose: z.string().describe("What this automation does"),
+      }),
+    )
+    .describe("List of detected automations"),
 });
 
 /**
@@ -950,11 +1100,11 @@ const MultiAutomationDetection = z.object({
  */
 export async function detectMultipleAutomations(
   message: string,
-  photographerId: string
+  photographerId: string,
 ): Promise<z.infer<typeof MultiAutomationDetection>> {
   const { storage } = await import("../storage");
   const stages = await storage.getStagesByPhotographer(photographerId);
-  const stagesList = stages.map(s => s.name).join(", ");
+  const stagesList = stages.map((s) => s.name).join(", ");
 
   const systemPrompt = `You are analyzing a photographer's automation request to detect if they want to create multiple automations in one message.
 
@@ -980,10 +1130,10 @@ Analyze the request and identify each separate automation.`;
     model: "gpt-4o-mini",
     messages: [
       { role: "system", content: systemPrompt },
-      { role: "user", content: message }
+      { role: "user", content: message },
     ],
     response_format: zodResponseFormat(MultiAutomationDetection, "detection"),
-    max_completion_tokens: 1000
+    max_completion_tokens: 1000,
   });
 
   const content = response.choices[0].message.content;
@@ -997,8 +1147,10 @@ Analyze the request and identify each separate automation.`;
 // Conversation state schema for building automations
 const AutomationInfo = z.object({
   // Automation type
-  automationType: z.enum(["COMMUNICATION", "STAGE_CHANGE", "COUNTDOWN"]).nullable(),
-  
+  automationType: z
+    .enum(["COMMUNICATION", "STAGE_CHANGE", "COUNTDOWN"])
+    .nullable(),
+
   // COMMUNICATION automation fields (stage-based triggers)
   triggerType: z.enum(["SPECIFIC_STAGE", "GLOBAL"]).nullable(),
   stageId: z.string().nullable(), // Source stage for communication automations
@@ -1013,12 +1165,19 @@ const AutomationInfo = z.object({
   content: z.string().nullable(),
   smartFileTemplateId: z.string().nullable(),
   smartFileTemplateName: z.string().nullable(),
-  
+
   // STAGE_CHANGE automation fields (business event triggers)
-  businessTrigger: z.enum(["APPOINTMENT_BOOKED", "DEPOSIT_PAID", "FULL_PAYMENT_MADE", "CONTRACT_SIGNED"]).nullable(),
+  businessTrigger: z
+    .enum([
+      "APPOINTMENT_BOOKED",
+      "DEPOSIT_PAID",
+      "FULL_PAYMENT_MADE",
+      "CONTRACT_SIGNED",
+    ])
+    .nullable(),
   targetStageId: z.string().nullable(), // Where to move contact
   targetStageName: z.string().nullable(),
-  
+
   // COUNTDOWN automation fields (event date triggers)
   eventType: z.enum(["WEDDING_DATE", "EVENT_DATE"]).nullable(),
   daysBefore: z.number().nullable(), // Days before event to trigger
@@ -1030,10 +1189,14 @@ const ConversationState = z.object({
   nextQuestion: z.string(),
   needsTemplateSelection: z.boolean().nullable(),
   needsStageSelection: z.boolean().nullable(),
-  options: z.array(z.object({
-    label: z.string(),
-    value: z.string()
-  })).nullable(),
+  options: z
+    .array(
+      z.object({
+        label: z.string(),
+        value: z.string(),
+      }),
+    )
+    .nullable(),
   // Multi-automation support
   automationQueue: z.array(AutomationInfo).nullable(), // Queue of automations to create
   currentAutomationIndex: z.number().nullable(), // Which automation we're working on (0-based)
@@ -1052,52 +1215,64 @@ export async function conversationalAutomationBuilder(
   photographerId: string,
   currentState?: ConversationStateType,
   projectType?: string,
-  hasSmartFileTemplates: boolean = true
+  hasSmartFileTemplates: boolean = true,
 ): Promise<ConversationStateType> {
   const { storage } = await import("../storage");
 
   // Get photographer context (unified pipeline)
   const stages = await storage.getStagesByPhotographer(photographerId);
-  const stagesList = stages.map(s => `${s.name} (ID: ${s.id})`).join(", ");
+  const stagesList = stages.map((s) => `${s.name} (ID: ${s.id})`).join(", ");
 
   const smartFiles = await storage.getSmartFilesByPhotographer(photographerId);
-  const smartFilesList = smartFiles.length > 0
-    ? smartFiles.map(sf => `${sf.name} (ID: ${sf.id})`).join(", ")
-    : "(No Smart Files created yet)";
+  const smartFilesList =
+    smartFiles.length > 0
+      ? smartFiles.map((sf) => `${sf.name} (ID: ${sf.id})`).join(", ")
+      : "(No Smart Files created yet)";
 
   // MULTI-AUTOMATION DETECTION: Check if this is the FIRST USER MESSAGE (not first message overall)
   // Count only user messages in history to determine if this is the first user input
-  const userMessagesInHistory = conversationHistory.filter(m => m.role === 'user').length;
-  console.log(`🔍 Multi-automation check: currentState=${!!currentState}, historyLength=${conversationHistory.length}, userMessages=${userMessagesInHistory}`);
-  
+  const userMessagesInHistory = conversationHistory.filter(
+    (m) => m.role === "user",
+  ).length;
+  console.log(
+    `🔍 Multi-automation check: currentState=${!!currentState}, historyLength=${conversationHistory.length}, userMessages=${userMessagesInHistory}`,
+  );
+
   // Run detection if: no current state AND this is the first USER message (count=1 because current msg is already in history)
   if (!currentState && userMessagesInHistory === 1) {
-    console.log('🔎 Running multi-automation detection (first user message)...');
-    const detection = await detectMultipleAutomations(userMessage, photographerId);
-    
+    console.log(
+      "🔎 Running multi-automation detection (first user message)...",
+    );
+    const detection = await detectMultipleAutomations(
+      userMessage,
+      photographerId,
+    );
+
     if (detection.isMultiAutomation && detection.automationCount > 1) {
       // Multi-automation detected! Set up the queue
-      const queue: z.infer<typeof AutomationInfo>[] = detection.automations.map(() => ({
-        automationType: null,
-        triggerType: null,
-        stageId: null,
-        stageName: null,
-        actionType: null,
-        delayDays: null,
-        delayHours: null,
-        delayMinutes: null,
-        scheduledHour: null,
-        scheduledMinute: null,
-        subject: null,
-        content: null,
-        smartFileTemplateId: null,
-        smartFileTemplateName: null,
-        businessTrigger: null,
-        targetStageId: null,
-        targetStageName: null,
-        eventType: null,
-        daysBefore: null,
-      }));
+      const queue: z.infer<typeof AutomationInfo>[] = detection.automations.map(
+        () => ({
+          automationType: null,
+          triggerType: null,
+          stageId: null,
+          stageName: null,
+          actionType: null,
+          delayDays: null,
+          delayHours: null,
+          delayMinutes: null,
+          scheduledHour: null,
+          scheduledMinute: null,
+          subject: null,
+          content: null,
+          smartFileTemplateId: null,
+          smartFileTemplateName: null,
+          businessTrigger: null,
+          targetStageId: null,
+          targetStageName: null,
+          eventType: null,
+          daysBefore: null,
+        }),
+      );
 
       // Create initial state with queue info
       return {
@@ -1106,7 +1281,7 @@ export async function conversationalAutomationBuilder(
         nextQuestion: `I can see you want to create ${detection.automationCount} automations here! Let me help you set them up one at a time.\n\n**Automation 1 of ${detection.automationCount}:** ${detection.automations[0].summary}\n\nWhich stage should trigger this first automation?`,
         needsTemplateSelection: null,
         needsStageSelection: true,
-        options: stages.map(s => ({ label: s.name, value: s.id })),
+        options: stages.map((s) => ({ label: s.name, value: s.id })),
         automationQueue: queue,
         currentAutomationIndex: 0,
         totalAutomations: detection.automationCount,
@@ -1115,18 +1290,23 @@ export async function conversationalAutomationBuilder(
   }
 
   // Check if we're in multi-automation mode
-  const isMultiMode = currentState?.automationQueue && currentState.automationQueue.length > 1;
+  const isMultiMode =
+    currentState?.automationQueue && currentState.automationQueue.length > 1;
   const currentIndex = currentState?.currentAutomationIndex ?? 0;
   const totalAutomations = currentState?.totalAutomations ?? 1;
-  const progressText = isMultiMode ? `\n\n**PROGRESS: Automation ${currentIndex + 1} of ${totalAutomations}**` : "";
-  
+  const progressText = isMultiMode
+    ? `\n\n**PROGRESS: Automation ${currentIndex + 1} of ${totalAutomations}**`
+    : "";
+
   // Pre-compute stage options for the AI prompt
-  const stageOptionsForPrompt = stages.map(s => `{label: "${s.name}", value: "${s.id}"}`).join(', ');
+  const stageOptionsForPrompt = stages
+    .map((s) => `{label: "${s.name}", value: "${s.id}"}`)
+    .join(", ");
 
   // Build Smart File availability message for the prompt
   const smartFileAvailabilityNote = hasSmartFileTemplates
     ? ""
-    : "\n**NOTE:** This photographer has NO Smart File templates yet. If they ask for a Smart File/proposal automation, tell them: \"You'll need to create a Smart File template first. Would you like to send an email or text message instead?\"";
+    : '\n**NOTE:** This photographer has NO Smart File templates yet. If they ask for a Smart File/proposal automation, tell them: "You\'ll need to create a Smart File template first. Would you like to send an email or text message instead?"';
 
   const systemPrompt = `You are helping a photographer create an automation through conversation.
 
@@ -1211,11 +1391,15 @@ Include the options array with {label, value} pairs for:
 - options: Array of {label, value} options - ALWAYS provide when asking about stages, action types, or automation types!
 
 **CRITICAL - Multi-Automation Queue Preservation:**
-${isMultiMode ? `⚠️ IMPORTANT: You are in MULTI-AUTOMATION MODE. You MUST preserve these fields in EVERY response:
+${
+  isMultiMode
+    ? `⚠️ IMPORTANT: You are in MULTI-AUTOMATION MODE. You MUST preserve these fields in EVERY response:
 - automationQueue: ${JSON.stringify(currentState?.automationQueue)} (copy this EXACTLY)
 - currentAutomationIndex: ${currentState?.currentAutomationIndex}
 - totalAutomations: ${currentState?.totalAutomations}
-These fields track the queue of automations being created. DO NOT set them to null or omit them!` : ""}
+These fields track the queue of automations being created. DO NOT set them to null or omit them!`
+    : ""
+}
 
 **CONFIRMATION MESSAGE (when status = "confirming"):**
 When you have ALL required info, set status to "confirming" and write a friendly summary based on type:
@@ -1289,44 +1473,49 @@ Conversation History: ${JSON.stringify(conversationHistory.slice(-4))} (showing 
   const messages: ChatMessage[] = [
     { role: "system", content: systemPrompt },
     ...conversationHistory,
-    { role: "user", content: userMessage }
+    { role: "user", content: userMessage },
   ];
 
-  console.log('🤖 Calling OpenAI for conversational automation...');
-  
+  console.log("🤖 Calling OpenAI for conversational automation...");
+
   try {
     const response = await Promise.race([
       openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages,
         response_format: zodResponseFormat(ConversationState, "conversation"),
-        max_completion_tokens: 1500
+        max_completion_tokens: 1500,
       }),
-      new Promise<never>((_, reject) => 
-        setTimeout(() => reject(new Error('OpenAI API timeout after 30 seconds')), 30000)
-      )
+      new Promise<never>((_, reject) =>
+        setTimeout(
+          () => reject(new Error("OpenAI API timeout after 30 seconds")),
+          30000,
+        ),
+      ),
     ]);
 
     const content = response.choices[0].message.content;
     if (!content) {
       throw new Error("No content in OpenAI response");
     }
-    
+
     let state = JSON.parse(content) as ConversationStateType;
-    console.log('✅ OpenAI response received, status:', state.status);
-    
+    console.log("✅ OpenAI response received, status:", state.status);
+
     // MULTI-AUTOMATION QUEUE HANDLING
     // If user confirmed and we're in multi-automation mode, advance to next automation
     if (state.status === "complete" && isMultiMode && state.automationQueue) {
       const nextIndex = currentIndex + 1;
-      
+
       if (nextIndex < totalAutomations) {
         // More automations in queue! Move to next one
-        console.log(`📋 Moving to automation ${nextIndex + 1} of ${totalAutomations}`);
-        
+        console.log(
+          `📋 Moving to automation ${nextIndex + 1} of ${totalAutomations}`,
+        );
+
         // Save completed automation in queue
         state.automationQueue[currentIndex] = state.collectedInfo;
-        
+
         // Reset to start collecting next automation
         state = {
           status: "collecting",
@@ -1334,7 +1523,7 @@ Conversation History: ${JSON.stringify(conversationHistory.slice(-4))} (showing 
           nextQuestion: `Great! Automation ${currentIndex + 1} is ready to create.\n\n**Now let's set up Automation ${nextIndex + 1} of ${totalAutomations}**\n\nWhat stage should trigger this automation?`,
           needsTemplateSelection: null,
           needsStageSelection: true,
-          options: stages.map(s => ({ label: s.name, value: s.id })),
+          options: stages.map((s) => ({ label: s.name, value: s.id })),
           automationQueue: state.automationQueue,
           currentAutomationIndex: nextIndex,
           totalAutomations: totalAutomations,
@@ -1345,10 +1534,10 @@ Conversation History: ${JSON.stringify(conversationHistory.slice(-4))} (showing 
         state.automationQueue[currentIndex] = state.collectedInfo;
       }
     }
-    
+
     return state;
   } catch (error: any) {
-    console.error('❌ OpenAI API error:', error.message);
+    console.error("❌ OpenAI API error:", error.message);
     throw error;
   }
 }

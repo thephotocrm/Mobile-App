@@ -53,10 +53,15 @@ function GoogleIcon() {
 // Get Google Client ID from app config
 const googleClientId = Constants.expoConfig?.extra?.googleClientId || "";
 const googleIosClientId = Constants.expoConfig?.extra?.googleIosClientId || "";
-const googleAndroidClientId = Constants.expoConfig?.extra?.googleAndroidClientId || "";
+const googleAndroidClientId =
+  Constants.expoConfig?.extra?.googleAndroidClientId || "";
 
 // Check if Google auth is properly configured
-const isGoogleConfigured = !!(googleClientId || googleIosClientId || googleAndroidClientId);
+const isGoogleConfigured = !!(
+  googleClientId ||
+  googleIosClientId ||
+  googleAndroidClientId
+);
 
 export default function LoginScreen() {
   const { theme } = useTheme();

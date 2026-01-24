@@ -1,6 +1,6 @@
-import { 
-  Play, 
-  CheckCircle2, 
+import {
+  Play,
+  CheckCircle2,
   Clock,
   Rocket,
   Settings as SettingsIcon,
@@ -14,7 +14,7 @@ import {
   TrendingUp,
   BarChart3,
   Workflow,
-  Calendar
+  Calendar,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -36,21 +36,27 @@ interface Tutorial {
 }
 
 export default function Tutorials() {
-  const [completedTutorials, setCompletedTutorials] = useState<Set<string>>(new Set());
-  const [watchingTutorial, setWatchingTutorial] = useState<Tutorial | null>(null);
+  const [completedTutorials, setCompletedTutorials] = useState<Set<string>>(
+    new Set(),
+  );
+  const [watchingTutorial, setWatchingTutorial] = useState<Tutorial | null>(
+    null,
+  );
 
   const setupTutorials: Tutorial[] = [
     {
       id: "setup-account",
       title: "Initial Account Setup",
-      description: "Configure your profile, business information, and timezone settings",
+      description:
+        "Configure your profile, business information, and timezone settings",
       duration: "4 min",
       icon: SettingsIcon,
     },
     {
       id: "setup-calendar",
       title: "Connect Google Calendar",
-      description: "Integrate Google Calendar for seamless appointment scheduling",
+      description:
+        "Integrate Google Calendar for seamless appointment scheduling",
       duration: "3 min",
       icon: Calendar,
     },
@@ -81,7 +87,8 @@ export default function Tutorials() {
     {
       id: "page-dashboard",
       title: "Dashboard Overview",
-      description: "Navigate your business metrics, quick actions, and recent activity",
+      description:
+        "Navigate your business metrics, quick actions, and recent activity",
       duration: "5 min",
       icon: BarChart3,
     },
@@ -154,14 +161,16 @@ export default function Tutorials() {
     {
       id: "workflow-inquiry",
       title: "Inquiry to Booking Workflow",
-      description: "Complete process: Lead capture → Contact → Proposal → Contract → Payment",
+      description:
+        "Complete process: Lead capture → Contact → Proposal → Contract → Payment",
       duration: "15 min",
       icon: Workflow,
     },
     {
       id: "workflow-wedding",
       title: "Automated Wedding Workflow",
-      description: "Set up stage-based automation for wedding photography clients",
+      description:
+        "Set up stage-based automation for wedding photography clients",
       duration: "18 min",
       icon: Rocket,
     },
@@ -175,7 +184,7 @@ export default function Tutorials() {
   ];
 
   const toggleComplete = (id: string) => {
-    setCompletedTutorials(prev => {
+    setCompletedTutorials((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
         newSet.delete(id);
@@ -189,14 +198,14 @@ export default function Tutorials() {
   const TutorialCard = ({ tutorial }: { tutorial: Tutorial }) => {
     const isCompleted = completedTutorials.has(tutorial.id);
     const Icon = tutorial.icon;
-    
+
     return (
-      <div 
+      <div
         className={cn(
           "group relative p-6 rounded-2xl border transition-all hover:shadow-lg",
-          isCompleted 
-            ? "bg-green-500/5 border-green-500/30" 
-            : "bg-card border-border hover:border-purple-500/30"
+          isCompleted
+            ? "bg-green-500/5 border-green-500/30"
+            : "bg-card border-border hover:border-purple-500/30",
         )}
         data-testid={`tutorial-${tutorial.id}`}
       >
@@ -207,20 +216,26 @@ export default function Tutorials() {
         )}
 
         <div className="flex items-start gap-4 mb-4">
-          <div className={cn(
-            "p-3 rounded-xl transition-colors",
-            isCompleted 
-              ? "bg-green-500/10" 
-              : "bg-purple-500/10 group-hover:bg-purple-500/20"
-          )}>
-            <Icon className={cn(
-              "w-6 h-6",
-              isCompleted ? "text-green-500" : "text-purple-500"
-            )} />
+          <div
+            className={cn(
+              "p-3 rounded-xl transition-colors",
+              isCompleted
+                ? "bg-green-500/10"
+                : "bg-purple-500/10 group-hover:bg-purple-500/20",
+            )}
+          >
+            <Icon
+              className={cn(
+                "w-6 h-6",
+                isCompleted ? "text-green-500" : "text-purple-500",
+              )}
+            />
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-lg mb-1">{tutorial.title}</h3>
-            <p className="text-sm text-muted-foreground mb-3">{tutorial.description}</p>
+            <p className="text-sm text-muted-foreground mb-3">
+              {tutorial.description}
+            </p>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Clock className="w-3 h-3" />
@@ -237,7 +252,7 @@ export default function Tutorials() {
               "flex-1 px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2",
               isCompleted
                 ? "bg-green-500/10 text-green-600 dark:text-green-400 hover:bg-green-500/20"
-                : "bg-purple-500 text-white hover:bg-purple-600"
+                : "bg-purple-500 text-white hover:bg-purple-600",
             )}
             data-testid={`button-watch-${tutorial.id}`}
           >
@@ -250,7 +265,7 @@ export default function Tutorials() {
               "px-4 py-2 rounded-lg font-medium transition-colors",
               isCompleted
                 ? "bg-background border border-border hover:bg-muted"
-                : "bg-background border border-border hover:bg-muted"
+                : "bg-background border border-border hover:bg-muted",
             )}
             data-testid={`button-mark-${tutorial.id}`}
           >
@@ -262,12 +277,17 @@ export default function Tutorials() {
   };
 
   const calculateProgress = (tutorials: Tutorial[]) => {
-    const completed = tutorials.filter(t => completedTutorials.has(t.id)).length;
+    const completed = tutorials.filter((t) =>
+      completedTutorials.has(t.id),
+    ).length;
     return Math.round((completed / tutorials.length) * 100);
   };
 
-  const totalTutorials = setupTutorials.length + perPageTutorials.length + workflowTutorials.length;
-  const overallProgress = Math.round((completedTutorials.size / totalTutorials) * 100);
+  const totalTutorials =
+    setupTutorials.length + perPageTutorials.length + workflowTutorials.length;
+  const overallProgress = Math.round(
+    (completedTutorials.size / totalTutorials) * 100,
+  );
 
   return (
     <div className="min-h-screen p-8" data-testid="tutorials-page">
@@ -294,7 +314,7 @@ export default function Tutorials() {
             </span>
           </div>
           <div className="w-full h-3 bg-background rounded-full overflow-hidden">
-            <div 
+            <div
               className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-500"
               style={{ width: `${overallProgress}%` }}
             />
@@ -310,7 +330,7 @@ export default function Tutorials() {
               <h2 className="text-2xl font-bold">1. Setup Tutorials</h2>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <div className="w-24 h-2 bg-background rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-green-500 transition-all duration-500"
                     style={{ width: `${calculateProgress(setupTutorials)}%` }}
                   />
@@ -318,10 +338,12 @@ export default function Tutorials() {
                 <span>{calculateProgress(setupTutorials)}%</span>
               </div>
             </div>
-            <p className="text-muted-foreground">Get your account configured and ready to use</p>
+            <p className="text-muted-foreground">
+              Get your account configured and ready to use
+            </p>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
-            {setupTutorials.map(tutorial => (
+            {setupTutorials.map((tutorial) => (
               <TutorialCard key={tutorial.id} tutorial={tutorial} />
             ))}
           </div>
@@ -334,7 +356,7 @@ export default function Tutorials() {
               <h2 className="text-2xl font-bold">2. Feature Deep-Dives</h2>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <div className="w-24 h-2 bg-background rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-blue-500 transition-all duration-500"
                     style={{ width: `${calculateProgress(perPageTutorials)}%` }}
                   />
@@ -342,10 +364,12 @@ export default function Tutorials() {
                 <span>{calculateProgress(perPageTutorials)}%</span>
               </div>
             </div>
-            <p className="text-muted-foreground">Master each feature with dedicated tutorials</p>
+            <p className="text-muted-foreground">
+              Master each feature with dedicated tutorials
+            </p>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
-            {perPageTutorials.map(tutorial => (
+            {perPageTutorials.map((tutorial) => (
               <TutorialCard key={tutorial.id} tutorial={tutorial} />
             ))}
           </div>
@@ -358,18 +382,22 @@ export default function Tutorials() {
               <h2 className="text-2xl font-bold">3. Complete Workflows</h2>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <div className="w-24 h-2 bg-background rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-purple-500 transition-all duration-500"
-                    style={{ width: `${calculateProgress(workflowTutorials)}%` }}
+                    style={{
+                      width: `${calculateProgress(workflowTutorials)}%`,
+                    }}
                   />
                 </div>
                 <span>{calculateProgress(workflowTutorials)}%</span>
               </div>
             </div>
-            <p className="text-muted-foreground">End-to-end processes and best practices</p>
+            <p className="text-muted-foreground">
+              End-to-end processes and best practices
+            </p>
           </div>
           <div className="grid md:grid-cols-1 gap-6">
-            {workflowTutorials.map(tutorial => (
+            {workflowTutorials.map((tutorial) => (
               <TutorialCard key={tutorial.id} tutorial={tutorial} />
             ))}
           </div>
@@ -381,9 +409,10 @@ export default function Tutorials() {
           <div className="relative">
             <h3 className="text-3xl font-bold mb-4">Need More Help?</h3>
             <p className="text-purple-100 mb-8 text-lg max-w-2xl mx-auto">
-              Can't find what you're looking for? Our support team is here to help you succeed.
+              Can't find what you're looking for? Our support team is here to
+              help you succeed.
             </p>
-            <button 
+            <button
               className="px-6 py-3 bg-white text-purple-600 rounded-lg font-semibold hover:bg-purple-50 transition-colors"
               data-testid="button-contact-support"
             >
@@ -394,11 +423,16 @@ export default function Tutorials() {
       </div>
 
       {/* Video Modal */}
-      <Dialog open={!!watchingTutorial} onOpenChange={(open) => !open && setWatchingTutorial(null)}>
+      <Dialog
+        open={!!watchingTutorial}
+        onOpenChange={(open) => !open && setWatchingTutorial(null)}
+      >
         <DialogContent className="max-w-4xl">
           <DialogHeader>
             <DialogTitle>{watchingTutorial?.title}</DialogTitle>
-            <DialogDescription>{watchingTutorial?.description}</DialogDescription>
+            <DialogDescription>
+              {watchingTutorial?.description}
+            </DialogDescription>
           </DialogHeader>
           <div className="mt-4">
             {watchingTutorial?.videoId ? (
@@ -416,9 +450,12 @@ export default function Tutorials() {
             ) : (
               <div className="aspect-video bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-lg flex flex-col items-center justify-center border border-purple-500/20">
                 <Play className="w-16 h-16 text-purple-500 mb-4" />
-                <h4 className="text-lg font-semibold mb-2">Video Coming Soon</h4>
+                <h4 className="text-lg font-semibold mb-2">
+                  Video Coming Soon
+                </h4>
                 <p className="text-muted-foreground text-center max-w-md">
-                  This tutorial video is currently being produced. Check back soon for the full walkthrough!
+                  This tutorial video is currently being produced. Check back
+                  soon for the full walkthrough!
                 </p>
               </div>
             )}

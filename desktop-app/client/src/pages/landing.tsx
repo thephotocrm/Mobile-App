@@ -56,7 +56,7 @@ import {
   Smartphone,
   Send,
   Wallet,
-  Globe
+  Globe,
 } from "lucide-react";
 import pipelineImage from "@assets/ChatGPT Image Oct 3, 2025, 03_42_16 PM_1759524152837.png";
 import communicationImage from "@assets/ChatGPT Image Oct 3, 2025, 03_45_04 PM_1759524321494.png";
@@ -66,11 +66,23 @@ import smsImage from "@assets/3D55A8ED-E647-49A1-943C-420BD0096F6E_1759528182642
 import questionnaireImage from "@assets/D80061BD-D8EF-4249-9B60-3EF75FA04DD6_1759528934938.png";
 import templatesImage from "@assets/27748FBD-CFCF-4C6D-8905-E877732DDE1B_1759529204307.png";
 import reportsImage from "@assets/BF61BA78-E366-4F99-A4B7-09A688E2C3E7_1759531405412.png";
-import { SiGmail, SiStripe, SiQuickbooks, SiFacebook, SiGooglecalendar, SiZapier, SiSlack, SiMailchimp, SiDropbox, SiInstagram, SiTwilio } from "react-icons/si";
+import {
+  SiGmail,
+  SiStripe,
+  SiQuickbooks,
+  SiFacebook,
+  SiGooglecalendar,
+  SiZapier,
+  SiSlack,
+  SiMailchimp,
+  SiDropbox,
+  SiInstagram,
+  SiTwilio,
+} from "react-icons/si";
 
 function MobileIntegrationSlideshow() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  
+
   const slides = [
     [
       { icon: SiGmail, name: "Gmail" },
@@ -109,8 +121,8 @@ function MobileIntegrationSlideshow() {
             slideIndex === currentSlide
               ? "opacity-100 translate-y-0"
               : slideIndex < currentSlide
-              ? "opacity-0 -translate-y-8"
-              : "opacity-0 translate-y-8"
+                ? "opacity-0 -translate-y-8"
+                : "opacity-0 translate-y-8"
           }`}
         >
           {slide.map((integration, index) => (
@@ -131,13 +143,17 @@ function MobileIntegrationSlideshow() {
 export default function Landing() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
-  const [photographerCount, setPhotographerCount] = useState<number | null>(null);
+  const [photographerCount, setPhotographerCount] = useState<number | null>(
+    null,
+  );
   const [currentProjectType, setCurrentProjectType] = useState(0);
   const [isRotating, setIsRotating] = useState(false);
   const [expandedStage, setExpandedStage] = useState<number | null>(0);
   const [demoDialogOpen, setDemoDialogOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
-  const [visibleFeatures, setVisibleFeatures] = useState(window.innerWidth >= 1024 ? 6 : 4);
+  const [visibleFeatures, setVisibleFeatures] = useState(
+    window.innerWidth >= 1024 ? 6 : 4,
+  );
 
   useEffect(() => {
     const checkDesktop = () => {
@@ -149,11 +165,11 @@ export default function Landing() {
         setVisibleFeatures(4);
       }
     };
-    
-    window.addEventListener('resize', checkDesktop);
-    return () => window.removeEventListener('resize', checkDesktop);
+
+    window.addEventListener("resize", checkDesktop);
+    return () => window.removeEventListener("resize", checkDesktop);
   }, [visibleFeatures]);
-  
+
   const projectTypes = ["Wedding", "Portrait", "Commercial"];
   const { toast } = useToast();
 
@@ -182,7 +198,8 @@ export default function Landing() {
     onSuccess: () => {
       toast({
         title: "Demo request sent!",
-        description: "You'll need a free account for the demo. Let's create one now!",
+        description:
+          "You'll need a free account for the demo. Let's create one now!",
       });
       setDemoDialogOpen(false);
       demoForm.reset();
@@ -194,19 +211,23 @@ export default function Landing() {
     onError: (error: Error) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to send demo request. Please try again.",
+        description:
+          error.message || "Failed to send demo request. Please try again.",
         variant: "destructive",
       });
     },
   });
-  
+
   // Redirect logged-in users to app subdomain (or dashboard if already there)
   useEffect(() => {
     if (user) {
       const currentHost = window.location.hostname;
-      
+
       // If on main thephotocrm.com domain (not app.thephotocrm.com), redirect to app subdomain
-      if (currentHost === 'thephotocrm.com' || currentHost === 'www.thephotocrm.com') {
+      if (
+        currentHost === "thephotocrm.com" ||
+        currentHost === "www.thephotocrm.com"
+      ) {
         // Redirect to app.thephotocrm.com/dashboard in production
         window.location.href = `${window.location.protocol}//app.thephotocrm.com/dashboard`;
       } else {
@@ -219,8 +240,8 @@ export default function Landing() {
   // Fetch current photographer count for spots remaining
   useEffect(() => {
     fetch("/api/stats/photographer-count")
-      .then(res => res.json())
-      .then(data => setPhotographerCount(data.count))
+      .then((res) => res.json())
+      .then((data) => setPhotographerCount(data.count))
       .catch(() => setPhotographerCount(null));
   }, []);
 
@@ -240,56 +261,65 @@ export default function Landing() {
     };
   }, []);
 
-  const spotsRemaining = photographerCount !== null ? Math.max(0, 100 - photographerCount) : null;
+  const spotsRemaining =
+    photographerCount !== null ? Math.max(0, 100 - photographerCount) : null;
 
   const features = [
     {
       title: "Smart Client Pipeline",
-      description: "Drag-and-drop cards through stages from inquiry to booking. See your entire sales funnel at a glance.",
-      screenshot: pipelineImage
+      description:
+        "Drag-and-drop cards through stages from inquiry to booking. See your entire sales funnel at a glance.",
+      screenshot: pipelineImage,
     },
     {
       title: "Automated Communication",
-      description: "Set it once, never touch it again. Personalized email sequences run on autopilot—dynamically inserting client names, wedding dates, and project details at exactly the right moment.",
-      screenshot: communicationImage
+      description:
+        "Set it once, never touch it again. Personalized email sequences run on autopilot—dynamically inserting client names, wedding dates, and project details at exactly the right moment.",
+      screenshot: communicationImage,
     },
     {
       title: "Proposals & Payments",
-      description: "Beautiful proposals with instant Stripe payouts. Clients sign & pay in one click.",
-      screenshot: proposalImage
+      description:
+        "Beautiful proposals with instant Stripe payouts. Clients sign & pay in one click.",
+      screenshot: proposalImage,
     },
     {
       title: "Smart Scheduling",
-      description: "Share your calendar link. Clients book consults when it works for both of you—syncs with Google Calendar.",
-      screenshot: schedulingImage
+      description:
+        "Share your calendar link. Clients book consults when it works for both of you—syncs with Google Calendar.",
+      screenshot: schedulingImage,
     },
     {
       title: "Two-Way SMS",
-      description: "Text clients right from the CRM. Keep all conversations in one place—no more switching apps.",
-      screenshot: smsImage
+      description:
+        "Text clients right from the CRM. Keep all conversations in one place—no more switching apps.",
+      screenshot: smsImage,
     },
     {
       title: "Client Questionnaires",
-      description: "Collect wedding details automatically. Custom forms assigned based on package type, then responses help you prep for every shoot.",
-      screenshot: questionnaireImage
+      description:
+        "Collect wedding details automatically. Custom forms assigned based on package type, then responses help you prep for every shoot.",
+      screenshot: questionnaireImage,
     },
     {
       title: "Reusable Templates",
-      description: "Save your best emails, proposals, and workflows. Reuse them with one click for every new client.",
-      screenshot: templatesImage
+      description:
+        "Save your best emails, proposals, and workflows. Reuse them with one click for every new client.",
+      screenshot: templatesImage,
     },
     {
       title: "Reports & Insights",
-      description: "Track bookings, revenue, and conversion rates. Know exactly what's working in your business.",
-      screenshot: reportsImage
-    }
+      description:
+        "Track bookings, revenue, and conversion rates. Know exactly what's working in your business.",
+      screenshot: reportsImage,
+    },
   ];
 
   // Mobile features: Show only the 3 most powerful features
   const mobileFeatures = [
     features[0], // Smart Client Pipeline
     features[1], // Automated Communication
-    features[2]  // Proposals & Payments
+    features[2], // Proposals & Payments
   ];
 
   // Journey stages with automation details
@@ -301,8 +331,8 @@ export default function Landing() {
       automations: [
         "✨ Auto-email sent via Gmail within seconds with pricing guide",
         "📱 Day 2: AI-powered follow-up SMS check-in",
-        "📧 Day 5: Personalized email with availability + calendar link"
-      ]
+        "📧 Day 5: Personalized email with availability + calendar link",
+      ],
     },
     {
       icon: Calendar,
@@ -311,8 +341,8 @@ export default function Landing() {
       automations: [
         "📅 Auto-calendar invite synced to Google Calendar",
         "📝 Pre-consult questionnaire automatically assigned",
-        "⏰ Reminder emails sent 24 hours before meeting"
-      ]
+        "⏰ Reminder emails sent 24 hours before meeting",
+      ],
     },
     {
       icon: DollarSign,
@@ -321,8 +351,8 @@ export default function Landing() {
       automations: [
         "💰 Stripe payment link sent immediately",
         "📬 Welcome email sequence triggers automatically",
-        "📄 Contract stored and tracked in your CRM"
-      ]
+        "📄 Contract stored and tracked in your CRM",
+      ],
     },
     {
       icon: CheckCircle2,
@@ -331,8 +361,8 @@ export default function Landing() {
       automations: [
         "📝 Custom form auto-assigned based on package type",
         "🎯 Responses populate your shoot prep checklist",
-        "🔔 Reminder if not completed within 3 days"
-      ]
+        "🔔 Reminder if not completed within 3 days",
+      ],
     },
     {
       icon: Camera,
@@ -341,8 +371,8 @@ export default function Landing() {
       automations: [
         "📸 7 days before: Location + timeline reminder email",
         "🌤️ 2 days before: SMS weather check & preparation tips",
-        "💪 Day-of: Good luck text with final details"
-      ]
+        "💪 Day-of: Good luck text with final details",
+      ],
     },
     {
       icon: Zap,
@@ -351,8 +381,8 @@ export default function Landing() {
       automations: [
         "🎨 Auto-email: 'Your photos are being edited!'",
         "📊 Weekly progress updates keep clients excited",
-        "👀 Sneak peek delivery with 2-3 highlight photos"
-      ]
+        "👀 Sneak peek delivery with 2-3 highlight photos",
+      ],
     },
     {
       icon: TrendingUp,
@@ -361,8 +391,8 @@ export default function Landing() {
       automations: [
         "🎉 Gallery link sent via email + SMS simultaneously",
         "💾 Download instructions and expiration reminder",
-        "📱 Social media sharing guide for easy tagging"
-      ]
+        "📱 Social media sharing guide for easy tagging",
+      ],
     },
     {
       icon: Sparkles,
@@ -371,27 +401,147 @@ export default function Landing() {
       automations: [
         "⭐ 7 days after delivery: Auto-testimonial request",
         "💝 30 days: Referral incentive email campaign",
-        "🎁 90 days: Anniversary photo reminder"
-      ]
-    }
+        "🎁 90 days: Anniversary photo reminder",
+      ],
+    },
   ];
 
   const allFeatures = [
-    { testid: "card-feature-payment", Icon: DollarSign, iconBg: "bg-blue-100 dark:bg-blue-900", iconColor: "text-blue-600 dark:text-blue-400", title: "Automated Payment Collection", description: "Stop chasing clients for deposits and final payments. Stripe integration handles it automatically with payment reminders" },
-    { testid: "card-feature-quickbooks", Icon: BarChart, iconBg: "bg-green-100 dark:bg-green-900", iconColor: "text-green-600 dark:text-green-400", title: "QuickBooks Sync", description: "Every payment, fee, and payout automatically syncs to QuickBooks. Tax season becomes painless" },
-    { testid: "card-feature-pipeline", Icon: Target, iconBg: "bg-purple-100 dark:bg-purple-900", iconColor: "text-purple-600 dark:text-purple-400", title: "Lead Pipeline Management", description: "Visual board shows exactly where every potential client is and how much revenue is in your pipeline" },
-    { testid: "card-feature-followup", Icon: Send, iconBg: "bg-orange-100 dark:bg-orange-900", iconColor: "text-orange-600 dark:text-orange-400", title: "Automated Follow-Up System", description: "Never lose a lead to \"forgot to follow up.\" System handles it 24/7 while you sleep" },
-    { testid: "card-feature-proposals", Icon: FileText, iconBg: "bg-pink-100 dark:bg-pink-900", iconColor: "text-pink-600 dark:text-pink-400", title: "Professional Proposal System", description: "Send branded proposals that make you look like a $10k+ photographer, not someone emailing price lists" },
-    { testid: "card-feature-communication", Icon: MessageSquare, iconBg: "bg-cyan-100 dark:bg-cyan-900", iconColor: "text-cyan-600 dark:text-cyan-400", title: "Two-Way Client Communication", description: "All emails, texts, and updates logged in one place. No more \"wait, did I tell them about the venue change?\"" },
-    { testid: "card-feature-revenue", Icon: Wallet, iconBg: "bg-indigo-100 dark:bg-indigo-900", iconColor: "text-indigo-600 dark:text-indigo-400", title: "Revenue Tracking & Earnings Dashboard", description: "See real-time income, outstanding payments, and monthly revenue at a glance" },
-    { testid: "card-feature-automation", Icon: Clock, iconBg: "bg-yellow-100 dark:bg-yellow-900", iconColor: "text-yellow-600 dark:text-yellow-400", title: "Time-Saving Automation", description: "Reclaim 10-15 hours per week by automating questionnaires, reminders, and check-ins" },
-    { testid: "card-feature-gmail", Icon: Mail, iconBg: "bg-red-100 dark:bg-red-900", iconColor: "text-red-600 dark:text-red-400", title: "Personal Email Sending (Gmail)", description: "Automated emails send from YOUR address, keeping relationships personal and authentic" },
-    { testid: "card-feature-calendar", Icon: Calendar, iconBg: "bg-teal-100 dark:bg-teal-900", iconColor: "text-teal-600 dark:text-teal-400", title: "Online Booking Calendar", description: "Clients self-schedule consultations without the \"when are you free?\" email tennis" },
-    { testid: "card-feature-nurture", Icon: TrendingUp, iconBg: "bg-violet-100 dark:bg-violet-900", iconColor: "text-violet-600 dark:text-violet-400", title: "Long-Term Nurture Campaigns", description: "Turn \"not ready yet\" leads into bookings 6-12 months later without manual effort" },
-    { testid: "card-feature-mobile", Icon: Smartphone, iconBg: "bg-lime-100 dark:bg-lime-900", iconColor: "text-lime-600 dark:text-lime-400", title: "Mobile Business Access", description: "Check client details, shot lists, and venue info from your phone during shoots" },
-    { testid: "card-feature-questionnaire", Icon: CheckCircle2, iconBg: "bg-emerald-100 dark:bg-emerald-900", iconColor: "text-emerald-600 dark:text-emerald-400", title: "Client Questionnaire Automation", description: "Get shot lists and details before the shoot, not scrambling day-of" },
-    { testid: "card-feature-wedding-dates", Icon: Zap, iconBg: "bg-rose-100 dark:bg-rose-900", iconColor: "text-rose-600 dark:text-rose-400", title: "Wedding Date Workflows", description: "Automations trigger based on the actual event date (30 days before, 7 days before, etc.)" },
-    { testid: "card-feature-templates", Icon: BookOpen, iconBg: "bg-amber-100 dark:bg-amber-900", iconColor: "text-amber-600 dark:text-amber-400", title: "Template Library", description: "Save your best-performing emails, packages, and workflows to reuse and scale" },
+    {
+      testid: "card-feature-payment",
+      Icon: DollarSign,
+      iconBg: "bg-blue-100 dark:bg-blue-900",
+      iconColor: "text-blue-600 dark:text-blue-400",
+      title: "Automated Payment Collection",
+      description:
+        "Stop chasing clients for deposits and final payments. Stripe integration handles it automatically with payment reminders",
+    },
+    {
+      testid: "card-feature-quickbooks",
+      Icon: BarChart,
+      iconBg: "bg-green-100 dark:bg-green-900",
+      iconColor: "text-green-600 dark:text-green-400",
+      title: "QuickBooks Sync",
+      description:
+        "Every payment, fee, and payout automatically syncs to QuickBooks. Tax season becomes painless",
+    },
+    {
+      testid: "card-feature-pipeline",
+      Icon: Target,
+      iconBg: "bg-purple-100 dark:bg-purple-900",
+      iconColor: "text-purple-600 dark:text-purple-400",
+      title: "Lead Pipeline Management",
+      description:
+        "Visual board shows exactly where every potential client is and how much revenue is in your pipeline",
+    },
+    {
+      testid: "card-feature-followup",
+      Icon: Send,
+      iconBg: "bg-orange-100 dark:bg-orange-900",
+      iconColor: "text-orange-600 dark:text-orange-400",
+      title: "Automated Follow-Up System",
+      description:
+        'Never lose a lead to "forgot to follow up." System handles it 24/7 while you sleep',
+    },
+    {
+      testid: "card-feature-proposals",
+      Icon: FileText,
+      iconBg: "bg-pink-100 dark:bg-pink-900",
+      iconColor: "text-pink-600 dark:text-pink-400",
+      title: "Professional Proposal System",
+      description:
+        "Send branded proposals that make you look like a $10k+ photographer, not someone emailing price lists",
+    },
+    {
+      testid: "card-feature-communication",
+      Icon: MessageSquare,
+      iconBg: "bg-cyan-100 dark:bg-cyan-900",
+      iconColor: "text-cyan-600 dark:text-cyan-400",
+      title: "Two-Way Client Communication",
+      description:
+        'All emails, texts, and updates logged in one place. No more "wait, did I tell them about the venue change?"',
+    },
+    {
+      testid: "card-feature-revenue",
+      Icon: Wallet,
+      iconBg: "bg-indigo-100 dark:bg-indigo-900",
+      iconColor: "text-indigo-600 dark:text-indigo-400",
+      title: "Revenue Tracking & Earnings Dashboard",
+      description:
+        "See real-time income, outstanding payments, and monthly revenue at a glance",
+    },
+    {
+      testid: "card-feature-automation",
+      Icon: Clock,
+      iconBg: "bg-yellow-100 dark:bg-yellow-900",
+      iconColor: "text-yellow-600 dark:text-yellow-400",
+      title: "Time-Saving Automation",
+      description:
+        "Reclaim 10-15 hours per week by automating questionnaires, reminders, and check-ins",
+    },
+    {
+      testid: "card-feature-gmail",
+      Icon: Mail,
+      iconBg: "bg-red-100 dark:bg-red-900",
+      iconColor: "text-red-600 dark:text-red-400",
+      title: "Personal Email Sending (Gmail)",
+      description:
+        "Automated emails send from YOUR address, keeping relationships personal and authentic",
+    },
+    {
+      testid: "card-feature-calendar",
+      Icon: Calendar,
+      iconBg: "bg-teal-100 dark:bg-teal-900",
+      iconColor: "text-teal-600 dark:text-teal-400",
+      title: "Online Booking Calendar",
+      description:
+        'Clients self-schedule consultations without the "when are you free?" email tennis',
+    },
+    {
+      testid: "card-feature-nurture",
+      Icon: TrendingUp,
+      iconBg: "bg-violet-100 dark:bg-violet-900",
+      iconColor: "text-violet-600 dark:text-violet-400",
+      title: "Long-Term Nurture Campaigns",
+      description:
+        'Turn "not ready yet" leads into bookings 6-12 months later without manual effort',
+    },
+    {
+      testid: "card-feature-mobile",
+      Icon: Smartphone,
+      iconBg: "bg-lime-100 dark:bg-lime-900",
+      iconColor: "text-lime-600 dark:text-lime-400",
+      title: "Mobile Business Access",
+      description:
+        "Check client details, shot lists, and venue info from your phone during shoots",
+    },
+    {
+      testid: "card-feature-questionnaire",
+      Icon: CheckCircle2,
+      iconBg: "bg-emerald-100 dark:bg-emerald-900",
+      iconColor: "text-emerald-600 dark:text-emerald-400",
+      title: "Client Questionnaire Automation",
+      description:
+        "Get shot lists and details before the shoot, not scrambling day-of",
+    },
+    {
+      testid: "card-feature-wedding-dates",
+      Icon: Zap,
+      iconBg: "bg-rose-100 dark:bg-rose-900",
+      iconColor: "text-rose-600 dark:text-rose-400",
+      title: "Wedding Date Workflows",
+      description:
+        "Automations trigger based on the actual event date (30 days before, 7 days before, etc.)",
+    },
+    {
+      testid: "card-feature-templates",
+      Icon: BookOpen,
+      iconBg: "bg-amber-100 dark:bg-amber-900",
+      iconColor: "text-amber-600 dark:text-amber-400",
+      title: "Template Library",
+      description:
+        "Save your best-performing emails, packages, and workflows to reuse and scale",
+    },
   ];
 
   return (
@@ -401,9 +551,14 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 text-sm md:text-base font-medium">
           <Sparkles className="h-5 w-5 animate-pulse" />
           <span>
-            <strong>Founder's Price: $4.95/month</strong> - Only for the First 100 Users
+            <strong>Founder's Price: $4.95/month</strong> - Only for the First
+            100 Users
             {spotsRemaining !== null && (
-              <> • <span className="font-bold">{spotsRemaining} spots left!</span></>
+              <>
+                {" "}
+                •{" "}
+                <span className="font-bold">{spotsRemaining} spots left!</span>
+              </>
             )}
           </span>
         </div>
@@ -442,29 +597,34 @@ export default function Landing() {
             <Camera className="h-3 w-3 mr-1" />
             Built for Photographers
           </Badge>
-          
+
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
             <span className="bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
               Run Your
             </span>
             <br />
-            <span className={`inline-block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent transition-all duration-300 ${isRotating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+            <span
+              className={`inline-block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent transition-all duration-300 ${isRotating ? "opacity-0 scale-95" : "opacity-100 scale-100"}`}
+            >
               {projectTypes[currentProjectType]}
             </span>
             <span className="bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
-              {" "}Photography Business
+              {" "}
+              Photography Business
             </span>
             <br className="md:hidden" />
             <span className="bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
-              {" "}Like a Pro
+              {" "}
+              Like a Pro
             </span>
           </h1>
-          
+
           <p className="text-xl text-slate-600 dark:text-slate-400 mb-8 max-w-3xl mx-auto">
-            All-in-one CRM built for photographers. Automate follow-ups, send proposals, and get paid faster.
-            Everything you need to book more clients and save hours every week.
+            All-in-one CRM built for photographers. Automate follow-ups, send
+            proposals, and get paid faster. Everything you need to book more
+            clients and save hours every week.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button
               size="lg"
@@ -488,7 +648,7 @@ export default function Landing() {
           <p className="text-xs text-slate-500 dark:text-slate-500 text-center mb-6 uppercase tracking-wider">
             Integrates with
           </p>
-          
+
           {/* Mobile: Rotating slideshow */}
           <div className="md:hidden">
             <MobileIntegrationSlideshow />
@@ -513,7 +673,10 @@ export default function Landing() {
             `}</style>
             <div className="flex items-center animate-scroll">
               {[...Array(2)].map((_, duplicateIndex) => (
-                <div key={duplicateIndex} className="flex items-center gap-12 px-6">
+                <div
+                  key={duplicateIndex}
+                  className="flex items-center gap-12 px-6"
+                >
                   <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 whitespace-nowrap">
                     <SiGmail className="h-8 w-8 flex-shrink-0" />
                     <span className="text-sm font-medium">Gmail</span>
@@ -576,7 +739,7 @@ export default function Landing() {
               See what happens when you automate the boring stuff
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="group hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-0 overflow-hidden">
               <CardContent className="p-6">
@@ -589,7 +752,7 @@ export default function Landing() {
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card className="group hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-0 overflow-hidden">
               <CardContent className="p-6">
                 <div className="bg-gradient-to-br from-green-500 to-green-600 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -597,19 +760,23 @@ export default function Landing() {
                 </div>
                 <h3 className="font-bold text-xl mb-2">Get paid instantly</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Clients sign & pay on the spot. Money hits your account same day.
+                  Clients sign & pay on the spot. Money hits your account same
+                  day.
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card className="group hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-0 overflow-hidden">
               <CardContent className="p-6">
                 <div className="bg-gradient-to-br from-purple-500 to-purple-600 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Clock className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="font-bold text-xl mb-2">Save 10+ hours per week</h3>
+                <h3 className="font-bold text-xl mb-2">
+                  Save 10+ hours per week
+                </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Stop copy-pasting emails. Automations handle the busywork for you.
+                  Stop copy-pasting emails. Automations handle the busywork for
+                  you.
                 </p>
               </CardContent>
             </Card>
@@ -619,9 +786,13 @@ export default function Landing() {
                 <div className="bg-gradient-to-br from-pink-500 to-pink-600 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Heart className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="font-bold text-xl mb-2">Delight clients after booking</h3>
+                <h3 className="font-bold text-xl mb-2">
+                  Delight clients after booking
+                </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Automated questionnaires, shoot reminders, and gallery delivery emails keep couples excited from contract to final photo.
+                  Automated questionnaires, shoot reminders, and gallery
+                  delivery emails keep couples excited from contract to final
+                  photo.
                 </p>
               </CardContent>
             </Card>
@@ -640,14 +811,14 @@ export default function Landing() {
               Stop switching between 5 tools. Run your studio from one place.
             </p>
           </div>
-          
+
           {/* Desktop: Tabs */}
           <div className="hidden md:block">
             <Tabs defaultValue="0" className="w-full">
               <TabsList className="grid w-full grid-cols-4 mb-8 h-auto">
                 {features.map((feature, index) => (
-                  <TabsTrigger 
-                    key={index} 
+                  <TabsTrigger
+                    key={index}
                     value={index.toString()}
                     className="text-sm py-3 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
                     data-testid={`tab-feature-${index}`}
@@ -657,20 +828,26 @@ export default function Landing() {
                 ))}
               </TabsList>
               {features.map((feature, index) => (
-                <TabsContent key={index} value={index.toString()} className="mt-0">
+                <TabsContent
+                  key={index}
+                  value={index.toString()}
+                  className="mt-0"
+                >
                   <Card className="border-2">
                     <CardContent className="p-0">
                       <div className="bg-slate-200 dark:bg-slate-800 aspect-video flex items-center justify-center overflow-hidden">
-                        <img 
-                          src={feature.screenshot} 
-                          alt={feature.title} 
-                          loading="lazy" 
+                        <img
+                          src={feature.screenshot}
+                          alt={feature.title}
+                          loading="lazy"
                           className="w-full h-full object-cover"
                           data-testid={`img-feature-${index}`}
                         />
                       </div>
                       <div className="p-6">
-                        <h3 className="font-bold text-2xl mb-3">{feature.title}</h3>
+                        <h3 className="font-bold text-2xl mb-3">
+                          {feature.title}
+                        </h3>
                         <p className="text-base text-slate-600 dark:text-slate-400">
                           {feature.description}
                         </p>
@@ -685,13 +862,16 @@ export default function Landing() {
           {/* Mobile: Condensed Grid (3 key features) */}
           <div className="grid md:hidden grid-cols-1 gap-8">
             {mobileFeatures.map((feature, index) => (
-              <Card key={index} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <Card
+                key={index}
+                className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              >
                 <CardContent className="p-0">
                   <div className="bg-slate-200 dark:bg-slate-800 aspect-video flex items-center justify-center overflow-hidden">
-                    <img 
-                      src={feature.screenshot} 
-                      alt={feature.title} 
-                      loading="lazy" 
+                    <img
+                      src={feature.screenshot}
+                      alt={feature.title}
+                      loading="lazy"
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -718,11 +898,15 @@ export default function Landing() {
                 OPTIONAL ADD-ON
               </div>
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                <span className="text-amber-600 dark:text-amber-500">NEED LEADS?</span>
+                <span className="text-amber-600 dark:text-amber-500">
+                  NEED LEADS?
+                </span>
                 <br />
-                <span className="text-slate-900 dark:text-white">JUST FLIP THE SWITCH</span>
+                <span className="text-slate-900 dark:text-white">
+                  JUST FLIP THE SWITCH
+                </span>
               </h2>
-              
+
               {/* Steps */}
               <div className="space-y-8">
                 {/* Step 1 */}
@@ -733,9 +917,13 @@ export default function Landing() {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold mb-2">Turn on exclusive leads when ready</h3>
+                    <h3 className="text-xl font-bold mb-2">
+                      Turn on exclusive leads when ready
+                    </h3>
                     <p className="text-slate-700 dark:text-slate-300">
-                      Already running your own ads? Perfect. Need more bookings? Just activate our lead service and receive high-quality leads sent directly to your CRM.
+                      Already running your own ads? Perfect. Need more bookings?
+                      Just activate our lead service and receive high-quality
+                      leads sent directly to your CRM.
                     </p>
                   </div>
                 </div>
@@ -748,9 +936,13 @@ export default function Landing() {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold mb-2">Automate follow-up</h3>
+                    <h3 className="text-xl font-bold mb-2">
+                      Automate follow-up
+                    </h3>
                     <p className="text-slate-700 dark:text-slate-300">
-                      Powerful automations instantly respond with personalized emails, SMS messages, and proposals—so you never miss an opportunity.
+                      Powerful automations instantly respond with personalized
+                      emails, SMS messages, and proposals—so you never miss an
+                      opportunity.
                     </p>
                   </div>
                 </div>
@@ -765,7 +957,9 @@ export default function Landing() {
                   <div>
                     <h3 className="text-xl font-bold mb-2">Close more deals</h3>
                     <p className="text-slate-700 dark:text-slate-300">
-                      With instant proposals, automated follow-ups, and integrated payments, leads convert faster—all while you focus on your craft.
+                      With instant proposals, automated follow-ups, and
+                      integrated payments, leads convert faster—all while you
+                      focus on your craft.
                     </p>
                   </div>
                 </div>
@@ -795,41 +989,60 @@ export default function Landing() {
                       <span className="font-semibold">Real Results</span>
                     </div>
                   </div>
-                  
+
                   {/* Stats Grid */}
                   <div className="grid grid-cols-2 gap-6 mb-6">
                     <div className="text-center p-4 bg-amber-50 dark:bg-slate-700 rounded-lg">
-                      <div className="text-3xl font-bold text-amber-600 dark:text-amber-500 mb-1">3x</div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">More Leads</div>
+                      <div className="text-3xl font-bold text-amber-600 dark:text-amber-500 mb-1">
+                        3x
+                      </div>
+                      <div className="text-sm text-slate-600 dark:text-slate-400">
+                        More Leads
+                      </div>
                     </div>
                     <div className="text-center p-4 bg-amber-50 dark:bg-slate-700 rounded-lg">
-                      <div className="text-3xl font-bold text-amber-600 dark:text-amber-500 mb-1">2x</div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">Conversion Rate</div>
+                      <div className="text-3xl font-bold text-amber-600 dark:text-amber-500 mb-1">
+                        2x
+                      </div>
+                      <div className="text-sm text-slate-600 dark:text-slate-400">
+                        Conversion Rate
+                      </div>
                     </div>
                     <div className="text-center p-4 bg-amber-50 dark:bg-slate-700 rounded-lg">
-                      <div className="text-3xl font-bold text-amber-600 dark:text-amber-500 mb-1">24/7</div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">Auto-Response</div>
+                      <div className="text-3xl font-bold text-amber-600 dark:text-amber-500 mb-1">
+                        24/7
+                      </div>
+                      <div className="text-sm text-slate-600 dark:text-slate-400">
+                        Auto-Response
+                      </div>
                     </div>
                     <div className="text-center p-4 bg-amber-50 dark:bg-slate-700 rounded-lg">
-                      <div className="text-3xl font-bold text-amber-600 dark:text-amber-500 mb-1">$0</div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">Lost Leads</div>
+                      <div className="text-3xl font-bold text-amber-600 dark:text-amber-500 mb-1">
+                        $0
+                      </div>
+                      <div className="text-sm text-slate-600 dark:text-slate-400">
+                        Lost Leads
+                      </div>
                     </div>
                   </div>
 
                   {/* Testimonial snippet */}
                   <div className="border-t border-amber-200 dark:border-slate-600 pt-6">
                     <p className="text-slate-700 dark:text-slate-300 italic text-sm mb-3">
-                      "The automated lead system filled my calendar in 2 weeks. Game changer!"
+                      "The automated lead system filled my calendar in 2 weeks.
+                      Game changer!"
                     </p>
                     <div className="flex items-center gap-3">
-                      <img 
-                        src="https://i.pravatar.cc/150?img=68" 
-                        alt="Photographer" 
+                      <img
+                        src="https://i.pravatar.cc/150?img=68"
+                        alt="Photographer"
                         className="w-10 h-10 rounded-full"
                       />
                       <div>
                         <div className="font-semibold text-sm">Sarah M.</div>
-                        <div className="text-xs text-slate-500">Wedding Photographer</div>
+                        <div className="text-xs text-slate-500">
+                          Wedding Photographer
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -853,7 +1066,8 @@ export default function Landing() {
               Personalized Automation for Every Client Journey
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-400">
-              Streamline leads, bookings, and delivery — all while keeping it personal.
+              Streamline leads, bookings, and delivery — all while keeping it
+              personal.
             </p>
           </div>
 
@@ -863,10 +1077,11 @@ export default function Landing() {
                 👆 Tap any stage to see the automation magic
               </p>
               <p className="text-sm md:text-base text-slate-600 dark:text-slate-400">
-                Every automation flow is fully customizable to match your brand and workflow
+                Every automation flow is fully customizable to match your brand
+                and workflow
               </p>
             </div>
-            
+
             {/* Mobile: Vertical Stack */}
             <div className="flex flex-col items-center gap-3 sm:hidden">
               {journeyStages.map((stage, index) => {
@@ -875,14 +1090,20 @@ export default function Landing() {
                 return (
                   <div key={index} className="w-full max-w-xs">
                     <button
-                      onClick={() => setExpandedStage(isExpanded ? null : index)}
+                      onClick={() =>
+                        setExpandedStage(isExpanded ? null : index)
+                      }
                       className={`flex items-center gap-2 bg-white dark:bg-slate-900 px-4 py-3 rounded-lg shadow-sm w-full transition-all duration-200 ${
-                        isExpanded ? 'ring-2 ring-blue-500 shadow-lg' : 'hover:shadow-md'
+                        isExpanded
+                          ? "ring-2 ring-blue-500 shadow-lg"
+                          : "hover:shadow-md"
                       }`}
                       data-testid={`button-stage-${index}`}
                     >
                       <Icon className={`h-6 w-6 ${stage.iconColor}`} />
-                      <span className="font-semibold text-base">{stage.title}</span>
+                      <span className="font-semibold text-base">
+                        {stage.title}
+                      </span>
                     </button>
                     {isExpanded && (
                       <div className="mt-2 ml-6 bg-white dark:bg-slate-900 rounded-lg shadow-md overflow-hidden animate-in slide-in-from-top-2 duration-200">
@@ -915,9 +1136,13 @@ export default function Landing() {
                   return (
                     <div key={index} className="flex items-center">
                       <button
-                        onClick={() => setExpandedStage(isExpanded ? null : index)}
+                        onClick={() =>
+                          setExpandedStage(isExpanded ? null : index)
+                        }
                         className={`flex items-center gap-2 bg-white dark:bg-slate-900 px-4 py-2 rounded-lg shadow-sm transition-all duration-200 ${
-                          isExpanded ? 'ring-2 ring-blue-500 shadow-lg' : 'hover:shadow-md'
+                          isExpanded
+                            ? "ring-2 ring-blue-500 shadow-lg"
+                            : "hover:shadow-md"
                         }`}
                         data-testid={`button-stage-${index}`}
                       >
@@ -942,12 +1167,14 @@ export default function Landing() {
                       {journeyStages[expandedStage].title}
                     </h4>
                     <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-300">
-                      {journeyStages[expandedStage].automations.map((automation, i) => (
-                        <li key={i} className="flex items-start gap-2">
-                          <span className="text-blue-600">•</span>
-                          <span>{automation}</span>
-                        </li>
-                      ))}
+                      {journeyStages[expandedStage].automations.map(
+                        (automation, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <span className="text-blue-600">•</span>
+                            <span>{automation}</span>
+                          </li>
+                        ),
+                      )}
                     </ul>
                   </div>
                 </div>
@@ -965,55 +1192,73 @@ export default function Landing() {
               Photographers love The Photo CRM
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-400">
-              Join hundreds of wedding photographers saving time and booking more clients
+              Join hundreds of wedding photographers saving time and booking
+              more clients
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 gap-8">
             <Card className="hover:shadow-xl transition-all">
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4 mb-4">
-                  <img 
-                    src="https://i.pravatar.cc/150?img=47" 
-                    alt="Dillon P." 
+                  <img
+                    src="https://i.pravatar.cc/150?img=47"
+                    alt="Dillon P."
                     className="w-12 h-12 rounded-full object-cover"
                   />
                   <div>
                     <h3 className="font-bold">Dillon P.</h3>
-                    <p className="text-sm text-slate-500">Wedding Photographer • Dallas, TX</p>
+                    <p className="text-sm text-slate-500">
+                      Wedding Photographer • Dallas, TX
+                    </p>
                   </div>
                 </div>
                 <div className="flex mb-3">
                   {[...Array(5)].map((_, i) => (
-                    <Sparkles key={i} className="h-4 w-4 text-yellow-500 fill-yellow-500" aria-hidden="true" />
+                    <Sparkles
+                      key={i}
+                      className="h-4 w-4 text-yellow-500 fill-yellow-500"
+                      aria-hidden="true"
+                    />
                   ))}
                 </div>
                 <p className="text-slate-700 dark:text-slate-300">
-                  "I was drowning in spreadsheets and missed follow-ups. Now automations handle everything from inquiry to gallery delivery while I shoot. Booked 8 more weddings this season!"
+                  "I was drowning in spreadsheets and missed follow-ups. Now
+                  automations handle everything from inquiry to gallery delivery
+                  while I shoot. Booked 8 more weddings this season!"
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card className="hover:shadow-xl transition-all">
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4 mb-4">
-                  <img 
-                    src="https://i.pravatar.cc/150?img=12" 
-                    alt="Eddie G." 
+                  <img
+                    src="https://i.pravatar.cc/150?img=12"
+                    alt="Eddie G."
                     className="w-12 h-12 rounded-full object-cover"
                   />
                   <div>
                     <h3 className="font-bold">Eddie G.</h3>
-                    <p className="text-sm text-slate-500">Wedding Photographer • Austin, TX</p>
+                    <p className="text-sm text-slate-500">
+                      Wedding Photographer • Austin, TX
+                    </p>
                   </div>
                 </div>
                 <div className="flex mb-3">
                   {[...Array(5)].map((_, i) => (
-                    <Sparkles key={i} className="h-4 w-4 text-yellow-500 fill-yellow-500" aria-hidden="true" />
+                    <Sparkles
+                      key={i}
+                      className="h-4 w-4 text-yellow-500 fill-yellow-500"
+                      aria-hidden="true"
+                    />
                   ))}
                 </div>
                 <p className="text-slate-700 dark:text-slate-300">
-                  "The questionnaire automation alone saves me 2 hours per wedding. Couples fill out details before the shoot, and the delivery reminders even get couples to leave reviews without me asking!"
+                  "The questionnaire automation alone saves me 2 hours per
+                  wedding. Couples fill out details before the shoot, and the
+                  delivery reminders even get couples to leave reviews without
+                  me asking!"
                 </p>
               </CardContent>
             </Card>
@@ -1025,7 +1270,10 @@ export default function Landing() {
       <section className="py-16 px-4 bg-slate-100 dark:bg-slate-900/50">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <Badge variant="default" className="mb-4 bg-amber-500 hover:bg-amber-600 text-white">
+            <Badge
+              variant="default"
+              className="mb-4 bg-amber-500 hover:bg-amber-600 text-white"
+            >
               Limited Time Offer
             </Badge>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -1035,7 +1283,7 @@ export default function Landing() {
               14-day free trial, no card required. Cancel anytime.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
             {/* Founder Price */}
             <Card className="border-4 border-blue-600 relative overflow-hidden hover:shadow-2xl transition-all hover:scale-105">
@@ -1045,16 +1293,23 @@ export default function Landing() {
               <CardContent className="pt-8 text-center">
                 <h3 className="text-2xl font-bold mb-2">Founder's Price</h3>
                 <div className="mb-4">
-                  <span className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">$4.95</span>
-                  <span className="text-slate-600 dark:text-slate-400">/month</span>
+                  <span className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    $4.95
+                  </span>
+                  <span className="text-slate-600 dark:text-slate-400">
+                    /month
+                  </span>
                 </div>
                 <Badge variant="secondary" className="mb-4">
-                  Only {spotsRemaining !== null ? spotsRemaining : "limited"} spots left
+                  Only {spotsRemaining !== null ? spotsRemaining : "limited"}{" "}
+                  spots left
                 </Badge>
                 <ul className="text-left space-y-2 mb-6">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Unlimited clients & bookings</span>
+                    <span className="text-sm">
+                      Unlimited clients & bookings
+                    </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
@@ -1062,7 +1317,9 @@ export default function Landing() {
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Proposals with Stripe payouts</span>
+                    <span className="text-sm">
+                      Proposals with Stripe payouts
+                    </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
@@ -1086,14 +1343,18 @@ export default function Landing() {
                 </p>
               </CardContent>
             </Card>
-            
+
             {/* Regular Price */}
             <Card className="opacity-75 hover:opacity-90 transition-opacity">
               <CardContent className="pt-8 text-center">
                 <h3 className="text-2xl font-bold mb-2">Regular Price</h3>
                 <div className="mb-4">
-                  <span className="text-5xl font-bold line-through text-slate-400">$9.95</span>
-                  <span className="text-slate-600 dark:text-slate-400">/month</span>
+                  <span className="text-5xl font-bold line-through text-slate-400">
+                    $9.95
+                  </span>
+                  <span className="text-slate-600 dark:text-slate-400">
+                    /month
+                  </span>
                 </div>
                 <Badge variant="outline" className="mb-4">
                   After 100 founders
@@ -1101,27 +1362,30 @@ export default function Landing() {
                 <ul className="text-left space-y-2 mb-6">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-5 w-5 text-slate-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-slate-500">Unlimited clients & bookings</span>
+                    <span className="text-sm text-slate-500">
+                      Unlimited clients & bookings
+                    </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-5 w-5 text-slate-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-slate-500">Email & SMS automation</span>
+                    <span className="text-sm text-slate-500">
+                      Email & SMS automation
+                    </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-5 w-5 text-slate-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-slate-500">Proposals with Stripe payouts</span>
+                    <span className="text-sm text-slate-500">
+                      Proposals with Stripe payouts
+                    </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-5 w-5 text-slate-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-slate-500">Google Calendar sync</span>
+                    <span className="text-sm text-slate-500">
+                      Google Calendar sync
+                    </span>
                   </li>
                 </ul>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  size="lg"
-                  disabled
-                >
+                <Button variant="outline" className="w-full" size="lg" disabled>
                   Coming Soon
                 </Button>
               </CardContent>
@@ -1145,12 +1409,14 @@ export default function Landing() {
           {/* Mobile: Progressive Disclosure */}
           <div className="grid grid-cols-2 gap-6 lg:hidden">
             {allFeatures.slice(0, visibleFeatures).map((feature) => (
-              <div 
-                key={feature.testid} 
-                className="bg-white dark:bg-slate-900 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all hover:scale-105" 
+              <div
+                key={feature.testid}
+                className="bg-white dark:bg-slate-900 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all hover:scale-105"
                 data-testid={feature.testid}
               >
-                <div className={`${feature.iconBg} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}>
+                <div
+                  className={`${feature.iconBg} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}
+                >
                   <feature.Icon className={`h-6 w-6 ${feature.iconColor}`} />
                 </div>
                 <h3 className="font-bold text-lg mb-2">{feature.title}</h3>
@@ -1164,12 +1430,14 @@ export default function Landing() {
           {/* Desktop: Progressive Disclosure */}
           <div className="hidden lg:grid lg:grid-cols-3 gap-6">
             {allFeatures.slice(0, visibleFeatures).map((feature) => (
-              <div 
-                key={feature.testid} 
-                className="bg-white dark:bg-slate-900 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all hover:scale-105" 
+              <div
+                key={feature.testid}
+                className="bg-white dark:bg-slate-900 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all hover:scale-105"
                 data-testid={feature.testid}
               >
-                <div className={`${feature.iconBg} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}>
+                <div
+                  className={`${feature.iconBg} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}
+                >
                   <feature.Icon className={`h-6 w-6 ${feature.iconColor}`} />
                 </div>
                 <h3 className="font-bold text-lg mb-2">{feature.title}</h3>
@@ -1184,7 +1452,11 @@ export default function Landing() {
           {visibleFeatures < allFeatures.length && (
             <div className="mt-8 text-center">
               <Button
-                onClick={() => setVisibleFeatures(prev => Math.min(prev + (isDesktop ? 6 : 4), allFeatures.length))}
+                onClick={() =>
+                  setVisibleFeatures((prev) =>
+                    Math.min(prev + (isDesktop ? 6 : 4), allFeatures.length),
+                  )
+                }
                 className="bg-white text-blue-600 hover:bg-blue-50"
                 size="lg"
                 data-testid="button-show-more-features"
@@ -1204,14 +1476,17 @@ export default function Landing() {
               Frequently asked questions
             </h2>
           </div>
-          
+
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1">
               <AccordionTrigger className="text-left">
                 How fast can I actually get this set up?
               </AccordionTrigger>
               <AccordionContent>
-                Most photographers are sending automated emails the same day they sign up. Connect your email in 2 clicks, set up Stripe in 5 minutes, and we have pre-built automation templates for wedding workflows. No steep learning curve like Dubsado.
+                Most photographers are sending automated emails the same day
+                they sign up. Connect your email in 2 clicks, set up Stripe in 5
+                minutes, and we have pre-built automation templates for wedding
+                workflows. No steep learning curve like Dubsado.
               </AccordionContent>
             </AccordionItem>
 
@@ -1220,7 +1495,11 @@ export default function Landing() {
                 How much time will this actually save me?
               </AccordionTrigger>
               <AccordionContent>
-                Wedding photographers save 10-15 hours per week on admin tasks. Automations handle inquiry responses, contract reminders, payment follow-ups, questionnaires 30 days before weddings, and post-wedding review requests. You set it once, it runs forever—even while you sleep.
+                Wedding photographers save 10-15 hours per week on admin tasks.
+                Automations handle inquiry responses, contract reminders,
+                payment follow-ups, questionnaires 30 days before weddings, and
+                post-wedding review requests. You set it once, it runs
+                forever—even while you sleep.
               </AccordionContent>
             </AccordionItem>
 
@@ -1229,7 +1508,11 @@ export default function Landing() {
                 Will automated emails feel robotic or still sound like me?
               </AccordionTrigger>
               <AccordionContent>
-                Every automation personalizes with client names, wedding dates, package details, and venue info—so it feels handwritten, not robotic. Plus they're sent from YOUR Gmail address (not a generic no-reply email), keeping your relationships authentic and personal.
+                Every automation personalizes with client names, wedding dates,
+                package details, and venue info—so it feels handwritten, not
+                robotic. Plus they're sent from YOUR Gmail address (not a
+                generic no-reply email), keeping your relationships authentic
+                and personal.
               </AccordionContent>
             </AccordionItem>
 
@@ -1238,7 +1521,12 @@ export default function Landing() {
                 What automations run without me touching anything?
               </AccordionTrigger>
               <AccordionContent>
-                Once set up: inquiry auto-responses, follow-up sequences, payment reminders, contract deadline alerts, pre-wedding questionnaires (triggered 30 days before), shoot-day reminders, gallery delivery notifications, and review requests. They trigger based on client actions, stage changes, or wedding dates—100% hands-free.
+                Once set up: inquiry auto-responses, follow-up sequences,
+                payment reminders, contract deadline alerts, pre-wedding
+                questionnaires (triggered 30 days before), shoot-day reminders,
+                gallery delivery notifications, and review requests. They
+                trigger based on client actions, stage changes, or wedding
+                dates—100% hands-free.
               </AccordionContent>
             </AccordionItem>
 
@@ -1247,7 +1535,10 @@ export default function Landing() {
                 How do payments work? Can clients pay me directly?
               </AccordionTrigger>
               <AccordionContent>
-                Yes. Clients pay via Stripe (credit card or ACH), money goes straight to your bank in 2 days. We take a 5% platform fee, you keep 95%. Automated payment reminders mean you never chase late deposits again—the system handles it for you.
+                Yes. Clients pay via Stripe (credit card or ACH), money goes
+                straight to your bank in 2 days. We take a 5% platform fee, you
+                keep 95%. Automated payment reminders mean you never chase late
+                deposits again—the system handles it for you.
               </AccordionContent>
             </AccordionItem>
 
@@ -1256,7 +1547,10 @@ export default function Landing() {
                 How do contracts and gallery delivery work?
               </AccordionTrigger>
               <AccordionContent>
-                Clients sign contracts digitally right in the proposal (no printing or scanning). Store all signed contracts in the CRM. For galleries, send delivery links via automated email + SMS when ready. Track when clients view and download their photos.
+                Clients sign contracts digitally right in the proposal (no
+                printing or scanning). Store all signed contracts in the CRM.
+                For galleries, send delivery links via automated email + SMS
+                when ready. Track when clients view and download their photos.
               </AccordionContent>
             </AccordionItem>
 
@@ -1265,7 +1559,10 @@ export default function Landing() {
                 I'm not tech-savvy. Will I actually be able to use this?
               </AccordionTrigger>
               <AccordionContent>
-                If you can send an email, you can use this. Everything is drag-and-drop with visual editors. We have video tutorials for every feature, and most photographers who've never used a CRM are confidently running automations within their first day.
+                If you can send an email, you can use this. Everything is
+                drag-and-drop with visual editors. We have video tutorials for
+                every feature, and most photographers who've never used a CRM
+                are confidently running automations within their first day.
               </AccordionContent>
             </AccordionItem>
 
@@ -1274,7 +1571,11 @@ export default function Landing() {
                 What makes this different from HoneyBook or Dubsado?
               </AccordionTrigger>
               <AccordionContent>
-                We're built specifically for the photography workflow—not generic service businesses. Your automations trigger based on wedding dates and project milestones automatically. Plus we're $4.95/month (founder pricing) vs. $16-32/month for competitors. And we send from your personal Gmail, not a branded domain.
+                We're built specifically for the photography workflow—not
+                generic service businesses. Your automations trigger based on
+                wedding dates and project milestones automatically. Plus we're
+                $4.95/month (founder pricing) vs. $16-32/month for competitors.
+                And we send from your personal Gmail, not a branded domain.
               </AccordionContent>
             </AccordionItem>
 
@@ -1283,7 +1584,10 @@ export default function Landing() {
                 Can I access client info on my phone during shoots?
               </AccordionTrigger>
               <AccordionContent>
-                Yes. Full mobile access means you can quickly look up client details, venue addresses, shot lists, and special requests right from the venue. Everything syncs in real-time across all your devices.
+                Yes. Full mobile access means you can quickly look up client
+                details, venue addresses, shot lists, and special requests right
+                from the venue. Everything syncs in real-time across all your
+                devices.
               </AccordionContent>
             </AccordionItem>
 
@@ -1292,7 +1596,10 @@ export default function Landing() {
                 Is my client data secure? What about privacy?
               </AccordionTrigger>
               <AccordionContent>
-                Your data is encrypted and stored securely on enterprise-grade servers. We never sell or share client information. You own your data—export everything anytime. Stripe handles all payment processing with bank-level security.
+                Your data is encrypted and stored securely on enterprise-grade
+                servers. We never sell or share client information. You own your
+                data—export everything anytime. Stripe handles all payment
+                processing with bank-level security.
               </AccordionContent>
             </AccordionItem>
 
@@ -1301,7 +1608,10 @@ export default function Landing() {
                 Can I cancel anytime or am I locked into a contract?
               </AccordionTrigger>
               <AccordionContent>
-                No contracts, no cancellation fees. Cancel with one click anytime. Your data is yours—export everything before you go. We believe in earning your business every month, not locking you in.
+                No contracts, no cancellation fees. Cancel with one click
+                anytime. Your data is yours—export everything before you go. We
+                believe in earning your business every month, not locking you
+                in.
               </AccordionContent>
             </AccordionItem>
 
@@ -1310,7 +1620,9 @@ export default function Landing() {
                 What if I get stuck or need help?
               </AccordionTrigger>
               <AccordionContent>
-                Every feature has step-by-step video tutorials. Plus you can email support and we'll help you set things up. Most questions get answered same-day. We want you succeeding, not struggling.
+                Every feature has step-by-step video tutorials. Plus you can
+                email support and we'll help you set things up. Most questions
+                get answered same-day. We want you succeeding, not struggling.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -1344,11 +1656,21 @@ export default function Landing() {
       {/* Footer */}
       <footer className="py-8 px-4 bg-slate-900 text-slate-400 text-center text-sm">
         <div className="flex justify-center gap-4 mb-4">
-          <a href="/privacy" className="hover:text-white" data-testid="link-privacy">Privacy Policy</a>
+          <a
+            href="/privacy"
+            className="hover:text-white"
+            data-testid="link-privacy"
+          >
+            Privacy Policy
+          </a>
           <span>|</span>
-          <a href="/tos" className="hover:text-white" data-testid="link-tos">Terms of Service</a>
+          <a href="/tos" className="hover:text-white" data-testid="link-tos">
+            Terms of Service
+          </a>
         </div>
-        <p>&copy; {new Date().getFullYear()} The Photo CRM. All rights reserved.</p>
+        <p>
+          &copy; {new Date().getFullYear()} The Photo CRM. All rights reserved.
+        </p>
       </footer>
 
       {/* Mobile Sticky CTA Bar */}
@@ -1384,11 +1706,17 @@ export default function Landing() {
           <DialogHeader>
             <DialogTitle>Book a Demo</DialogTitle>
             <DialogDescription>
-              Schedule a personalized demo of The Photo CRM. We'll show you how to automate your workflow and close more clients.
+              Schedule a personalized demo of The Photo CRM. We'll show you how
+              to automate your workflow and close more clients.
             </DialogDescription>
           </DialogHeader>
           <Form {...demoForm}>
-            <form onSubmit={demoForm.handleSubmit((data) => demoMutation.mutate(data))} className="space-y-4">
+            <form
+              onSubmit={demoForm.handleSubmit((data) =>
+                demoMutation.mutate(data),
+              )}
+              className="space-y-4"
+            >
               <FormField
                 control={demoForm.control}
                 name="firstName"
@@ -1396,7 +1724,11 @@ export default function Landing() {
                   <FormItem>
                     <FormLabel>First Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="John" {...field} data-testid="input-demo-firstname" />
+                      <Input
+                        placeholder="John"
+                        {...field}
+                        data-testid="input-demo-firstname"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1409,7 +1741,12 @@ export default function Landing() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="john@example.com" {...field} data-testid="input-demo-email" />
+                      <Input
+                        type="email"
+                        placeholder="john@example.com"
+                        {...field}
+                        data-testid="input-demo-email"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1422,7 +1759,11 @@ export default function Landing() {
                   <FormItem>
                     <FormLabel>Preferred Date</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} data-testid="input-demo-date" />
+                      <Input
+                        type="date"
+                        {...field}
+                        data-testid="input-demo-date"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1435,13 +1776,22 @@ export default function Landing() {
                   <FormItem>
                     <FormLabel>Preferred Time</FormLabel>
                     <FormControl>
-                      <Input type="time" {...field} data-testid="input-demo-time" />
+                      <Input
+                        type="time"
+                        {...field}
+                        data-testid="input-demo-time"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={demoMutation.isPending} data-testid="button-submit-demo">
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={demoMutation.isPending}
+                data-testid="button-submit-demo"
+              >
                 {demoMutation.isPending ? "Sending..." : "Request Demo"}
               </Button>
             </form>

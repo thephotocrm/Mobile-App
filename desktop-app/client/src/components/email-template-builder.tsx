@@ -38,71 +38,105 @@ import {
   Edit,
   Crown,
   PenLine,
-  Settings
+  Settings,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { generateEmailHeader, generateEmailSignature } from "@shared/email-branding-shared";
+import {
+  generateEmailHeader,
+  generateEmailSignature,
+} from "@shared/email-branding-shared";
 
 export type ContentBlock = {
   id: string;
-  type: 'HEADING' | 'TEXT' | 'BUTTON' | 'IMAGE' | 'SPACER' | 'HEADER' | 'SIGNATURE';
+  type:
+    | "HEADING"
+    | "TEXT"
+    | "BUTTON"
+    | "IMAGE"
+    | "SPACER"
+    | "HEADER"
+    | "SIGNATURE";
   content: any;
 };
 
-type ButtonLinkType = 'CUSTOM' | 'SMART_FILE' | 'GALLERY' | 'CALENDAR';
+type ButtonLinkType = "CUSTOM" | "SMART_FILE" | "GALLERY" | "CALENDAR";
 
 const BLOCK_TYPES = {
-  HEADING: { icon: Type, label: 'Heading' },
-  TEXT: { icon: AlignLeft, label: 'Text' },
-  BUTTON: { icon: MousePointerClick, label: 'Button' },
-  IMAGE: { icon: ImageIcon, label: 'Image' },
-  SPACER: { icon: MoveVertical, label: 'Spacer' },
+  HEADING: { icon: Type, label: "Heading" },
+  TEXT: { icon: AlignLeft, label: "Text" },
+  BUTTON: { icon: MousePointerClick, label: "Button" },
+  IMAGE: { icon: ImageIcon, label: "Image" },
+  SPACER: { icon: MoveVertical, label: "Spacer" },
 } as const;
 
 const VARIABLES = [
-  { value: '{{first_name}}', label: 'First Name' },
-  { value: '{{last_name}}', label: 'Last Name' },
-  { value: '{{full_name}}', label: 'Full Name' },
-  { value: '{{email}}', label: 'Email Address' },
-  { value: '{{phone}}', label: 'Phone Number' },
-  { value: '{{project_type}}', label: 'Project Type' },
-  { value: '{{event_date}}', label: 'Event Date' },
-  { value: '{{business_name}}', label: 'Business Name' },
-  { value: '{{photographer_name}}', label: 'Photographer Name' },
+  { value: "{{first_name}}", label: "First Name" },
+  { value: "{{last_name}}", label: "Last Name" },
+  { value: "{{full_name}}", label: "Full Name" },
+  { value: "{{email}}", label: "Email Address" },
+  { value: "{{phone}}", label: "Phone Number" },
+  { value: "{{project_type}}", label: "Project Type" },
+  { value: "{{event_date}}", label: "Event Date" },
+  { value: "{{business_name}}", label: "Business Name" },
+  { value: "{{photographer_name}}", label: "Photographer Name" },
 ];
 
 const HEADER_STYLES = [
-  { value: 'simple', label: 'Simple', description: 'Clean text-based header' },
-  { value: 'professional', label: 'Professional', description: 'Logo with business name' },
-  { value: 'bold', label: 'Bold', description: 'Large logo with brand colors' },
+  { value: "simple", label: "Simple", description: "Clean text-based header" },
+  {
+    value: "professional",
+    label: "Professional",
+    description: "Logo with business name",
+  },
+  { value: "bold", label: "Bold", description: "Large logo with brand colors" },
 ];
 
 const SIGNATURE_STYLES = [
-  { value: 'simple', label: 'Simple', description: 'Clean text-based signature' },
-  { value: 'professional', label: 'Professional', description: 'Includes headshot and social icons' },
-  { value: 'minimal', label: 'Minimal', description: 'Just name and contact info' },
+  {
+    value: "simple",
+    label: "Simple",
+    description: "Clean text-based signature",
+  },
+  {
+    value: "professional",
+    label: "Professional",
+    description: "Includes headshot and social icons",
+  },
+  {
+    value: "minimal",
+    label: "Minimal",
+    description: "Just name and contact info",
+  },
 ];
 
-function HeaderBlockEditor({ style, onStyleChange }: { style: string; onStyleChange: (style: string) => void }) {
+function HeaderBlockEditor({
+  style,
+  onStyleChange,
+}: {
+  style: string;
+  onStyleChange: (style: string) => void;
+}) {
   const { data: photographer } = useQuery({
-    queryKey: ['/api/photographers/me']
+    queryKey: ["/api/photographers/me"],
   });
 
-  const brandingData = photographer ? {
-    businessName: photographer.businessName,
-    photographerName: photographer.photographerName,
-    logoUrl: photographer.logoUrl,
-    headshotUrl: photographer.headshotUrl,
-    brandPrimary: photographer.brandPrimary,
-    brandSecondary: photographer.brandSecondary,
-    phone: photographer.phone,
-    email: photographer.email,
-    website: photographer.website,
-    businessAddress: photographer.businessAddress,
-    socialLinks: photographer.socialLinks
-  } : undefined;
+  const brandingData = photographer
+    ? {
+        businessName: photographer.businessName,
+        photographerName: photographer.photographerName,
+        logoUrl: photographer.logoUrl,
+        headshotUrl: photographer.headshotUrl,
+        brandPrimary: photographer.brandPrimary,
+        brandSecondary: photographer.brandSecondary,
+        phone: photographer.phone,
+        email: photographer.email,
+        website: photographer.website,
+        businessAddress: photographer.businessAddress,
+        socialLinks: photographer.socialLinks,
+      }
+    : undefined;
 
   return (
     <div className="space-y-3">
@@ -121,38 +155,51 @@ function HeaderBlockEditor({ style, onStyleChange }: { style: string; onStyleCha
           </SelectContent>
         </Select>
       </div>
-      
+
       {brandingData && (
         <div className="border rounded-md overflow-hidden bg-muted/30">
-          <div dangerouslySetInnerHTML={{ __html: generateEmailHeader(style, brandingData) }} />
+          <div
+            dangerouslySetInnerHTML={{
+              __html: generateEmailHeader(style, brandingData),
+            }}
+          />
         </div>
       )}
-      
+
       <p className="text-xs text-muted-foreground">
-        Header pulls from your Email Settings. Edit your logo and branding there.
+        Header pulls from your Email Settings. Edit your logo and branding
+        there.
       </p>
     </div>
   );
 }
 
-function SignatureBlockEditor({ style, onStyleChange }: { style: string; onStyleChange: (style: string) => void }) {
+function SignatureBlockEditor({
+  style,
+  onStyleChange,
+}: {
+  style: string;
+  onStyleChange: (style: string) => void;
+}) {
   const { data: photographer } = useQuery({
-    queryKey: ['/api/photographers/me']
+    queryKey: ["/api/photographers/me"],
   });
 
-  const brandingData = photographer ? {
-    businessName: photographer.businessName,
-    photographerName: photographer.photographerName,
-    logoUrl: photographer.logoUrl,
-    headshotUrl: photographer.headshotUrl,
-    brandPrimary: photographer.brandPrimary,
-    brandSecondary: photographer.brandSecondary,
-    phone: photographer.phone,
-    email: photographer.email,
-    website: photographer.website,
-    businessAddress: photographer.businessAddress,
-    socialLinks: photographer.socialLinks
-  } : undefined;
+  const brandingData = photographer
+    ? {
+        businessName: photographer.businessName,
+        photographerName: photographer.photographerName,
+        logoUrl: photographer.logoUrl,
+        headshotUrl: photographer.headshotUrl,
+        brandPrimary: photographer.brandPrimary,
+        brandSecondary: photographer.brandSecondary,
+        phone: photographer.phone,
+        email: photographer.email,
+        website: photographer.website,
+        businessAddress: photographer.businessAddress,
+        socialLinks: photographer.socialLinks,
+      }
+    : undefined;
 
   return (
     <div className="space-y-3">
@@ -171,15 +218,20 @@ function SignatureBlockEditor({ style, onStyleChange }: { style: string; onStyle
           </SelectContent>
         </Select>
       </div>
-      
+
       {brandingData && (
         <div className="border rounded-md overflow-hidden bg-muted/30">
-          <div dangerouslySetInnerHTML={{ __html: generateEmailSignature(style, brandingData) }} />
+          <div
+            dangerouslySetInnerHTML={{
+              __html: generateEmailSignature(style, brandingData),
+            }}
+          />
         </div>
       )}
-      
+
       <p className="text-xs text-muted-foreground">
-        Signature pulls from your Email Settings. Edit your contact info and photo there.
+        Signature pulls from your Email Settings. Edit your contact info and
+        photo there.
       </p>
     </div>
   );
@@ -188,7 +240,7 @@ function SignatureBlockEditor({ style, onStyleChange }: { style: string; onStyle
 function BlockEditor({
   block,
   onUpdate,
-  onDelete
+  onDelete,
 }: {
   block: ContentBlock;
   onUpdate: (content: any) => void;
@@ -196,13 +248,18 @@ function BlockEditor({
 }) {
   // Normalize content: handle both plain string and {text: string} formats for TEXT/HEADING blocks
   const normalizeContent = (content: any, type: string) => {
-    if ((type === 'TEXT' || type === 'HEADING') && typeof content === 'string') {
+    if (
+      (type === "TEXT" || type === "HEADING") &&
+      typeof content === "string"
+    ) {
       return { text: content };
     }
     return content;
   };
-  
-  const [localContent, setLocalContent] = useState(() => normalizeContent(block.content, block.type));
+
+  const [localContent, setLocalContent] = useState(() =>
+    normalizeContent(block.content, block.type),
+  );
   const dragControls = useDragControls();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -222,11 +279,12 @@ function BlockEditor({
 
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
-    const currentText = localContent[fieldName] || '';
-    const newText = currentText.substring(0, start) + variable + currentText.substring(end);
-    
+    const currentText = localContent[fieldName] || "";
+    const newText =
+      currentText.substring(0, start) + variable + currentText.substring(end);
+
     setLocalContent({ ...localContent, [fieldName]: newText });
-    
+
     setTimeout(() => {
       textarea.focus();
       const newCursorPos = start + variable.length;
@@ -237,21 +295,21 @@ function BlockEditor({
   // Fetch Smart Files for button link selector
   const { data: smartFiles = [] } = useQuery({
     queryKey: ["/api/smart-files"],
-    enabled: block.type === 'BUTTON'
+    enabled: block.type === "BUTTON",
   });
 
   // Fetch Projects (with galleries) for button link selector
   const { data: projects = [] } = useQuery({
     queryKey: ["/api/projects"],
-    enabled: block.type === 'BUTTON'
+    enabled: block.type === "BUTTON",
   });
 
   const { data: photographerData } = useQuery({
     queryKey: ["/api/auth/me"],
-    enabled: block.type === 'BUTTON'
+    enabled: block.type === "BUTTON",
   }) as { data: { publicToken?: string } | undefined };
 
-  const galleriesWithUrl = (projects as any[]).filter(p => p.galleryUrl);
+  const galleriesWithUrl = (projects as any[]).filter((p) => p.galleryUrl);
 
   return (
     <Reorder.Item
@@ -271,12 +329,12 @@ function BlockEditor({
             >
               <GripVertical className="w-4 h-4 text-muted-foreground" />
             </button>
-            
+
             <div className="flex-1">
-              {block.type === 'HEADING' && (
+              {block.type === "HEADING" && (
                 <div className="space-y-2">
                   <Input
-                    value={localContent?.text || ''}
+                    value={localContent?.text || ""}
                     onChange={(e) => {
                       const updated = { ...localContent, text: e.target.value };
                       setLocalContent(updated);
@@ -298,8 +356,9 @@ function BlockEditor({
                         <DropdownMenuItem
                           key={variable.value}
                           onClick={() => {
-                            const input = document.activeElement as HTMLInputElement;
-                            const currentText = localContent?.text || '';
+                            const input =
+                              document.activeElement as HTMLInputElement;
+                            const currentText = localContent?.text || "";
                             const newText = currentText + variable.value;
                             setLocalContent({ ...localContent, text: newText });
                             onUpdate({ ...localContent, text: newText });
@@ -316,11 +375,11 @@ function BlockEditor({
                 </div>
               )}
 
-              {block.type === 'TEXT' && (
+              {block.type === "TEXT" && (
                 <div className="space-y-2">
                   <Textarea
                     ref={textareaRef}
-                    value={localContent?.text || ''}
+                    value={localContent?.text || ""}
                     onChange={(e) => {
                       const updated = { ...localContent, text: e.target.value };
                       setLocalContent(updated);
@@ -341,7 +400,7 @@ function BlockEditor({
                       {VARIABLES.map((variable) => (
                         <DropdownMenuItem
                           key={variable.value}
-                          onClick={() => insertVariable(variable.value, 'text')}
+                          onClick={() => insertVariable(variable.value, "text")}
                         >
                           <span className="text-xs font-mono text-muted-foreground mr-2">
                             {variable.value}
@@ -354,15 +413,18 @@ function BlockEditor({
                 </div>
               )}
 
-              {block.type === 'BUTTON' && (
+              {block.type === "BUTTON" && (
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
                       <Label className="text-xs">Button Text</Label>
                       <Input
-                        value={localContent?.text || ''}
+                        value={localContent?.text || ""}
                         onChange={(e) => {
-                          const updated = { ...localContent, text: e.target.value };
+                          const updated = {
+                            ...localContent,
+                            text: e.target.value,
+                          };
                           setLocalContent(updated);
                           onUpdate(updated);
                         }}
@@ -372,7 +434,7 @@ function BlockEditor({
                     <div className="space-y-1">
                       <Label className="text-xs">Button Style</Label>
                       <Select
-                        value={localContent?.variant || 'default'}
+                        value={localContent?.variant || "default"}
                         onValueChange={(value) => {
                           const updated = { ...localContent, variant: value };
                           setLocalContent(updated);
@@ -390,13 +452,17 @@ function BlockEditor({
                       </Select>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-1">
                     <Label className="text-xs">Link To</Label>
                     <Select
-                      value={localContent?.linkType || 'CUSTOM'}
+                      value={localContent?.linkType || "CUSTOM"}
                       onValueChange={(value: ButtonLinkType) => {
-                        const updated = { ...localContent, linkType: value, linkValue: '' };
+                        const updated = {
+                          ...localContent,
+                          linkType: value,
+                          linkValue: "",
+                        };
                         setLocalContent(updated);
                         onUpdate(updated);
                       }}
@@ -408,18 +474,23 @@ function BlockEditor({
                         <SelectItem value="CUSTOM">Custom URL</SelectItem>
                         <SelectItem value="SMART_FILE">Smart File</SelectItem>
                         <SelectItem value="GALLERY">Gallery</SelectItem>
-                        <SelectItem value="CALENDAR">Booking Calendar</SelectItem>
+                        <SelectItem value="CALENDAR">
+                          Booking Calendar
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
-                  {localContent?.linkType === 'CUSTOM' && (
+                  {localContent?.linkType === "CUSTOM" && (
                     <div className="space-y-1">
                       <Label className="text-xs">URL</Label>
                       <Input
-                        value={localContent?.linkValue || ''}
+                        value={localContent?.linkValue || ""}
                         onChange={(e) => {
-                          const updated = { ...localContent, linkValue: e.target.value };
+                          const updated = {
+                            ...localContent,
+                            linkValue: e.target.value,
+                          };
                           setLocalContent(updated);
                           onUpdate(updated);
                         }}
@@ -430,11 +501,11 @@ function BlockEditor({
                     </div>
                   )}
 
-                  {localContent?.linkType === 'SMART_FILE' && (
+                  {localContent?.linkType === "SMART_FILE" && (
                     <div className="space-y-1">
                       <Label className="text-xs">Select Smart File</Label>
                       <Select
-                        value={localContent?.linkValue || ''}
+                        value={localContent?.linkValue || ""}
                         onValueChange={(value) => {
                           const updated = { ...localContent, linkValue: value };
                           setLocalContent(updated);
@@ -455,14 +526,17 @@ function BlockEditor({
                     </div>
                   )}
 
-                  {localContent?.linkType === 'GALLERY' && (
+                  {localContent?.linkType === "GALLERY" && (
                     <div className="space-y-1">
                       <Label className="text-xs">Select Gallery</Label>
                       {galleriesWithUrl.length > 0 ? (
                         <Select
-                          value={localContent?.linkValue || ''}
+                          value={localContent?.linkValue || ""}
                           onValueChange={(value) => {
-                            const updated = { ...localContent, linkValue: value };
+                            const updated = {
+                              ...localContent,
+                              linkValue: value,
+                            };
                             setLocalContent(updated);
                             onUpdate(updated);
                           }}
@@ -480,30 +554,31 @@ function BlockEditor({
                         </Select>
                       ) : (
                         <div className="p-2 bg-amber-50 border border-amber-200 rounded text-xs text-amber-700">
-                          ⚠ No galleries available. Create galleries on the Galleries page first.
+                          ⚠ No galleries available. Create galleries on the
+                          Galleries page first.
                         </div>
                       )}
                     </div>
                   )}
 
-                  {localContent?.linkType === 'CALENDAR' && (
-                    photographerData?.publicToken ? (
+                  {localContent?.linkType === "CALENDAR" &&
+                    (photographerData?.publicToken ? (
                       <div className="p-2 bg-green-50 border border-green-200 rounded text-xs text-green-700">
                         ✓ Will link to your public booking calendar
                       </div>
                     ) : (
                       <div className="p-2 bg-amber-50 border border-amber-200 rounded text-xs text-amber-700">
-                        ⚠ Set up your booking calendar in Settings → Scheduling to enable this link
+                        ⚠ Set up your booking calendar in Settings → Scheduling
+                        to enable this link
                       </div>
-                    )
-                  )}
+                    ))}
                 </div>
               )}
 
-              {block.type === 'IMAGE' && (
+              {block.type === "IMAGE" && (
                 <div className="space-y-2">
                   <Input
-                    value={localContent?.url || ''}
+                    value={localContent?.url || ""}
                     onChange={(e) => {
                       const updated = { ...localContent, url: e.target.value };
                       setLocalContent(updated);
@@ -512,22 +587,27 @@ function BlockEditor({
                     placeholder="Image URL"
                   />
                   {localContent?.url && (
-                    <img src={localContent.url} alt="Preview" className="max-w-full h-auto rounded" />
+                    <img
+                      src={localContent.url}
+                      alt="Preview"
+                      className="max-w-full h-auto rounded"
+                    />
                   )}
                 </div>
               )}
 
-              {block.type === 'SPACER' && (
+              {block.type === "SPACER" && (
                 <div className="flex items-center gap-2">
                   <Label className="text-xs">Spacer Size</Label>
                   <Select
-                    value={localContent?.size || 'medium'}
+                    value={localContent?.size || "medium"}
                     onValueChange={(value) => {
                       const heightMap = { small: 20, medium: 40, large: 60 };
-                      const updated = { 
-                        ...localContent, 
+                      const updated = {
+                        ...localContent,
                         size: value,
-                        height: heightMap[value as keyof typeof heightMap] || 40
+                        height:
+                          heightMap[value as keyof typeof heightMap] || 40,
                       };
                       setLocalContent(updated);
                       onUpdate(updated);
@@ -545,9 +625,9 @@ function BlockEditor({
                 </div>
               )}
 
-              {block.type === 'HEADER' && (
+              {block.type === "HEADER" && (
                 <HeaderBlockEditor
-                  style={localContent?.style || 'professional'}
+                  style={localContent?.style || "professional"}
                   onStyleChange={(style) => {
                     const updated = { ...localContent, style };
                     setLocalContent(updated);
@@ -556,9 +636,9 @@ function BlockEditor({
                 />
               )}
 
-              {block.type === 'SIGNATURE' && (
+              {block.type === "SIGNATURE" && (
                 <SignatureBlockEditor
-                  style={localContent?.style || 'professional'}
+                  style={localContent?.style || "professional"}
                   onStyleChange={(style) => {
                     const updated = { ...localContent, style };
                     setLocalContent(updated);
@@ -599,97 +679,138 @@ interface EmailTemplateBuilderProps {
   }) => void;
 }
 
-export function EmailTemplateBuilder({ 
-  blocks, 
+export function EmailTemplateBuilder({
+  blocks,
   onBlocksChange,
   includeHeader = false,
-  headerStyle = 'professional',
+  headerStyle = "professional",
   includeSignature = false,
-  signatureStyle = 'professional',
-  onBrandingChange
+  signatureStyle = "professional",
+  onBrandingChange,
 }: EmailTemplateBuilderProps) {
   const [headerModalOpen, setHeaderModalOpen] = useState(false);
   const [signatureModalOpen, setSignatureModalOpen] = useState(false);
 
   const { data: photographer } = useQuery({
-    queryKey: ['/api/photographers/me']
+    queryKey: ["/api/photographers/me"],
   });
 
-  const brandingData = photographer ? {
-    businessName: photographer.businessName,
-    photographerName: photographer.photographerName,
-    logoUrl: photographer.logoUrl,
-    headshotUrl: photographer.headshotUrl,
-    brandPrimary: photographer.brandPrimary,
-    brandSecondary: photographer.brandSecondary,
-    phone: photographer.phone,
-    email: photographer.email,
-    website: photographer.website,
-    businessAddress: photographer.businessAddress,
-    socialLinks: photographer.socialLinks
-  } : {
-    businessName: 'Your Business Name',
-    photographerName: 'Your Name',
-    phone: '(555) 123-4567',
-    email: 'hello@yourbusiness.com',
-    website: 'www.yourbusiness.com'
-  };
+  const brandingData = photographer
+    ? {
+        businessName: photographer.businessName,
+        photographerName: photographer.photographerName,
+        logoUrl: photographer.logoUrl,
+        headshotUrl: photographer.headshotUrl,
+        brandPrimary: photographer.brandPrimary,
+        brandSecondary: photographer.brandSecondary,
+        phone: photographer.phone,
+        email: photographer.email,
+        website: photographer.website,
+        businessAddress: photographer.businessAddress,
+        socialLinks: photographer.socialLinks,
+      }
+    : {
+        businessName: "Your Business Name",
+        photographerName: "Your Name",
+        phone: "(555) 123-4567",
+        email: "hello@yourbusiness.com",
+        website: "www.yourbusiness.com",
+      };
 
-  const addBlock = (type: ContentBlock['type']) => {
+  const addBlock = (type: ContentBlock["type"]) => {
     let content: any;
-    
-    if (type === 'SPACER') {
-      content = { size: 'medium', height: 40 };
-    } else if (type === 'BUTTON') {
-      content = { text: '', linkType: 'CUSTOM', linkValue: '', variant: 'default' };
-    } else if (type === 'HEADER') {
-      content = { style: 'professional' };
-    } else if (type === 'SIGNATURE') {
-      content = { style: 'professional' };
+
+    if (type === "SPACER") {
+      content = { size: "medium", height: 40 };
+    } else if (type === "BUTTON") {
+      content = {
+        text: "",
+        linkType: "CUSTOM",
+        linkValue: "",
+        variant: "default",
+      };
+    } else if (type === "HEADER") {
+      content = { style: "professional" };
+    } else if (type === "SIGNATURE") {
+      content = { style: "professional" };
     } else {
-      content = { text: '' };
+      content = { text: "" };
     }
-    
+
     const newBlock: ContentBlock = {
       id: `block-${Date.now()}-${Math.random()}`,
       type,
-      content
+      content,
     };
     onBlocksChange([...blocks, newBlock]);
   };
 
   const updateBlock = (id: string, content: any) => {
-    onBlocksChange(blocks.map(b => b.id === id ? { ...b, content } : b));
+    onBlocksChange(blocks.map((b) => (b.id === id ? { ...b, content } : b)));
   };
 
   const deleteBlock = (id: string) => {
-    onBlocksChange(blocks.filter(b => b.id !== id));
+    onBlocksChange(blocks.filter((b) => b.id !== id));
   };
 
   const headerStyles = [
-    { value: 'minimal', label: 'Minimal', description: 'Clean and simple centered header' },
-    { value: 'professional', label: 'Professional', description: 'Centered with bottom border' },
-    { value: 'bold', label: 'Bold', description: 'Eye-catching gradient background' },
-    { value: 'classic', label: 'Classic', description: 'Traditional layout with text' }
+    {
+      value: "minimal",
+      label: "Minimal",
+      description: "Clean and simple centered header",
+    },
+    {
+      value: "professional",
+      label: "Professional",
+      description: "Centered with bottom border",
+    },
+    {
+      value: "bold",
+      label: "Bold",
+      description: "Eye-catching gradient background",
+    },
+    {
+      value: "classic",
+      label: "Classic",
+      description: "Traditional layout with text",
+    },
   ];
 
   const signatureStyles = [
-    { value: 'simple', label: 'Simple', description: 'Clean text-based signature' },
-    { value: 'professional', label: 'Professional', description: 'Includes headshot and social icons' },
-    { value: 'detailed', label: 'Detailed', description: 'Full contact card with all details' },
-    { value: 'branded', label: 'Branded', description: 'Brand-focused with color accents' }
+    {
+      value: "simple",
+      label: "Simple",
+      description: "Clean text-based signature",
+    },
+    {
+      value: "professional",
+      label: "Professional",
+      description: "Includes headshot and social icons",
+    },
+    {
+      value: "detailed",
+      label: "Detailed",
+      description: "Full contact card with all details",
+    },
+    {
+      value: "branded",
+      label: "Branded",
+      description: "Brand-focused with color accents",
+    },
   ];
 
   // Get the photographer's configured email styles from settings
-  const photographerHeaderStyle = photographer?.emailHeaderStyle || 'professional';
-  const photographerSignatureStyle = photographer?.emailSignatureStyle || 'professional';
+  const photographerHeaderStyle =
+    photographer?.emailHeaderStyle || "professional";
+  const photographerSignatureStyle =
+    photographer?.emailSignatureStyle || "professional";
 
   return (
     <div className="space-y-4">
       {/* Header & Signature Checkboxes */}
       <div className="flex flex-wrap items-center gap-6 p-3 bg-muted/50 rounded-lg border">
         <div className="flex items-center gap-2">
-          <Checkbox 
+          <Checkbox
             id="include-header"
             checked={includeHeader}
             onCheckedChange={(checked) => {
@@ -697,19 +818,22 @@ export function EmailTemplateBuilder({
                 includeHeader: checked === true,
                 headerStyle: photographerHeaderStyle,
                 includeSignature,
-                signatureStyle: photographerSignatureStyle
+                signatureStyle: photographerSignatureStyle,
               });
             }}
             data-testid="checkbox-include-header"
           />
-          <Label htmlFor="include-header" className="text-sm font-medium cursor-pointer flex items-center gap-1.5">
+          <Label
+            htmlFor="include-header"
+            className="text-sm font-medium cursor-pointer flex items-center gap-1.5"
+          >
             <Crown className="w-4 h-4 text-amber-500" />
             Include Email Header
           </Label>
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <Checkbox 
+          <Checkbox
             id="include-signature"
             checked={includeSignature}
             onCheckedChange={(checked) => {
@@ -717,19 +841,22 @@ export function EmailTemplateBuilder({
                 includeHeader,
                 headerStyle: photographerHeaderStyle,
                 includeSignature: checked === true,
-                signatureStyle: photographerSignatureStyle
+                signatureStyle: photographerSignatureStyle,
               });
             }}
             data-testid="checkbox-include-signature"
           />
-          <Label htmlFor="include-signature" className="text-sm font-medium cursor-pointer flex items-center gap-1.5">
+          <Label
+            htmlFor="include-signature"
+            className="text-sm font-medium cursor-pointer flex items-center gap-1.5"
+          >
             <PenLine className="w-4 h-4 text-blue-500" />
             Include Email Signature
           </Label>
         </div>
-        
-        <a 
-          href="/settings" 
+
+        <a
+          href="/settings"
           className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 ml-auto"
           target="_blank"
         >
@@ -748,7 +875,7 @@ export function EmailTemplateBuilder({
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => addBlock(type as ContentBlock['type'])}
+              onClick={() => addBlock(type as ContentBlock["type"])}
               data-testid={`button-add-${type.toLowerCase()}`}
             >
               <Icon className="w-4 h-4 mr-2" />

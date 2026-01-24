@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 
@@ -40,8 +46,8 @@ export default function ResetPassword() {
         method: "POST",
         body: JSON.stringify({ token: resetToken }),
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       });
 
       const data = await result.json();
@@ -68,7 +74,7 @@ export default function ResetPassword() {
       toast({
         title: "Passwords don't match",
         description: "Please make sure both passwords match",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -77,7 +83,7 @@ export default function ResetPassword() {
       toast({
         title: "Password too short",
         description: "Password must be at least 6 characters long",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -89,8 +95,8 @@ export default function ResetPassword() {
         method: "POST",
         body: JSON.stringify({ token, newPassword }),
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       });
 
       if (!result.ok) {
@@ -101,7 +107,7 @@ export default function ResetPassword() {
       setIsSuccess(true);
       toast({
         title: "Password reset successful",
-        description: "You can now login with your new password"
+        description: "You can now login with your new password",
       });
 
       // Redirect to login after 2 seconds
@@ -111,8 +117,9 @@ export default function ResetPassword() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Failed to reset password. Please try again.",
-        variant: "destructive"
+        description:
+          error.message || "Failed to reset password. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -126,7 +133,9 @@ export default function ResetPassword() {
           <CardContent className="pt-6">
             <div className="flex flex-col items-center justify-center space-y-4">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">Validating reset token...</p>
+              <p className="text-sm text-muted-foreground">
+                Validating reset token...
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -150,7 +159,8 @@ export default function ResetPassword() {
           <CardContent>
             <div className="space-y-4">
               <p className="text-center text-sm text-muted-foreground">
-                This password reset link is either invalid or has expired. Please request a new one.
+                This password reset link is either invalid or has expired.
+                Please request a new one.
               </p>
               <div className="flex justify-center gap-2">
                 <Link href="/forgot-password">
@@ -179,7 +189,9 @@ export default function ResetPassword() {
             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/20 mx-auto mb-4">
               <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
             </div>
-            <CardTitle className="text-center">Password Reset Successful</CardTitle>
+            <CardTitle className="text-center">
+              Password Reset Successful
+            </CardTitle>
             <CardDescription className="text-center">
               Your password has been updated successfully
             </CardDescription>
@@ -199,9 +211,7 @@ export default function ResetPassword() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Reset Your Password</CardTitle>
-          <CardDescription>
-            Enter a new password for {email}
-          </CardDescription>
+          <CardDescription>Enter a new password for {email}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -239,9 +249,9 @@ export default function ResetPassword() {
               />
             </div>
 
-            <Button 
-              type="submit" 
-              className="w-full" 
+            <Button
+              type="submit"
+              className="w-full"
               disabled={isLoading}
               data-testid="button-reset-password"
             >
@@ -250,7 +260,11 @@ export default function ResetPassword() {
 
             <p className="text-center text-sm text-muted-foreground">
               Remember your password?{" "}
-              <Link href="/login" className="text-primary hover:underline" data-testid="link-login">
+              <Link
+                href="/login"
+                className="text-primary hover:underline"
+                data-testid="link-login"
+              >
                 Sign in
               </Link>
             </p>

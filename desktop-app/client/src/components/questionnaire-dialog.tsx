@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,7 +15,11 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2, CheckCircle } from "lucide-react";
@@ -52,7 +63,7 @@ export function QuestionnaireDialog({
   questionnaire,
   open,
   onOpenChange,
-  onComplete
+  onComplete,
 }: QuestionnaireDialogProps) {
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -60,7 +71,7 @@ export function QuestionnaireDialog({
   // Fetch questionnaire details with questions
   const { data: questionnaireData, isLoading } = useQuery<QuestionnaireData>({
     queryKey: [`/api/client-portal/questionnaires/${questionnaire?.id}`],
-    enabled: open && !!questionnaire?.id
+    enabled: open && !!questionnaire?.id,
   });
 
   // Reset state when dialog opens with new questionnaire
@@ -74,29 +85,42 @@ export function QuestionnaireDialog({
   // Submit mutation
   const submitMutation = useMutation({
     mutationFn: async (answers: Record<string, any>) => {
-      return apiRequest('PUT', `/api/client-portal/questionnaires/${questionnaire?.id}`, { answers });
+      return apiRequest(
+        "PUT",
+        `/api/client-portal/questionnaires/${questionnaire?.id}`,
+        { answers },
+      );
     },
     onSuccess: () => {
       setSubmitted(true);
-      queryClient.invalidateQueries({ queryKey: ['/api/client-portal'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/client-portal"] });
       onComplete();
-    }
+    },
   });
 
   const handleAnswerChange = (questionId: string, value: any) => {
-    setAnswers(prev => ({
+    setAnswers((prev) => ({
       ...prev,
-      [questionId]: value
+      [questionId]: value,
     }));
   };
 
-  const handleCheckboxChange = (questionId: string, option: string, checked: boolean) => {
-    setAnswers(prev => {
-      const currentValues = Array.isArray(prev[questionId]) ? prev[questionId] : [];
+  const handleCheckboxChange = (
+    questionId: string,
+    option: string,
+    checked: boolean,
+  ) => {
+    setAnswers((prev) => {
+      const currentValues = Array.isArray(prev[questionId])
+        ? prev[questionId]
+        : [];
       if (checked) {
         return { ...prev, [questionId]: [...currentValues, option] };
       } else {
-        return { ...prev, [questionId]: currentValues.filter((v: string) => v !== option) };
+        return {
+          ...prev,
+          [questionId]: currentValues.filter((v: string) => v !== option),
+        };
       }
     });
   };
@@ -109,10 +133,10 @@ export function QuestionnaireDialog({
     const value = answers[question.id];
 
     switch (question.type) {
-      case 'TEXT':
+      case "TEXT":
         return (
           <Input
-            value={value || ''}
+            value={value || ""}
             onChange={(e) => handleAnswerChange(question.id, e.target.value)}
             placeholder="Your answer..."
             disabled={submitted}
@@ -120,10 +144,10 @@ export function QuestionnaireDialog({
           />
         );
 
-      case 'TEXTAREA':
+      case "TEXTAREA":
         return (
           <Textarea
-            value={value || ''}
+            value={value || ""}
             onChange={(e) => handleAnswerChange(question.id, e.target.value)}
             placeholder="Your answer..."
             rows={4}
@@ -132,10 +156,10 @@ export function QuestionnaireDialog({
           />
         );
 
-      case 'MULTIPLE_CHOICE':
+      case "MULTIPLE_CHOICE":
         return (
           <RadioGroup
-            value={value || ''}
+            value={value || ""}
             onValueChange={(val) => handleAnswerChange(question.id, val)}
             disabled={submitted}
             className="mt-3 space-y-2"
@@ -143,7 +167,10 @@ export function QuestionnaireDialog({
             {question.options?.map((option, idx) => (
               <div key={idx} className="flex items-center space-x-2">
                 <RadioGroupItem value={option} id={`${question.id}-${idx}`} />
-                <Label htmlFor={`${question.id}-${idx}`} className="font-normal cursor-pointer">
+                <Label
+                  htmlFor={`${question.id}-${idx}`}
+                  className="font-normal cursor-pointer"
+                >
                   {option}
                 </Label>
               </div>
@@ -151,7 +178,7 @@ export function QuestionnaireDialog({
           </RadioGroup>
         );
 
-      case 'CHECKBOX':
+      case "CHECKBOX":
         const selectedValues = Array.isArray(value) ? value : [];
         return (
           <div className="mt-3 space-y-2">
@@ -160,10 +187,15 @@ export function QuestionnaireDialog({
                 <Checkbox
                   id={`${question.id}-${idx}`}
                   checked={selectedValues.includes(option)}
-                  onCheckedChange={(checked) => handleCheckboxChange(question.id, option, !!checked)}
+                  onCheckedChange={(checked) =>
+                    handleCheckboxChange(question.id, option, !!checked)
+                  }
                   disabled={submitted}
                 />
-                <Label htmlFor={`${question.id}-${idx}`} className="font-normal cursor-pointer">
+                <Label
+                  htmlFor={`${question.id}-${idx}`}
+                  className="font-normal cursor-pointer"
+                >
                   {option}
                 </Label>
               </div>
@@ -171,7 +203,7 @@ export function QuestionnaireDialog({
           </div>
         );
 
-      case 'DATE':
+      case "DATE":
         const dateValue = value ? new Date(value) : undefined;
         return (
           <Popover>
@@ -181,7 +213,7 @@ export function QuestionnaireDialog({
                 disabled={submitted}
                 className={cn(
                   "w-full mt-2 justify-start text-left font-normal",
-                  !dateValue && "text-muted-foreground"
+                  !dateValue && "text-muted-foreground",
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
@@ -192,7 +224,9 @@ export function QuestionnaireDialog({
               <Calendar
                 mode="single"
                 selected={dateValue}
-                onSelect={(date) => handleAnswerChange(question.id, date?.toISOString())}
+                onSelect={(date) =>
+                  handleAnswerChange(question.id, date?.toISOString())
+                }
                 initialFocus
               />
             </PopoverContent>
@@ -202,7 +236,7 @@ export function QuestionnaireDialog({
       default:
         return (
           <Input
-            value={value || ''}
+            value={value || ""}
             onChange={(e) => handleAnswerChange(question.id, e.target.value)}
             placeholder="Your answer..."
             disabled={submitted}
@@ -212,14 +246,16 @@ export function QuestionnaireDialog({
     }
   };
 
-  const sortedQuestions = questionnaireData?.questions?.sort((a, b) => a.orderIndex - b.orderIndex) || [];
+  const sortedQuestions =
+    questionnaireData?.questions?.sort((a, b) => a.orderIndex - b.orderIndex) ||
+    [];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl tracking-wide">
-            {questionnaire?.template.title || 'Questionnaire'}
+            {questionnaire?.template.title || "Questionnaire"}
           </DialogTitle>
           {questionnaire?.template.description && (
             <DialogDescription className="text-muted-foreground">
@@ -235,7 +271,9 @@ export function QuestionnaireDialog({
         ) : submitted ? (
           <div className="text-center py-12">
             <CheckCircle className="w-16 h-16 mx-auto text-green-500 mb-4" />
-            <h3 className="text-xl font-semibold tracking-wide mb-2">Thank You!</h3>
+            <h3 className="text-xl font-semibold tracking-wide mb-2">
+              Thank You!
+            </h3>
             <p className="text-muted-foreground">
               Your responses have been submitted successfully.
             </p>
@@ -272,7 +310,7 @@ export function QuestionnaireDialog({
                   Submitting...
                 </>
               ) : (
-                'Submit Questionnaire'
+                "Submit Questionnaire"
               )}
             </Button>
           )}

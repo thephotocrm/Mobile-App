@@ -5,12 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  Camera, 
-  User, 
-  Building2, 
-  Palette, 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Camera,
+  User,
+  Building2,
+  Palette,
   Sparkles,
   ArrowRight,
   ArrowLeft,
@@ -21,14 +27,14 @@ import {
   Phone,
   Clock,
   Image as ImageIcon,
-  X
+  X,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import Confetti from 'react-confetti';
+import Confetti from "react-confetti";
 import { getAccessibleTextColor } from "@shared/color-utils";
 
-type OnboardingStep = 'welcome' | 'info' | 'business' | 'branding' | 'complete';
+type OnboardingStep = "welcome" | "info" | "business" | "branding" | "complete";
 
 const TIMEZONES = [
   { value: "America/New_York", label: "Eastern Time (ET)" },
@@ -74,92 +80,93 @@ type PhotographerData = {
   onboardingCompletedAt: Date | null;
 };
 
-export default function OnboardingWizard({ 
-  open, 
-  onComplete 
-}: { 
-  open: boolean; 
+export default function OnboardingWizard({
+  open,
+  onComplete,
+}: {
+  open: boolean;
   onComplete: () => void;
 }) {
-  const [currentStep, setCurrentStep] = useState<OnboardingStep>('welcome');
+  const [currentStep, setCurrentStep] = useState<OnboardingStep>("welcome");
   const [showConfetti, setShowConfetti] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const { toast } = useToast();
 
   // Form state
-  const [photographerName, setPhotographerName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [timezone, setTimezone] = useState('America/New_York');
-  const [businessAddress, setBusinessAddress] = useState('');
-  const [website, setWebsite] = useState('');
+  const [photographerName, setPhotographerName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [timezone, setTimezone] = useState("America/New_York");
+  const [businessAddress, setBusinessAddress] = useState("");
+  const [website, setWebsite] = useState("");
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
   const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string>('');
+  const [logoPreview, setLogoPreview] = useState<string>("");
   const [headshotFile, setHeadshotFile] = useState<File | null>(null);
-  const [headshotPreview, setHeadshotPreview] = useState<string>('');
-  const [brandPrimary, setBrandPrimary] = useState('#3b82f6');
-  const [brandSecondary, setBrandSecondary] = useState('#8b5cf6');
+  const [headshotPreview, setHeadshotPreview] = useState<string>("");
+  const [brandPrimary, setBrandPrimary] = useState("#3b82f6");
+  const [brandSecondary, setBrandSecondary] = useState("#8b5cf6");
 
   const { data: photographer } = useQuery<PhotographerData>({
-    queryKey: ['/api/photographers/me'],
+    queryKey: ["/api/photographers/me"],
   });
 
   // Window size for confetti (SSR safe)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-      const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
+      const handleResize = () =>
+        setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
     }
   }, []);
 
   // Escape key handler
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && open) {
+      if (e.key === "Escape" && open) {
         onComplete();
       }
     };
     if (open) {
-      document.addEventListener('keydown', handleEscape);
-      return () => document.removeEventListener('keydown', handleEscape);
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
     }
   }, [open, onComplete]);
 
   // Auto-populate form when photographer data loads
   useEffect(() => {
     if (photographer) {
-      setPhotographerName(photographer.photographerName || '');
-      setPhone(photographer.phone || '');
-      setTimezone(photographer.timezone || 'America/New_York');
-      setBusinessAddress(photographer.businessAddress || '');
-      setWebsite(photographer.website || '');
-      setLogoPreview(photographer.logoUrl || '');
-      setHeadshotPreview(photographer.headshotUrl || '');
-      setBrandPrimary(photographer.brandPrimary || '#3b82f6');
-      setBrandSecondary(photographer.brandSecondary || '#8b5cf6');
+      setPhotographerName(photographer.photographerName || "");
+      setPhone(photographer.phone || "");
+      setTimezone(photographer.timezone || "America/New_York");
+      setBusinessAddress(photographer.businessAddress || "");
+      setWebsite(photographer.website || "");
+      setLogoPreview(photographer.logoUrl || "");
+      setHeadshotPreview(photographer.headshotUrl || "");
+      setBrandPrimary(photographer.brandPrimary || "#3b82f6");
+      setBrandSecondary(photographer.brandSecondary || "#8b5cf6");
     }
   }, [photographer]);
 
   const updatePhotographerMutation = useMutation({
     mutationFn: async (data: Partial<PhotographerData>) => {
-      return apiRequest('PATCH', '/api/photographers/me', data);
+      return apiRequest("PATCH", "/api/photographers/me", data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/photographers/me'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/photographer'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/photographers/me"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/photographer"] });
     },
   });
 
   const completeOnboardingMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest('POST', '/api/photographers/me/complete-onboarding');
+      return apiRequest("POST", "/api/photographers/me/complete-onboarding");
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/photographers/me'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/photographer'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/photographers/me"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/photographer"] });
       setShowConfetti(true);
       setTimeout(() => {
         setShowConfetti(false);
@@ -171,7 +178,7 @@ export default function OnboardingWizard({
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     setFile: (f: File | null) => void,
-    setPreview: (s: string) => void
+    setPreview: (s: string) => void,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -185,10 +192,8 @@ export default function OnboardingWizard({
   };
 
   const toggleSpecialty = (id: string) => {
-    setSelectedSpecialties(prev => 
-      prev.includes(id) 
-        ? prev.filter(s => s !== id)
-        : [...prev, id]
+    setSelectedSpecialties((prev) =>
+      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id],
     );
   };
 
@@ -198,7 +203,7 @@ export default function OnboardingWizard({
       phone: phone || null,
       timezone,
     });
-    setCurrentStep('business');
+    setCurrentStep("business");
   };
 
   const handleSaveBusiness = async () => {
@@ -206,7 +211,7 @@ export default function OnboardingWizard({
       businessAddress: businessAddress || null,
       website: website || null,
     });
-    setCurrentStep('branding');
+    setCurrentStep("branding");
   };
 
   const handleSaveBranding = async () => {
@@ -214,55 +219,58 @@ export default function OnboardingWizard({
     try {
       let finalLogoUrl = logoPreview;
       let finalHeadshotUrl = headshotPreview;
-      
+
       // Upload logo if new file selected
       if (logoFile) {
         const formData = new FormData();
-        formData.append('logo', logoFile);
-        const response = await fetch('/api/upload/logo', {
-          method: 'POST',
+        formData.append("logo", logoFile);
+        const response = await fetch("/api/upload/logo", {
+          method: "POST",
           body: formData,
-          credentials: 'include'
+          credentials: "include",
         });
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.message || 'Logo upload failed');
+          throw new Error(errorData.message || "Logo upload failed");
         }
         const data = await response.json();
         finalLogoUrl = data.logoUrl;
       }
-      
+
       // Upload headshot if new file selected
       if (headshotFile) {
         const formData = new FormData();
-        formData.append('headshot', headshotFile);
-        const response = await fetch('/api/upload/headshot', {
-          method: 'POST',
+        formData.append("headshot", headshotFile);
+        const response = await fetch("/api/upload/headshot", {
+          method: "POST",
           body: formData,
-          credentials: 'include'
+          credentials: "include",
         });
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.message || 'Headshot upload failed');
+          throw new Error(errorData.message || "Headshot upload failed");
         }
         const data = await response.json();
         finalHeadshotUrl = data.headshotUrl;
       }
-      
+
       await updatePhotographerMutation.mutateAsync({
         logoUrl: finalLogoUrl || null,
         headshotUrl: finalHeadshotUrl || null,
         brandPrimary,
         brandSecondary,
       });
-      
+
       toast({ title: "Branding saved!" });
-      setCurrentStep('complete');
+      setCurrentStep("complete");
     } catch (error) {
       toast({
         title: "Upload Failed",
-        description: error instanceof Error ? error.message : "Could not save branding. Please try again.",
-        variant: "destructive"
+        description:
+          error instanceof Error
+            ? error.message
+            : "Could not save branding. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsUploading(false);
@@ -273,9 +281,15 @@ export default function OnboardingWizard({
     await completeOnboardingMutation.mutateAsync();
   };
 
-  const steps: OnboardingStep[] = ['welcome', 'info', 'business', 'branding', 'complete'];
+  const steps: OnboardingStep[] = [
+    "welcome",
+    "info",
+    "business",
+    "branding",
+    "complete",
+  ];
   const stepIndex = steps.indexOf(currentStep);
-  const progress = ((stepIndex) / (steps.length - 1)) * 100;
+  const progress = (stepIndex / (steps.length - 1)) * 100;
 
   if (!open) return null;
 
@@ -289,8 +303,14 @@ export default function OnboardingWizard({
           numberOfPieces={500}
         />
       )}
-      
-      <div className="fixed inset-0 z-50 bg-gradient-to-br from-slate-50 via-white to-blue-50 overflow-hidden" data-testid="onboarding-wizard" role="dialog" aria-modal="true" aria-label="Setup wizard">
+
+      <div
+        className="fixed inset-0 z-50 bg-gradient-to-br from-slate-50 via-white to-blue-50 overflow-hidden"
+        data-testid="onboarding-wizard"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Setup wizard"
+      >
         {/* Close button */}
         <Button
           variant="ghost"
@@ -302,7 +322,7 @@ export default function OnboardingWizard({
         >
           <X className="h-5 w-5" />
         </Button>
-        
+
         {/* Background decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-100/40 to-purple-100/40 rounded-full blur-3xl" />
@@ -311,9 +331,9 @@ export default function OnboardingWizard({
         </div>
 
         {/* Progress bar */}
-        {currentStep !== 'welcome' && currentStep !== 'complete' && (
+        {currentStep !== "welcome" && currentStep !== "complete" && (
           <div className="absolute top-0 left-0 right-0 h-1 bg-gray-100">
-            <motion.div 
+            <motion.div
               className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
@@ -326,7 +346,7 @@ export default function OnboardingWizard({
         <div className="relative h-full flex items-center justify-center p-8">
           <AnimatePresence mode="wait">
             {/* Welcome Step */}
-            {currentStep === 'welcome' && (
+            {currentStep === "welcome" && (
               <motion.div
                 key="welcome"
                 initial={{ opacity: 0, y: 20 }}
@@ -362,7 +382,8 @@ export default function OnboardingWizard({
                   transition={{ delay: 0.4, duration: 0.4 }}
                   className="text-xl text-gray-600 mb-8 leading-relaxed"
                 >
-                  Let's set up your studio in just a few minutes.<br />
+                  Let's set up your studio in just a few minutes.
+                  <br />
                   You'll be ready to book your next client in no time.
                 </motion.p>
 
@@ -374,7 +395,7 @@ export default function OnboardingWizard({
                 >
                   <Button
                     size="lg"
-                    onClick={() => setCurrentStep('info')}
+                    onClick={() => setCurrentStep("info")}
                     className="px-8 py-6 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg shadow-purple-500/25 transition-all hover:shadow-xl hover:shadow-purple-500/30"
                     data-testid="button-get-started"
                   >
@@ -419,7 +440,7 @@ export default function OnboardingWizard({
             )}
 
             {/* Info Step */}
-            {currentStep === 'info' && (
+            {currentStep === "info" && (
               <motion.div
                 key="info"
                 initial={{ opacity: 0, x: 50 }}
@@ -434,14 +455,24 @@ export default function OnboardingWizard({
                       <User className="w-7 h-7 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-gray-900" data-testid="text-info-title">Tell us about yourself</h2>
-                      <p className="text-gray-500">This helps personalize your client experience</p>
+                      <h2
+                        className="text-2xl font-bold text-gray-900"
+                        data-testid="text-info-title"
+                      >
+                        Tell us about yourself
+                      </h2>
+                      <p className="text-gray-500">
+                        This helps personalize your client experience
+                      </p>
                     </div>
                   </div>
 
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-sm font-medium flex items-center gap-2">
+                      <Label
+                        htmlFor="name"
+                        className="text-sm font-medium flex items-center gap-2"
+                      >
                         <User className="w-4 h-4 text-gray-400" />
                         Your Name
                       </Label>
@@ -453,11 +484,16 @@ export default function OnboardingWizard({
                         className="h-12 text-base border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
                         data-testid="input-photographer-name"
                       />
-                      <p className="text-xs text-gray-400">Used in email signatures and automated messages</p>
+                      <p className="text-xs text-gray-400">
+                        Used in email signatures and automated messages
+                      </p>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="phone" className="text-sm font-medium flex items-center gap-2">
+                      <Label
+                        htmlFor="phone"
+                        className="text-sm font-medium flex items-center gap-2"
+                      >
                         <Phone className="w-4 h-4 text-gray-400" />
                         Phone Number
                       </Label>
@@ -470,34 +506,44 @@ export default function OnboardingWizard({
                         className="h-12 text-base border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
                         data-testid="input-phone"
                       />
-                      <p className="text-xs text-gray-400">For SMS notifications and client communication</p>
+                      <p className="text-xs text-gray-400">
+                        For SMS notifications and client communication
+                      </p>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="timezone" className="text-sm font-medium flex items-center gap-2">
+                      <Label
+                        htmlFor="timezone"
+                        className="text-sm font-medium flex items-center gap-2"
+                      >
                         <Clock className="w-4 h-4 text-gray-400" />
                         Timezone
                       </Label>
                       <Select value={timezone} onValueChange={setTimezone}>
-                        <SelectTrigger className="h-12 text-base border-gray-200" data-testid="select-timezone">
+                        <SelectTrigger
+                          className="h-12 text-base border-gray-200"
+                          data-testid="select-timezone"
+                        >
                           <SelectValue placeholder="Select your timezone" />
                         </SelectTrigger>
                         <SelectContent>
-                          {TIMEZONES.map(tz => (
+                          {TIMEZONES.map((tz) => (
                             <SelectItem key={tz.value} value={tz.value}>
                               {tz.label}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      <p className="text-xs text-gray-400">Ensures accurate scheduling for you and clients</p>
+                      <p className="text-xs text-gray-400">
+                        Ensures accurate scheduling for you and clients
+                      </p>
                     </div>
                   </div>
 
                   <div className="flex gap-3 mt-8">
                     <Button
                       variant="outline"
-                      onClick={() => setCurrentStep('welcome')}
+                      onClick={() => setCurrentStep("welcome")}
                       className="h-12 px-6"
                       data-testid="button-back-info"
                     >
@@ -510,7 +556,9 @@ export default function OnboardingWizard({
                       className="flex-1 h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                       data-testid="button-continue-info"
                     >
-                      {updatePhotographerMutation.isPending ? "Saving..." : "Continue"}
+                      {updatePhotographerMutation.isPending
+                        ? "Saving..."
+                        : "Continue"}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </div>
@@ -519,7 +567,7 @@ export default function OnboardingWizard({
             )}
 
             {/* Business Step */}
-            {currentStep === 'business' && (
+            {currentStep === "business" && (
               <motion.div
                 key="business"
                 initial={{ opacity: 0, x: 50 }}
@@ -534,14 +582,24 @@ export default function OnboardingWizard({
                       <Building2 className="w-7 h-7 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-gray-900" data-testid="text-business-title">Your Business</h2>
-                      <p className="text-gray-500">Help clients find and connect with you</p>
+                      <h2
+                        className="text-2xl font-bold text-gray-900"
+                        data-testid="text-business-title"
+                      >
+                        Your Business
+                      </h2>
+                      <p className="text-gray-500">
+                        Help clients find and connect with you
+                      </p>
                     </div>
                   </div>
 
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <Label htmlFor="address" className="text-sm font-medium flex items-center gap-2">
+                      <Label
+                        htmlFor="address"
+                        className="text-sm font-medium flex items-center gap-2"
+                      >
                         <MapPin className="w-4 h-4 text-gray-400" />
                         Business Address
                       </Label>
@@ -553,11 +611,16 @@ export default function OnboardingWizard({
                         className="min-h-[80px] text-base border-gray-200 focus:border-purple-500 focus:ring-purple-500/20"
                         data-testid="input-business-address"
                       />
-                      <p className="text-xs text-gray-400">Appears on invoices and contracts</p>
+                      <p className="text-xs text-gray-400">
+                        Appears on invoices and contracts
+                      </p>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="website" className="text-sm font-medium flex items-center gap-2">
+                      <Label
+                        htmlFor="website"
+                        className="text-sm font-medium flex items-center gap-2"
+                      >
                         <Globe className="w-4 h-4 text-gray-400" />
                         Website
                       </Label>
@@ -570,7 +633,9 @@ export default function OnboardingWizard({
                         className="h-12 text-base border-gray-200 focus:border-purple-500 focus:ring-purple-500/20"
                         data-testid="input-website"
                       />
-                      <p className="text-xs text-gray-400">Included in your email signature</p>
+                      <p className="text-xs text-gray-400">
+                        Included in your email signature
+                      </p>
                     </div>
 
                     <div className="space-y-3">
@@ -578,15 +643,18 @@ export default function OnboardingWizard({
                         <Camera className="w-4 h-4 text-gray-400" />
                         What do you photograph?
                       </Label>
-                      <div className="flex flex-wrap gap-2" data-testid="specialty-options">
-                        {SPECIALTIES.map(specialty => (
+                      <div
+                        className="flex flex-wrap gap-2"
+                        data-testid="specialty-options"
+                      >
+                        {SPECIALTIES.map((specialty) => (
                           <button
                             key={specialty.id}
                             onClick={() => toggleSpecialty(specialty.id)}
                             className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                               selectedSpecialties.includes(specialty.id)
-                                ? 'bg-purple-100 text-purple-700 ring-2 ring-purple-500 ring-offset-1'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                ? "bg-purple-100 text-purple-700 ring-2 ring-purple-500 ring-offset-1"
+                                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                             }`}
                             data-testid={`specialty-${specialty.id}`}
                           >
@@ -594,14 +662,16 @@ export default function OnboardingWizard({
                           </button>
                         ))}
                       </div>
-                      <p className="text-xs text-gray-400">Select all that apply</p>
+                      <p className="text-xs text-gray-400">
+                        Select all that apply
+                      </p>
                     </div>
                   </div>
 
                   <div className="flex gap-3 mt-8">
                     <Button
                       variant="outline"
-                      onClick={() => setCurrentStep('info')}
+                      onClick={() => setCurrentStep("info")}
                       className="h-12 px-6"
                       data-testid="button-back-business"
                     >
@@ -614,7 +684,9 @@ export default function OnboardingWizard({
                       className="flex-1 h-12 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                       data-testid="button-continue-business"
                     >
-                      {updatePhotographerMutation.isPending ? "Saving..." : "Continue"}
+                      {updatePhotographerMutation.isPending
+                        ? "Saving..."
+                        : "Continue"}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </div>
@@ -623,7 +695,7 @@ export default function OnboardingWizard({
             )}
 
             {/* Branding Step */}
-            {currentStep === 'branding' && (
+            {currentStep === "branding" && (
               <motion.div
                 key="branding"
                 initial={{ opacity: 0, x: 50 }}
@@ -638,8 +710,15 @@ export default function OnboardingWizard({
                       <Palette className="w-7 h-7 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-gray-900" data-testid="text-branding-title">Make it yours</h2>
-                      <p className="text-gray-500">Customize how clients see your brand</p>
+                      <h2
+                        className="text-2xl font-bold text-gray-900"
+                        data-testid="text-branding-title"
+                      >
+                        Make it yours
+                      </h2>
+                      <p className="text-gray-500">
+                        Customize how clients see your brand
+                      </p>
                     </div>
                   </div>
 
@@ -648,30 +727,46 @@ export default function OnboardingWizard({
                     <div className="space-y-6">
                       {/* Logo Upload */}
                       <div className="space-y-3">
-                        <Label className="text-sm font-medium">Business Logo</Label>
-                        <div 
+                        <Label className="text-sm font-medium">
+                          Business Logo
+                        </Label>
+                        <div
                           className="relative border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center hover:border-pink-400 transition-colors cursor-pointer group"
-                          onClick={() => document.getElementById('logo-upload')?.click()}
+                          onClick={() =>
+                            document.getElementById("logo-upload")?.click()
+                          }
                         >
                           {logoPreview ? (
                             <div className="flex flex-col items-center">
-                              <img src={logoPreview} alt="Logo" className="w-24 h-24 object-contain rounded-lg mb-2" />
-                              <p className="text-sm text-gray-500">Click to change</p>
+                              <img
+                                src={logoPreview}
+                                alt="Logo"
+                                className="w-24 h-24 object-contain rounded-lg mb-2"
+                              />
+                              <p className="text-sm text-gray-500">
+                                Click to change
+                              </p>
                             </div>
                           ) : (
                             <div className="flex flex-col items-center py-4">
                               <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mb-3 group-hover:bg-pink-50 transition-colors">
                                 <Upload className="w-8 h-8 text-gray-400 group-hover:text-pink-500 transition-colors" />
                               </div>
-                              <p className="text-sm font-medium text-gray-700">Upload your logo</p>
-                              <p className="text-xs text-gray-400 mt-1">PNG, JPG or SVG</p>
+                              <p className="text-sm font-medium text-gray-700">
+                                Upload your logo
+                              </p>
+                              <p className="text-xs text-gray-400 mt-1">
+                                PNG, JPG or SVG
+                              </p>
                             </div>
                           )}
                           <input
                             id="logo-upload"
                             type="file"
                             accept="image/*"
-                            onChange={(e) => handleFileChange(e, setLogoFile, setLogoPreview)}
+                            onChange={(e) =>
+                              handleFileChange(e, setLogoFile, setLogoPreview)
+                            }
                             className="hidden"
                             data-testid="input-logo-upload"
                           />
@@ -680,30 +775,50 @@ export default function OnboardingWizard({
 
                       {/* Headshot Upload */}
                       <div className="space-y-3">
-                        <Label className="text-sm font-medium">Your Headshot</Label>
-                        <div 
+                        <Label className="text-sm font-medium">
+                          Your Headshot
+                        </Label>
+                        <div
                           className="relative border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center hover:border-pink-400 transition-colors cursor-pointer group"
-                          onClick={() => document.getElementById('headshot-upload')?.click()}
+                          onClick={() =>
+                            document.getElementById("headshot-upload")?.click()
+                          }
                         >
                           {headshotPreview ? (
                             <div className="flex flex-col items-center">
-                              <img src={headshotPreview} alt="Headshot" className="w-24 h-24 object-cover rounded-full mb-2" />
-                              <p className="text-sm text-gray-500">Click to change</p>
+                              <img
+                                src={headshotPreview}
+                                alt="Headshot"
+                                className="w-24 h-24 object-cover rounded-full mb-2"
+                              />
+                              <p className="text-sm text-gray-500">
+                                Click to change
+                              </p>
                             </div>
                           ) : (
                             <div className="flex flex-col items-center py-4">
                               <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-3 group-hover:bg-pink-50 transition-colors">
                                 <ImageIcon className="w-8 h-8 text-gray-400 group-hover:text-pink-500 transition-colors" />
                               </div>
-                              <p className="text-sm font-medium text-gray-700">Upload your photo</p>
-                              <p className="text-xs text-gray-400 mt-1">For email signatures</p>
+                              <p className="text-sm font-medium text-gray-700">
+                                Upload your photo
+                              </p>
+                              <p className="text-xs text-gray-400 mt-1">
+                                For email signatures
+                              </p>
                             </div>
                           )}
                           <input
                             id="headshot-upload"
                             type="file"
                             accept="image/*"
-                            onChange={(e) => handleFileChange(e, setHeadshotFile, setHeadshotPreview)}
+                            onChange={(e) =>
+                              handleFileChange(
+                                e,
+                                setHeadshotFile,
+                                setHeadshotPreview,
+                              )
+                            }
                             className="hidden"
                             data-testid="input-headshot-upload"
                           />
@@ -716,17 +831,25 @@ export default function OnboardingWizard({
                       {/* Color Pickers */}
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label className="text-sm font-medium">Primary Color</Label>
+                          <Label className="text-sm font-medium">
+                            Primary Color
+                          </Label>
                           <div className="flex items-center gap-2">
-                            <div 
+                            <div
                               className="w-12 h-12 rounded-xl cursor-pointer shadow-sm border border-gray-200 overflow-hidden"
-                              onClick={() => document.getElementById('primary-color')?.click()}
+                              onClick={() =>
+                                document
+                                  .getElementById("primary-color")
+                                  ?.click()
+                              }
                             >
                               <input
                                 id="primary-color"
                                 type="color"
                                 value={brandPrimary}
-                                onChange={(e) => setBrandPrimary(e.target.value)}
+                                onChange={(e) =>
+                                  setBrandPrimary(e.target.value)
+                                }
                                 className="w-16 h-16 -m-2 cursor-pointer"
                                 data-testid="input-brand-primary"
                               />
@@ -739,24 +862,34 @@ export default function OnboardingWizard({
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-sm font-medium">Secondary Color</Label>
+                          <Label className="text-sm font-medium">
+                            Secondary Color
+                          </Label>
                           <div className="flex items-center gap-2">
-                            <div 
+                            <div
                               className="w-12 h-12 rounded-xl cursor-pointer shadow-sm border border-gray-200 overflow-hidden"
-                              onClick={() => document.getElementById('secondary-color')?.click()}
+                              onClick={() =>
+                                document
+                                  .getElementById("secondary-color")
+                                  ?.click()
+                              }
                             >
                               <input
                                 id="secondary-color"
                                 type="color"
                                 value={brandSecondary}
-                                onChange={(e) => setBrandSecondary(e.target.value)}
+                                onChange={(e) =>
+                                  setBrandSecondary(e.target.value)
+                                }
                                 className="w-16 h-16 -m-2 cursor-pointer"
                                 data-testid="input-brand-secondary"
                               />
                             </div>
                             <Input
                               value={brandSecondary}
-                              onChange={(e) => setBrandSecondary(e.target.value)}
+                              onChange={(e) =>
+                                setBrandSecondary(e.target.value)
+                              }
                               className="flex-1 h-10 text-sm font-mono"
                             />
                           </div>
@@ -769,30 +902,38 @@ export default function OnboardingWizard({
                         <div className="bg-gray-50 rounded-2xl p-6 space-y-4">
                           <div className="flex items-center gap-3">
                             {logoPreview ? (
-                              <img src={logoPreview} alt="Logo" className="w-10 h-10 object-contain" />
+                              <img
+                                src={logoPreview}
+                                alt="Logo"
+                                className="w-10 h-10 object-contain"
+                              />
                             ) : (
                               <div className="w-10 h-10 rounded-lg bg-gray-200" />
                             )}
                             <div>
-                              <p className="font-semibold text-gray-900">{photographer?.businessName || "Your Business"}</p>
-                              <p className="text-xs text-gray-500">Photography Studio</p>
+                              <p className="font-semibold text-gray-900">
+                                {photographer?.businessName || "Your Business"}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                Photography Studio
+                              </p>
                             </div>
                           </div>
                           <div className="flex gap-2">
                             <button
                               className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                              style={{ 
+                              style={{
                                 backgroundColor: brandPrimary,
-                                color: getAccessibleTextColor(brandPrimary)
+                                color: getAccessibleTextColor(brandPrimary),
                               }}
                             >
                               View Proposal
                             </button>
                             <button
                               className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                              style={{ 
+                              style={{
                                 backgroundColor: brandSecondary,
-                                color: getAccessibleTextColor(brandSecondary)
+                                color: getAccessibleTextColor(brandSecondary),
                               }}
                             >
                               Book Session
@@ -806,7 +947,7 @@ export default function OnboardingWizard({
                   <div className="flex gap-3 mt-8">
                     <Button
                       variant="outline"
-                      onClick={() => setCurrentStep('business')}
+                      onClick={() => setCurrentStep("business")}
                       className="h-12 px-6"
                       data-testid="button-back-branding"
                     >
@@ -815,11 +956,15 @@ export default function OnboardingWizard({
                     </Button>
                     <Button
                       onClick={handleSaveBranding}
-                      disabled={updatePhotographerMutation.isPending || isUploading}
+                      disabled={
+                        updatePhotographerMutation.isPending || isUploading
+                      }
                       className="flex-1 h-12 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700"
                       data-testid="button-continue-branding"
                     >
-                      {isUploading || updatePhotographerMutation.isPending ? "Saving..." : "Finish Setup"}
+                      {isUploading || updatePhotographerMutation.isPending
+                        ? "Saving..."
+                        : "Finish Setup"}
                       <Sparkles className="w-4 h-4 ml-2" />
                     </Button>
                   </div>
@@ -828,7 +973,7 @@ export default function OnboardingWizard({
             )}
 
             {/* Complete Step */}
-            {currentStep === 'complete' && (
+            {currentStep === "complete" && (
               <motion.div
                 key="complete"
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -874,14 +1019,18 @@ export default function OnboardingWizard({
                   transition={{ delay: 0.6 }}
                   className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left shadow-lg"
                 >
-                  <h3 className="font-semibold text-gray-900 mb-4">What's set up:</h3>
+                  <h3 className="font-semibold text-gray-900 mb-4">
+                    What's set up:
+                  </h3>
                   <div className="space-y-3">
                     {photographerName && (
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
                           <Check className="w-4 h-4 text-green-600" />
                         </div>
-                        <span className="text-gray-700">Personal info saved</span>
+                        <span className="text-gray-700">
+                          Personal info saved
+                        </span>
                       </div>
                     )}
                     {(businessAddress || website) && (
@@ -889,10 +1038,12 @@ export default function OnboardingWizard({
                         <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
                           <Check className="w-4 h-4 text-green-600" />
                         </div>
-                        <span className="text-gray-700">Business details added</span>
+                        <span className="text-gray-700">
+                          Business details added
+                        </span>
                       </div>
                     )}
-                    {(logoPreview || brandPrimary !== '#3b82f6') && (
+                    {(logoPreview || brandPrimary !== "#3b82f6") && (
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
                           <Check className="w-4 h-4 text-green-600" />
@@ -915,7 +1066,9 @@ export default function OnboardingWizard({
                     className="px-10 py-6 text-lg bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-lg shadow-green-500/25"
                     data-testid="button-complete-onboarding"
                   >
-                    {completeOnboardingMutation.isPending ? "Finishing..." : "Go to Dashboard"}
+                    {completeOnboardingMutation.isPending
+                      ? "Finishing..."
+                      : "Go to Dashboard"}
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
                 </motion.div>

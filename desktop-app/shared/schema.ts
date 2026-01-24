@@ -1,5 +1,17 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, boolean, timestamp, json, jsonb, uuid, index, unique } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  varchar,
+  integer,
+  boolean,
+  timestamp,
+  json,
+  jsonb,
+  uuid,
+  index,
+  unique,
+} from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -7,19 +19,19 @@ import { z } from "zod";
 // Enums
 export const roleEnum = {
   PHOTOGRAPHER: "PHOTOGRAPHER",
-  CLIENT: "CLIENT", 
-  ADMIN: "ADMIN"
+  CLIENT: "CLIENT",
+  ADMIN: "ADMIN",
 } as const;
 
 export const channelEnum = {
   EMAIL: "EMAIL",
   SMS: "SMS",
-  SMART_FILE: "SMART_FILE"
+  SMART_FILE: "SMART_FILE",
 } as const;
 
 export const projectTypeEnum = {
   WEDDING: "WEDDING",
-  ENGAGEMENT: "ENGAGEMENT", 
+  ENGAGEMENT: "ENGAGEMENT",
   PROPOSAL: "PROPOSAL",
   CORPORATE: "CORPORATE",
   PORTRAIT: "PORTRAIT",
@@ -28,7 +40,7 @@ export const projectTypeEnum = {
   NEWBORN: "NEWBORN",
   EVENT: "EVENT",
   COMMERCIAL: "COMMERCIAL",
-  OTHER: "OTHER"
+  OTHER: "OTHER",
 } as const;
 
 export const leadSourceEnum = {
@@ -36,19 +48,19 @@ export const leadSourceEnum = {
   WEBSITE_WIDGET: "WEBSITE_WIDGET",
   REFERRAL: "REFERRAL",
   SOCIAL_MEDIA: "SOCIAL_MEDIA",
-  OTHER: "OTHER"
+  OTHER: "OTHER",
 } as const;
 
 export const automationTypeEnum = {
   COMMUNICATION: "COMMUNICATION",
   STAGE_CHANGE: "STAGE_CHANGE",
   COUNTDOWN: "COUNTDOWN",
-  NURTURE: "NURTURE"
+  NURTURE: "NURTURE",
 } as const;
 
 export const smartFileStatusEnum = {
   ACTIVE: "ACTIVE",
-  ARCHIVED: "ARCHIVED"
+  ARCHIVED: "ARCHIVED",
 } as const;
 
 export const smartFilePageTypeEnum = {
@@ -60,7 +72,7 @@ export const smartFilePageTypeEnum = {
   INVOICE: "INVOICE",
   PAY: "PAY",
   FORM: "FORM",
-  SCHEDULING: "SCHEDULING"
+  SCHEDULING: "SCHEDULING",
 } as const;
 
 export const projectSmartFileStatusEnum = {
@@ -69,12 +81,12 @@ export const projectSmartFileStatusEnum = {
   VIEWED: "VIEWED",
   ACCEPTED: "ACCEPTED",
   DEPOSIT_PAID: "DEPOSIT_PAID",
-  PAID: "PAID"
+  PAID: "PAID",
 } as const;
 
 export const triggerTypeEnum = {
   DEPOSIT_PAID: "DEPOSIT_PAID",
-  FULL_PAYMENT_MADE: "FULL_PAYMENT_MADE", 
+  FULL_PAYMENT_MADE: "FULL_PAYMENT_MADE",
   PROJECT_BOOKED: "PROJECT_BOOKED",
   CONTRACT_SIGNED: "CONTRACT_SIGNED",
   SMART_FILE_ACCEPTED: "SMART_FILE_ACCEPTED",
@@ -83,12 +95,12 @@ export const triggerTypeEnum = {
   PROJECT_DELIVERED: "PROJECT_DELIVERED",
   CLIENT_ONBOARDED: "CLIENT_ONBOARDED",
   APPOINTMENT_BOOKED: "APPOINTMENT_BOOKED",
-  GALLERY_SHARED: "GALLERY_SHARED"
+  GALLERY_SHARED: "GALLERY_SHARED",
 } as const;
 
 export const adPlatformEnum = {
   GOOGLE: "GOOGLE",
-  FACEBOOK: "FACEBOOK"
+  FACEBOOK: "FACEBOOK",
 } as const;
 
 export const adCampaignStatusEnum = {
@@ -97,17 +109,19 @@ export const adCampaignStatusEnum = {
   PAUSED: "PAUSED",
   BUDGET_EXCEEDED: "BUDGET_EXCEEDED",
   PAYMENT_FAILED: "PAYMENT_FAILED",
-  COMPLETED: "COMPLETED"
+  COMPLETED: "COMPLETED",
 } as const;
 
 export const tokenTypeEnum = {
-  PORTAL_ACCESS: "PORTAL_ACCESS",  // 90-day project access tokens
-  MAGIC_LINK: "MAGIC_LINK"          // 30-minute login tokens
+  PORTAL_ACCESS: "PORTAL_ACCESS", // 90-day project access tokens
+  MAGIC_LINK: "MAGIC_LINK", // 30-minute login tokens
 } as const;
 
 // Tables
 export const photographers = pgTable("photographers", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   businessName: text("business_name").notNull(),
   photographerName: text("photographer_name"),
   portalSlug: text("portal_slug").unique(), // Custom subdomain for client portal (e.g., "johnsphotography" for johnsphotography.tpcportal.co)
@@ -120,7 +134,9 @@ export const photographers = pgTable("photographers", {
   personalPhone: text("personal_phone"), // Photographer's personal phone for test automations
   timezone: text("timezone").notNull().default("America/New_York"),
   // Widget Integration
-  publicToken: varchar("public_token").unique().default(sql`gen_random_uuid()`),
+  publicToken: varchar("public_token")
+    .unique()
+    .default(sql`gen_random_uuid()`),
   // Google Calendar Integration
   googleCalendarAccessToken: text("google_calendar_access_token"),
   googleCalendarRefreshToken: text("google_calendar_refresh_token"),
@@ -130,9 +146,15 @@ export const photographers = pgTable("photographers", {
   googleCalendarId: text("google_calendar_id"), // Dedicated business calendar ID
   googleEmail: text("google_email"), // Email address of connected Google account
   // Google Calendar Two-Way Sync
-  googleCalendarSyncEnabled: boolean("google_calendar_sync_enabled").default(false), // Whether two-way sync is active
-  googleCalendarIdsToCheck: json("google_calendar_ids_to_check").$type<string[]>(), // Calendar IDs to check for conflicts
-  googleCalendarMetadata: json("google_calendar_metadata").$type<Record<string, { name: string; color: string }>>(), // Calendar names and colors for display
+  googleCalendarSyncEnabled: boolean("google_calendar_sync_enabled").default(
+    false,
+  ), // Whether two-way sync is active
+  googleCalendarIdsToCheck: json("google_calendar_ids_to_check").$type<
+    string[]
+  >(), // Calendar IDs to check for conflicts
+  googleCalendarMetadata: json("google_calendar_metadata").$type<
+    Record<string, { name: string; color: string }>
+  >(), // Calendar names and colors for display
   googleCalendarWriteTo: text("google_calendar_write_to"), // Which calendar to write CRM bookings to
   // Gmail watch/history tracking for email reply threading
   gmailHistoryId: text("gmail_history_id"), // Last processed Gmail history ID for incremental sync
@@ -186,91 +208,150 @@ export const photographers = pgTable("photographers", {
   onboardingCompletedAt: timestamp("onboarding_completed_at"),
   onboardingDismissed: boolean("onboarding_dismissed").default(false),
   // Photographer Appointment Notifications
-  appointmentReminderEnabled: boolean("appointment_reminder_enabled").default(false),
-  appointmentReminderMinutes: integer("appointment_reminder_minutes").default(60), // How many minutes before to send reminder
+  appointmentReminderEnabled: boolean("appointment_reminder_enabled").default(
+    false,
+  ),
+  appointmentReminderMinutes: integer("appointment_reminder_minutes").default(
+    60,
+  ), // How many minutes before to send reminder
   appointmentReminderLastSentId: text("appointment_reminder_last_sent_id"), // Track last booking we sent reminder for to avoid duplicates
   // Push Notifications (Mobile App)
-  pushTokens: json("push_tokens").$type<Array<{
-    token: string;
-    platform: "ios" | "android";
-    deviceId?: string;
-    createdAt: string;
-  }>>().default([]),
-  createdAt: timestamp("created_at").defaultNow()
+  pushTokens: json("push_tokens")
+    .$type<
+      Array<{
+        token: string;
+        platform: "ios" | "android";
+        deviceId?: string;
+        createdAt: string;
+      }>
+    >()
+    .default([]),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  email: text("email").notNull(),
-  passwordHash: text("password_hash"), // Optional for OAuth users
-  role: text("role").notNull(),
-  photographerId: varchar("photographer_id").references(() => photographers.id),
-  clientId: varchar("client_id"),
-  // OAuth fields
-  googleId: text("google_id").unique(), // Google OAuth user ID
-  appleId: text("apple_id").unique(), // Apple Sign In user ID
-  authProvider: text("auth_provider"), // 'google', 'apple', or 'email'
-  resetToken: text("reset_token"),
-  resetTokenExpiry: timestamp("reset_token_expiry"),
-  resetTokenUsed: boolean("reset_token_used").default(false),
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  // Composite unique constraint: same email can exist for different (role, photographerId) combinations
-  // Example: sarah@example.com can be PHOTOGRAPHER (her own account) AND CLIENT (for photographer A) AND CLIENT (for photographer B)
-  emailRolePhotographerUnique: unique("users_email_role_photographer_unique").on(table.email, table.role, table.photographerId)
-}));
+export const users = pgTable(
+  "users",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    email: text("email").notNull(),
+    passwordHash: text("password_hash"), // Optional for OAuth users
+    role: text("role").notNull(),
+    photographerId: varchar("photographer_id").references(
+      () => photographers.id,
+    ),
+    clientId: varchar("client_id"),
+    // OAuth fields
+    googleId: text("google_id").unique(), // Google OAuth user ID
+    appleId: text("apple_id").unique(), // Apple Sign In user ID
+    authProvider: text("auth_provider"), // 'google', 'apple', or 'email'
+    resetToken: text("reset_token"),
+    resetTokenExpiry: timestamp("reset_token_expiry"),
+    resetTokenUsed: boolean("reset_token_used").default(false),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    // Composite unique constraint: same email can exist for different (role, photographerId) combinations
+    // Example: sarah@example.com can be PHOTOGRAPHER (her own account) AND CLIENT (for photographer A) AND CLIENT (for photographer B)
+    emailRolePhotographerUnique: unique(
+      "users_email_role_photographer_unique",
+    ).on(table.email, table.role, table.photographerId),
+  }),
+);
 
 // Account linking requests for Google OAuth
-export const linkingRequests = pgTable("linking_requests", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  token: text("token").notNull().unique(), // Temporary linking token
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
-  googleId: text("google_id").notNull(), // Google OAuth user ID to link
-  email: text("email").notNull(),
-  firstName: text("first_name"),
-  lastName: text("last_name"),
-  profileImageUrl: text("profile_image_url"),
-  expiresAt: timestamp("expires_at").notNull(),
-  used: boolean("used").default(false),
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  tokenIdx: index("linking_requests_token_idx").on(table.token),
-  userIdIdx: index("linking_requests_user_id_idx").on(table.userId),
-  expiresAtIdx: index("linking_requests_expires_at_idx").on(table.expiresAt)
-}));
+export const linkingRequests = pgTable(
+  "linking_requests",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    token: text("token").notNull().unique(), // Temporary linking token
+    userId: varchar("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    googleId: text("google_id").notNull(), // Google OAuth user ID to link
+    email: text("email").notNull(),
+    firstName: text("first_name"),
+    lastName: text("last_name"),
+    profileImageUrl: text("profile_image_url"),
+    expiresAt: timestamp("expires_at").notNull(),
+    used: boolean("used").default(false),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    tokenIdx: index("linking_requests_token_idx").on(table.token),
+    userIdIdx: index("linking_requests_user_id_idx").on(table.userId),
+    expiresAtIdx: index("linking_requests_expires_at_idx").on(table.expiresAt),
+  }),
+);
 
-export const adminActivityLog = pgTable("admin_activity_log", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  adminUserId: varchar("admin_user_id").notNull().references(() => users.id),
-  action: text("action").notNull(), // IMPERSONATE, EXIT_IMPERSONATION, VIEW_DASHBOARD
-  targetPhotographerId: varchar("target_photographer_id").references(() => photographers.id),
-  metadata: json("metadata"), // Additional context (IP, user agent, etc.)
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  adminUserIdx: index("admin_activity_log_admin_user_idx").on(table.adminUserId),
-  targetPhotographerIdx: index("admin_activity_log_target_photographer_idx").on(table.targetPhotographerId),
-  createdAtIdx: index("admin_activity_log_created_at_idx").on(table.createdAt)
-}));
+export const adminActivityLog = pgTable(
+  "admin_activity_log",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    adminUserId: varchar("admin_user_id")
+      .notNull()
+      .references(() => users.id),
+    action: text("action").notNull(), // IMPERSONATE, EXIT_IMPERSONATION, VIEW_DASHBOARD
+    targetPhotographerId: varchar("target_photographer_id").references(
+      () => photographers.id,
+    ),
+    metadata: json("metadata"), // Additional context (IP, user agent, etc.)
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    adminUserIdx: index("admin_activity_log_admin_user_idx").on(
+      table.adminUserId,
+    ),
+    targetPhotographerIdx: index(
+      "admin_activity_log_target_photographer_idx",
+    ).on(table.targetPhotographerId),
+    createdAtIdx: index("admin_activity_log_created_at_idx").on(
+      table.createdAt,
+    ),
+  }),
+);
 
 // Project Types - photographer-specific customizable project types
-export const projectTypes = pgTable("project_types", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  name: text("name").notNull(), // Display name like "Wedding", "Engagement"
-  slug: text("slug").notNull(), // Internal identifier like "WEDDING", "ENGAGEMENT"
-  color: text("color").default("#64748b"), // Optional color for UI display
-  orderIndex: integer("order_index").notNull().default(0),
-  isDefault: boolean("is_default").default(false), // If true, used as default for new projects
-  isArchived: boolean("is_archived").default(false), // Soft delete
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  photographerIdx: index("project_types_photographer_idx").on(table.photographerId),
-  photographerSlugUnique: unique("project_types_photographer_slug_unique").on(table.photographerId, table.slug)
-}));
+export const projectTypes = pgTable(
+  "project_types",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    name: text("name").notNull(), // Display name like "Wedding", "Engagement"
+    slug: text("slug").notNull(), // Internal identifier like "WEDDING", "ENGAGEMENT"
+    color: text("color").default("#64748b"), // Optional color for UI display
+    orderIndex: integer("order_index").notNull().default(0),
+    isDefault: boolean("is_default").default(false), // If true, used as default for new projects
+    isArchived: boolean("is_archived").default(false), // Soft delete
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    photographerIdx: index("project_types_photographer_idx").on(
+      table.photographerId,
+    ),
+    photographerSlugUnique: unique("project_types_photographer_slug_unique").on(
+      table.photographerId,
+      table.slug,
+    ),
+  }),
+);
 
 export const stages = pgTable("stages", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  photographerId: varchar("photographer_id")
+    .notNull()
+    .references(() => photographers.id),
   projectType: text("project_type"), // Deprecated - stages are now unified per photographer (no project type)
   projectTypeId: varchar("project_type_id").references(() => projectTypes.id), // New FK reference
   name: text("name").notNull(),
@@ -280,8 +361,12 @@ export const stages = pgTable("stages", {
 });
 
 export const contacts = pgTable("contacts", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  photographerId: varchar("photographer_id")
+    .notNull()
+    .references(() => photographers.id),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   email: text("email"),
@@ -297,35 +382,55 @@ export const contacts = pgTable("contacts", {
   projectType: text("project_type").notNull().default("WEDDING"), // Legacy
   projectTypeId: varchar("project_type_id").references(() => projectTypes.id), // New FK
   leadSource: text("lead_source").default("MANUAL"),
-  status: text("status").notNull().default('ACTIVE'), // ACTIVE or ARCHIVED
+  status: text("status").notNull().default("ACTIVE"), // ACTIVE or ARCHIVED
   // Stripe Customer for saved payment methods and autopay
   stripeCustomerId: text("stripe_customer_id"),
-  defaultPaymentMethodId: text("default_payment_method_id") // Default saved card for autopay
+  defaultPaymentMethodId: text("default_payment_method_id"), // Default saved card for autopay
 });
 
 // Saved payment methods for autopay
-export const savedPaymentMethods = pgTable("saved_payment_methods", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  contactId: varchar("contact_id").notNull().references(() => contacts.id, { onDelete: "cascade" }),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  stripePaymentMethodId: text("stripe_payment_method_id").notNull(), // Stripe PM ID (pm_xxx)
-  type: text("type").notNull().default("card"), // card, us_bank_account, etc.
-  cardBrand: text("card_brand"), // visa, mastercard, amex, etc.
-  cardLast4: text("card_last4"), // Last 4 digits
-  cardExpMonth: integer("card_exp_month"),
-  cardExpYear: integer("card_exp_year"),
-  isDefault: boolean("is_default").default(false),
-  nickname: text("nickname"), // Optional user-friendly name like "Personal Visa"
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  contactIdIdx: index("saved_payment_methods_contact_id_idx").on(table.contactId),
-  photographerIdIdx: index("saved_payment_methods_photographer_id_idx").on(table.photographerId)
-}));
+export const savedPaymentMethods = pgTable(
+  "saved_payment_methods",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    contactId: varchar("contact_id")
+      .notNull()
+      .references(() => contacts.id, { onDelete: "cascade" }),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    stripePaymentMethodId: text("stripe_payment_method_id").notNull(), // Stripe PM ID (pm_xxx)
+    type: text("type").notNull().default("card"), // card, us_bank_account, etc.
+    cardBrand: text("card_brand"), // visa, mastercard, amex, etc.
+    cardLast4: text("card_last4"), // Last 4 digits
+    cardExpMonth: integer("card_exp_month"),
+    cardExpYear: integer("card_exp_year"),
+    isDefault: boolean("is_default").default(false),
+    nickname: text("nickname"), // Optional user-friendly name like "Personal Visa"
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    contactIdIdx: index("saved_payment_methods_contact_id_idx").on(
+      table.contactId,
+    ),
+    photographerIdIdx: index("saved_payment_methods_photographer_id_idx").on(
+      table.photographerId,
+    ),
+  }),
+);
 
 export const projects = pgTable("projects", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  clientId: varchar("client_id").notNull().references(() => contacts.id),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  clientId: varchar("client_id")
+    .notNull()
+    .references(() => contacts.id),
+  photographerId: varchar("photographer_id")
+    .notNull()
+    .references(() => photographers.id),
   projectType: text("project_type").notNull().default("WEDDING"), // Legacy
   projectTypeId: varchar("project_type_id").references(() => projectTypes.id), // New FK
   title: text("title").notNull(),
@@ -356,69 +461,122 @@ export const projects = pgTable("projects", {
   enableDripCampaigns: boolean("enable_drip_campaigns").default(true), // Enable drip campaign subscriptions
   // Tags
   tags: text("tags").array(), // Array of tag names for this project
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 // Photographer-defined tags for organizing projects
-export const photographerTags = pgTable("photographer_tags", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
-  color: text("color").default("#6366f1"), // Default indigo color
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  photographerIdIdx: index("photographer_tags_photographer_id_idx").on(table.photographerId),
-  uniqueNamePerPhotographer: unique("photographer_tags_name_unique").on(table.photographerId, table.name)
-}));
+export const photographerTags = pgTable(
+  "photographer_tags",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    color: text("color").default("#6366f1"), // Default indigo color
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    photographerIdIdx: index("photographer_tags_photographer_id_idx").on(
+      table.photographerId,
+    ),
+    uniqueNamePerPhotographer: unique("photographer_tags_name_unique").on(
+      table.photographerId,
+      table.name,
+    ),
+  }),
+);
 
-export const projectNotes = pgTable("project_notes", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  projectId: varchar("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  noteText: text("note_text").notNull(),
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  projectIdIdx: index("project_notes_project_id_idx").on(table.projectId),
-  createdAtIdx: index("project_notes_created_at_idx").on(table.createdAt)
-}));
+export const projectNotes = pgTable(
+  "project_notes",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    projectId: varchar("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    noteText: text("note_text").notNull(),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    projectIdIdx: index("project_notes_project_id_idx").on(table.projectId),
+    createdAtIdx: index("project_notes_created_at_idx").on(table.createdAt),
+  }),
+);
 
-export const projectParticipants = pgTable("project_participants", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  projectId: varchar("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
-  clientId: varchar("client_id").notNull().references(() => contacts.id, { onDelete: "cascade" }),
-  role: text("role"), // Project-specific role: Bride, Groom, Partner 1, Partner 2, Parent of Bride, etc.
-  addedBy: text("added_by").notNull(), // PHOTOGRAPHER or CLIENT
-  inviteSent: boolean("invite_sent").default(false),
-  inviteSentAt: timestamp("invite_sent_at"),
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  // Index for quick lookups by project
-  projectIdIdx: index("project_participants_project_id_idx").on(table.projectId),
-  // Index for quick lookups by client (to find all projects they're a participant in)
-  clientIdIdx: index("project_participants_client_id_idx").on(table.clientId),
-  // Unique constraint: one participant can only be added once per project
-  uniqueProjectClientIdx: unique("project_participants_project_client_unique").on(table.projectId, table.clientId)
-}));
+export const projectParticipants = pgTable(
+  "project_participants",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    projectId: varchar("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    clientId: varchar("client_id")
+      .notNull()
+      .references(() => contacts.id, { onDelete: "cascade" }),
+    role: text("role"), // Project-specific role: Bride, Groom, Partner 1, Partner 2, Parent of Bride, etc.
+    addedBy: text("added_by").notNull(), // PHOTOGRAPHER or CLIENT
+    inviteSent: boolean("invite_sent").default(false),
+    inviteSentAt: timestamp("invite_sent_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    // Index for quick lookups by project
+    projectIdIdx: index("project_participants_project_id_idx").on(
+      table.projectId,
+    ),
+    // Index for quick lookups by client (to find all projects they're a participant in)
+    clientIdIdx: index("project_participants_client_id_idx").on(table.clientId),
+    // Unique constraint: one participant can only be added once per project
+    uniqueProjectClientIdx: unique(
+      "project_participants_project_client_unique",
+    ).on(table.projectId, table.clientId),
+  }),
+);
 
-export const portalTokens = pgTable("portal_tokens", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  token: text("token").notNull().unique(), // Secure random token for magic link
-  tokenType: text("token_type").notNull().default("PORTAL_ACCESS"), // PORTAL_ACCESS (90-day) or MAGIC_LINK (30-minute)
-  projectId: varchar("project_id").references(() => projects.id, { onDelete: "cascade" }), // Nullable for magic links without project context
-  clientId: varchar("client_id").notNull().references(() => contacts.id, { onDelete: "cascade" }),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  expiresAt: timestamp("expires_at").notNull(), // Expiration: 90 days for portal access, 30 minutes for magic links
-  lastUsedAt: timestamp("last_used_at"), // Track when the client last clicked the link
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  tokenIdx: index("portal_tokens_token_idx").on(table.token),
-  projectIdIdx: index("portal_tokens_project_id_idx").on(table.projectId),
-  clientIdIdx: index("portal_tokens_client_id_idx").on(table.clientId)
-}));
+export const portalTokens = pgTable(
+  "portal_tokens",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    token: text("token").notNull().unique(), // Secure random token for magic link
+    tokenType: text("token_type").notNull().default("PORTAL_ACCESS"), // PORTAL_ACCESS (90-day) or MAGIC_LINK (30-minute)
+    projectId: varchar("project_id").references(() => projects.id, {
+      onDelete: "cascade",
+    }), // Nullable for magic links without project context
+    clientId: varchar("client_id")
+      .notNull()
+      .references(() => contacts.id, { onDelete: "cascade" }),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    expiresAt: timestamp("expires_at").notNull(), // Expiration: 90 days for portal access, 30 minutes for magic links
+    lastUsedAt: timestamp("last_used_at"), // Track when the client last clicked the link
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    tokenIdx: index("portal_tokens_token_idx").on(table.token),
+    projectIdIdx: index("portal_tokens_project_id_idx").on(table.projectId),
+    clientIdIdx: index("portal_tokens_client_id_idx").on(table.clientId),
+  }),
+);
 
 export const templates = pgTable("templates", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  photographerId: varchar("photographer_id")
+    .notNull()
+    .references(() => photographers.id),
   name: text("name").notNull(),
   channel: text("channel").notNull(),
   subject: text("subject"),
@@ -432,12 +590,16 @@ export const templates = pgTable("templates", {
   headerStyle: text("header_style"), // minimal, professional, bold, classic
   includeSignature: boolean("include_signature").default(true),
   signatureStyle: text("signature_style"), // simple, professional, detailed, branded
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const automations = pgTable("automations", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  photographerId: varchar("photographer_id")
+    .notNull()
+    .references(() => photographers.id),
   projectType: text("project_type").notNull().default("WEDDING"), // Legacy
   projectTypeId: varchar("project_type_id").references(() => projectTypes.id), // New FK
   name: text("name").notNull(),
@@ -446,7 +608,7 @@ export const automations = pgTable("automations", {
   // Communication automation fields
   stageId: varchar("stage_id").references(() => stages.id),
   channel: text("channel"), // EMAIL, SMS (nullable for stage change and countdown automations)
-  // Stage change automation fields  
+  // Stage change automation fields
   triggerType: text("trigger_type"), // DEPOSIT_PAID, FULL_PAYMENT_MADE, PROJECT_BOOKED, APPOINTMENT_BOOKED, etc.
   targetStageId: varchar("target_stage_id").references(() => stages.id),
   // Countdown automation fields
@@ -458,9 +620,13 @@ export const automations = pgTable("automations", {
   eventType: text("event_type"), // event_date, session_date, delivery_date, etc. - which project date field to use
   stageCondition: varchar("stage_condition").references(() => stages.id), // Optional stage filter for countdown automations
   templateId: varchar("template_id").references(() => templates.id), // Template for countdown automations
-  smartFileTemplateId: varchar("smart_file_template_id").references(() => smartFiles.id), // Smart File template to include in email or send directly
+  smartFileTemplateId: varchar("smart_file_template_id").references(
+    () => smartFiles.id,
+  ), // Smart File template to include in email or send directly
   // Questionnaire assignment fields (for communication automations)
-  questionnaireTemplateId: varchar("questionnaire_template_id").references(() => questionnaireTemplates.id),
+  questionnaireTemplateId: varchar("questionnaire_template_id").references(
+    () => questionnaireTemplates.id,
+  ),
   // Custom email builder fields (alternative to templateId)
   useEmailBuilder: boolean("use_email_builder").default(false), // Flag to indicate custom email builder was used
   emailSubject: text("email_subject"), // Subject line for custom emails
@@ -477,40 +643,59 @@ export const automations = pgTable("automations", {
   eventDateCondition: text("event_date_condition"), // null = no condition, HAS_EVENT_DATE = must have date, NO_EVENT_DATE = must not have date
   effectiveFrom: timestamp("effective_from").defaultNow(), // Only run on clients who entered stage at/after this time
   enabled: boolean("enabled").default(true),
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 // Business Triggers table - separate from automations to avoid null-handling issues
-export const automationBusinessTriggers = pgTable("automation_business_triggers", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  automationId: varchar("automation_id").notNull().references(() => automations.id, { onDelete: "cascade" }),
-  triggerType: text("trigger_type").notNull(), // DEPOSIT_PAID, FULL_PAYMENT_MADE, etc.
-  enabled: boolean("enabled").default(true),
-  // Optional constraints for more specific triggering
-  minAmountCents: integer("min_amount_cents"), // For payment triggers
-  projectType: text("project_type"), // If trigger should only apply to specific project types
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  // Ensure each automation can only have one trigger of each type
-  uniqueAutomationTrigger: unique("automation_business_triggers_unique").on(table.automationId, table.triggerType),
-  // Index for efficient queries
-  automationIdIdx: index("automation_business_triggers_automation_id_idx").on(table.automationId)
-}));
+export const automationBusinessTriggers = pgTable(
+  "automation_business_triggers",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    automationId: varchar("automation_id")
+      .notNull()
+      .references(() => automations.id, { onDelete: "cascade" }),
+    triggerType: text("trigger_type").notNull(), // DEPOSIT_PAID, FULL_PAYMENT_MADE, etc.
+    enabled: boolean("enabled").default(true),
+    // Optional constraints for more specific triggering
+    minAmountCents: integer("min_amount_cents"), // For payment triggers
+    projectType: text("project_type"), // If trigger should only apply to specific project types
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    // Ensure each automation can only have one trigger of each type
+    uniqueAutomationTrigger: unique("automation_business_triggers_unique").on(
+      table.automationId,
+      table.triggerType,
+    ),
+    // Index for efficient queries
+    automationIdIdx: index("automation_business_triggers_automation_id_idx").on(
+      table.automationId,
+    ),
+  }),
+);
 
 export const anchorTypeEnum = {
-  STAGE_ENTRY: "STAGE_ENTRY",      // Relative to when contact enters the stage (default)
-  BOOKING_START: "BOOKING_START",  // Relative to when booking/appointment starts
-  BOOKING_END: "BOOKING_END"       // Relative to when booking/appointment ends
+  STAGE_ENTRY: "STAGE_ENTRY", // Relative to when contact enters the stage (default)
+  BOOKING_START: "BOOKING_START", // Relative to when booking/appointment starts
+  BOOKING_END: "BOOKING_END", // Relative to when booking/appointment ends
 } as const;
 
 export const automationSteps = pgTable("automation_steps", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  automationId: varchar("automation_id").notNull().references(() => automations.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  automationId: varchar("automation_id")
+    .notNull()
+    .references(() => automations.id),
   stepIndex: integer("step_index").notNull(),
   delayMinutes: integer("delay_minutes").notNull(),
   actionType: text("action_type").notNull().default("EMAIL"), // EMAIL, SMS, SMART_FILE
   templateId: varchar("template_id").references(() => templates.id), // For EMAIL/SMS
-  smartFileTemplateId: varchar("smart_file_template_id").references(() => smartFiles.id), // For SMART_FILE
+  smartFileTemplateId: varchar("smart_file_template_id").references(
+    () => smartFiles.id,
+  ), // For SMART_FILE
   customSmsContent: text("custom_sms_content"), // Custom SMS message (alternative to template)
   enabled: boolean("enabled").default(true),
   quietHoursStart: integer("quiet_hours_start"),
@@ -523,27 +708,39 @@ export const automationSteps = pgTable("automation_steps", {
   sendAtHour: integer("send_at_hour"), // Hour (0-23) to send when using day-based delays
   sendAtMinute: integer("send_at_minute"), // Minute (0-59) to send when using day-based delays
   // Booking-relative timing anchor
-  anchorType: text("anchor_type").default("STAGE_ENTRY") // STAGE_ENTRY, BOOKING_START, BOOKING_END
+  anchorType: text("anchor_type").default("STAGE_ENTRY"), // STAGE_ENTRY, BOOKING_START, BOOKING_END
 });
 
 export const emailLogs = pgTable("email_logs", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  clientId: varchar("client_id").notNull().references(() => contacts.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  clientId: varchar("client_id")
+    .notNull()
+    .references(() => contacts.id),
   projectId: varchar("project_id").references(() => projects.id),
-  automationStepId: varchar("automation_step_id").references(() => automationSteps.id),
+  automationStepId: varchar("automation_step_id").references(
+    () => automationSteps.id,
+  ),
   status: text("status").notNull(),
   providerId: text("provider_id"),
   sentAt: timestamp("sent_at"),
   openedAt: timestamp("opened_at"),
   clickedAt: timestamp("clicked_at"),
-  bouncedAt: timestamp("bounced_at")
+  bouncedAt: timestamp("bounced_at"),
 });
 
 export const smsLogs = pgTable("sms_logs", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  clientId: varchar("client_id").notNull().references(() => contacts.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  clientId: varchar("client_id")
+    .notNull()
+    .references(() => contacts.id),
   projectId: varchar("project_id").references(() => projects.id),
-  automationStepId: varchar("automation_step_id").references(() => automationSteps.id),
+  automationStepId: varchar("automation_step_id").references(
+    () => automationSteps.id,
+  ),
   status: text("status").notNull(),
   providerId: text("provider_id"),
   sentAt: timestamp("sent_at"),
@@ -551,91 +748,122 @@ export const smsLogs = pgTable("sms_logs", {
   // Two-way messaging support
   direction: text("direction").notNull().default("OUTBOUND"), // OUTBOUND, INBOUND
   fromPhone: text("from_phone"), // Source phone number
-  toPhone: text("to_phone"), // Destination phone number  
+  toPhone: text("to_phone"), // Destination phone number
   messageBody: text("message_body"), // SMS content for tracking
   imageUrl: text("image_url"), // MMS image attachment URL
   isForwarded: boolean("is_forwarded").default(false), // Whether this was forwarded to photographer
   relatedSmsId: varchar("related_sms_id").references(() => smsLogs.id), // Link replies to original messages
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 // Email history tracking for Gmail integration
-export const emailHistory = pgTable("email_history", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  clientId: varchar("client_id").references(() => contacts.id),
-  projectId: varchar("project_id").references(() => projects.id),
-  automationStepId: varchar("automation_step_id").references(() => automationSteps.id),
-  // Email details
-  direction: text("direction").notNull().default("OUTBOUND"), // OUTBOUND, INBOUND
-  fromEmail: text("from_email").notNull(),
-  toEmails: text("to_emails").array().notNull(), // Array of recipient emails
-  ccEmails: text("cc_emails").array(), // CC recipients
-  bccEmails: text("bcc_emails").array(), // BCC recipients
-  subject: text("subject"),
-  htmlBody: text("html_body"),
-  textBody: text("text_body"),
-  // Gmail tracking
-  gmailMessageId: text("gmail_message_id"), // Gmail's unique message ID
-  gmailThreadId: text("gmail_thread_id"), // Gmail's thread ID for grouping conversations
-  // Source tracking
-  source: text("source").notNull().default("MANUAL"), // AUTOMATION, DRIP_CAMPAIGN, MANUAL, CLIENT_REPLY
-  status: text("status").notNull().default("SENT"), // SENT, DELIVERED, FAILED, BOUNCED
-  // Timestamps
-  sentAt: timestamp("sent_at").defaultNow(),
-  deliveredAt: timestamp("delivered_at"),
-  openedAt: timestamp("opened_at"),
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  // Index for quick lookups by client
-  clientIdIdx: index("email_history_client_id_idx").on(table.clientId),
-  // Index for quick lookups by Gmail thread
-  gmailThreadIdIdx: index("email_history_gmail_thread_id_idx").on(table.gmailThreadId)
-}));
+export const emailHistory = pgTable(
+  "email_history",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    clientId: varchar("client_id").references(() => contacts.id),
+    projectId: varchar("project_id").references(() => projects.id),
+    automationStepId: varchar("automation_step_id").references(
+      () => automationSteps.id,
+    ),
+    // Email details
+    direction: text("direction").notNull().default("OUTBOUND"), // OUTBOUND, INBOUND
+    fromEmail: text("from_email").notNull(),
+    toEmails: text("to_emails").array().notNull(), // Array of recipient emails
+    ccEmails: text("cc_emails").array(), // CC recipients
+    bccEmails: text("bcc_emails").array(), // BCC recipients
+    subject: text("subject"),
+    htmlBody: text("html_body"),
+    textBody: text("text_body"),
+    // Gmail tracking
+    gmailMessageId: text("gmail_message_id"), // Gmail's unique message ID
+    gmailThreadId: text("gmail_thread_id"), // Gmail's thread ID for grouping conversations
+    // Source tracking
+    source: text("source").notNull().default("MANUAL"), // AUTOMATION, DRIP_CAMPAIGN, MANUAL, CLIENT_REPLY
+    status: text("status").notNull().default("SENT"), // SENT, DELIVERED, FAILED, BOUNCED
+    // Timestamps
+    sentAt: timestamp("sent_at").defaultNow(),
+    deliveredAt: timestamp("delivered_at"),
+    openedAt: timestamp("opened_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    // Index for quick lookups by client
+    clientIdIdx: index("email_history_client_id_idx").on(table.clientId),
+    // Index for quick lookups by Gmail thread
+    gmailThreadIdIdx: index("email_history_gmail_thread_id_idx").on(
+      table.gmailThreadId,
+    ),
+  }),
+);
 
 // Bulletproof automation execution tracking to prevent duplicates
-export const automationExecutions = pgTable("automation_executions", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  projectId: varchar("project_id").notNull().references(() => projects.id),
-  automationId: varchar("automation_id").notNull().references(() => automations.id),
-  automationType: text("automation_type").notNull(), // COMMUNICATION, STAGE_CHANGE, COUNTDOWN, NURTURE
-  // For communication automations
-  automationStepId: varchar("automation_step_id").references(() => automationSteps.id),
-  // For stage change automations  
-  triggerType: text("trigger_type"), // DEPOSIT_PAID, FULL_PAYMENT_MADE, etc.
-  // For countdown automations
-  eventDate: timestamp("event_date"), // The event date this countdown was for
-  daysBefore: integer("days_before"), // How many days before event this was sent
-  // Execution details
-  executedAt: timestamp("executed_at").defaultNow(),
-  channel: text("channel"), // EMAIL, SMS
-  status: text("status").notNull().default("SUCCESS"), // SUCCESS, FAILED, PENDING, CANCELLED
-  // Cancellation tracking (for booking changes)
-  cancelledAt: timestamp("cancelled_at"),
-  cancelReason: text("cancel_reason")
-}, (table) => ({
-  // Unique constraint for communication automations: one execution per project+step
-  communicationUniqueIdx: unique("automation_executions_communication_unique").on(
-    table.projectId, table.automationStepId
-  ),
-  // Unique constraint for email builder automations: one execution per project+automation+channel
-  emailBuilderUniqueIdx: unique("automation_executions_email_builder_unique").on(
-    table.projectId, table.automationId, table.channel
-  ),
-  // Unique constraint for stage change automations: one execution per project+automation+trigger
-  stageChangeUniqueIdx: unique("automation_executions_stage_change_unique").on(
-    table.projectId, table.automationId, table.triggerType
-  ),
-  // Unique constraint for countdown automations: one execution per project+automation+event+days
-  countdownUniqueIdx: unique("automation_executions_countdown_unique").on(
-    table.projectId, table.automationId, table.eventDate, table.daysBefore
-  )
-}));
+export const automationExecutions = pgTable(
+  "automation_executions",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    projectId: varchar("project_id")
+      .notNull()
+      .references(() => projects.id),
+    automationId: varchar("automation_id")
+      .notNull()
+      .references(() => automations.id),
+    automationType: text("automation_type").notNull(), // COMMUNICATION, STAGE_CHANGE, COUNTDOWN, NURTURE
+    // For communication automations
+    automationStepId: varchar("automation_step_id").references(
+      () => automationSteps.id,
+    ),
+    // For stage change automations
+    triggerType: text("trigger_type"), // DEPOSIT_PAID, FULL_PAYMENT_MADE, etc.
+    // For countdown automations
+    eventDate: timestamp("event_date"), // The event date this countdown was for
+    daysBefore: integer("days_before"), // How many days before event this was sent
+    // Execution details
+    executedAt: timestamp("executed_at").defaultNow(),
+    channel: text("channel"), // EMAIL, SMS
+    status: text("status").notNull().default("SUCCESS"), // SUCCESS, FAILED, PENDING, CANCELLED
+    // Cancellation tracking (for booking changes)
+    cancelledAt: timestamp("cancelled_at"),
+    cancelReason: text("cancel_reason"),
+  },
+  (table) => ({
+    // Unique constraint for communication automations: one execution per project+step
+    communicationUniqueIdx: unique(
+      "automation_executions_communication_unique",
+    ).on(table.projectId, table.automationStepId),
+    // Unique constraint for email builder automations: one execution per project+automation+channel
+    emailBuilderUniqueIdx: unique(
+      "automation_executions_email_builder_unique",
+    ).on(table.projectId, table.automationId, table.channel),
+    // Unique constraint for stage change automations: one execution per project+automation+trigger
+    stageChangeUniqueIdx: unique(
+      "automation_executions_stage_change_unique",
+    ).on(table.projectId, table.automationId, table.triggerType),
+    // Unique constraint for countdown automations: one execution per project+automation+event+days
+    countdownUniqueIdx: unique("automation_executions_countdown_unique").on(
+      table.projectId,
+      table.automationId,
+      table.eventDate,
+      table.daysBefore,
+    ),
+  }),
+);
 
 // Drip Campaign Tables
 export const dripCampaigns = pgTable("drip_campaigns", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  photographerId: varchar("photographer_id")
+    .notNull()
+    .references(() => photographers.id),
   projectType: text("project_type").notNull().default("WEDDING"), // Legacy
   projectTypeId: varchar("project_type_id").references(() => projectTypes.id), // New FK
   name: text("name").notNull(),
@@ -656,7 +884,9 @@ export const dripCampaigns = pgTable("drip_campaigns", {
   approvedBy: varchar("approved_by").references(() => users.id),
   // Campaign versioning system
   version: integer("version").notNull().default(1), // Version number for the campaign
-  parentCampaignId: varchar("parent_campaign_id").references(() => dripCampaigns.id), // Reference to original campaign if this is a version
+  parentCampaignId: varchar("parent_campaign_id").references(
+    () => dripCampaigns.id,
+  ), // Reference to original campaign if this is a version
   isCurrentVersion: boolean("is_current_version").default(true), // Whether this is the active version
   versionNotes: text("version_notes"), // Notes about what changed in this version
   // Brand and styling preferences
@@ -665,12 +895,16 @@ export const dripCampaigns = pgTable("drip_campaigns", {
   secondaryBrandColor: text("secondary_brand_color"), // Hex code for secondary brand color
   fontFamily: text("font_family").default("Arial, sans-serif"), // Email font preference
   createdAt: timestamp("created_at").defaultNow(),
-  enabled: boolean("enabled").default(true)
+  enabled: boolean("enabled").default(true),
 });
 
 export const dripCampaignEmails = pgTable("drip_campaign_emails", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  campaignId: varchar("campaign_id").notNull().references(() => dripCampaigns.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  campaignId: varchar("campaign_id")
+    .notNull()
+    .references(() => dripCampaigns.id),
   sequenceIndex: integer("sequence_index").notNull(), // Order in the sequence (0, 1, 2, etc.)
   subject: text("subject").notNull(),
   htmlBody: text("html_body").notNull(),
@@ -700,201 +934,307 @@ export const dripCampaignEmails = pgTable("drip_campaign_emails", {
   hasManualEdits: boolean("has_manual_edits").default(false), // Track if manually edited
   lastEditedAt: timestamp("last_edited_at"),
   lastEditedBy: varchar("last_edited_by").references(() => users.id),
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const dripCampaignSubscriptions = pgTable("drip_campaign_subscriptions", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  campaignId: varchar("campaign_id").notNull().references(() => dripCampaigns.id),
-  projectId: varchar("project_id").notNull().references(() => projects.id),
-  clientId: varchar("client_id").notNull().references(() => contacts.id),
-  startedAt: timestamp("started_at").defaultNow(),
-  nextEmailIndex: integer("next_email_index").notNull().default(0), // Which email to send next
-  nextEmailAt: timestamp("next_email_at"), // When to send the next email
-  completedAt: timestamp("completed_at"), // When the campaign completed (event date reached or max duration)
-  unsubscribedAt: timestamp("unsubscribed_at"),
-  status: text("status").notNull().default("ACTIVE") // ACTIVE, COMPLETED, UNSUBSCRIBED, PAUSED
-}, (table) => ({
-  // Unique constraint: one subscription per project per campaign
-  projectCampaignUniqueIdx: unique("drip_subscription_project_campaign_unique").on(
-    table.projectId, table.campaignId
-  )
-}));
+export const dripCampaignSubscriptions = pgTable(
+  "drip_campaign_subscriptions",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    campaignId: varchar("campaign_id")
+      .notNull()
+      .references(() => dripCampaigns.id),
+    projectId: varchar("project_id")
+      .notNull()
+      .references(() => projects.id),
+    clientId: varchar("client_id")
+      .notNull()
+      .references(() => contacts.id),
+    startedAt: timestamp("started_at").defaultNow(),
+    nextEmailIndex: integer("next_email_index").notNull().default(0), // Which email to send next
+    nextEmailAt: timestamp("next_email_at"), // When to send the next email
+    completedAt: timestamp("completed_at"), // When the campaign completed (event date reached or max duration)
+    unsubscribedAt: timestamp("unsubscribed_at"),
+    status: text("status").notNull().default("ACTIVE"), // ACTIVE, COMPLETED, UNSUBSCRIBED, PAUSED
+  },
+  (table) => ({
+    // Unique constraint: one subscription per project per campaign
+    projectCampaignUniqueIdx: unique(
+      "drip_subscription_project_campaign_unique",
+    ).on(table.projectId, table.campaignId),
+  }),
+);
 
-export const dripEmailDeliveries = pgTable("drip_email_deliveries", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  subscriptionId: varchar("subscription_id").notNull().references(() => dripCampaignSubscriptions.id),
-  emailId: varchar("email_id").notNull().references(() => dripCampaignEmails.id),
-  clientId: varchar("client_id").notNull().references(() => contacts.id),
-  projectId: varchar("project_id").notNull().references(() => projects.id),
-  status: text("status").notNull(), // PENDING, SENT, DELIVERED, BOUNCED, FAILED
-  providerId: text("provider_id"),
-  sentAt: timestamp("sent_at"),
-  openedAt: timestamp("opened_at"),
-  clickedAt: timestamp("clicked_at"),
-  bouncedAt: timestamp("bounced_at"),
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  // Unique constraint: one delivery per subscription per email
-  subscriptionEmailUniqueIdx: unique("drip_delivery_subscription_email_unique").on(
-    table.subscriptionId, table.emailId
-  )
-}));
+export const dripEmailDeliveries = pgTable(
+  "drip_email_deliveries",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    subscriptionId: varchar("subscription_id")
+      .notNull()
+      .references(() => dripCampaignSubscriptions.id),
+    emailId: varchar("email_id")
+      .notNull()
+      .references(() => dripCampaignEmails.id),
+    clientId: varchar("client_id")
+      .notNull()
+      .references(() => contacts.id),
+    projectId: varchar("project_id")
+      .notNull()
+      .references(() => projects.id),
+    status: text("status").notNull(), // PENDING, SENT, DELIVERED, BOUNCED, FAILED
+    providerId: text("provider_id"),
+    sentAt: timestamp("sent_at"),
+    openedAt: timestamp("opened_at"),
+    clickedAt: timestamp("clicked_at"),
+    bouncedAt: timestamp("bounced_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    // Unique constraint: one delivery per subscription per email
+    subscriptionEmailUniqueIdx: unique(
+      "drip_delivery_subscription_email_unique",
+    ).on(table.subscriptionId, table.emailId),
+  }),
+);
 
 // Static Campaign Settings
-export const staticCampaignSettings = pgTable("static_campaign_settings", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  projectType: text("project_type").notNull(), // Legacy - WEDDING, PORTRAIT, COMMERCIAL, ENGAGEMENT, MATERNITY, FAMILY
-  projectTypeId: varchar("project_type_id").references(() => projectTypes.id), // New FK
-  campaignEnabled: boolean("campaign_enabled").default(false), // Master toggle for this campaign type
-  emailToggles: text("email_toggles"), // JSON string storing individual email toggles {0: true, 1: false, etc}
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-}, (table) => ({
-  // Unique constraint: one setting per photographer per project type
-  photographerProjectTypeUniqueIdx: unique("static_campaign_settings_photographer_project_type_unique").on(
-    table.photographerId, table.projectType
-  )
-}));
+export const staticCampaignSettings = pgTable(
+  "static_campaign_settings",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    projectType: text("project_type").notNull(), // Legacy - WEDDING, PORTRAIT, COMMERCIAL, ENGAGEMENT, MATERNITY, FAMILY
+    projectTypeId: varchar("project_type_id").references(() => projectTypes.id), // New FK
+    campaignEnabled: boolean("campaign_enabled").default(false), // Master toggle for this campaign type
+    emailToggles: text("email_toggles"), // JSON string storing individual email toggles {0: true, 1: false, etc}
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    // Unique constraint: one setting per photographer per project type
+    photographerProjectTypeUniqueIdx: unique(
+      "static_campaign_settings_photographer_project_type_unique",
+    ).on(table.photographerId, table.projectType),
+  }),
+);
 
 // Campaign version history tracking
-export const dripCampaignVersionHistory = pgTable("drip_campaign_version_history", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  campaignId: varchar("campaign_id").notNull().references(() => dripCampaigns.id),
-  version: integer("version").notNull(),
-  changeType: text("change_type").notNull(), // CREATED, EMAIL_MODIFIED, EMAIL_ADDED, EMAIL_REMOVED, SETTINGS_CHANGED
-  changeDescription: text("change_description").notNull(),
-  changedBy: varchar("changed_by").notNull().references(() => users.id),
-  affectedEmailId: varchar("affected_email_id").references(() => dripCampaignEmails.id), // If change affects specific email
-  previousData: text("previous_data"), // JSON snapshot of previous state
-  newData: text("new_data"), // JSON snapshot of new state
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  // Index for efficient version history queries
-  campaignVersionIdx: index("drip_campaign_version_history_campaign_version_idx").on(
-    table.campaignId, table.version
-  )
-}));
+export const dripCampaignVersionHistory = pgTable(
+  "drip_campaign_version_history",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    campaignId: varchar("campaign_id")
+      .notNull()
+      .references(() => dripCampaigns.id),
+    version: integer("version").notNull(),
+    changeType: text("change_type").notNull(), // CREATED, EMAIL_MODIFIED, EMAIL_ADDED, EMAIL_REMOVED, SETTINGS_CHANGED
+    changeDescription: text("change_description").notNull(),
+    changedBy: varchar("changed_by")
+      .notNull()
+      .references(() => users.id),
+    affectedEmailId: varchar("affected_email_id").references(
+      () => dripCampaignEmails.id,
+    ), // If change affects specific email
+    previousData: text("previous_data"), // JSON snapshot of previous state
+    newData: text("new_data"), // JSON snapshot of new state
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    // Index for efficient version history queries
+    campaignVersionIdx: index(
+      "drip_campaign_version_history_campaign_version_idx",
+    ).on(table.campaignId, table.version),
+  }),
+);
 
 export const photographerLinks = pgTable("photographer_links", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  photographerId: varchar("photographer_id")
+    .notNull()
+    .references(() => photographers.id),
   title: text("title").notNull(),
   url: text("url").notNull(),
   orderIndex: integer("order_index").default(0),
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const checklistTemplateItems = pgTable("checklist_template_items", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  photographerId: varchar("photographer_id")
+    .notNull()
+    .references(() => photographers.id),
   title: text("title").notNull(),
   orderIndex: integer("order_index").default(0),
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const projectChecklistItems = pgTable("project_checklist_items", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  projectId: varchar("project_id").notNull().references(() => projects.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  projectId: varchar("project_id")
+    .notNull()
+    .references(() => projects.id),
   title: text("title").notNull(),
   orderIndex: integer("order_index").default(0),
   completedAt: timestamp("completed_at"),
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const packages = pgTable("packages", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  photographerId: varchar("photographer_id")
+    .notNull()
+    .references(() => photographers.id),
   name: text("name").notNull(),
   description: text("description"),
   imageUrl: text("image_url"),
   basePriceCents: integer("base_price_cents").notNull(),
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const packageItems = pgTable("package_items", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  packageId: varchar("package_id").notNull().references(() => packages.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  packageId: varchar("package_id")
+    .notNull()
+    .references(() => packages.id),
   name: text("name").notNull(),
   description: text("description"),
   qty: integer("qty").default(1),
   unitCents: integer("unit_cents").default(0),
-  lineTotalCents: integer("line_total_cents").default(0)
+  lineTotalCents: integer("line_total_cents").default(0),
 });
 
 export const addOns = pgTable("add_ons", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  photographerId: varchar("photographer_id")
+    .notNull()
+    .references(() => photographers.id),
   name: text("name").notNull(),
   description: text("description"),
   priceCents: integer("price_cents").notNull(),
   imageUrl: text("image_url"),
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const questionnaireTemplates = pgTable("questionnaire_templates", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  photographerId: varchar("photographer_id")
+    .notNull()
+    .references(() => photographers.id),
   title: text("title").notNull(),
   description: text("description"),
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const questionnaireQuestions = pgTable("questionnaire_questions", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  templateId: varchar("template_id").notNull().references(() => questionnaireTemplates.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  templateId: varchar("template_id")
+    .notNull()
+    .references(() => questionnaireTemplates.id),
   type: text("type").notNull(),
   label: text("label").notNull(),
   options: text("options"),
-  orderIndex: integer("order_index").notNull()
+  orderIndex: integer("order_index").notNull(),
 });
 
 export const projectQuestionnaires = pgTable("project_questionnaires", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  projectId: varchar("project_id").notNull().references(() => projects.id),
-  templateId: varchar("questionnaire_template_id").notNull().references(() => questionnaireTemplates.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  projectId: varchar("project_id")
+    .notNull()
+    .references(() => projects.id),
+  templateId: varchar("questionnaire_template_id")
+    .notNull()
+    .references(() => questionnaireTemplates.id),
   answers: json("answers"),
   submittedAt: timestamp("submitted_at"),
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 // Daily availability templates for weekly patterns (e.g., "Monday: 8am-6pm")
-export const dailyAvailabilityTemplates = pgTable("daily_availability_templates", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  dayOfWeek: integer("day_of_week").notNull(), // 0=Sunday, 1=Monday, etc.
-  startTime: text("start_time").notNull(), // "08:00"
-  endTime: text("end_time").notNull(), // "18:00"
-  isEnabled: boolean("is_enabled").default(true),
-  createdAt: timestamp("created_at").defaultNow()
-});
+export const dailyAvailabilityTemplates = pgTable(
+  "daily_availability_templates",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    dayOfWeek: integer("day_of_week").notNull(), // 0=Sunday, 1=Monday, etc.
+    startTime: text("start_time").notNull(), // "08:00"
+    endTime: text("end_time").notNull(), // "18:00"
+    isEnabled: boolean("is_enabled").default(true),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+);
 
 // Break times within daily availability (e.g., "12pm-2pm lunch break")
 export const dailyAvailabilityBreaks = pgTable("daily_availability_breaks", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  templateId: varchar("template_id").notNull().references(() => dailyAvailabilityTemplates.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  templateId: varchar("template_id")
+    .notNull()
+    .references(() => dailyAvailabilityTemplates.id),
   startTime: text("start_time").notNull(), // "12:00"
   endTime: text("end_time").notNull(), // "14:00"
   label: text("label"), // "Lunch break"
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 // Date-specific overrides for custom hours or closures
-export const dailyAvailabilityOverrides = pgTable("daily_availability_overrides", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  date: text("date").notNull(), // "2024-01-15" format
-  startTime: text("start_time"), // null = closed day
-  endTime: text("end_time"),
-  breaks: json("breaks"), // Array of {startTime, endTime, label}
-  reason: text("reason"), // "Holiday", "Vacation", etc.
-  createdAt: timestamp("created_at").defaultNow()
-});
+export const dailyAvailabilityOverrides = pgTable(
+  "daily_availability_overrides",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    date: text("date").notNull(), // "2024-01-15" format
+    startTime: text("start_time"), // null = closed day
+    endTime: text("end_time"),
+    breaks: json("breaks"), // Array of {startTime, endTime, label}
+    reason: text("reason"), // "Holiday", "Vacation", etc.
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+);
 
 export const availabilitySlots = pgTable("availability_slots", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  photographerId: varchar("photographer_id")
+    .notNull()
+    .references(() => photographers.id),
   title: text("title").notNull(),
   description: text("description"),
   startAt: timestamp("start_at").notNull(),
@@ -903,14 +1243,20 @@ export const availabilitySlots = pgTable("availability_slots", {
   isRecurring: boolean("is_recurring").default(false),
   recurrencePattern: text("recurrence_pattern"), // WEEKLY, DAILY
   sourceTemplateId: varchar("source_template_id"), // Reference to daily template that generated this slot
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const bookings = pgTable("bookings", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  photographerId: varchar("photographer_id")
+    .notNull()
+    .references(() => photographers.id),
   projectId: varchar("project_id").references(() => projects.id),
-  projectSmartFileId: varchar("project_smart_file_id").references(() => projectSmartFiles.id),
+  projectSmartFileId: varchar("project_smart_file_id").references(
+    () => projectSmartFiles.id,
+  ),
   title: text("title").notNull(),
   description: text("description"),
   startAt: timestamp("start_at").notNull(),
@@ -924,365 +1270,549 @@ export const bookings = pgTable("bookings", {
   clientEmail: text("client_email"),
   clientPhone: text("client_phone"),
   clientName: text("client_name"),
-  photographerReminderSent: boolean("photographer_reminder_sent").default(false),
-  createdAt: timestamp("created_at").defaultNow()
+  photographerReminderSent: boolean("photographer_reminder_sent").default(
+    false,
+  ),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const shortLinks = pgTable("short_links", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  shortCode: text("short_code").notNull().unique(),
-  targetUrl: text("target_url").notNull(),
-  linkType: text("link_type").notNull().default("BOOKING"), // BOOKING, ESTIMATE, CUSTOM
-  clicks: integer("clicks").default(0),
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  shortCodeIdx: index("short_links_short_code_idx").on(table.shortCode),
-  photographerIdx: index("short_links_photographer_idx").on(table.photographerId)
-}));
+export const shortLinks = pgTable(
+  "short_links",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    shortCode: text("short_code").notNull().unique(),
+    targetUrl: text("target_url").notNull(),
+    linkType: text("link_type").notNull().default("BOOKING"), // BOOKING, ESTIMATE, CUSTOM
+    clicks: integer("clicks").default(0),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    shortCodeIdx: index("short_links_short_code_idx").on(table.shortCode),
+    photographerIdx: index("short_links_photographer_idx").on(
+      table.photographerId,
+    ),
+  }),
+);
 
 // Lead Forms (Website Embedded Forms)
-export const leadForms = pgTable("lead_forms", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  name: text("name").notNull(),
-  description: text("description"),
-  publicToken: varchar("public_token").notNull().unique().default(sql`gen_random_uuid()`),
-  projectType: text("project_type").notNull(), // Legacy - WEDDING, PORTRAIT, COMMERCIAL, etc
-  projectTypeId: varchar("project_type_id").references(() => projectTypes.id), // New FK
-  config: json("config").notNull(), // Form configuration: title, description, colors, field visibility, etc
-  status: text("status").notNull().default("ACTIVE"), // ACTIVE, ARCHIVED
-  submissionCount: integer("submission_count").default(0),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-}, (table) => ({
-  photographerIdx: index("lead_forms_photographer_idx").on(table.photographerId),
-  publicTokenIdx: index("lead_forms_public_token_idx").on(table.publicToken)
-}));
+export const leadForms = pgTable(
+  "lead_forms",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    name: text("name").notNull(),
+    description: text("description"),
+    publicToken: varchar("public_token")
+      .notNull()
+      .unique()
+      .default(sql`gen_random_uuid()`),
+    projectType: text("project_type").notNull(), // Legacy - WEDDING, PORTRAIT, COMMERCIAL, etc
+    projectTypeId: varchar("project_type_id").references(() => projectTypes.id), // New FK
+    config: json("config").notNull(), // Form configuration: title, description, colors, field visibility, etc
+    status: text("status").notNull().default("ACTIVE"), // ACTIVE, ARCHIVED
+    submissionCount: integer("submission_count").default(0),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    photographerIdx: index("lead_forms_photographer_idx").on(
+      table.photographerId,
+    ),
+    publicTokenIdx: index("lead_forms_public_token_idx").on(table.publicToken),
+  }),
+);
 
 // Smart Files (Custom Invoice/Checkout Builder)
-export const smartFiles = pgTable("smart_files", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  name: text("name").notNull(),
-  description: text("description"),
-  projectType: text("project_type"), // Legacy - WEDDING, PORTRAIT, etc - can be null for universal templates
-  projectTypeId: varchar("project_type_id").references(() => projectTypes.id), // New FK
-  status: text("status").notNull().default("ACTIVE"), // ACTIVE, ARCHIVED
-  defaultDepositPercent: integer("default_deposit_percent").default(50),
-  allowFullPayment: boolean("allow_full_payment").default(true),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-}, (table) => ({
-  photographerIdx: index("smart_files_photographer_idx").on(table.photographerId),
-  projectTypeIdx: index("smart_files_project_type_idx").on(table.projectType)
-}));
+export const smartFiles = pgTable(
+  "smart_files",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    name: text("name").notNull(),
+    description: text("description"),
+    projectType: text("project_type"), // Legacy - WEDDING, PORTRAIT, etc - can be null for universal templates
+    projectTypeId: varchar("project_type_id").references(() => projectTypes.id), // New FK
+    status: text("status").notNull().default("ACTIVE"), // ACTIVE, ARCHIVED
+    defaultDepositPercent: integer("default_deposit_percent").default(50),
+    allowFullPayment: boolean("allow_full_payment").default(true),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    photographerIdx: index("smart_files_photographer_idx").on(
+      table.photographerId,
+    ),
+    projectTypeIdx: index("smart_files_project_type_idx").on(table.projectType),
+  }),
+);
 
-export const smartFilePages = pgTable("smart_file_pages", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  smartFileId: varchar("smart_file_id").notNull().references(() => smartFiles.id, { onDelete: 'cascade' }),
-  pageType: text("page_type").notNull(), // TEXT, PACKAGE, ADDON, CONTRACT, PAYMENT, FORM
-  pageOrder: integer("page_order").notNull(),
-  displayTitle: text("display_title").notNull(),
-  content: json("content").notNull(), // Flexible JSON structure per page type
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  smartFileIdx: index("smart_file_pages_smart_file_idx").on(table.smartFileId),
-  orderIdx: index("smart_file_pages_order_idx").on(table.smartFileId, table.pageOrder),
-  uniqueOrder: unique("smart_file_pages_unique_order").on(table.smartFileId, table.pageOrder)
-}));
+export const smartFilePages = pgTable(
+  "smart_file_pages",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    smartFileId: varchar("smart_file_id")
+      .notNull()
+      .references(() => smartFiles.id, { onDelete: "cascade" }),
+    pageType: text("page_type").notNull(), // TEXT, PACKAGE, ADDON, CONTRACT, PAYMENT, FORM
+    pageOrder: integer("page_order").notNull(),
+    displayTitle: text("display_title").notNull(),
+    content: json("content").notNull(), // Flexible JSON structure per page type
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    smartFileIdx: index("smart_file_pages_smart_file_idx").on(
+      table.smartFileId,
+    ),
+    orderIdx: index("smart_file_pages_order_idx").on(
+      table.smartFileId,
+      table.pageOrder,
+    ),
+    uniqueOrder: unique("smart_file_pages_unique_order").on(
+      table.smartFileId,
+      table.pageOrder,
+    ),
+  }),
+);
 
-export const projectSmartFiles = pgTable("project_smart_files", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  projectId: varchar("project_id").notNull().references(() => projects.id),
-  smartFileId: varchar("smart_file_id").notNull().references(() => smartFiles.id),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  clientId: varchar("client_id").notNull().references(() => contacts.id),
-  
-  // Snapshot metadata
-  smartFileName: text("smart_file_name").notNull(),
-  pagesSnapshot: json("pages_snapshot").notNull(), // Full snapshot of pages at time of sending
-  
-  // Status tracking
-  status: text("status").notNull().default("DRAFT"), // DRAFT, SENT, VIEWED, ACCEPTED, PAID
-  sentAt: timestamp("sent_at"),
-  viewedAt: timestamp("viewed_at"),
-  acceptedAt: timestamp("accepted_at"),
-  paidAt: timestamp("paid_at"),
+export const projectSmartFiles = pgTable(
+  "project_smart_files",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    projectId: varchar("project_id")
+      .notNull()
+      .references(() => projects.id),
+    smartFileId: varchar("smart_file_id")
+      .notNull()
+      .references(() => smartFiles.id),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    clientId: varchar("client_id")
+      .notNull()
+      .references(() => contacts.id),
 
-  // Expiration settings
-  expiresAt: timestamp("expires_at"), // When the proposal expires (null = never expires)
-  expirationDays: integer("expiration_days"), // Original duration for reference
-  expirationMode: varchar("expiration_mode", { length: 50 }), // TIME_ONLY, UNLESS_PAYMENT, UNLESS_BOOKING, UNLESS_SIGNED
-  expirationReminderSentAt: timestamp("expiration_reminder_sent_at"), // Track when reminder was sent
+    // Snapshot metadata
+    smartFileName: text("smart_file_name").notNull(),
+    pagesSnapshot: json("pages_snapshot").notNull(), // Full snapshot of pages at time of sending
 
-  // Client selections (JSONB)
-  selectedPackages: json("selected_packages"), // [{ pageId, packageId, name, priceCents }]
-  selectedAddOns: json("selected_add_ons"), // [{ pageId, addOnId, name, priceCents, quantity }]
-  
-  // Form answers (JSONB) - { pageId: { questionId: answer } }
-  formAnswers: json("form_answers"), // Store client form submissions
-  
-  // Pricing breakdown
-  subtotalCents: integer("subtotal_cents").default(0),
-  taxCents: integer("tax_cents").default(0),
-  feesCents: integer("fees_cents").default(0),
-  tipCents: integer("tip_cents").default(0),
-  totalCents: integer("total_cents").default(0),
-  depositPercent: integer("deposit_percent"),
-  depositCents: integer("deposit_cents"),
-  
-  // Payment tracking
-  stripePaymentIntentId: text("stripe_payment_intent_id"),
-  stripeChargeId: text("stripe_charge_id"),
-  paymentType: text("payment_type"), // DEPOSIT, FULL, BALANCE
-  amountPaidCents: integer("amount_paid_cents").default(0), // Track cumulative payments
-  balanceDueCents: integer("balance_due_cents").default(0), // Remaining balance
-  
-  // Payment schedule configuration
-  paymentScheduleMode: text("payment_schedule_mode"), // SIMPLE (deposit+balance), CLIENT_CHOICE, CUSTOM
-  paymentScheduleConfig: json("payment_schedule_config"), // Config for client-choice mode: { maxInstallments: 6, allowPayInFull: true, payInFullDiscountPercent: 3 }
-  paymentSchedule: json("payment_schedule"), // Array of installments: [{ id, description, dueDate, amountCents, percentOfTotal, status: PENDING/PAID/PARTIAL }]
-  
-  // Autopay configuration
-  autopayEnabled: boolean("autopay_enabled").default(false), // Whether autopay is enabled for this Smart File
-  autopayPaymentMethodId: text("autopay_payment_method_id"), // Stripe PM ID for autopay (overrides contact default)
-  autopayEnabledAt: timestamp("autopay_enabled_at"), // When autopay was enabled
-  lastAutopayAttemptAt: timestamp("last_autopay_attempt_at"), // Last autopay charge attempt
-  lastAutopayError: text("last_autopay_error"), // Error message if last autopay failed
-  
-  // Contract signatures
-  clientSignatureUrl: text("client_signature_url"),
-  photographerSignatureUrl: text("photographer_signature_url"),
-  clientSignedAt: timestamp("client_signed_at"),
-  photographerSignedAt: timestamp("photographer_signed_at"),
-  clientSignedIp: text("client_signed_ip"), // IP address at time of client signature
-  clientSignedUserAgent: text("client_signed_user_agent"), // Browser info at signature
-  contractSnapshotHtml: text("contract_snapshot_html"), // Full rendered contract HTML at signature time
-  contractPdfUrl: text("contract_pdf_url"), // Generated PDF of signed contract
-  contractTermsAccepted: boolean("contract_terms_accepted").default(false), // Whether client accepted terms checkbox
+    // Status tracking
+    status: text("status").notNull().default("DRAFT"), // DRAFT, SENT, VIEWED, ACCEPTED, PAID
+    sentAt: timestamp("sent_at"),
+    viewedAt: timestamp("viewed_at"),
+    acceptedAt: timestamp("accepted_at"),
+    paidAt: timestamp("paid_at"),
 
-  // Access token for client view
-  token: varchar("token").default(sql`gen_random_uuid()`),
-  
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-}, (table) => ({
-  projectIdx: index("project_smart_files_project_idx").on(table.projectId),
-  smartFileIdx: index("project_smart_files_smart_file_idx").on(table.smartFileId),
-  photographerIdx: index("project_smart_files_photographer_idx").on(table.photographerId),
-  statusIdx: index("project_smart_files_status_idx").on(table.status),
-  tokenIdx: index("project_smart_files_token_idx").on(table.token),
-  expiresAtIdx: index("project_smart_files_expires_at_idx").on(table.photographerId, table.status, table.expiresAt)
-}));
+    // Expiration settings
+    expiresAt: timestamp("expires_at"), // When the proposal expires (null = never expires)
+    expirationDays: integer("expiration_days"), // Original duration for reference
+    expirationMode: varchar("expiration_mode", { length: 50 }), // TIME_ONLY, UNLESS_PAYMENT, UNLESS_BOOKING, UNLESS_SIGNED
+    expirationReminderSentAt: timestamp("expiration_reminder_sent_at"), // Track when reminder was sent
 
-export const paymentTransactions = pgTable("payment_transactions", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  projectSmartFileId: varchar("project_smart_file_id").notNull().references(() => projectSmartFiles.id, { onDelete: 'cascade' }),
-  projectId: varchar("project_id").notNull().references(() => projects.id),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  clientId: varchar("client_id").references(() => contacts.id), // Nullable for leads without persisted contacts
-  
-  // Payment details
-  amountCents: integer("amount_cents").notNull(), // Amount paid in this transaction
-  tipCents: integer("tip_cents").default(0), // Tip amount included in this transaction
-  paymentType: text("payment_type").notNull(), // DEPOSIT, INSTALLMENT, BALANCE, FULL, CUSTOM
-  paymentMethod: text("payment_method"), // CARD, ACH, CASH, CHECK
-  
-  // Stripe tracking
-  stripePaymentIntentId: text("stripe_payment_intent_id"),
-  stripeChargeId: text("stripe_charge_id"),
-  
-  // Installment linkage
-  installmentId: text("installment_id"), // Links to specific installment in paymentSchedule array
-  installmentDescription: text("installment_description"), // Copy of installment description for history
-  
-  // Status
-  status: text("status").notNull().default("COMPLETED"), // PENDING, COMPLETED, FAILED, REFUNDED
-  failureReason: text("failure_reason"),
-  
-  // Metadata
-  notes: text("notes"), // Optional notes (e.g., "Check #1234")
-  metadata: json("metadata"), // Additional data (e.g., partial payment info)
-  
-  createdAt: timestamp("created_at").defaultNow(),
-  processedAt: timestamp("processed_at")
-}, (table) => ({
-  projectSmartFileIdx: index("payment_transactions_project_smart_file_idx").on(table.projectSmartFileId),
-  projectIdx: index("payment_transactions_project_idx").on(table.projectId),
-  photographerIdx: index("payment_transactions_photographer_idx").on(table.photographerId),
-  statusIdx: index("payment_transactions_status_idx").on(table.status),
-  createdAtIdx: index("payment_transactions_created_at_idx").on(table.createdAt),
-  // Composite index for chronological history queries
-  smartFileChronologicalIdx: index("payment_transactions_smart_file_chronological_idx").on(table.projectSmartFileId, table.createdAt)
-}));
+    // Client selections (JSONB)
+    selectedPackages: json("selected_packages"), // [{ pageId, packageId, name, priceCents }]
+    selectedAddOns: json("selected_add_ons"), // [{ pageId, addOnId, name, priceCents, quantity }]
 
-export const photographerEarnings = pgTable("photographer_earnings", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  projectId: varchar("project_id").notNull().references(() => projects.id),
-  paymentIntentId: text("payment_intent_id").unique(), // Stripe Connect Payment Intent ID (unique)
-  transferId: text("transfer_id").unique(), // Stripe Connect Transfer ID (unique)
-  totalAmountCents: integer("total_amount_cents").notNull(), // Original payment amount
-  platformFeeCents: integer("platform_fee_cents").notNull(), // Platform commission
-  photographerEarningsCents: integer("photographer_earnings_cents").notNull(), // Amount photographer receives
-  currency: text("currency").default("USD").notNull(), // Currency for the earning
-  status: text("status").notNull().default("pending"), // pending, transferred, failed
-  transferredAt: timestamp("transferred_at"),
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  // Composite indexes for performance
-  photographerStatusIdx: index("photographer_earnings_photographer_status_idx").on(table.photographerId, table.status)
-}));
+    // Form answers (JSONB) - { pageId: { questionId: answer } }
+    formAnswers: json("form_answers"), // Store client form submissions
 
-export const photographerPayouts = pgTable("photographer_payouts", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  stripePayoutId: text("stripe_payout_id").unique(), // Stripe payout ID (unique)
-  amountCents: integer("amount_cents").notNull(),
-  currency: text("currency").default("USD").notNull(),
-  status: text("status").notNull().default("pending"), // pending, paid, failed, cancelled
-  isInstant: boolean("is_instant").default(false), // Whether this was an instant payout (1% fee)
-  feeCents: integer("fee_cents").default(0), // Instant payout fee if applicable
-  method: text("method").default("standard"), // standard, instant
-  stripeCreatedAt: timestamp("stripe_created_at"),
-  arrivalDate: timestamp("arrival_date"), // Expected arrival date
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  // Composite indexes for performance
-  photographerStatusIdx: index("photographer_payouts_photographer_status_idx").on(table.photographerId, table.status)
-}));
+    // Pricing breakdown
+    subtotalCents: integer("subtotal_cents").default(0),
+    taxCents: integer("tax_cents").default(0),
+    feesCents: integer("fees_cents").default(0),
+    tipCents: integer("tip_cents").default(0),
+    totalCents: integer("total_cents").default(0),
+    depositPercent: integer("deposit_percent"),
+    depositCents: integer("deposit_cents"),
+
+    // Payment tracking
+    stripePaymentIntentId: text("stripe_payment_intent_id"),
+    stripeChargeId: text("stripe_charge_id"),
+    paymentType: text("payment_type"), // DEPOSIT, FULL, BALANCE
+    amountPaidCents: integer("amount_paid_cents").default(0), // Track cumulative payments
+    balanceDueCents: integer("balance_due_cents").default(0), // Remaining balance
+
+    // Payment schedule configuration
+    paymentScheduleMode: text("payment_schedule_mode"), // SIMPLE (deposit+balance), CLIENT_CHOICE, CUSTOM
+    paymentScheduleConfig: json("payment_schedule_config"), // Config for client-choice mode: { maxInstallments: 6, allowPayInFull: true, payInFullDiscountPercent: 3 }
+    paymentSchedule: json("payment_schedule"), // Array of installments: [{ id, description, dueDate, amountCents, percentOfTotal, status: PENDING/PAID/PARTIAL }]
+
+    // Autopay configuration
+    autopayEnabled: boolean("autopay_enabled").default(false), // Whether autopay is enabled for this Smart File
+    autopayPaymentMethodId: text("autopay_payment_method_id"), // Stripe PM ID for autopay (overrides contact default)
+    autopayEnabledAt: timestamp("autopay_enabled_at"), // When autopay was enabled
+    lastAutopayAttemptAt: timestamp("last_autopay_attempt_at"), // Last autopay charge attempt
+    lastAutopayError: text("last_autopay_error"), // Error message if last autopay failed
+
+    // Contract signatures
+    clientSignatureUrl: text("client_signature_url"),
+    photographerSignatureUrl: text("photographer_signature_url"),
+    clientSignedAt: timestamp("client_signed_at"),
+    photographerSignedAt: timestamp("photographer_signed_at"),
+    clientSignedIp: text("client_signed_ip"), // IP address at time of client signature
+    clientSignedUserAgent: text("client_signed_user_agent"), // Browser info at signature
+    contractSnapshotHtml: text("contract_snapshot_html"), // Full rendered contract HTML at signature time
+    contractPdfUrl: text("contract_pdf_url"), // Generated PDF of signed contract
+    contractTermsAccepted: boolean("contract_terms_accepted").default(false), // Whether client accepted terms checkbox
+
+    // Access token for client view
+    token: varchar("token").default(sql`gen_random_uuid()`),
+
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    projectIdx: index("project_smart_files_project_idx").on(table.projectId),
+    smartFileIdx: index("project_smart_files_smart_file_idx").on(
+      table.smartFileId,
+    ),
+    photographerIdx: index("project_smart_files_photographer_idx").on(
+      table.photographerId,
+    ),
+    statusIdx: index("project_smart_files_status_idx").on(table.status),
+    tokenIdx: index("project_smart_files_token_idx").on(table.token),
+    expiresAtIdx: index("project_smart_files_expires_at_idx").on(
+      table.photographerId,
+      table.status,
+      table.expiresAt,
+    ),
+  }),
+);
+
+export const paymentTransactions = pgTable(
+  "payment_transactions",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    projectSmartFileId: varchar("project_smart_file_id")
+      .notNull()
+      .references(() => projectSmartFiles.id, { onDelete: "cascade" }),
+    projectId: varchar("project_id")
+      .notNull()
+      .references(() => projects.id),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    clientId: varchar("client_id").references(() => contacts.id), // Nullable for leads without persisted contacts
+
+    // Payment details
+    amountCents: integer("amount_cents").notNull(), // Amount paid in this transaction
+    tipCents: integer("tip_cents").default(0), // Tip amount included in this transaction
+    paymentType: text("payment_type").notNull(), // DEPOSIT, INSTALLMENT, BALANCE, FULL, CUSTOM
+    paymentMethod: text("payment_method"), // CARD, ACH, CASH, CHECK
+
+    // Stripe tracking
+    stripePaymentIntentId: text("stripe_payment_intent_id"),
+    stripeChargeId: text("stripe_charge_id"),
+
+    // Installment linkage
+    installmentId: text("installment_id"), // Links to specific installment in paymentSchedule array
+    installmentDescription: text("installment_description"), // Copy of installment description for history
+
+    // Status
+    status: text("status").notNull().default("COMPLETED"), // PENDING, COMPLETED, FAILED, REFUNDED
+    failureReason: text("failure_reason"),
+
+    // Metadata
+    notes: text("notes"), // Optional notes (e.g., "Check #1234")
+    metadata: json("metadata"), // Additional data (e.g., partial payment info)
+
+    createdAt: timestamp("created_at").defaultNow(),
+    processedAt: timestamp("processed_at"),
+  },
+  (table) => ({
+    projectSmartFileIdx: index(
+      "payment_transactions_project_smart_file_idx",
+    ).on(table.projectSmartFileId),
+    projectIdx: index("payment_transactions_project_idx").on(table.projectId),
+    photographerIdx: index("payment_transactions_photographer_idx").on(
+      table.photographerId,
+    ),
+    statusIdx: index("payment_transactions_status_idx").on(table.status),
+    createdAtIdx: index("payment_transactions_created_at_idx").on(
+      table.createdAt,
+    ),
+    // Composite index for chronological history queries
+    smartFileChronologicalIdx: index(
+      "payment_transactions_smart_file_chronological_idx",
+    ).on(table.projectSmartFileId, table.createdAt),
+  }),
+);
+
+export const photographerEarnings = pgTable(
+  "photographer_earnings",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    projectId: varchar("project_id")
+      .notNull()
+      .references(() => projects.id),
+    paymentIntentId: text("payment_intent_id").unique(), // Stripe Connect Payment Intent ID (unique)
+    transferId: text("transfer_id").unique(), // Stripe Connect Transfer ID (unique)
+    totalAmountCents: integer("total_amount_cents").notNull(), // Original payment amount
+    platformFeeCents: integer("platform_fee_cents").notNull(), // Platform commission
+    photographerEarningsCents: integer("photographer_earnings_cents").notNull(), // Amount photographer receives
+    currency: text("currency").default("USD").notNull(), // Currency for the earning
+    status: text("status").notNull().default("pending"), // pending, transferred, failed
+    transferredAt: timestamp("transferred_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    // Composite indexes for performance
+    photographerStatusIdx: index(
+      "photographer_earnings_photographer_status_idx",
+    ).on(table.photographerId, table.status),
+  }),
+);
+
+export const photographerPayouts = pgTable(
+  "photographer_payouts",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    stripePayoutId: text("stripe_payout_id").unique(), // Stripe payout ID (unique)
+    amountCents: integer("amount_cents").notNull(),
+    currency: text("currency").default("USD").notNull(),
+    status: text("status").notNull().default("pending"), // pending, paid, failed, cancelled
+    isInstant: boolean("is_instant").default(false), // Whether this was an instant payout (1% fee)
+    feeCents: integer("fee_cents").default(0), // Instant payout fee if applicable
+    method: text("method").default("standard"), // standard, instant
+    stripeCreatedAt: timestamp("stripe_created_at"),
+    arrivalDate: timestamp("arrival_date"), // Expected arrival date
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    // Composite indexes for performance
+    photographerStatusIdx: index(
+      "photographer_payouts_photographer_status_idx",
+    ).on(table.photographerId, table.status),
+  }),
+);
 
 // Track when photographers last read conversations with contacts for inbox unread badges
-export const conversationReads = pgTable("conversation_reads", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  contactId: varchar("contact_id").notNull().references(() => contacts.id),
-  lastReadAt: timestamp("last_read_at").notNull().defaultNow(),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-}, (table) => ({
-  // Unique constraint: one read tracker per photographer-contact pair
-  photographerContactUnique: unique("conversation_reads_photographer_contact_unique").on(
-    table.photographerId, table.contactId
-  ),
-  // Index for quick lookups by photographer
-  photographerIdx: index("conversation_reads_photographer_idx").on(table.photographerId)
-}));
+export const conversationReads = pgTable(
+  "conversation_reads",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    contactId: varchar("contact_id")
+      .notNull()
+      .references(() => contacts.id),
+    lastReadAt: timestamp("last_read_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    // Unique constraint: one read tracker per photographer-contact pair
+    photographerContactUnique: unique(
+      "conversation_reads_photographer_contact_unique",
+    ).on(table.photographerId, table.contactId),
+    // Index for quick lookups by photographer
+    photographerIdx: index("conversation_reads_photographer_idx").on(
+      table.photographerId,
+    ),
+  }),
+);
 
-export const projectActivityLog = pgTable("project_activity_log", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  projectId: varchar("project_id").notNull().references(() => projects.id),
-  action: text("action").notNull(), // CREATED, UPDATED, SENT, RECEIVED, etc.
-  activityType: text("activity_type").notNull(), // STAGE_CHANGE, PROPOSAL_SENT, PROPOSAL_SIGNED, PAYMENT_RECEIVED, MESSAGE_SENT, EMAIL_OPENED, etc.
-  title: text("title").notNull(),
-  description: text("description"),
-  metadata: json("metadata"), // Additional structured data
-  relatedId: varchar("related_id"), // ID of related record (estimate, message, etc.)
-  relatedType: text("related_type"), // Type of related record (ESTIMATE, MESSAGE, EMAIL_LOG, etc.)
-  // Gmail threading fields for email reply tracking
-  gmailThreadId: text("gmail_thread_id"), // Gmail conversation thread ID for threading replies
-  gmailMessageId: text("gmail_message_id"), // Gmail message ID for this specific email
-  gmailInReplyTo: text("gmail_in_reply_to"), // Message ID this email is replying to
-  emailDirection: text("email_direction"), // OUTBOUND (sent from portal) or INBOUND (reply from client)
-  emailSignature: text("email_signature"), // HMAC signature for verifying incoming emails
-  processedAt: timestamp("processed_at"), // When an incoming email was processed
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  // Index for finding emails by thread ID for threading conversations
-  gmailThreadIdx: index("project_activity_gmail_thread_idx").on(table.gmailThreadId),
-  // Index for preventing duplicate processing of incoming emails
-  gmailMessageIdx: index("project_activity_gmail_message_idx").on(table.gmailMessageId)
-}));
+export const projectActivityLog = pgTable(
+  "project_activity_log",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    projectId: varchar("project_id")
+      .notNull()
+      .references(() => projects.id),
+    action: text("action").notNull(), // CREATED, UPDATED, SENT, RECEIVED, etc.
+    activityType: text("activity_type").notNull(), // STAGE_CHANGE, PROPOSAL_SENT, PROPOSAL_SIGNED, PAYMENT_RECEIVED, MESSAGE_SENT, EMAIL_OPENED, etc.
+    title: text("title").notNull(),
+    description: text("description"),
+    metadata: json("metadata"), // Additional structured data
+    relatedId: varchar("related_id"), // ID of related record (estimate, message, etc.)
+    relatedType: text("related_type"), // Type of related record (ESTIMATE, MESSAGE, EMAIL_LOG, etc.)
+    // Gmail threading fields for email reply tracking
+    gmailThreadId: text("gmail_thread_id"), // Gmail conversation thread ID for threading replies
+    gmailMessageId: text("gmail_message_id"), // Gmail message ID for this specific email
+    gmailInReplyTo: text("gmail_in_reply_to"), // Message ID this email is replying to
+    emailDirection: text("email_direction"), // OUTBOUND (sent from portal) or INBOUND (reply from client)
+    emailSignature: text("email_signature"), // HMAC signature for verifying incoming emails
+    processedAt: timestamp("processed_at"), // When an incoming email was processed
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    // Index for finding emails by thread ID for threading conversations
+    gmailThreadIdx: index("project_activity_gmail_thread_idx").on(
+      table.gmailThreadId,
+    ),
+    // Index for preventing duplicate processing of incoming emails
+    gmailMessageIdx: index("project_activity_gmail_message_idx").on(
+      table.gmailMessageId,
+    ),
+  }),
+);
 
 export const clientPortalTokens = pgTable("client_portal_tokens", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  clientId: varchar("client_id").notNull().references(() => contacts.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  clientId: varchar("client_id")
+    .notNull()
+    .references(() => contacts.id),
   projectId: varchar("project_id").references(() => projects.id),
   tokenType: text("token_type").notNull().default("CLIENT"), // CLIENT or PROJECT
   token: text("token").notNull().unique(),
   expiresAt: timestamp("expires_at").notNull(),
   usedAt: timestamp("used_at"),
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 // Advertising System Tables
-export const adCampaigns = pgTable("ad_campaigns", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  platform: text("platform").notNull(), // GOOGLE, FACEBOOK
-  status: text("status").notNull().default("DRAFT"), // DRAFT, ACTIVE, PAUSED, BUDGET_EXCEEDED, PAYMENT_FAILED, COMPLETED
-  monthlyBudgetCents: integer("monthly_budget_cents").notNull(), // Budget in cents
-  markupPercent: integer("markup_percent").notNull(), // Markup percentage (e.g., 2500 = 25%)
-  // External platform IDs
-  googleAdAccountId: text("google_ad_account_id"),
-  googleCampaignId: text("google_campaign_id"),
-  facebookAdAccountId: text("facebook_ad_account_id"),
-  facebookCampaignId: text("facebook_campaign_id"),
-  // Landing page
-  landingPageSubdomain: text("landing_page_subdomain").unique(),
-  landingPageUrl: text("landing_page_url"),
-  // Tracking
-  currentSpendCents: integer("current_spend_cents").default(0),
-  totalLeadsGenerated: integer("total_leads_generated").default(0),
-  lastSyncedAt: timestamp("last_synced_at"),
-  activatedAt: timestamp("activated_at"),
-  pausedAt: timestamp("paused_at"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-}, (table) => ({
-  photographerIdx: index("ad_campaigns_photographer_idx").on(table.photographerId),
-  statusIdx: index("ad_campaigns_status_idx").on(table.status),
-  platformIdx: index("ad_campaigns_platform_idx").on(table.platform)
-}));
+export const adCampaigns = pgTable(
+  "ad_campaigns",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    platform: text("platform").notNull(), // GOOGLE, FACEBOOK
+    status: text("status").notNull().default("DRAFT"), // DRAFT, ACTIVE, PAUSED, BUDGET_EXCEEDED, PAYMENT_FAILED, COMPLETED
+    monthlyBudgetCents: integer("monthly_budget_cents").notNull(), // Budget in cents
+    markupPercent: integer("markup_percent").notNull(), // Markup percentage (e.g., 2500 = 25%)
+    // External platform IDs
+    googleAdAccountId: text("google_ad_account_id"),
+    googleCampaignId: text("google_campaign_id"),
+    facebookAdAccountId: text("facebook_ad_account_id"),
+    facebookCampaignId: text("facebook_campaign_id"),
+    // Landing page
+    landingPageSubdomain: text("landing_page_subdomain").unique(),
+    landingPageUrl: text("landing_page_url"),
+    // Tracking
+    currentSpendCents: integer("current_spend_cents").default(0),
+    totalLeadsGenerated: integer("total_leads_generated").default(0),
+    lastSyncedAt: timestamp("last_synced_at"),
+    activatedAt: timestamp("activated_at"),
+    pausedAt: timestamp("paused_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    photographerIdx: index("ad_campaigns_photographer_idx").on(
+      table.photographerId,
+    ),
+    statusIdx: index("ad_campaigns_status_idx").on(table.status),
+    platformIdx: index("ad_campaigns_platform_idx").on(table.platform),
+  }),
+);
 
-export const adPaymentMethods = pgTable("ad_payment_methods", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  stripePaymentMethodId: text("stripe_payment_method_id").notNull(),
-  cardBrand: text("card_brand"), // visa, mastercard, etc.
-  cardLast4: text("card_last_4"),
-  cardExpMonth: integer("card_exp_month"),
-  cardExpYear: integer("card_exp_year"),
-  isDefault: boolean("is_default").default(false),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-}, (table) => ({
-  photographerIdx: index("ad_payment_methods_photographer_idx").on(table.photographerId)
-}));
+export const adPaymentMethods = pgTable(
+  "ad_payment_methods",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    stripePaymentMethodId: text("stripe_payment_method_id").notNull(),
+    cardBrand: text("card_brand"), // visa, mastercard, etc.
+    cardLast4: text("card_last_4"),
+    cardExpMonth: integer("card_exp_month"),
+    cardExpYear: integer("card_exp_year"),
+    isDefault: boolean("is_default").default(false),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    photographerIdx: index("ad_payment_methods_photographer_idx").on(
+      table.photographerId,
+    ),
+  }),
+);
 
-export const adPerformance = pgTable("ad_performance", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  campaignId: varchar("campaign_id").notNull().references(() => adCampaigns.id),
-  date: timestamp("date").notNull(),
-  impressions: integer("impressions").default(0),
-  clicks: integer("clicks").default(0),
-  leads: integer("leads").default(0),
-  spendCents: integer("spend_cents").default(0),
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  campaignDateIdx: index("ad_performance_campaign_date_idx").on(table.campaignId, table.date)
-}));
+export const adPerformance = pgTable(
+  "ad_performance",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    campaignId: varchar("campaign_id")
+      .notNull()
+      .references(() => adCampaigns.id),
+    date: timestamp("date").notNull(),
+    impressions: integer("impressions").default(0),
+    clicks: integer("clicks").default(0),
+    leads: integer("leads").default(0),
+    spendCents: integer("spend_cents").default(0),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    campaignDateIdx: index("ad_performance_campaign_date_idx").on(
+      table.campaignId,
+      table.date,
+    ),
+  }),
+);
 
-export const adBillingTransactions = pgTable("ad_billing_transactions", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  campaignId: varchar("campaign_id").references(() => adCampaigns.id),
-  type: text("type").notNull(), // CHARGE, REFUND
-  amountCents: integer("amount_cents").notNull(),
-  platformSpendCents: integer("platform_spend_cents").notNull(), // Actual spend on ad platform
-  markupCents: integer("markup_cents").notNull(), // Our markup amount
-  stripeChargeId: text("stripe_charge_id"),
-  stripeRefundId: text("stripe_refund_id"),
-  status: text("status").notNull().default("PENDING"), // PENDING, SUCCEEDED, FAILED
-  failureReason: text("failure_reason"),
-  billingPeriodStart: timestamp("billing_period_start"),
-  billingPeriodEnd: timestamp("billing_period_end"),
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  photographerIdx: index("ad_billing_photographer_idx").on(table.photographerId),
-  statusIdx: index("ad_billing_status_idx").on(table.status)
-}));
+export const adBillingTransactions = pgTable(
+  "ad_billing_transactions",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    campaignId: varchar("campaign_id").references(() => adCampaigns.id),
+    type: text("type").notNull(), // CHARGE, REFUND
+    amountCents: integer("amount_cents").notNull(),
+    platformSpendCents: integer("platform_spend_cents").notNull(), // Actual spend on ad platform
+    markupCents: integer("markup_cents").notNull(), // Our markup amount
+    stripeChargeId: text("stripe_charge_id"),
+    stripeRefundId: text("stripe_refund_id"),
+    status: text("status").notNull().default("PENDING"), // PENDING, SUCCEEDED, FAILED
+    failureReason: text("failure_reason"),
+    billingPeriodStart: timestamp("billing_period_start"),
+    billingPeriodEnd: timestamp("billing_period_end"),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    photographerIdx: index("ad_billing_photographer_idx").on(
+      table.photographerId,
+    ),
+    statusIdx: index("ad_billing_status_idx").on(table.status),
+  }),
+);
 
 // Relations
 export const photographersRelations = relations(photographers, ({ many }) => ({
@@ -1298,47 +1828,47 @@ export const photographersRelations = relations(photographers, ({ many }) => ({
   contacts: many(contacts),
   projects: many(projects),
   bookings: many(bookings),
-  emailHistory: many(emailHistory)
+  emailHistory: many(emailHistory),
 }));
 
 export const usersRelations = relations(users, ({ one }) => ({
   photographer: one(photographers, {
     fields: [users.photographerId],
-    references: [photographers.id]
-  })
+    references: [photographers.id],
+  }),
 }));
 
 export const stagesRelations = relations(stages, ({ one, many }) => ({
   photographer: one(photographers, {
     fields: [stages.photographerId],
-    references: [photographers.id]
+    references: [photographers.id],
   }),
   projects: many(projects),
-  automations: many(automations)
+  automations: many(automations),
 }));
 
 export const contactsRelations = relations(contacts, ({ one, many }) => ({
   photographer: one(photographers, {
     fields: [contacts.photographerId],
-    references: [photographers.id]
+    references: [photographers.id],
   }),
   projects: many(projects),
   emailHistory: many(emailHistory),
-  participantProjects: many(projectParticipants)
+  participantProjects: many(projectParticipants),
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
   client: one(contacts, {
     fields: [projects.clientId],
-    references: [contacts.id]
+    references: [contacts.id],
   }),
   photographer: one(photographers, {
     fields: [projects.photographerId],
-    references: [photographers.id]
+    references: [photographers.id],
   }),
   stage: one(stages, {
     fields: [projects.stageId],
-    references: [stages.id]
+    references: [stages.id],
   }),
   emailLogs: many(emailLogs),
   emailHistory: many(emailHistory),
@@ -1346,383 +1876,452 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
   checklistItems: many(projectChecklistItems),
   questionnaires: many(projectQuestionnaires),
   activityLog: many(projectActivityLog),
-  participants: many(projectParticipants)
+  participants: many(projectParticipants),
 }));
 
-export const projectParticipantsRelations = relations(projectParticipants, ({ one }) => ({
-  project: one(projects, {
-    fields: [projectParticipants.projectId],
-    references: [projects.id]
+export const projectParticipantsRelations = relations(
+  projectParticipants,
+  ({ one }) => ({
+    project: one(projects, {
+      fields: [projectParticipants.projectId],
+      references: [projects.id],
+    }),
+    client: one(contacts, {
+      fields: [projectParticipants.clientId],
+      references: [contacts.id],
+    }),
   }),
-  client: one(contacts, {
-    fields: [projectParticipants.clientId],
-    references: [contacts.id]
-  })
-}));
+);
 
 export const templatesRelations = relations(templates, ({ one, many }) => ({
   photographer: one(photographers, {
     fields: [templates.photographerId],
-    references: [photographers.id]
+    references: [photographers.id],
   }),
-  automationSteps: many(automationSteps)
+  automationSteps: many(automationSteps),
 }));
 
 export const automationsRelations = relations(automations, ({ one, many }) => ({
   photographer: one(photographers, {
     fields: [automations.photographerId],
-    references: [photographers.id]
+    references: [photographers.id],
   }),
   stage: one(stages, {
     fields: [automations.stageId],
-    references: [stages.id]
+    references: [stages.id],
   }),
   targetStage: one(stages, {
     fields: [automations.targetStageId],
-    references: [stages.id]
+    references: [stages.id],
   }),
   conditionStage: one(stages, {
     fields: [automations.stageCondition],
-    references: [stages.id]
+    references: [stages.id],
   }),
   steps: many(automationSteps),
-  businessTriggers: many(automationBusinessTriggers)
+  businessTriggers: many(automationBusinessTriggers),
 }));
 
-export const automationBusinessTriggersRelations = relations(automationBusinessTriggers, ({ one }) => ({
-  automation: one(automations, {
-    fields: [automationBusinessTriggers.automationId],
-    references: [automations.id]
-  })
-}));
-
-export const automationStepsRelations = relations(automationSteps, ({ one }) => ({
-  automation: one(automations, {
-    fields: [automationSteps.automationId],
-    references: [automations.id]
+export const automationBusinessTriggersRelations = relations(
+  automationBusinessTriggers,
+  ({ one }) => ({
+    automation: one(automations, {
+      fields: [automationBusinessTriggers.automationId],
+      references: [automations.id],
+    }),
   }),
-  template: one(templates, {
-    fields: [automationSteps.templateId],
-    references: [templates.id]
-  })
-}));
+);
+
+export const automationStepsRelations = relations(
+  automationSteps,
+  ({ one }) => ({
+    automation: one(automations, {
+      fields: [automationSteps.automationId],
+      references: [automations.id],
+    }),
+    template: one(templates, {
+      fields: [automationSteps.templateId],
+      references: [templates.id],
+    }),
+  }),
+);
 
 export const emailLogsRelations = relations(emailLogs, ({ one }) => ({
   project: one(projects, {
     fields: [emailLogs.projectId],
-    references: [projects.id]
+    references: [projects.id],
   }),
   automationStep: one(automationSteps, {
     fields: [emailLogs.automationStepId],
-    references: [automationSteps.id]
-  })
+    references: [automationSteps.id],
+  }),
 }));
 
 export const smsLogsRelations = relations(smsLogs, ({ one }) => ({
   project: one(projects, {
     fields: [smsLogs.projectId],
-    references: [projects.id]
+    references: [projects.id],
   }),
   automationStep: one(automationSteps, {
     fields: [smsLogs.automationStepId],
-    references: [automationSteps.id]
-  })
+    references: [automationSteps.id],
+  }),
 }));
 
 export const emailHistoryRelations = relations(emailHistory, ({ one }) => ({
   photographer: one(photographers, {
     fields: [emailHistory.photographerId],
-    references: [photographers.id]
+    references: [photographers.id],
   }),
   client: one(contacts, {
     fields: [emailHistory.clientId],
-    references: [contacts.id]
+    references: [contacts.id],
   }),
   project: one(projects, {
     fields: [emailHistory.projectId],
-    references: [projects.id]
+    references: [projects.id],
   }),
   automationStep: one(automationSteps, {
     fields: [emailHistory.automationStepId],
-    references: [automationSteps.id]
-  })
+    references: [automationSteps.id],
+  }),
 }));
 
 export const packagesRelations = relations(packages, ({ one, many }) => ({
   photographer: one(photographers, {
     fields: [packages.photographerId],
-    references: [photographers.id]
+    references: [photographers.id],
   }),
-  items: many(packageItems)
+  items: many(packageItems),
 }));
 
 export const packageItemsRelations = relations(packageItems, ({ one }) => ({
   package: one(packages, {
     fields: [packageItems.packageId],
-    references: [packages.id]
-  })
+    references: [packages.id],
+  }),
 }));
 
 export const addOnsRelations = relations(addOns, ({ one }) => ({
   photographer: one(photographers, {
     fields: [addOns.photographerId],
-    references: [photographers.id]
-  })
-}));
-
-export const questionnaireTemplatesRelations = relations(questionnaireTemplates, ({ one, many }) => ({
-  photographer: one(photographers, {
-    fields: [questionnaireTemplates.photographerId],
-    references: [photographers.id]
+    references: [photographers.id],
   }),
-  questions: many(questionnaireQuestions),
-  projectQuestionnaires: many(projectQuestionnaires)
 }));
 
-export const questionnaireQuestionsRelations = relations(questionnaireQuestions, ({ one }) => ({
-  template: one(questionnaireTemplates, {
-    fields: [questionnaireQuestions.templateId],
-    references: [questionnaireTemplates.id]
-  })
-}));
-
-export const projectQuestionnairesRelations = relations(projectQuestionnaires, ({ one }) => ({
-  project: one(projects, {
-    fields: [projectQuestionnaires.projectId],
-    references: [projects.id]
+export const questionnaireTemplatesRelations = relations(
+  questionnaireTemplates,
+  ({ one, many }) => ({
+    photographer: one(photographers, {
+      fields: [questionnaireTemplates.photographerId],
+      references: [photographers.id],
+    }),
+    questions: many(questionnaireQuestions),
+    projectQuestionnaires: many(projectQuestionnaires),
   }),
-  template: one(questionnaireTemplates, {
-    fields: [projectQuestionnaires.templateId],
-    references: [questionnaireTemplates.id]
-  })
-}));
+);
+
+export const questionnaireQuestionsRelations = relations(
+  questionnaireQuestions,
+  ({ one }) => ({
+    template: one(questionnaireTemplates, {
+      fields: [questionnaireQuestions.templateId],
+      references: [questionnaireTemplates.id],
+    }),
+  }),
+);
+
+export const projectQuestionnairesRelations = relations(
+  projectQuestionnaires,
+  ({ one }) => ({
+    project: one(projects, {
+      fields: [projectQuestionnaires.projectId],
+      references: [projects.id],
+    }),
+    template: one(questionnaireTemplates, {
+      fields: [projectQuestionnaires.templateId],
+      references: [questionnaireTemplates.id],
+    }),
+  }),
+);
 
 export const bookingsRelations = relations(bookings, ({ one }) => ({
   photographer: one(photographers, {
     fields: [bookings.photographerId],
-    references: [photographers.id]
+    references: [photographers.id],
   }),
   project: one(projects, {
     fields: [bookings.projectId],
-    references: [projects.id]
-  })
+    references: [projects.id],
+  }),
 }));
 
-export const projectActivityLogRelations = relations(projectActivityLog, ({ one }) => ({
-  project: one(projects, {
-    fields: [projectActivityLog.projectId],
-    references: [projects.id]
-  })
-}));
+export const projectActivityLogRelations = relations(
+  projectActivityLog,
+  ({ one }) => ({
+    project: one(projects, {
+      fields: [projectActivityLog.projectId],
+      references: [projects.id],
+    }),
+  }),
+);
 
-export const projectChecklistItemsRelations = relations(projectChecklistItems, ({ one }) => ({
-  project: one(projects, {
-    fields: [projectChecklistItems.projectId],
-    references: [projects.id]
-  })
-}));
+export const projectChecklistItemsRelations = relations(
+  projectChecklistItems,
+  ({ one }) => ({
+    project: one(projects, {
+      fields: [projectChecklistItems.projectId],
+      references: [projects.id],
+    }),
+  }),
+);
 
 // Insert schemas
 export const insertPhotographerSchema = createInsertSchema(photographers).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
-export const insertLinkingRequestSchema = createInsertSchema(linkingRequests).omit({
+export const insertLinkingRequestSchema = createInsertSchema(
+  linkingRequests,
+).omit({
   id: true,
   createdAt: true,
-  used: true
+  used: true,
 });
 
-export const insertAdminActivityLogSchema = createInsertSchema(adminActivityLog).omit({
+export const insertAdminActivityLogSchema = createInsertSchema(
+  adminActivityLog,
+).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
 export const insertContactSchema = createInsertSchema(contacts).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
-export const insertSavedPaymentMethodSchema = createInsertSchema(savedPaymentMethods).omit({
-  id: true,
-  createdAt: true
-});
-
-export const insertProjectSchema = createInsertSchema(projects).omit({
+export const insertSavedPaymentMethodSchema = createInsertSchema(
+  savedPaymentMethods,
+).omit({
   id: true,
   createdAt: true,
-  stageEnteredAt: true
-}).extend({
-  eventDate: z.string().optional().transform((val) => val ? new Date(val) : undefined)
 });
+
+export const insertProjectSchema = createInsertSchema(projects)
+  .omit({
+    id: true,
+    createdAt: true,
+    stageEnteredAt: true,
+  })
+  .extend({
+    eventDate: z
+      .string()
+      .optional()
+      .transform((val) => (val ? new Date(val) : undefined)),
+  });
 
 export const insertProjectNoteSchema = createInsertSchema(projectNotes).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
-export const insertProjectParticipantSchema = createInsertSchema(projectParticipants).omit({
+export const insertProjectParticipantSchema = createInsertSchema(
+  projectParticipants,
+).omit({
   id: true,
   createdAt: true,
   inviteSent: true,
-  inviteSentAt: true
+  inviteSentAt: true,
 });
 
 export const insertPortalTokenSchema = createInsertSchema(portalTokens).omit({
   id: true,
   createdAt: true,
-  lastUsedAt: true
+  lastUsedAt: true,
 });
 
 export const insertProjectTypeSchema = createInsertSchema(projectTypes).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
 export const insertStageSchema = createInsertSchema(stages).omit({
-  id: true
+  id: true,
 });
 
 export const insertTemplateSchema = createInsertSchema(templates).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
 export const insertAutomationSchema = createInsertSchema(automations).omit({
-  id: true
+  id: true,
 });
 
 // Separate validation schema for backend API with stricter rules
 export const validateAutomationSchema = insertAutomationSchema.refine(
   (data) => {
-    if (data.automationType === 'COMMUNICATION') {
+    if (data.automationType === "COMMUNICATION") {
       // Communication automations require either:
       // 1. channel (for messaging - EMAIL/SMS)
       // 2. questionnaireTemplateId (for questionnaire assignment)
       const hasChannel = data.channel !== undefined && data.channel !== null;
-      const hasQuestionnaire = data.questionnaireTemplateId !== undefined && data.questionnaireTemplateId !== null;
+      const hasQuestionnaire =
+        data.questionnaireTemplateId !== undefined &&
+        data.questionnaireTemplateId !== null;
 
       // If using custom email builder, validate email content is present
       // Use templateBody pattern (plain text with markers like {{first_name}} and [[BUTTON:...]])
       if (hasChannel && data.useEmailBuilder) {
-        const hasTemplateBody = data.templateBody !== undefined && data.templateBody !== null;
-        const hasSubject = data.emailSubject !== undefined && data.emailSubject !== null;
+        const hasTemplateBody =
+          data.templateBody !== undefined && data.templateBody !== null;
+        const hasSubject =
+          data.emailSubject !== undefined && data.emailSubject !== null;
         return hasTemplateBody && hasSubject;
       }
 
       // For non-email-builder automations (template-based or SMS), just need channel or questionnaire
       return hasChannel || hasQuestionnaire;
     }
-    if (data.automationType === 'STAGE_CHANGE') {
+    if (data.automationType === "STAGE_CHANGE") {
       // Pipeline automations require triggerType and targetStageId
       return data.triggerType !== undefined && data.targetStageId !== undefined;
     }
-    if (data.automationType === 'COUNTDOWN') {
+    if (data.automationType === "COUNTDOWN") {
       // Countdown automations require daysBefore, eventType, and either:
       // - templateId (template-based), OR
       // - templateBody (custom email with useEmailBuilder), OR
       // - targetStageId (stage change countdown), OR
       // - channel (basic countdown notification)
-      const hasTemplate = data.templateId !== undefined && data.templateId !== null;
-      const hasCustomEmail = data.useEmailBuilder && data.templateBody !== undefined && data.emailSubject !== undefined;
-      const hasTargetStage = data.targetStageId !== undefined && data.targetStageId !== null;
+      const hasTemplate =
+        data.templateId !== undefined && data.templateId !== null;
+      const hasCustomEmail =
+        data.useEmailBuilder &&
+        data.templateBody !== undefined &&
+        data.emailSubject !== undefined;
+      const hasTargetStage =
+        data.targetStageId !== undefined && data.targetStageId !== null;
       const hasChannel = data.channel !== undefined && data.channel !== null;
 
       // Countdown is valid if it has daysBefore, eventType, and either an action or is stage-change-only
-      const hasBasicFields = data.daysBefore !== undefined && data.eventType !== undefined;
-      const hasAction = hasTemplate || hasCustomEmail || hasTargetStage || hasChannel;
+      const hasBasicFields =
+        data.daysBefore !== undefined && data.eventType !== undefined;
+      const hasAction =
+        hasTemplate || hasCustomEmail || hasTargetStage || hasChannel;
 
       return hasBasicFields && (hasAction || hasTargetStage);
     }
     return true;
   },
   {
-    message: "Invalid automation configuration - ensure required fields are present for the selected automation type"
-  }
+    message:
+      "Invalid automation configuration - ensure required fields are present for the selected automation type",
+  },
 );
 
-export const insertAutomationStepSchema = createInsertSchema(automationSteps).omit({
-  id: true
+export const insertAutomationStepSchema = createInsertSchema(
+  automationSteps,
+).omit({
+  id: true,
 });
 
-export const insertAutomationBusinessTriggerSchema = createInsertSchema(automationBusinessTriggers).omit({
+export const insertAutomationBusinessTriggerSchema = createInsertSchema(
+  automationBusinessTriggers,
+).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
-export const insertAutomationExecutionSchema = createInsertSchema(automationExecutions).omit({
+export const insertAutomationExecutionSchema = createInsertSchema(
+  automationExecutions,
+).omit({
   id: true,
-  executedAt: true
+  executedAt: true,
 });
 
 export const insertPackageSchema = createInsertSchema(packages).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
 export const insertAddOnSchema = createInsertSchema(addOns).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
-export const insertQuestionnaireTemplateSchema = createInsertSchema(questionnaireTemplates).omit({
-  id: true,
-  createdAt: true
-});
-
-export const insertQuestionnaireQuestionSchema = createInsertSchema(questionnaireQuestions).omit({
-  id: true
-});
-
-export const insertProjectQuestionnaireSchema = createInsertSchema(projectQuestionnaires).omit({
-  id: true,
-  createdAt: true
-});
-
-export const insertConversationReadSchema = createInsertSchema(conversationReads).omit({
+export const insertQuestionnaireTemplateSchema = createInsertSchema(
+  questionnaireTemplates,
+).omit({
   id: true,
   createdAt: true,
-  updatedAt: true
+});
+
+export const insertQuestionnaireQuestionSchema = createInsertSchema(
+  questionnaireQuestions,
+).omit({
+  id: true,
+});
+
+export const insertProjectQuestionnaireSchema = createInsertSchema(
+  projectQuestionnaires,
+).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertConversationReadSchema = createInsertSchema(
+  conversationReads,
+).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 export const insertSmsLogSchema = createInsertSchema(smsLogs).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
 export const insertEmailHistorySchema = createInsertSchema(emailHistory).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
-export const insertProjectActivityLogSchema = createInsertSchema(projectActivityLog).omit({
-  id: true,
-  createdAt: true
-});
-export const insertClientPortalTokenSchema = createInsertSchema(clientPortalTokens).omit({
-  id: true,
-  createdAt: true
-});
-
-export const insertBookingSchema = createInsertSchema(bookings).omit({
+export const insertProjectActivityLogSchema = createInsertSchema(
+  projectActivityLog,
+).omit({
   id: true,
   createdAt: true,
-  bookingToken: true
-}).extend({
-  startAt: z.string().transform((val) => new Date(val)),
-  endAt: z.string().transform((val) => new Date(val))
 });
+export const insertClientPortalTokenSchema = createInsertSchema(
+  clientPortalTokens,
+).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertBookingSchema = createInsertSchema(bookings)
+  .omit({
+    id: true,
+    createdAt: true,
+    bookingToken: true,
+  })
+  .extend({
+    startAt: z.string().transform((val) => new Date(val)),
+    endAt: z.string().transform((val) => new Date(val)),
+  });
 
 export const insertShortLinkSchema = createInsertSchema(shortLinks).omit({
   id: true,
   createdAt: true,
-  clicks: true
+  clicks: true,
 });
 
 export const insertLeadFormSchema = createInsertSchema(leadForms).omit({
@@ -1730,41 +2329,56 @@ export const insertLeadFormSchema = createInsertSchema(leadForms).omit({
   createdAt: true,
   updatedAt: true,
   publicToken: true,
-  submissionCount: true
+  submissionCount: true,
 });
 
 export const insertSmartFileSchema = createInsertSchema(smartFiles).omit({
   id: true,
   createdAt: true,
-  updatedAt: true
+  updatedAt: true,
 });
 
-export const insertSmartFilePageSchema = createInsertSchema(smartFilePages).omit({
-  id: true,
-  createdAt: true
-});
-
-export const insertProjectSmartFileSchema = createInsertSchema(projectSmartFiles).omit({
+export const insertSmartFilePageSchema = createInsertSchema(
+  smartFilePages,
+).omit({
   id: true,
   createdAt: true,
-  updatedAt: true
 });
 
-export const insertPaymentTransactionSchema = createInsertSchema(paymentTransactions).omit({
+export const insertProjectSmartFileSchema = createInsertSchema(
+  projectSmartFiles,
+).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertPaymentTransactionSchema = createInsertSchema(
+  paymentTransactions,
+).omit({
+  id: true,
+  createdAt: true,
 });
 
 // Booking confirmation validation schema
 export const bookingConfirmationSchema = z.object({
-  clientName: z.string().min(2, "Name must be at least 2 characters").max(100, "Name too long"),
-  clientEmail: z.string().email("Invalid email address").max(255, "Email too long"),
-  clientPhone: z.string().min(10, "Phone number must be at least 10 digits").max(20, "Phone number too long")
+  clientName: z
+    .string()
+    .min(2, "Name must be at least 2 characters")
+    .max(100, "Name too long"),
+  clientEmail: z
+    .string()
+    .email("Invalid email address")
+    .max(255, "Email too long"),
+  clientPhone: z
+    .string()
+    .min(10, "Phone number must be at least 10 digits")
+    .max(20, "Phone number too long"),
 });
 
 // Update booking validation schema for PUT requests
 export const updateBookingSchema = insertBookingSchema.partial().omit({
-  photographerId: true
+  photographerId: true,
 });
 
 // Sanitized booking data for public endpoints (excludes sensitive photographer info)
@@ -1779,15 +2393,21 @@ export const sanitizedBookingSchema = z.object({
   isFirstBooking: z.boolean(),
   googleMeetLink: z.string().nullable(),
   clientEmail: z.string().nullable(),
-  clientPhone: z.string().nullable(), 
+  clientPhone: z.string().nullable(),
   clientName: z.string().nullable(),
-  createdAt: z.date()
+  createdAt: z.date(),
 });
 
 // Daily availability template schemas
-export const insertDailyAvailabilityTemplateSchema = createInsertSchema(dailyAvailabilityTemplates).omit({ id: true });
-export const insertDailyAvailabilityBreakSchema = createInsertSchema(dailyAvailabilityBreaks).omit({ id: true });
-export const insertDailyAvailabilityOverrideSchema = createInsertSchema(dailyAvailabilityOverrides).omit({ id: true });
+export const insertDailyAvailabilityTemplateSchema = createInsertSchema(
+  dailyAvailabilityTemplates,
+).omit({ id: true });
+export const insertDailyAvailabilityBreakSchema = createInsertSchema(
+  dailyAvailabilityBreaks,
+).omit({ id: true });
+export const insertDailyAvailabilityOverrideSchema = createInsertSchema(
+  dailyAvailabilityOverrides,
+).omit({ id: true });
 
 // Old availability slot schemas removed - use template-based system instead
 // Use insertDailyAvailabilityTemplateSchema and insertDailyAvailabilityOverrideSchema
@@ -1800,18 +2420,24 @@ export type InsertUser = z.infer<typeof insertUserSchema>;
 export type LinkingRequest = typeof linkingRequests.$inferSelect;
 export type InsertLinkingRequest = z.infer<typeof insertLinkingRequestSchema>;
 export type AdminActivityLog = typeof adminActivityLog.$inferSelect;
-export type InsertAdminActivityLog = z.infer<typeof insertAdminActivityLogSchema>;
+export type InsertAdminActivityLog = z.infer<
+  typeof insertAdminActivityLogSchema
+>;
 export type Contact = typeof contacts.$inferSelect;
 export type InsertContact = z.infer<typeof insertContactSchema>;
 export type SavedPaymentMethod = typeof savedPaymentMethods.$inferSelect;
-export type InsertSavedPaymentMethod = z.infer<typeof insertSavedPaymentMethodSchema>;
+export type InsertSavedPaymentMethod = z.infer<
+  typeof insertSavedPaymentMethodSchema
+>;
 export type Project = typeof projects.$inferSelect;
 export type InsertProject = z.infer<typeof insertProjectSchema>;
 export type ProjectNote = typeof projectNotes.$inferSelect;
 export type InsertProjectNote = z.infer<typeof insertProjectNoteSchema>;
 export type PhotographerTag = typeof photographerTags.$inferSelect;
 export type ProjectParticipant = typeof projectParticipants.$inferSelect;
-export type InsertProjectParticipant = z.infer<typeof insertProjectParticipantSchema>;
+export type InsertProjectParticipant = z.infer<
+  typeof insertProjectParticipantSchema
+>;
 export type PortalToken = typeof portalTokens.$inferSelect;
 export type InsertPortalToken = z.infer<typeof insertPortalTokenSchema>;
 export type ProjectType = typeof projectTypes.$inferSelect;
@@ -1824,38 +2450,64 @@ export type Automation = typeof automations.$inferSelect;
 export type InsertAutomation = z.infer<typeof insertAutomationSchema>;
 export type AutomationStep = typeof automationSteps.$inferSelect;
 export type InsertAutomationStep = z.infer<typeof insertAutomationStepSchema>;
-export type AutomationBusinessTrigger = typeof automationBusinessTriggers.$inferSelect;
-export type InsertAutomationBusinessTrigger = z.infer<typeof insertAutomationBusinessTriggerSchema>;
+export type AutomationBusinessTrigger =
+  typeof automationBusinessTriggers.$inferSelect;
+export type InsertAutomationBusinessTrigger = z.infer<
+  typeof insertAutomationBusinessTriggerSchema
+>;
 export type AutomationExecution = typeof automationExecutions.$inferSelect;
-export type InsertAutomationExecution = z.infer<typeof insertAutomationExecutionSchema>;
+export type InsertAutomationExecution = z.infer<
+  typeof insertAutomationExecutionSchema
+>;
 export type Package = typeof packages.$inferSelect;
 export type InsertPackage = z.infer<typeof insertPackageSchema>;
 export type AddOn = typeof addOns.$inferSelect;
 export type InsertAddOn = z.infer<typeof insertAddOnSchema>;
 export type QuestionnaireTemplate = typeof questionnaireTemplates.$inferSelect;
-export type InsertQuestionnaireTemplate = z.infer<typeof insertQuestionnaireTemplateSchema>;
+export type InsertQuestionnaireTemplate = z.infer<
+  typeof insertQuestionnaireTemplateSchema
+>;
 export type QuestionnaireQuestion = typeof questionnaireQuestions.$inferSelect;
-export type InsertQuestionnaireQuestion = z.infer<typeof insertQuestionnaireQuestionSchema>;
+export type InsertQuestionnaireQuestion = z.infer<
+  typeof insertQuestionnaireQuestionSchema
+>;
 export type ConversationRead = typeof conversationReads.$inferSelect;
-export type InsertConversationRead = z.infer<typeof insertConversationReadSchema>;
+export type InsertConversationRead = z.infer<
+  typeof insertConversationReadSchema
+>;
 export type SmsLog = typeof smsLogs.$inferSelect;
 export type InsertSmsLog = z.infer<typeof insertSmsLogSchema>;
 export type EmailHistory = typeof emailHistory.$inferSelect;
 export type InsertEmailHistory = z.infer<typeof insertEmailHistorySchema>;
 export type ProjectActivityLog = typeof projectActivityLog.$inferSelect;
-export type InsertProjectActivityLog = z.infer<typeof insertProjectActivityLogSchema>;
+export type InsertProjectActivityLog = z.infer<
+  typeof insertProjectActivityLogSchema
+>;
 export type ProjectChecklistItem = typeof projectChecklistItems.$inferSelect;
 export type ProjectQuestionnaire = typeof projectQuestionnaires.$inferSelect;
 export type ClientPortalToken = typeof clientPortalTokens.$inferSelect;
-export type InsertClientPortalToken = z.infer<typeof insertClientPortalTokenSchema>;
-export type DailyAvailabilityTemplate = typeof dailyAvailabilityTemplates.$inferSelect;
-export type InsertDailyAvailabilityTemplate = z.infer<typeof insertDailyAvailabilityTemplateSchema>;
-export type DailyAvailabilityBreak = typeof dailyAvailabilityBreaks.$inferSelect;
-export type InsertDailyAvailabilityBreak = z.infer<typeof insertDailyAvailabilityBreakSchema>;
-export type DailyAvailabilityOverride = typeof dailyAvailabilityOverrides.$inferSelect;
-export type InsertDailyAvailabilityOverride = z.infer<typeof insertDailyAvailabilityOverrideSchema>;
+export type InsertClientPortalToken = z.infer<
+  typeof insertClientPortalTokenSchema
+>;
+export type DailyAvailabilityTemplate =
+  typeof dailyAvailabilityTemplates.$inferSelect;
+export type InsertDailyAvailabilityTemplate = z.infer<
+  typeof insertDailyAvailabilityTemplateSchema
+>;
+export type DailyAvailabilityBreak =
+  typeof dailyAvailabilityBreaks.$inferSelect;
+export type InsertDailyAvailabilityBreak = z.infer<
+  typeof insertDailyAvailabilityBreakSchema
+>;
+export type DailyAvailabilityOverride =
+  typeof dailyAvailabilityOverrides.$inferSelect;
+export type InsertDailyAvailabilityOverride = z.infer<
+  typeof insertDailyAvailabilityOverrideSchema
+>;
 export type AvailabilitySlot = typeof availabilitySlots.$inferSelect;
-export type InsertAvailabilitySlot = z.infer<typeof insertAvailabilitySlotSchema>;
+export type InsertAvailabilitySlot = z.infer<
+  typeof insertAvailabilitySlotSchema
+>;
 export type Booking = typeof bookings.$inferSelect;
 export type InsertBooking = z.infer<typeof insertBookingSchema>;
 
@@ -1894,7 +2546,7 @@ export type ContactWithStage = Contact & {
 // Timeline event types for client history
 export type TimelineEvent =
   | {
-      type: 'activity';
+      type: "activity";
       id: string;
       title: string;
       description?: string;
@@ -1905,7 +2557,7 @@ export type TimelineEvent =
       createdAt: Date;
     }
   | {
-      type: 'email';
+      type: "email";
       id: string;
       title: string;
       description: string;
@@ -1922,7 +2574,7 @@ export type TimelineEvent =
       automationName?: string;
     }
   | {
-      type: 'sms';
+      type: "sms";
       id: string;
       title: string;
       description: string;
@@ -1936,7 +2588,7 @@ export type TimelineEvent =
       automationName?: string;
     }
   | {
-      type: 'proposal';
+      type: "proposal";
       id: string;
       title: string;
       description: string;
@@ -1947,7 +2599,7 @@ export type TimelineEvent =
       createdAt: Date;
     }
   | {
-      type: 'payment';
+      type: "payment";
       id: string;
       title: string;
       description: string;
@@ -1958,7 +2610,7 @@ export type TimelineEvent =
       createdAt: Date;
     }
   | {
-      type: 'message';
+      type: "message";
       id: string;
       title: string;
       description: string;
@@ -1968,56 +2620,81 @@ export type TimelineEvent =
     };
 
 // Insert schemas for new Stripe Connect tables
-export const insertPhotographerEarningsSchema = createInsertSchema(photographerEarnings).omit({
+export const insertPhotographerEarningsSchema = createInsertSchema(
+  photographerEarnings,
+).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
 // Drip Campaign Schemas
 export const insertDripCampaignSchema = createInsertSchema(dripCampaigns).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
-export const insertDripCampaignEmailSchema = createInsertSchema(dripCampaignEmails).omit({
-  id: true,
-  createdAt: true
-});
-
-export const insertDripCampaignSubscriptionSchema = createInsertSchema(dripCampaignSubscriptions).omit({
-  id: true,
-  startedAt: true
-});
-
-export const insertDripCampaignVersionHistorySchema = createInsertSchema(dripCampaignVersionHistory).omit({
-  id: true,
-  createdAt: true
-});
-
-export const insertDripEmailDeliverySchema = createInsertSchema(dripEmailDeliveries).omit({
-  id: true,
-  createdAt: true
-});
-
-export const insertStaticCampaignSettingsSchema = createInsertSchema(staticCampaignSettings).omit({
+export const insertDripCampaignEmailSchema = createInsertSchema(
+  dripCampaignEmails,
+).omit({
   id: true,
   createdAt: true,
-  updatedAt: true
+});
+
+export const insertDripCampaignSubscriptionSchema = createInsertSchema(
+  dripCampaignSubscriptions,
+).omit({
+  id: true,
+  startedAt: true,
+});
+
+export const insertDripCampaignVersionHistorySchema = createInsertSchema(
+  dripCampaignVersionHistory,
+).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertDripEmailDeliverySchema = createInsertSchema(
+  dripEmailDeliveries,
+).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertStaticCampaignSettingsSchema = createInsertSchema(
+  staticCampaignSettings,
+).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 // Drip Campaign Types
 export type DripCampaign = typeof dripCampaigns.$inferSelect;
 export type InsertDripCampaign = z.infer<typeof insertDripCampaignSchema>;
 export type DripCampaignEmail = typeof dripCampaignEmails.$inferSelect;
-export type InsertDripCampaignEmail = z.infer<typeof insertDripCampaignEmailSchema>;
-export type DripCampaignSubscription = typeof dripCampaignSubscriptions.$inferSelect;
-export type InsertDripCampaignSubscription = z.infer<typeof insertDripCampaignSubscriptionSchema>;
-export type DripCampaignVersionHistory = typeof dripCampaignVersionHistory.$inferSelect;
-export type InsertDripCampaignVersionHistory = z.infer<typeof insertDripCampaignVersionHistorySchema>;
+export type InsertDripCampaignEmail = z.infer<
+  typeof insertDripCampaignEmailSchema
+>;
+export type DripCampaignSubscription =
+  typeof dripCampaignSubscriptions.$inferSelect;
+export type InsertDripCampaignSubscription = z.infer<
+  typeof insertDripCampaignSubscriptionSchema
+>;
+export type DripCampaignVersionHistory =
+  typeof dripCampaignVersionHistory.$inferSelect;
+export type InsertDripCampaignVersionHistory = z.infer<
+  typeof insertDripCampaignVersionHistorySchema
+>;
 
 // Enhanced drip campaign types for the UI
-export type DripCampaignEmailStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
-export type CampaignChangeType = 'CREATED' | 'EMAIL_MODIFIED' | 'EMAIL_ADDED' | 'EMAIL_REMOVED' | 'SETTINGS_CHANGED';
+export type DripCampaignEmailStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type CampaignChangeType =
+  | "CREATED"
+  | "EMAIL_MODIFIED"
+  | "EMAIL_ADDED"
+  | "EMAIL_REMOVED"
+  | "SETTINGS_CHANGED";
 
 // Extended types for campaign management with version control
 export type DripCampaignWithEmails = DripCampaign & {
@@ -2033,9 +2710,13 @@ export type DripCampaignEmailWithVersioning = DripCampaignEmail & {
   versionHistory?: DripCampaignVersionHistory[];
 };
 export type DripEmailDelivery = typeof dripEmailDeliveries.$inferSelect;
-export type InsertDripEmailDelivery = z.infer<typeof insertDripEmailDeliverySchema>;
+export type InsertDripEmailDelivery = z.infer<
+  typeof insertDripEmailDeliverySchema
+>;
 export type StaticCampaignSettings = typeof staticCampaignSettings.$inferSelect;
-export type InsertStaticCampaignSettings = z.infer<typeof insertStaticCampaignSettingsSchema>;
+export type InsertStaticCampaignSettings = z.infer<
+  typeof insertStaticCampaignSettingsSchema
+>;
 
 // Drip Campaign with Relations
 export type DripCampaignWithEmails = DripCampaign & {
@@ -2055,28 +2736,34 @@ export type DripCampaignSubscriptionWithDetails = DripCampaignSubscription & {
   };
 };
 
-export const insertPhotographerPayoutsSchema = createInsertSchema(photographerPayouts).omit({
+export const insertPhotographerPayoutsSchema = createInsertSchema(
+  photographerPayouts,
+).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
 // Types for new Stripe Connect tables
 export type PhotographerEarnings = typeof photographerEarnings.$inferSelect;
-export type InsertPhotographerEarnings = z.infer<typeof insertPhotographerEarningsSchema>;
+export type InsertPhotographerEarnings = z.infer<
+  typeof insertPhotographerEarningsSchema
+>;
 
 export type PhotographerPayouts = typeof photographerPayouts.$inferSelect;
-export type InsertPhotographerPayouts = z.infer<typeof insertPhotographerPayoutsSchema>;
+export type InsertPhotographerPayouts = z.infer<
+  typeof insertPhotographerPayoutsSchema
+>;
 
 // Stripe Connect request validation schemas
 export const createOnboardingLinkSchema = z.object({
   returnUrl: z.string().url().optional(),
-  refreshUrl: z.string().url().optional()
+  refreshUrl: z.string().url().optional(),
 });
 
 export const createPayoutSchema = z.object({
   amountCents: z.number().int().positive(),
-  currency: z.string().length(3).default('USD'),
-  method: z.enum(['standard', 'instant']).default('standard')
+  currency: z.string().length(3).default("USD"),
+  method: z.enum(["standard", "instant"]).default("standard"),
 });
 
 // Short Link Types
@@ -2098,23 +2785,29 @@ export const insertAdCampaignSchema = createInsertSchema(adCampaigns).omit({
   totalLeadsGenerated: true,
   lastSyncedAt: true,
   createdAt: true,
-  updatedAt: true
+  updatedAt: true,
 });
 
-export const insertAdPaymentMethodSchema = createInsertSchema(adPaymentMethods).omit({
+export const insertAdPaymentMethodSchema = createInsertSchema(
+  adPaymentMethods,
+).omit({
   id: true,
   createdAt: true,
-  updatedAt: true
+  updatedAt: true,
 });
 
-export const insertAdPerformanceSchema = createInsertSchema(adPerformance).omit({
-  id: true,
-  createdAt: true
-});
+export const insertAdPerformanceSchema = createInsertSchema(adPerformance).omit(
+  {
+    id: true,
+    createdAt: true,
+  },
+);
 
-export const insertAdBillingTransactionSchema = createInsertSchema(adBillingTransactions).omit({
+export const insertAdBillingTransactionSchema = createInsertSchema(
+  adBillingTransactions,
+).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
 // Advertising System Types
@@ -2125,7 +2818,9 @@ export type InsertAdPaymentMethod = z.infer<typeof insertAdPaymentMethodSchema>;
 export type AdPerformance = typeof adPerformance.$inferSelect;
 export type InsertAdPerformance = z.infer<typeof insertAdPerformanceSchema>;
 export type AdBillingTransaction = typeof adBillingTransactions.$inferSelect;
-export type InsertAdBillingTransaction = z.infer<typeof insertAdBillingTransactionSchema>;
+export type InsertAdBillingTransaction = z.infer<
+  typeof insertAdBillingTransactionSchema
+>;
 
 // Extended types for ad campaign management
 export type AdCampaignWithPerformance = AdCampaign & {
@@ -2138,9 +2833,13 @@ export type AdCampaignWithPerformance = AdCampaign & {
 export type SmartFilePage = typeof smartFilePages.$inferSelect;
 export type InsertSmartFilePage = z.infer<typeof insertSmartFilePageSchema>;
 export type ProjectSmartFile = typeof projectSmartFiles.$inferSelect;
-export type InsertProjectSmartFile = z.infer<typeof insertProjectSmartFileSchema>;
+export type InsertProjectSmartFile = z.infer<
+  typeof insertProjectSmartFileSchema
+>;
 export type PaymentTransaction = typeof paymentTransactions.$inferSelect;
-export type InsertPaymentTransaction = z.infer<typeof insertPaymentTransactionSchema>;
+export type InsertPaymentTransaction = z.infer<
+  typeof insertPaymentTransactionSchema
+>;
 
 // Smart File with pages
 export type SmartFileWithPages = SmartFile & {
@@ -2165,150 +2864,208 @@ export type ProjectSmartFileWithRelations = ProjectSmartFile & {
 export const galleryStatusEnum = {
   DRAFT: "DRAFT",
   READY: "READY",
-  SHARED: "SHARED"
+  SHARED: "SHARED",
 } as const;
 
 // Native galleries (replaces third-party integrations)
-export const galleries = pgTable("galleries", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  projectId: varchar("project_id").references(() => projects.id, { onDelete: "cascade" }), // Nullable for standalone portfolio galleries
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  title: text("title").notNull(),
-  description: text("description"),
-  status: text("status").notNull().default("DRAFT"), // DRAFT, READY, SHARED
-  isPublic: boolean("is_public").default(false), // For photographer's public portfolio showcase
-  // Branding & Customization
-  logoUrl: text("logo_url"), // Custom logo for this gallery (overrides photographer's default)
-  watermarkEnabled: boolean("watermark_enabled").default(true),
-  watermarkText: text("watermark_text"), // Custom watermark text
-  watermarkImageUrl: text("watermark_image_url"), // Custom watermark image/logo
-  watermarkPosition: text("watermark_position").default("bottom-right"), // bottom-right, bottom-left, center, etc.
-  watermarkOpacity: integer("watermark_opacity").default(60), // 0-100, controls transparency
-  brandColorPrimary: text("brand_color_primary"), // Override photographer's brand colors
-  brandColorSecondary: text("brand_color_secondary"),
-  // Download Settings
-  allowDownloads: boolean("allow_downloads").default(true),
-  downloadRequiresApproval: boolean("download_requires_approval").default(false),
-  watermarkDownloads: boolean("watermark_downloads").default(true), // Apply watermark to downloads
-  // Print Settings (for future lab integration)
-  enablePrinting: boolean("enable_printing").default(false),
-  printLabProvider: text("print_lab_provider"), // Future: WHCC, MPIX, etc.
-  printLabSettings: jsonb("print_lab_settings"), // Future: pricing, product catalog, etc.
-  // Expiration & Access Control
-  expiresAt: timestamp("expires_at"), // Optional expiration date
-  accessPin: text("access_pin"), // Optional PIN for additional security
-  // Metadata
-  coverImageId: varchar("cover_image_id"), // Reference to gallery_images.id for cover
-  imageCount: integer("image_count").default(0),
-  viewCount: integer("view_count").default(0),
-  sharedAt: timestamp("shared_at"), // When marked as SHARED and sent to client
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-  deletedAt: timestamp("deleted_at") // Soft delete: null = active, timestamp = deleted (30-day recovery)
-}, (table) => ({
-  projectIdIdx: index("galleries_project_id_idx").on(table.projectId),
-  photographerIdIdx: index("galleries_photographer_id_idx").on(table.photographerId),
-  statusIdx: index("galleries_status_idx").on(table.status),
-  isPublicIdx: index("galleries_is_public_idx").on(table.isPublic),
-  deletedAtIdx: index("galleries_deleted_at_idx").on(table.deletedAt)
-}));
+export const galleries = pgTable(
+  "galleries",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    projectId: varchar("project_id").references(() => projects.id, {
+      onDelete: "cascade",
+    }), // Nullable for standalone portfolio galleries
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    title: text("title").notNull(),
+    description: text("description"),
+    status: text("status").notNull().default("DRAFT"), // DRAFT, READY, SHARED
+    isPublic: boolean("is_public").default(false), // For photographer's public portfolio showcase
+    // Branding & Customization
+    logoUrl: text("logo_url"), // Custom logo for this gallery (overrides photographer's default)
+    watermarkEnabled: boolean("watermark_enabled").default(true),
+    watermarkText: text("watermark_text"), // Custom watermark text
+    watermarkImageUrl: text("watermark_image_url"), // Custom watermark image/logo
+    watermarkPosition: text("watermark_position").default("bottom-right"), // bottom-right, bottom-left, center, etc.
+    watermarkOpacity: integer("watermark_opacity").default(60), // 0-100, controls transparency
+    brandColorPrimary: text("brand_color_primary"), // Override photographer's brand colors
+    brandColorSecondary: text("brand_color_secondary"),
+    // Download Settings
+    allowDownloads: boolean("allow_downloads").default(true),
+    downloadRequiresApproval: boolean("download_requires_approval").default(
+      false,
+    ),
+    watermarkDownloads: boolean("watermark_downloads").default(true), // Apply watermark to downloads
+    // Print Settings (for future lab integration)
+    enablePrinting: boolean("enable_printing").default(false),
+    printLabProvider: text("print_lab_provider"), // Future: WHCC, MPIX, etc.
+    printLabSettings: jsonb("print_lab_settings"), // Future: pricing, product catalog, etc.
+    // Expiration & Access Control
+    expiresAt: timestamp("expires_at"), // Optional expiration date
+    accessPin: text("access_pin"), // Optional PIN for additional security
+    // Metadata
+    coverImageId: varchar("cover_image_id"), // Reference to gallery_images.id for cover
+    imageCount: integer("image_count").default(0),
+    viewCount: integer("view_count").default(0),
+    sharedAt: timestamp("shared_at"), // When marked as SHARED and sent to client
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+    deletedAt: timestamp("deleted_at"), // Soft delete: null = active, timestamp = deleted (30-day recovery)
+  },
+  (table) => ({
+    projectIdIdx: index("galleries_project_id_idx").on(table.projectId),
+    photographerIdIdx: index("galleries_photographer_id_idx").on(
+      table.photographerId,
+    ),
+    statusIdx: index("galleries_status_idx").on(table.status),
+    isPublicIdx: index("galleries_is_public_idx").on(table.isPublic),
+    deletedAtIdx: index("galleries_deleted_at_idx").on(table.deletedAt),
+  }),
+);
 
 // Gallery images (stored in Cloudinary)
-export const galleryImages = pgTable("gallery_images", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  galleryId: varchar("gallery_id").notNull().references(() => galleries.id, { onDelete: "cascade" }),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id),
-  // Cloudinary URLs for different variants
-  originalUrl: text("original_url").notNull(), // Full resolution original
-  webUrl: text("web_url").notNull(), // Web-optimized (1920px)
-  thumbnailUrl: text("thumbnail_url").notNull(), // Grid thumbnail (400px)
-  watermarkedUrl: text("watermarked_url"), // Watermarked version
-  // Cloudinary metadata
-  cloudinaryPublicId: text("cloudinary_public_id").notNull(),
-  cloudinaryFolder: text("cloudinary_folder").notNull(),
-  format: text("format"), // jpg, png, raw, etc.
-  width: integer("width"),
-  height: integer("height"),
-  fileSize: integer("file_size"), // Bytes
-  // Image metadata (EXIF data for print quality)
-  capturedAt: timestamp("captured_at"), // From EXIF
-  cameraMake: text("camera_make"),
-  cameraModel: text("camera_model"),
-  focalLength: text("focal_length"),
-  aperture: text("aperture"),
-  shutterSpeed: text("shutter_speed"),
-  iso: text("iso"),
-  colorProfile: text("color_profile"), // sRGB, Adobe RGB, etc. (important for printing)
-  dpi: integer("dpi"), // Print resolution
-  // Organization
-  sortIndex: integer("sort_index").notNull().default(0), // For drag-drop reordering
-  caption: text("caption"),
-  tags: text("tags").array(), // Searchable tags
-  // Print readiness (for future lab integration)
-  printReady: boolean("print_ready").default(true), // High enough resolution for printing
-  minPrintSize: text("min_print_size"), // e.g., "8x10", "16x20" based on resolution
-  // Timestamps
-  uploadedAt: timestamp("uploaded_at").defaultNow(),
-  createdAt: timestamp("created_at").defaultNow(),
-  deletedAt: timestamp("deleted_at") // Soft delete: null = active, timestamp = deleted (30-day recovery)
-}, (table) => ({
-  galleryIdIdx: index("gallery_images_gallery_id_idx").on(table.galleryId),
-  sortIndexIdx: index("gallery_images_sort_index_idx").on(table.sortIndex),
-  cloudinaryPublicIdIdx: index("gallery_images_cloudinary_public_id_idx").on(table.cloudinaryPublicId),
-  deletedAtIdx: index("gallery_images_deleted_at_idx").on(table.deletedAt)
-}));
+export const galleryImages = pgTable(
+  "gallery_images",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    galleryId: varchar("gallery_id")
+      .notNull()
+      .references(() => galleries.id, { onDelete: "cascade" }),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id),
+    // Cloudinary URLs for different variants
+    originalUrl: text("original_url").notNull(), // Full resolution original
+    webUrl: text("web_url").notNull(), // Web-optimized (1920px)
+    thumbnailUrl: text("thumbnail_url").notNull(), // Grid thumbnail (400px)
+    watermarkedUrl: text("watermarked_url"), // Watermarked version
+    // Cloudinary metadata
+    cloudinaryPublicId: text("cloudinary_public_id").notNull(),
+    cloudinaryFolder: text("cloudinary_folder").notNull(),
+    format: text("format"), // jpg, png, raw, etc.
+    width: integer("width"),
+    height: integer("height"),
+    fileSize: integer("file_size"), // Bytes
+    // Image metadata (EXIF data for print quality)
+    capturedAt: timestamp("captured_at"), // From EXIF
+    cameraMake: text("camera_make"),
+    cameraModel: text("camera_model"),
+    focalLength: text("focal_length"),
+    aperture: text("aperture"),
+    shutterSpeed: text("shutter_speed"),
+    iso: text("iso"),
+    colorProfile: text("color_profile"), // sRGB, Adobe RGB, etc. (important for printing)
+    dpi: integer("dpi"), // Print resolution
+    // Organization
+    sortIndex: integer("sort_index").notNull().default(0), // For drag-drop reordering
+    caption: text("caption"),
+    tags: text("tags").array(), // Searchable tags
+    // Print readiness (for future lab integration)
+    printReady: boolean("print_ready").default(true), // High enough resolution for printing
+    minPrintSize: text("min_print_size"), // e.g., "8x10", "16x20" based on resolution
+    // Timestamps
+    uploadedAt: timestamp("uploaded_at").defaultNow(),
+    createdAt: timestamp("created_at").defaultNow(),
+    deletedAt: timestamp("deleted_at"), // Soft delete: null = active, timestamp = deleted (30-day recovery)
+  },
+  (table) => ({
+    galleryIdIdx: index("gallery_images_gallery_id_idx").on(table.galleryId),
+    sortIndexIdx: index("gallery_images_sort_index_idx").on(table.sortIndex),
+    cloudinaryPublicIdIdx: index("gallery_images_cloudinary_public_id_idx").on(
+      table.cloudinaryPublicId,
+    ),
+    deletedAtIdx: index("gallery_images_deleted_at_idx").on(table.deletedAt),
+  }),
+);
 
 // Client favorites (heart/like system)
-export const galleryFavorites = pgTable("gallery_favorites", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  galleryId: varchar("gallery_id").notNull().references(() => galleries.id, { onDelete: "cascade" }),
-  imageId: varchar("image_id").notNull().references(() => galleryImages.id, { onDelete: "cascade" }),
-  contactId: varchar("contact_id").references(() => contacts.id, { onDelete: "cascade" }), // Nullable for anonymous users
-  sessionId: varchar("session_id"), // For anonymous user sessions
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  galleryIdIdx: index("gallery_favorites_gallery_id_idx").on(table.galleryId),
-  contactIdIdx: index("gallery_favorites_contact_id_idx").on(table.contactId),
-  sessionIdIdx: index("gallery_favorites_session_id_idx").on(table.sessionId)
-}));
+export const galleryFavorites = pgTable(
+  "gallery_favorites",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    galleryId: varchar("gallery_id")
+      .notNull()
+      .references(() => galleries.id, { onDelete: "cascade" }),
+    imageId: varchar("image_id")
+      .notNull()
+      .references(() => galleryImages.id, { onDelete: "cascade" }),
+    contactId: varchar("contact_id").references(() => contacts.id, {
+      onDelete: "cascade",
+    }), // Nullable for anonymous users
+    sessionId: varchar("session_id"), // For anonymous user sessions
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    galleryIdIdx: index("gallery_favorites_gallery_id_idx").on(table.galleryId),
+    contactIdIdx: index("gallery_favorites_contact_id_idx").on(table.contactId),
+    sessionIdIdx: index("gallery_favorites_session_id_idx").on(table.sessionId),
+  }),
+);
 
 // Download requests & ZIP archives
-export const galleryDownloads = pgTable("gallery_downloads", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  galleryId: varchar("gallery_id").notNull().references(() => galleries.id, { onDelete: "cascade" }),
-  contactId: varchar("contact_id").notNull().references(() => contacts.id),
-  scope: text("scope").notNull(), // ALL (all images) or FAVORITES (favorited only)
-  includeWatermark: boolean("include_watermark").default(true),
-  // ZIP archive details
-  zipUrl: text("zip_url"), // Cloudinary archive URL
-  zipSize: integer("zip_size"), // Bytes
-  imageCount: integer("image_count"),
-  status: text("status").notNull().default("PENDING"), // PENDING, PROCESSING, READY, EXPIRED, FAILED
-  expiresAt: timestamp("expires_at"), // 24-48 hour expiration
-  downloadedAt: timestamp("downloaded_at"),
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  galleryIdIdx: index("gallery_downloads_gallery_id_idx").on(table.galleryId),
-  contactIdIdx: index("gallery_downloads_contact_id_idx").on(table.contactId),
-  statusIdx: index("gallery_downloads_status_idx").on(table.status)
-}));
+export const galleryDownloads = pgTable(
+  "gallery_downloads",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    galleryId: varchar("gallery_id")
+      .notNull()
+      .references(() => galleries.id, { onDelete: "cascade" }),
+    contactId: varchar("contact_id")
+      .notNull()
+      .references(() => contacts.id),
+    scope: text("scope").notNull(), // ALL (all images) or FAVORITES (favorited only)
+    includeWatermark: boolean("include_watermark").default(true),
+    // ZIP archive details
+    zipUrl: text("zip_url"), // Cloudinary archive URL
+    zipSize: integer("zip_size"), // Bytes
+    imageCount: integer("image_count"),
+    status: text("status").notNull().default("PENDING"), // PENDING, PROCESSING, READY, EXPIRED, FAILED
+    expiresAt: timestamp("expires_at"), // 24-48 hour expiration
+    downloadedAt: timestamp("downloaded_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    galleryIdIdx: index("gallery_downloads_gallery_id_idx").on(table.galleryId),
+    contactIdIdx: index("gallery_downloads_contact_id_idx").on(table.contactId),
+    statusIdx: index("gallery_downloads_status_idx").on(table.status),
+  }),
+);
 
 // Gallery view analytics
-export const galleryViews = pgTable("gallery_views", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  galleryId: varchar("gallery_id").notNull().references(() => galleries.id, { onDelete: "cascade" }),
-  contactId: varchar("contact_id").references(() => contacts.id), // Null for anonymous views
-  ipAddress: text("ip_address"),
-  userAgent: text("user_agent"),
-  viewedAt: timestamp("viewed_at").defaultNow()
-}, (table) => ({
-  galleryIdIdx: index("gallery_views_gallery_id_idx").on(table.galleryId),
-  viewedAtIdx: index("gallery_views_viewed_at_idx").on(table.viewedAt)
-}));
+export const galleryViews = pgTable(
+  "gallery_views",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    galleryId: varchar("gallery_id")
+      .notNull()
+      .references(() => galleries.id, { onDelete: "cascade" }),
+    contactId: varchar("contact_id").references(() => contacts.id), // Null for anonymous views
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+    viewedAt: timestamp("viewed_at").defaultNow(),
+  },
+  (table) => ({
+    galleryIdIdx: index("gallery_views_gallery_id_idx").on(table.galleryId),
+    viewedAtIdx: index("gallery_views_viewed_at_idx").on(table.viewedAt),
+  }),
+);
 
 // Gallery subscription plans
 export const galleryPlans = pgTable("gallery_plans", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
   displayName: text("display_name").notNull(),
   description: text("description"),
@@ -2318,51 +3075,57 @@ export const galleryPlans = pgTable("gallery_plans", {
   isActive: boolean("is_active").default(true).notNull(),
   sortOrder: integer("sort_order").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 // Relations
 export const galleriesRelations = relations(galleries, ({ one, many }) => ({
   project: one(projects, {
     fields: [galleries.projectId],
-    references: [projects.id]
+    references: [projects.id],
   }),
   photographer: one(photographers, {
     fields: [galleries.photographerId],
-    references: [photographers.id]
+    references: [photographers.id],
   }),
   images: many(galleryImages),
   favorites: many(galleryFavorites),
   downloads: many(galleryDownloads),
-  views: many(galleryViews)
+  views: many(galleryViews),
 }));
 
-export const galleryImagesRelations = relations(galleryImages, ({ one, many }) => ({
-  gallery: one(galleries, {
-    fields: [galleryImages.galleryId],
-    references: [galleries.id]
+export const galleryImagesRelations = relations(
+  galleryImages,
+  ({ one, many }) => ({
+    gallery: one(galleries, {
+      fields: [galleryImages.galleryId],
+      references: [galleries.id],
+    }),
+    photographer: one(photographers, {
+      fields: [galleryImages.photographerId],
+      references: [photographers.id],
+    }),
+    favorites: many(galleryFavorites),
   }),
-  photographer: one(photographers, {
-    fields: [galleryImages.photographerId],
-    references: [photographers.id]
-  }),
-  favorites: many(galleryFavorites)
-}));
+);
 
-export const galleryFavoritesRelations = relations(galleryFavorites, ({ one }) => ({
-  gallery: one(galleries, {
-    fields: [galleryFavorites.galleryId],
-    references: [galleries.id]
+export const galleryFavoritesRelations = relations(
+  galleryFavorites,
+  ({ one }) => ({
+    gallery: one(galleries, {
+      fields: [galleryFavorites.galleryId],
+      references: [galleries.id],
+    }),
+    image: one(galleryImages, {
+      fields: [galleryFavorites.imageId],
+      references: [galleryImages.id],
+    }),
+    contact: one(contacts, {
+      fields: [galleryFavorites.contactId],
+      references: [contacts.id],
+    }),
   }),
-  image: one(galleryImages, {
-    fields: [galleryFavorites.imageId],
-    references: [galleryImages.id]
-  }),
-  contact: one(contacts, {
-    fields: [galleryFavorites.contactId],
-    references: [contacts.id]
-  })
-}));
+);
 
 // Insert schemas
 export const insertGallerySchema = createInsertSchema(galleries).omit({
@@ -2370,29 +3133,33 @@ export const insertGallerySchema = createInsertSchema(galleries).omit({
   imageCount: true,
   viewCount: true,
   createdAt: true,
-  updatedAt: true
+  updatedAt: true,
 });
 
 export const insertGalleryImageSchema = createInsertSchema(galleryImages).omit({
   id: true,
   uploadedAt: true,
-  createdAt: true
+  createdAt: true,
 });
 
-export const insertGalleryFavoriteSchema = createInsertSchema(galleryFavorites).omit({
+export const insertGalleryFavoriteSchema = createInsertSchema(
+  galleryFavorites,
+).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
-export const insertGalleryDownloadSchema = createInsertSchema(galleryDownloads).omit({
+export const insertGalleryDownloadSchema = createInsertSchema(
+  galleryDownloads,
+).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
 });
 
 export const insertGalleryPlanSchema = createInsertSchema(galleryPlans).omit({
   id: true,
   createdAt: true,
-  updatedAt: true
+  updatedAt: true,
 });
 
 // Types
@@ -2423,45 +3190,59 @@ export type GalleryImageWithFavorites = GalleryImage & {
 export const testimonialStatusEnum = {
   PENDING: "PENDING",
   APPROVED: "APPROVED",
-  REJECTED: "REJECTED"
+  REJECTED: "REJECTED",
 } as const;
 
-export const testimonials = pgTable("testimonials", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id, { onDelete: "cascade" }),
-  projectId: varchar("project_id").references(() => projects.id, { onDelete: "set null" }),
-  contactId: varchar("contact_id").references(() => contacts.id, { onDelete: "set null" }),
-  clientName: text("client_name").notNull(),
-  clientEmail: text("client_email"),
-  rating: integer("rating").notNull(), // 1-5 stars
-  testimonialText: text("testimonial_text").notNull(),
-  status: text("status").notNull().default("PENDING"), // PENDING, APPROVED, REJECTED
-  isFeatured: boolean("is_featured").default(false).notNull(),
-  eventDate: timestamp("event_date"), // Wedding/event date for context
-  eventType: text("event_type"), // Wedding, Engagement, etc.
-  createdAt: timestamp("created_at").defaultNow(),
-  approvedAt: timestamp("approved_at"),
-  approvedBy: varchar("approved_by").references(() => users.id)
-}, (table) => ({
-  photographerIdIdx: index("testimonials_photographer_id_idx").on(table.photographerId),
-  statusIdx: index("testimonials_status_idx").on(table.status),
-  isFeaturedIdx: index("testimonials_is_featured_idx").on(table.isFeatured)
-}));
+export const testimonials = pgTable(
+  "testimonials",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id, { onDelete: "cascade" }),
+    projectId: varchar("project_id").references(() => projects.id, {
+      onDelete: "set null",
+    }),
+    contactId: varchar("contact_id").references(() => contacts.id, {
+      onDelete: "set null",
+    }),
+    clientName: text("client_name").notNull(),
+    clientEmail: text("client_email"),
+    rating: integer("rating").notNull(), // 1-5 stars
+    testimonialText: text("testimonial_text").notNull(),
+    status: text("status").notNull().default("PENDING"), // PENDING, APPROVED, REJECTED
+    isFeatured: boolean("is_featured").default(false).notNull(),
+    eventDate: timestamp("event_date"), // Wedding/event date for context
+    eventType: text("event_type"), // Wedding, Engagement, etc.
+    createdAt: timestamp("created_at").defaultNow(),
+    approvedAt: timestamp("approved_at"),
+    approvedBy: varchar("approved_by").references(() => users.id),
+  },
+  (table) => ({
+    photographerIdIdx: index("testimonials_photographer_id_idx").on(
+      table.photographerId,
+    ),
+    statusIdx: index("testimonials_status_idx").on(table.status),
+    isFeaturedIdx: index("testimonials_is_featured_idx").on(table.isFeatured),
+  }),
+);
 
 // Relations
 export const testimonialsRelations = relations(testimonials, ({ one }) => ({
   photographer: one(photographers, {
     fields: [testimonials.photographerId],
-    references: [photographers.id]
+    references: [photographers.id],
   }),
   project: one(projects, {
     fields: [testimonials.projectId],
-    references: [projects.id]
+    references: [projects.id],
   }),
   contact: one(contacts, {
     fields: [testimonials.contactId],
-    references: [contacts.id]
-  })
+    references: [contacts.id],
+  }),
 }));
 
 // Insert schema
@@ -2469,7 +3250,7 @@ export const insertTestimonialSchema = createInsertSchema(testimonials).omit({
   id: true,
   createdAt: true,
   approvedAt: true,
-  approvedBy: true
+  approvedBy: true,
 });
 
 // Types
@@ -2478,71 +3259,87 @@ export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
 
 // Notifications
 export const notificationTypeEnum = {
-  LEAD: "LEAD",                     // New lead/inquiry
-  PAYMENT: "PAYMENT",               // Payment received
-  MESSAGE: "MESSAGE",               // Client message received
-  CONTRACT: "CONTRACT",             // Contract signed
-  SMART_FILE_VIEWED: "SMART_FILE_VIEWED",   // Client viewed proposal
+  LEAD: "LEAD", // New lead/inquiry
+  PAYMENT: "PAYMENT", // Payment received
+  MESSAGE: "MESSAGE", // Client message received
+  CONTRACT: "CONTRACT", // Contract signed
+  SMART_FILE_VIEWED: "SMART_FILE_VIEWED", // Client viewed proposal
   SMART_FILE_ACCEPTED: "SMART_FILE_ACCEPTED", // Client accepted proposal
-  BOOKING: "BOOKING",               // Appointment/booking scheduled
-  GALLERY: "GALLERY",               // Gallery activity (upload complete, favorites)
-  AUTOMATION: "AUTOMATION",         // Automation triggered/failed
-  REMINDER: "REMINDER",             // Upcoming event reminder
-  SYSTEM: "SYSTEM"                  // System notifications
+  BOOKING: "BOOKING", // Appointment/booking scheduled
+  GALLERY: "GALLERY", // Gallery activity (upload complete, favorites)
+  AUTOMATION: "AUTOMATION", // Automation triggered/failed
+  REMINDER: "REMINDER", // Upcoming event reminder
+  SYSTEM: "SYSTEM", // System notifications
 } as const;
 
 export const notificationPriorityEnum = {
   HIGH: "HIGH",
   MEDIUM: "MEDIUM",
-  LOW: "LOW"
+  LOW: "LOW",
 } as const;
 
-export const notifications = pgTable("notifications", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  photographerId: varchar("photographer_id").notNull().references(() => photographers.id, { onDelete: "cascade" }),
-  type: text("type").notNull(), // LEAD, PAYMENT, MESSAGE, CONTRACT, etc.
-  priority: text("priority").notNull().default("MEDIUM"), // HIGH, MEDIUM, LOW
-  title: text("title").notNull(),
-  description: text("description"),
-  projectId: varchar("project_id").references(() => projects.id, { onDelete: "set null" }),
-  contactId: varchar("contact_id").references(() => contacts.id, { onDelete: "set null" }),
-  relatedId: varchar("related_id"), // ID of related entity (payment, smart file, etc.)
-  relatedType: text("related_type"), // Type of related entity
-  actionUrl: text("action_url"), // URL to navigate to on click
-  read: boolean("read").default(false).notNull(),
-  readAt: timestamp("read_at"),
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  photographerIdIdx: index("notifications_photographer_id_idx").on(table.photographerId),
-  readIdx: index("notifications_read_idx").on(table.photographerId, table.read),
-  createdAtIdx: index("notifications_created_at_idx").on(table.createdAt),
-  typeIdx: index("notifications_type_idx").on(table.type)
-}));
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    photographerId: varchar("photographer_id")
+      .notNull()
+      .references(() => photographers.id, { onDelete: "cascade" }),
+    type: text("type").notNull(), // LEAD, PAYMENT, MESSAGE, CONTRACT, etc.
+    priority: text("priority").notNull().default("MEDIUM"), // HIGH, MEDIUM, LOW
+    title: text("title").notNull(),
+    description: text("description"),
+    projectId: varchar("project_id").references(() => projects.id, {
+      onDelete: "set null",
+    }),
+    contactId: varchar("contact_id").references(() => contacts.id, {
+      onDelete: "set null",
+    }),
+    relatedId: varchar("related_id"), // ID of related entity (payment, smart file, etc.)
+    relatedType: text("related_type"), // Type of related entity
+    actionUrl: text("action_url"), // URL to navigate to on click
+    read: boolean("read").default(false).notNull(),
+    readAt: timestamp("read_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    photographerIdIdx: index("notifications_photographer_id_idx").on(
+      table.photographerId,
+    ),
+    readIdx: index("notifications_read_idx").on(
+      table.photographerId,
+      table.read,
+    ),
+    createdAtIdx: index("notifications_created_at_idx").on(table.createdAt),
+    typeIdx: index("notifications_type_idx").on(table.type),
+  }),
+);
 
 // Relations
 export const notificationsRelations = relations(notifications, ({ one }) => ({
   photographer: one(photographers, {
     fields: [notifications.photographerId],
-    references: [photographers.id]
+    references: [photographers.id],
   }),
   project: one(projects, {
     fields: [notifications.projectId],
-    references: [projects.id]
+    references: [projects.id],
   }),
   contact: one(contacts, {
     fields: [notifications.contactId],
-    references: [contacts.id]
-  })
+    references: [contacts.id],
+  }),
 }));
 
 // Insert schema
 export const insertNotificationSchema = createInsertSchema(notifications).omit({
   id: true,
   createdAt: true,
-  readAt: true
+  readAt: true,
 });
 
 // Types
 export type Notification = typeof notifications.$inferSelect;
 export type InsertNotification = z.infer<typeof insertNotificationSchema>;
-

@@ -39,38 +39,58 @@ export function NewItemButton({ transparent = false }: NewItemButtonProps) {
             "h-9 px-3 gap-1",
             transparent
               ? "bg-white/15 backdrop-blur-md border border-white/20 text-white hover:bg-white/25 hover:text-white"
-              : "text-muted-foreground hover:text-foreground"
+              : "text-muted-foreground hover:text-foreground",
           )}
         >
           <Plus className={cn("h-4 w-4", transparent && "drop-shadow-sm")} />
           <span className="hidden sm:inline">New</span>
-          <ChevronDown className={cn("h-3 w-3", transparent ? "opacity-70" : "opacity-50")} />
+          <ChevronDown
+            className={cn("h-3 w-3", transparent ? "opacity-70" : "opacity-50")}
+          />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuItem className="cursor-pointer" onClick={() => handleNew("/projects")}>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onClick={() => handleNew("/projects")}
+        >
           <FolderPlus className="mr-2 h-4 w-4 text-primary/70" />
           <span>New Project</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer" onClick={() => handleNew("/contacts")}>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onClick={() => handleNew("/contacts")}
+        >
           <UserPlus className="mr-2 h-4 w-4 text-primary/70" />
           <span>New Contact</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer" onClick={() => handleNew("/smart-files")}>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onClick={() => handleNew("/smart-files")}
+        >
           <FileText className="mr-2 h-4 w-4 text-primary/70" />
           <span>New Smart File</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer" onClick={() => handleNew("/galleries")}>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onClick={() => handleNew("/galleries")}
+        >
           <Image className="mr-2 h-4 w-4 text-primary/70" />
           <span>New Gallery</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer" onClick={() => handleNew("/automations")}>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onClick={() => handleNew("/automations")}
+        >
           <Zap className="mr-2 h-4 w-4 text-primary/70" />
           <span>New Automation</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer" onClick={() => handleNew("/templates")}>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onClick={() => handleNew("/templates")}
+        >
           <Mail className="mr-2 h-4 w-4 text-primary/70" />
           <span>New Email Template</span>
         </DropdownMenuItem>

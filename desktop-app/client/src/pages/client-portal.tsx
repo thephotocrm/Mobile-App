@@ -13,9 +13,9 @@ import { useToast } from "@/hooks/use-toast";
 import { formatEventDate } from "@/lib/utils";
 import {
   Camera,
-  CheckCircle, 
-  Clock, 
-  FileText, 
+  CheckCircle,
+  Clock,
+  FileText,
   ExternalLink,
   Calendar,
   Heart,
@@ -24,7 +24,7 @@ import {
   Phone,
   Mail,
   Loader2,
-  XCircle
+  XCircle,
 } from "lucide-react";
 
 interface ClientPortalData {
@@ -50,7 +50,7 @@ interface ClientPortalData {
     projectType: string;
     eventDate?: string;
     status: string;
-    role: 'PRIMARY' | 'PARTICIPANT';
+    role: "PRIMARY" | "PARTICIPANT";
     stage?: {
       name: string;
     };
@@ -104,7 +104,9 @@ export default function ClientPortal() {
   const { user, loading, refetchUser } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [tokenStatus, setTokenStatus] = useState<"idle" | "validating" | "success" | "error">("idle");
+  const [tokenStatus, setTokenStatus] = useState<
+    "idle" | "validating" | "success" | "error"
+  >("idle");
   const [tokenError, setTokenError] = useState("");
   const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
   const hasValidatedToken = useRef(false);
@@ -121,7 +123,7 @@ export default function ClientPortal() {
   // Check for magic link token in URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
+    const token = params.get("token");
 
     if (token && !hasValidatedToken.current) {
       hasValidatedToken.current = true;
@@ -130,7 +132,7 @@ export default function ClientPortal() {
         try {
           const response = await fetch(`/api/client-portal/validate/${token}`, {
             method: "GET",
-            credentials: "include"
+            credentials: "include",
           });
 
           if (!response.ok) {
@@ -142,25 +144,28 @@ export default function ClientPortal() {
 
           const data = await response.json();
           setTokenStatus("success");
-          
+
           // Refresh user auth state first
           await refetchUser();
-          
+
           // Smart routing based on token type and project count (navigation happens in useEffect)
-          if (data.loginMode === 'PROJECT' && data.projectId) {
+          if (data.loginMode === "PROJECT" && data.projectId) {
             // Project-specific link - go directly to that project
             console.log("Will redirect to project:", data.projectId);
             setRedirectUrl(`/client-portal/projects/${data.projectId}`);
-          } else if (data.loginMode === 'CLIENT') {
+          } else if (data.loginMode === "CLIENT") {
             // Generic portal link - check project count
             if (data.projects && data.projects.length === 1) {
               // Single project - auto-redirect
-              console.log("Single project - will auto-redirect to:", data.projects[0].id);
+              console.log(
+                "Single project - will auto-redirect to:",
+                data.projects[0].id,
+              );
               setRedirectUrl(`/client-portal/projects/${data.projects[0].id}`);
             } else if (data.projects && data.projects.length > 1) {
               // Multiple projects - show selection page
               console.log("Multiple projects - showing selection");
-              setRedirectUrl('/client-portal/select-project');
+              setRedirectUrl("/client-portal/select-project");
             } else {
               // No projects - stay on main portal
               console.log("No projects - staying on portal");
@@ -180,7 +185,7 @@ export default function ClientPortal() {
   // State-driven navigation in useEffect to prevent React error #185
   useEffect(() => {
     if (redirectUrl) {
-      console.log('✅ Redirecting to:', redirectUrl);
+      console.log("✅ Redirecting to:", redirectUrl);
       setLocation(redirectUrl);
       // Clear redirect URL after navigation
       setRedirectUrl(null);
@@ -189,30 +194,45 @@ export default function ClientPortal() {
 
   // Redirect to login if not authenticated (prevent infinite loop with ref guard)
   useEffect(() => {
-    if (!loading && !user && tokenStatus !== "validating" && !hasRedirectedToLogin.current) {
+    if (
+      !loading &&
+      !user &&
+      tokenStatus !== "validating" &&
+      !hasRedirectedToLogin.current
+    ) {
       hasRedirectedToLogin.current = true;
       setLocation("/login");
     }
   }, [loading, user, tokenStatus, setLocation]);
 
   // Fetch client portal data from API
-  const { data: portalData, isLoading: portalLoading } = useQuery<ClientPortalData>({
-    queryKey: ["/api/client-portal"],
-    enabled: !!user
-  });
+  const { data: portalData, isLoading: portalLoading } =
+    useQuery<ClientPortalData>({
+      queryKey: ["/api/client-portal"],
+      enabled: !!user,
+    });
 
   // Auto-redirect to most recent project when data loads
   // ONLY on base /client-portal route to preserve multi-project selection UX
   const [location] = useLocation();
   useEffect(() => {
     // Normalize path by removing trailing slash for comparison
-    const normalizedPath = location.endsWith('/') ? location.slice(0, -1) : location;
-    const isBasePortalRoute = normalizedPath === '/client-portal';
-    if (isBasePortalRoute && portalData && portalData.projects.length > 0 && !redirectUrl) {
+    const normalizedPath = location.endsWith("/")
+      ? location.slice(0, -1)
+      : location;
+    const isBasePortalRoute = normalizedPath === "/client-portal";
+    if (
+      isBasePortalRoute &&
+      portalData &&
+      portalData.projects.length > 0 &&
+      !redirectUrl
+    ) {
       // Projects are already sorted by createdAt DESC from backend
       // Always redirect to the first (most recent) project
       const mostRecentProject = portalData.projects[0];
-      console.log(`🚀 Auto-redirecting to most recent project: ${mostRecentProject.id}`);
+      console.log(
+        `🚀 Auto-redirecting to most recent project: ${mostRecentProject.id}`,
+      );
       setRedirectUrl(`/client-portal/projects/${mostRecentProject.id}`);
     }
   }, [location, portalData, redirectUrl]);
@@ -224,9 +244,14 @@ export default function ClientPortal() {
         <Card className="w-full max-w-md" data-testid="card-validating-token">
           <CardContent className="pt-6">
             <div className="flex flex-col items-center space-y-4 py-8">
-              <Loader2 className="w-12 h-12 text-blue-600 animate-spin" data-testid="icon-loading" />
+              <Loader2
+                className="w-12 h-12 text-blue-600 animate-spin"
+                data-testid="icon-loading"
+              />
               <div className="text-center">
-                <h2 className="text-xl font-semibold mb-2">Verifying your access...</h2>
+                <h2 className="text-xl font-semibold mb-2">
+                  Verifying your access...
+                </h2>
                 <p className="text-sm text-muted-foreground">
                   Please wait while we log you in
                 </p>
@@ -244,13 +269,21 @@ export default function ClientPortal() {
         <Card className="w-full max-w-md" data-testid="card-token-error">
           <CardContent className="pt-6">
             <div className="flex flex-col items-center space-y-4 py-8">
-              <XCircle className="w-12 h-12 text-red-600" data-testid="icon-error" />
+              <XCircle
+                className="w-12 h-12 text-red-600"
+                data-testid="icon-error"
+              />
               <div className="text-center">
-                <h2 className="text-xl font-semibold mb-2">Access Link Invalid</h2>
+                <h2 className="text-xl font-semibold mb-2">
+                  Access Link Invalid
+                </h2>
                 <p className="text-sm text-muted-foreground mb-4">
                   {tokenError}
                 </p>
-                <Button onClick={() => setLocation("/login")} data-testid="button-go-to-login">
+                <Button
+                  onClick={() => setLocation("/login")}
+                  data-testid="button-go-to-login"
+                >
                   Go to Login
                 </Button>
               </div>
@@ -278,11 +311,16 @@ export default function ClientPortal() {
             <div className="flex flex-col items-center space-y-4 py-8">
               <XCircle className="w-12 h-12 text-red-600" />
               <div className="text-center">
-                <h2 className="text-xl font-semibold mb-2">Unable to Load Portal</h2>
+                <h2 className="text-xl font-semibold mb-2">
+                  Unable to Load Portal
+                </h2>
                 <p className="text-sm text-muted-foreground mb-4">
                   There was an error loading your client portal data.
                 </p>
-                <Button onClick={() => window.location.reload()} data-testid="button-reload">
+                <Button
+                  onClick={() => window.location.reload()}
+                  data-testid="button-reload"
+                >
                   Reload Page
                 </Button>
               </div>
@@ -294,29 +332,32 @@ export default function ClientPortal() {
   }
 
   const hasProjects = portalData.projects.length > 0;
-  const completedChecklistItems = portalData.checklistItems.filter(item => item.completedAt).length;
-  const checklistProgress = portalData.checklistItems.length > 0 
-    ? (completedChecklistItems / portalData.checklistItems.length) * 100 
-    : 0;
+  const completedChecklistItems = portalData.checklistItems.filter(
+    (item) => item.completedAt,
+  ).length;
+  const checklistProgress =
+    portalData.checklistItems.length > 0
+      ? (completedChecklistItems / portalData.checklistItems.length) * 100
+      : 0;
 
   const formatPrice = (cents: number) => {
-    return (cents / 100).toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD'
+    return (cents / 100).toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
     });
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'CONFIRMED':
-      case 'COMPLETED':
-        return 'default';
-      case 'PENDING':
-        return 'secondary';
-      case 'SENT':
-        return 'outline';
+      case "CONFIRMED":
+      case "COMPLETED":
+        return "default";
+      case "PENDING":
+        return "secondary";
+      case "SENT":
+        return "outline";
       default:
-        return 'secondary';
+        return "secondary";
     }
   };
 
@@ -324,22 +365,34 @@ export default function ClientPortal() {
     <ClientPortalLayout currentProjectId={portalData.projects[0]?.id}>
       {/* Cover Photo Hero Banner */}
       {/* TODO: Add photographer.coverImageUrl field to schema for custom branding */}
-      <div 
+      <div
         className="relative h-48 md:h-64 w-full bg-cover bg-center bg-gray-100"
-        style={{ 
-          backgroundImage: 'url(https://images.unsplash.com/photo-1606800052052-a08af7148866?w=1200&h=400&fit=crop)'
+        style={{
+          backgroundImage:
+            "url(https://images.unsplash.com/photo-1606800052052-a08af7148866?w=1200&h=400&fit=crop)",
         }}
         data-testid="hero-banner"
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/50"></div>
         <div className="relative h-full flex items-end p-6 md:p-8">
           <div className="text-white max-w-4xl">
-            <h2 className="text-2xl md:text-3xl font-semibold tracking-wide mb-1 drop-shadow-lg" data-testid="text-welcome">
-              Welcome, {portalData.contact.firstName} {portalData.contact.lastName && `& ${portalData.contact.lastName}`}!
+            <h2
+              className="text-2xl md:text-3xl font-semibold tracking-wide mb-1 drop-shadow-lg"
+              data-testid="text-welcome"
+            >
+              Welcome, {portalData.contact.firstName}{" "}
+              {portalData.contact.lastName &&
+                `& ${portalData.contact.lastName}`}
+              !
             </h2>
             <div className="flex items-center text-white/90 drop-shadow">
-              <Badge variant="secondary" className="bg-white/20 text-white border-white/30 hover:bg-white/25">
-                {hasProjects ? portalData.contact.stage?.name || 'Active' : 'No Project'}
+              <Badge
+                variant="secondary"
+                className="bg-white/20 text-white border-white/30 hover:bg-white/25"
+              >
+                {hasProjects
+                  ? portalData.contact.stage?.name || "Active"
+                  : "No Project"}
               </Badge>
             </div>
           </div>
@@ -352,7 +405,9 @@ export default function ClientPortal() {
           <div className="mb-8 flex flex-wrap items-center gap-6 text-muted-foreground">
             <div className="flex items-center">
               <Heart className="w-4 h-4 mr-2" />
-              <span>Wedding: {formatEventDate(portalData.contact.weddingDate)}</span>
+              <span>
+                Wedding: {formatEventDate(portalData.contact.weddingDate)}
+              </span>
             </div>
             <div className="flex items-center">
               <Users className="w-4 h-4 mr-2" />
@@ -363,21 +418,32 @@ export default function ClientPortal() {
 
         {/* No Projects Empty State */}
         {!hasProjects && (
-          <Card className="mb-8 transition-all duration-300" data-testid="card-no-projects">
+          <Card
+            className="mb-8 transition-all duration-300"
+            data-testid="card-no-projects"
+          >
             <CardContent className="py-12">
               <div className="text-center">
                 <Camera className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold tracking-wide mb-2">No Projects Yet</h3>
+                <h3 className="text-xl font-semibold tracking-wide mb-2">
+                  No Projects Yet
+                </h3>
                 <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                  Your photographer hasn't assigned any projects to you yet. They'll create your project soon and you'll be able to access all your wedding details here.
+                  Your photographer hasn't assigned any projects to you yet.
+                  They'll create your project soon and you'll be able to access
+                  all your wedding details here.
                 </p>
-                {(portalData.photographer.email || portalData.photographer.phone) && (
+                {(portalData.photographer.email ||
+                  portalData.photographer.phone) && (
                   <div className="space-y-2 text-sm">
                     <p className="font-medium">Need to get in touch?</p>
                     {portalData.photographer.email && (
                       <div className="flex items-center justify-center">
                         <Mail className="w-4 h-4 mr-2 text-muted-foreground" />
-                        <a href={`mailto:${portalData.photographer.email}`} className="text-primary hover:underline">
+                        <a
+                          href={`mailto:${portalData.photographer.email}`}
+                          className="text-primary hover:underline"
+                        >
                           {portalData.photographer.email}
                         </a>
                       </div>
@@ -385,7 +451,10 @@ export default function ClientPortal() {
                     {portalData.photographer.phone && (
                       <div className="flex items-center justify-center">
                         <Phone className="w-4 h-4 mr-2 text-muted-foreground" />
-                        <a href={`tel:${portalData.photographer.phone}`} className="text-primary hover:underline">
+                        <a
+                          href={`tel:${portalData.photographer.phone}`}
+                          className="text-primary hover:underline"
+                        >
                           {portalData.photographer.phone}
                         </a>
                       </div>
@@ -410,7 +479,8 @@ export default function ClientPortal() {
                       Wedding Checklist
                     </CardTitle>
                     <Badge variant="outline">
-                      {completedChecklistItems} of {portalData.checklistItems.length} complete
+                      {completedChecklistItems} of{" "}
+                      {portalData.checklistItems.length} complete
                     </Badge>
                   </div>
                 </CardHeader>
@@ -422,16 +492,25 @@ export default function ClientPortal() {
                     </div>
                     <Progress value={checklistProgress} className="h-2" />
                   </div>
-                  
+
                   <div className="space-y-3">
                     {portalData.checklistItems.map((item) => (
-                      <div key={item.id} className="flex items-center space-x-3">
-                        <Checkbox 
-                          checked={!!item.completedAt} 
+                      <div
+                        key={item.id}
+                        className="flex items-center space-x-3"
+                      >
+                        <Checkbox
+                          checked={!!item.completedAt}
                           disabled={!!item.completedAt}
                           data-testid={`checklist-item-${item.id}`}
                         />
-                        <span className={item.completedAt ? "line-through text-muted-foreground" : ""}>
+                        <span
+                          className={
+                            item.completedAt
+                              ? "line-through text-muted-foreground"
+                              : ""
+                          }
+                        >
                           {item.title}
                         </span>
                         {item.completedAt && (
@@ -463,36 +542,47 @@ export default function ClientPortal() {
                   ) : (
                     <div className="space-y-4">
                       {portalData.questionnaires.map((questionnaire) => (
-                      <div key={questionnaire.id} className="flex items-center justify-between p-4 border border-border rounded-lg">
-                        <div>
-                          <h4 className="font-medium">{questionnaire.template.title}</h4>
-                          {questionnaire.template.description && (
-                            <p className="text-sm text-muted-foreground">{questionnaire.template.description}</p>
-                          )}
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Badge variant={getStatusColor(questionnaire.status)}>
-                            {questionnaire.status === 'PENDING' ? 'Complete' : 'Completed'}
-                          </Badge>
-                          {questionnaire.status === 'PENDING' && (
-                            <Button
-                              size="sm"
-                              data-testid={`complete-questionnaire-${questionnaire.id}`}
-                              onClick={() => {
-                                setSelectedQuestionnaire(questionnaire);
-                                setQuestionnaireDialogOpen(true);
-                              }}
+                        <div
+                          key={questionnaire.id}
+                          className="flex items-center justify-between p-4 border border-border rounded-lg"
+                        >
+                          <div>
+                            <h4 className="font-medium">
+                              {questionnaire.template.title}
+                            </h4>
+                            {questionnaire.template.description && (
+                              <p className="text-sm text-muted-foreground">
+                                {questionnaire.template.description}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Badge
+                              variant={getStatusColor(questionnaire.status)}
                             >
-                              Complete
-                            </Button>
-                          )}
+                              {questionnaire.status === "PENDING"
+                                ? "Complete"
+                                : "Completed"}
+                            </Badge>
+                            {questionnaire.status === "PENDING" && (
+                              <Button
+                                size="sm"
+                                data-testid={`complete-questionnaire-${questionnaire.id}`}
+                                onClick={() => {
+                                  setSelectedQuestionnaire(questionnaire);
+                                  setQuestionnaireDialogOpen(true);
+                                }}
+                              >
+                                Complete
+                              </Button>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             )}
 
             {/* Estimates & Invoices */}
@@ -512,21 +602,31 @@ export default function ClientPortal() {
                   ) : (
                     <div className="space-y-4">
                       {portalData.estimates.map((estimate) => (
-                        <div key={estimate.id} className="flex items-center justify-between p-4 border border-border rounded-lg">
+                        <div
+                          key={estimate.id}
+                          className="flex items-center justify-between p-4 border border-border rounded-lg"
+                        >
                           <div>
                             <h4 className="font-medium">{estimate.title}</h4>
                             <p className="text-sm text-muted-foreground">
-                              Created: {new Date(estimate.createdAt).toLocaleDateString()}
+                              Created:{" "}
+                              {new Date(
+                                estimate.createdAt,
+                              ).toLocaleDateString()}
                             </p>
-                            <p className="font-mono text-lg">{formatPrice(estimate.totalCents)}</p>
+                            <p className="font-mono text-lg">
+                              {formatPrice(estimate.totalCents)}
+                            </p>
                           </div>
                           <div className="flex items-center space-x-2">
                             <Badge variant={getStatusColor(estimate.status)}>
                               {estimate.status}
                             </Badge>
-                            <Button 
-                              size="sm" 
-                              onClick={() => setLocation(`/estimates/${estimate.token}`)}
+                            <Button
+                              size="sm"
+                              onClick={() =>
+                                setLocation(`/estimates/${estimate.token}`)
+                              }
                               data-testid={`view-estimate-${estimate.id}`}
                             >
                               View
@@ -557,12 +657,19 @@ export default function ClientPortal() {
                   ) : (
                     <div className="space-y-4">
                       {portalData.bookings.map((booking) => (
-                        <div key={booking.id} className="flex items-center justify-between p-4 border border-border rounded-lg">
+                        <div
+                          key={booking.id}
+                          className="flex items-center justify-between p-4 border border-border rounded-lg"
+                        >
                           <div>
                             <h4 className="font-medium">{booking.title}</h4>
                             <p className="text-sm text-muted-foreground">
-                              {new Date(booking.startAt).toLocaleDateString()} at{' '}
-                              {new Date(booking.startAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              {new Date(booking.startAt).toLocaleDateString()}{" "}
+                              at{" "}
+                              {new Date(booking.startAt).toLocaleTimeString(
+                                [],
+                                { hour: "2-digit", minute: "2-digit" },
+                              )}
                             </p>
                           </div>
                           <Badge variant={getStatusColor(booking.status)}>
@@ -606,7 +713,9 @@ export default function ClientPortal() {
             {/* Contact Information */}
             <Card className="transition-all duration-300 hover:shadow-lg">
               <CardHeader>
-                <CardTitle className="tracking-wide">Contact Information</CardTitle>
+                <CardTitle className="tracking-wide">
+                  Contact Information
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -617,7 +726,9 @@ export default function ClientPortal() {
                   {portalData.contact.phone && (
                     <div className="flex items-center">
                       <Phone className="w-4 h-4 mr-3 text-muted-foreground" />
-                      <span className="text-sm">{portalData.contact.phone}</span>
+                      <span className="text-sm">
+                        {portalData.contact.phone}
+                      </span>
                     </div>
                   )}
                   {portalData.contact.weddingDate && (
@@ -639,7 +750,8 @@ export default function ClientPortal() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Have questions or need assistance? We're here to help make your wedding photography experience perfect.
+                  Have questions or need assistance? We're here to help make
+                  your wedding photography experience perfect.
                 </p>
                 <Button className="w-full" data-testid="button-contact-support">
                   Contact Us
@@ -656,7 +768,7 @@ export default function ClientPortal() {
         open={questionnaireDialogOpen}
         onOpenChange={setQuestionnaireDialogOpen}
         onComplete={() => {
-          toast({ title: 'Questionnaire submitted successfully!' });
+          toast({ title: "Questionnaire submitted successfully!" });
         }}
       />
     </ClientPortalLayout>

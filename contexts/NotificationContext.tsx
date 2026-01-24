@@ -105,7 +105,13 @@ export function NotificationProvider({
           try {
             const tenant = createTenantContext(user);
             const platform = Platform.OS as "ios" | "android";
-            await pushTokensApi.register(token, newPushToken, platform, undefined, tenant);
+            await pushTokensApi.register(
+              token,
+              newPushToken,
+              platform,
+              undefined,
+              tenant,
+            );
             if (__DEV__) {
               console.log("Push token sent to API successfully");
             }
@@ -145,13 +151,24 @@ export function NotificationProvider({
               try {
                 const tenant = createTenantContext(user);
                 const platform = Platform.OS as "ios" | "android";
-                await pushTokensApi.register(token, newPushToken, platform, undefined, tenant);
+                await pushTokensApi.register(
+                  token,
+                  newPushToken,
+                  platform,
+                  undefined,
+                  tenant,
+                );
                 if (__DEV__) {
-                  console.log("Push token sent to API successfully (from settings change)");
+                  console.log(
+                    "Push token sent to API successfully (from settings change)",
+                  );
                 }
               } catch (error) {
                 if (__DEV__) {
-                  console.error("Failed to register push token with API:", error);
+                  console.error(
+                    "Failed to register push token with API:",
+                    error,
+                  );
                 }
               }
             }
@@ -180,9 +197,17 @@ export function NotificationProvider({
         try {
           const tenant = createTenantContext(user);
           const platform = Platform.OS as "ios" | "android";
-          await pushTokensApi.register(token, newPushToken, platform, undefined, tenant);
+          await pushTokensApi.register(
+            token,
+            newPushToken,
+            platform,
+            undefined,
+            tenant,
+          );
           if (__DEV__) {
-            console.log("Push token sent to API successfully (from requestPermissions)");
+            console.log(
+              "Push token sent to API successfully (from requestPermissions)",
+            );
           }
         } catch (error) {
           if (__DEV__) {

@@ -1,5 +1,17 @@
-import { createContext, useContext, useState, useEffect, useCallback, type PropsWithChildren } from "react";
-import { getCurrentUser, login as authLogin, logout as authLogout, register as authRegister } from "@/lib/auth";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  type PropsWithChildren,
+} from "react";
+import {
+  getCurrentUser,
+  login as authLogin,
+  logout as authLogout,
+  register as authRegister,
+} from "@/lib/auth";
 import type { User, LoginCredentials, RegisterData } from "@/lib/auth";
 import { useAuthBroadcast } from "./use-auth-broadcast";
 
@@ -21,12 +33,12 @@ export function AuthProvider({ children }: PropsWithChildren): JSX.Element {
   const handleLogoutRequired = useCallback(async () => {
     await authLogout();
     setUser(null);
-    window.location.href = '/login';
+    window.location.href = "/login";
   }, []);
 
   const { broadcastLogin, broadcastLogout } = useAuthBroadcast(
     user?.id || null,
-    handleLogoutRequired
+    handleLogoutRequired,
   );
 
   useEffect(() => {
@@ -58,7 +70,7 @@ export function AuthProvider({ children }: PropsWithChildren): JSX.Element {
     broadcastLogout();
     await authLogout();
     setUser(null);
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
 
   const refetchUser = useCallback(async (): Promise<User | null> => {
@@ -74,7 +86,9 @@ export function AuthProvider({ children }: PropsWithChildren): JSX.Element {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refetchUser }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, register, logout, refetchUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -1,7 +1,7 @@
-import { createContext, useContext, ReactNode } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { createContext, useContext, ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-type DomainType = 'photographer' | 'client_portal' | 'dev';
+type DomainType = "photographer" | "client_portal" | "dev";
 
 interface DomainInfo {
   type: DomainType;
@@ -25,16 +25,26 @@ interface DomainContextValue {
 const DomainContext = createContext<DomainContextValue | undefined>(undefined);
 
 export function DomainProvider({ children }: { children: ReactNode }) {
-  const { data: domain, isLoading, error } = useQuery<DomainInfo>({
-    queryKey: ['/api/domain'],
+  const {
+    data: domain,
+    isLoading,
+    error,
+  } = useQuery<DomainInfo>({
+    queryKey: ["/api/domain"],
     staleTime: 5 * 60 * 1000, // 5 minutes - allow refetching for admin/support switching tenants
     refetchOnWindowFocus: true,
     refetchOnMount: true,
-    retry: 2 // Retry failed requests twice before giving up
+    retry: 2, // Retry failed requests twice before giving up
   });
 
   return (
-    <DomainContext.Provider value={{ domain: domain || null, isLoading, error: error as Error | null }}>
+    <DomainContext.Provider
+      value={{
+        domain: domain || null,
+        isLoading,
+        error: error as Error | null,
+      }}
+    >
       {children}
     </DomainContext.Provider>
   );
@@ -43,7 +53,7 @@ export function DomainProvider({ children }: { children: ReactNode }) {
 export function useDomain() {
   const context = useContext(DomainContext);
   if (context === undefined) {
-    throw new Error('useDomain must be used within DomainProvider');
+    throw new Error("useDomain must be used within DomainProvider");
   }
   return context;
 }

@@ -88,10 +88,18 @@ const inferEventType = (
   ) {
     return "shooting";
   }
-  if (text.includes("consult") || text.includes("meeting") || text.includes("call")) {
+  if (
+    text.includes("consult") ||
+    text.includes("meeting") ||
+    text.includes("call")
+  ) {
     return "consultation";
   }
-  if (text.includes("edit") || text.includes("review") || text.includes("contract")) {
+  if (
+    text.includes("edit") ||
+    text.includes("review") ||
+    text.includes("contract")
+  ) {
     return "meeting";
   }
   return "other";
@@ -100,7 +108,10 @@ const inferEventType = (
 // Transform API booking to calendar event
 const transformBookingToEvent = (booking: Booking): CalendarEvent => {
   const notes = booking.description || booking.notes || "";
-  const subtitle = notes.length > 50 ? `${notes.substring(0, 50)}...` : notes || booking.status;
+  const subtitle =
+    notes.length > 50
+      ? `${notes.substring(0, 50)}...`
+      : notes || booking.status;
 
   return {
     id: booking.id,
@@ -288,7 +299,9 @@ export function CalendarScreen() {
   const eventsForDate = useMemo(() => {
     return bookings
       .map(transformBookingToEvent)
-      .filter((event) => event.date.toDateString() === selectedDate.toDateString());
+      .filter(
+        (event) => event.date.toDateString() === selectedDate.toDateString(),
+      );
   }, [bookings, selectedDate]);
 
   // Get availability info for selected date
@@ -370,7 +383,10 @@ export function CalendarScreen() {
           style={styles.monthYearHeader}
         >
           <ThemedText style={[styles.monthYearText, { color: theme.text }]}>
-            {selectedDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+            {selectedDate.toLocaleDateString("en-US", {
+              month: "long",
+              year: "numeric",
+            })}
           </ThemedText>
         </Animated.View>
 

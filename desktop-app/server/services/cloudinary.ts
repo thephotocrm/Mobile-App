@@ -3,25 +3,25 @@
  * Handles uploading compressed images to Cloudinary CDN
  */
 
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary } from "cloudinary";
 
 // Configure Cloudinary with environment variables
 const cloudName = process.env.CLOUDINARY_CLOUD_NAME?.trim();
 const apiKey = process.env.CLOUDINARY_API_KEY?.trim();
 const apiSecret = process.env.CLOUDINARY_API_SECRET?.trim();
 
-console.log('🔐 Cloudinary config check:', {
+console.log("🔐 Cloudinary config check:", {
   hasCloudName: !!cloudName,
   hasApiKey: !!apiKey,
   hasApiSecret: !!apiSecret,
-  cloudName: cloudName || 'MISSING'
+  cloudName: cloudName || "MISSING",
 });
 
 cloudinary.config({
   cloud_name: cloudName,
   api_key: apiKey,
   api_secret: apiSecret,
-  secure: true
+  secure: true,
 });
 
 /**
@@ -32,20 +32,20 @@ cloudinary.config({
  */
 export async function uploadImageToCloudinary(
   base64Image: string,
-  folder: string = 'mms'
+  folder: string = "mms",
 ): Promise<string> {
   try {
     // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(base64Image, {
       folder,
-      resource_type: 'image'
+      resource_type: "image",
     });
 
     // Return the secure URL
     return result.secure_url;
   } catch (error) {
-    console.error('Cloudinary upload error:', error);
-    throw new Error('Failed to upload image to cloud storage');
+    console.error("Cloudinary upload error:", error);
+    throw new Error("Failed to upload image to cloud storage");
   }
 }
 
@@ -53,17 +53,19 @@ export async function uploadImageToCloudinary(
  * Delete an image from Cloudinary by URL
  * @param imageUrl - The Cloudinary URL to delete
  */
-export async function deleteImageFromCloudinary(imageUrl: string): Promise<void> {
+export async function deleteImageFromCloudinary(
+  imageUrl: string,
+): Promise<void> {
   try {
     // Extract public ID from URL
     // URL format: https://res.cloudinary.com/{cloud_name}/image/upload/{version}/{public_id}.jpg
-    const urlParts = imageUrl.split('/');
+    const urlParts = imageUrl.split("/");
     const filename = urlParts[urlParts.length - 1];
-    const publicId = `mms/${filename.replace(/\.[^/.]+$/, '')}`; // Remove extension
+    const publicId = `mms/${filename.replace(/\.[^/.]+$/, "")}`; // Remove extension
 
     await cloudinary.uploader.destroy(publicId);
   } catch (error) {
-    console.error('Cloudinary delete error:', error);
+    console.error("Cloudinary delete error:", error);
     // Don't throw - deletion failures shouldn't break the flow
   }
 }
@@ -78,23 +80,23 @@ export async function deleteImageFromCloudinary(imageUrl: string): Promise<void>
 export async function uploadToCloudinary(
   fileBuffer: Buffer,
   folder: string,
-  options: Record<string, any> = {}
+  options: Record<string, any> = {},
 ): Promise<any> {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
         folder,
-        resource_type: 'auto',
-        ...options
+        resource_type: "auto",
+        ...options,
       },
       (error, result) => {
         if (error) {
-          console.error('Cloudinary upload error:', error);
+          console.error("Cloudinary upload error:", error);
           reject(error);
         } else {
           resolve(result);
         }
-      }
+      },
     );
 
     uploadStream.end(fileBuffer);
@@ -127,38 +129,49 @@ export function applyWatermark(
     position?: string;
     opacity?: number;
   },
-  signUrl: boolean = false
+  signUrl: boolean = false,
 ): string {
-  if (!imageUrl || (!watermarkOptions.watermarkImageUrl && !watermarkOptions.watermarkText)) {
+  if (
+    !imageUrl ||
+    (!watermarkOptions.watermarkImageUrl && !watermarkOptions.watermarkText)
+  ) {
     return imageUrl;
   }
 
-  const { watermarkImageUrl, watermarkText, position = 'bottom-right', opacity = 60 } = watermarkOptions;
+  const {
+    watermarkImageUrl,
+    watermarkText,
+    position = "bottom-right",
+    opacity = 60,
+  } = watermarkOptions;
 
   // Map position to Cloudinary gravity
   const gravityMap: Record<string, string> = {
-    'bottom-right': 'south_east',
-    'bottom-left': 'south_west',
-    'top-right': 'north_east',
-    'top-left': 'north_west',
-    'center': 'center',
+    "bottom-right": "south_east",
+    "bottom-left": "south_west",
+    "top-right": "north_east",
+    "top-left": "north_west",
+    center: "center",
   };
 
-  const gravity = gravityMap[position] || 'south_east';
-  
+  const gravity = gravityMap[position] || "south_east";
+
   // Build transformation string
-  let transformation = '';
-  
+  let transformation = "";
+
   if (watermarkImageUrl) {
     // Extract public ID from watermark image URL
     const watermarkPublicId = extractPublicIdFromUrl(watermarkImageUrl);
     if (watermarkPublicId) {
       // Image overlay transformation
-      transformation = `l_${watermarkPublicId.replace(/\//g, ':')},g_${gravity},o_${opacity},w_150`;
+      transformation = `l_${watermarkPublicId.replace(/\//g, ":")},g_${gravity},o_${opacity},w_150`;
     }
   } else if (watermarkText) {
     // Text overlay transformation
-    const encodedText = encodeURIComponent(watermarkText).replace(/%20/g, '%2520');
+    const encodedText = encodeURIComponent(watermarkText).replace(
+      /%20/g,
+      "%2520",
+    );
     transformation = `l_text:Arial_40:${encodedText},g_${gravity},o_${opacity},co_rgb:FFFFFF`;
   }
 
@@ -174,14 +187,14 @@ export function applyWatermark(
       return cloudinary.url(publicId, {
         transformation: transformation,
         sign_url: true,
-        type: 'upload'
+        type: "upload",
       });
     }
   }
 
   // Otherwise, insert transformation into URL (not secure against URL manipulation)
   // Cloudinary URL format: https://res.cloudinary.com/{cloud_name}/image/upload/{transformations}/{public_id}.{ext}
-  return imageUrl.replace('/upload/', `/upload/${transformation}/`);
+  return imageUrl.replace("/upload/", `/upload/${transformation}/`);
 }
 
 /**

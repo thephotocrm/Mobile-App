@@ -58,7 +58,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   if (!isLoaded) {
     const defaultTheme = Colors.light;
     return (
-      <ThemeContext.Provider value={{ mode: "light", setMode: () => {}, theme: defaultTheme, isDark: false }}>
+      <ThemeContext.Provider
+        value={{
+          mode: "light",
+          setMode: () => {},
+          theme: defaultTheme,
+          isDark: false,
+        }}
+      >
         {children}
       </ThemeContext.Provider>
     );

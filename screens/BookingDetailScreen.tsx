@@ -16,11 +16,7 @@ import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, Typography, BorderRadius } from "@/constants/theme";
-import {
-  bookingsApi,
-  Booking,
-  createTenantContext,
-} from "@/services/api";
+import { bookingsApi, Booking, createTenantContext } from "@/services/api";
 
 type BookingDetailRouteProp = RouteProp<
   { BookingDetail: { bookingId: string } },
@@ -152,7 +148,9 @@ export default function BookingDetailScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.centered, { backgroundColor: theme.backgroundRoot }]}>
+      <View
+        style={[styles.centered, { backgroundColor: theme.backgroundRoot }]}
+      >
         <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
@@ -160,7 +158,9 @@ export default function BookingDetailScreen() {
 
   if (error || !booking) {
     return (
-      <View style={[styles.centered, { backgroundColor: theme.backgroundRoot }]}>
+      <View
+        style={[styles.centered, { backgroundColor: theme.backgroundRoot }]}
+      >
         <Feather name="alert-circle" size={48} color={theme.textSecondary} />
         <ThemedText style={[styles.errorText, { color: theme.textSecondary }]}>
           {error || "Booking not found"}
@@ -216,10 +216,15 @@ export default function BookingDetailScreen() {
           <View
             style={[
               styles.typeBadge,
-              { backgroundColor: theme.backgroundCard, borderColor: theme.border },
+              {
+                backgroundColor: theme.backgroundCard,
+                borderColor: theme.border,
+              },
             ]}
           >
-            <ThemedText style={[styles.typeText, { color: theme.textSecondary }]}>
+            <ThemedText
+              style={[styles.typeText, { color: theme.textSecondary }]}
+            >
               {getBookingTypeLabel(booking.bookingType)}
             </ThemedText>
           </View>

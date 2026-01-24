@@ -1,6 +1,19 @@
 import { SiGoogle } from "react-icons/si";
-import { Search, MapPin, TrendingUp, Target, BarChart3, Zap } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Search,
+  MapPin,
+  TrendingUp,
+  Target,
+  BarChart3,
+  Zap,
+} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function GoogleAds() {
   return (
@@ -13,7 +26,9 @@ export default function GoogleAds() {
           </div>
           <div>
             <h1 className="text-3xl font-bold">Google Ads</h1>
-            <p className="text-muted-foreground">Capture clients actively searching for photography services</p>
+            <p className="text-muted-foreground">
+              Capture clients actively searching for photography services
+            </p>
           </div>
         </div>
       </div>
@@ -27,7 +42,8 @@ export default function GoogleAds() {
             </div>
             <CardTitle className="text-lg">Search Campaigns</CardTitle>
             <CardDescription>
-              Appear at the top of Google when couples search for "wedding photographer near me"
+              Appear at the top of Google when couples search for "wedding
+              photographer near me"
             </CardDescription>
           </CardHeader>
         </Card>
@@ -39,7 +55,8 @@ export default function GoogleAds() {
             </div>
             <CardTitle className="text-lg">Local Targeting</CardTitle>
             <CardDescription>
-              Target specific cities, neighborhoods, or radius around your location
+              Target specific cities, neighborhoods, or radius around your
+              location
             </CardDescription>
           </CardHeader>
         </Card>
@@ -51,7 +68,8 @@ export default function GoogleAds() {
             </div>
             <CardTitle className="text-lg">Keyword Optimization</CardTitle>
             <CardDescription>
-              Automatically find and bid on the most profitable keywords for your business
+              Automatically find and bid on the most profitable keywords for
+              your business
             </CardDescription>
           </CardHeader>
         </Card>
@@ -63,7 +81,8 @@ export default function GoogleAds() {
             </div>
             <CardTitle className="text-lg">Smart Bidding</CardTitle>
             <CardDescription>
-              AI-powered bidding strategies to maximize conversions while controlling costs
+              AI-powered bidding strategies to maximize conversions while
+              controlling costs
             </CardDescription>
           </CardHeader>
         </Card>
@@ -75,7 +94,8 @@ export default function GoogleAds() {
             </div>
             <CardTitle className="text-lg">Performance Tracking</CardTitle>
             <CardDescription>
-              Monitor ad performance, quality score, and conversion metrics in real-time
+              Monitor ad performance, quality score, and conversion metrics in
+              real-time
             </CardDescription>
           </CardHeader>
         </Card>
@@ -87,7 +107,8 @@ export default function GoogleAds() {
             </div>
             <CardTitle className="text-lg">Display Network</CardTitle>
             <CardDescription>
-              Reach couples browsing wedding sites with beautiful visual ads across Google's network
+              Reach couples browsing wedding sites with beautiful visual ads
+              across Google's network
             </CardDescription>
           </CardHeader>
         </Card>
@@ -102,7 +123,9 @@ export default function GoogleAds() {
             </div>
             <h2 className="text-2xl font-bold mb-3">Coming Soon</h2>
             <p className="text-muted-foreground max-w-md mx-auto mb-6">
-              We're developing a powerful Google Ads integration that will help you capture high-intent clients actively searching for photography services. Launching soon!
+              We're developing a powerful Google Ads integration that will help
+              you capture high-intent clients actively searching for photography
+              services. Launching soon!
             </p>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />

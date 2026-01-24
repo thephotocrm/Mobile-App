@@ -1,5 +1,15 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { HelpCircle, X, Send, ThumbsUp, ThumbsDown, AlertCircle, ExternalLink, ArrowRight, Lightbulb } from "lucide-react";
+import {
+  HelpCircle,
+  X,
+  Send,
+  ThumbsUp,
+  ThumbsDown,
+  AlertCircle,
+  ExternalLink,
+  ArrowRight,
+  Lightbulb,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -106,12 +116,13 @@ export function ChatbotWidget({
   projectCount,
   hasAutomations,
   isOpen: controlledIsOpen,
-  onOpenChange
+  onOpenChange,
 }: ChatbotWidgetProps) {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
 
   // Use controlled state if provided, otherwise use internal state
-  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
+  const isOpen =
+    controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
   const setIsOpen = (open: boolean) => {
     if (onOpenChange) {
       onOpenChange(open);
@@ -123,7 +134,9 @@ export function ChatbotWidget({
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
-  const [hoveredMessageIndex, setHoveredMessageIndex] = useState<number | null>(null);
+  const [hoveredMessageIndex, setHoveredMessageIndex] = useState<number | null>(
+    null,
+  );
   const [nudgeDismissed, setNudgeDismissed] = useState(false);
   const [pendingFollowUp, setPendingFollowUp] = useState<{
     action: ChatbotAction;
@@ -225,7 +238,10 @@ export function ChatbotWidget({
 
   const dismissNudge = () => {
     setNudgeDismissed(true);
-    localStorage.setItem(NUDGE_DISMISSED_KEY, JSON.stringify({ timestamp: Date.now() }));
+    localStorage.setItem(
+      NUDGE_DISMISSED_KEY,
+      JSON.stringify({ timestamp: Date.now() }),
+    );
   };
 
   // Keyboard shortcuts
@@ -264,7 +280,7 @@ export function ChatbotWidget({
         // Convert timestamp strings back to Date objects
         const restored = parsed.map((m: any) => ({
           ...m,
-          timestamp: new Date(m.timestamp)
+          timestamp: new Date(m.timestamp),
         }));
         setMessages(restored);
         setShowSuggestions(false);
@@ -284,7 +300,7 @@ export function ChatbotWidget({
   // Auto-scroll to bottom smoothly
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isLoading, isFollowUpLoading]);
 
@@ -295,11 +311,13 @@ export function ChatbotWidget({
         ? `Hi ${photographerName}! I'm here to help you get the most out of thePhotoCrm. What would you like to know?`
         : "Hi! I'm here to help you get the most out of thePhotoCrm. What would you like to know?";
 
-      setMessages([{
-        role: "assistant",
-        content: greeting,
-        timestamp: new Date()
-      }]);
+      setMessages([
+        {
+          role: "assistant",
+          content: greeting,
+          timestamp: new Date(),
+        },
+      ]);
     }
   }, [isOpen, photographerName, messages.length]);
 
@@ -310,45 +328,45 @@ export function ChatbotWidget({
     const userMessage: Message = {
       role: "user",
       content: text,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
     setShowSuggestions(false);
 
     try {
-      const res = await apiRequest(
-        "POST",
-        "/api/chatbot",
-        {
-          message: text,
-          context: `${context}:${getCurrentPage()}`,
-          photographerName,
-          history: messages.map(m => ({ role: m.role, content: m.content }))
-        }
-      );
+      const res = await apiRequest("POST", "/api/chatbot", {
+        message: text,
+        context: `${context}:${getCurrentPage()}`,
+        photographerName,
+        history: messages.map((m) => ({ role: m.role, content: m.content })),
+      });
 
-      const response = await res.json() as { message: string; actions?: ChatbotAction[] };
+      const response = (await res.json()) as {
+        message: string;
+        actions?: ChatbotAction[];
+      };
 
       const assistantMessage: Message = {
         role: "assistant",
         content: response.message,
         timestamp: new Date(),
-        actions: response.actions
+        actions: response.actions,
       };
 
-      setMessages(prev => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error("Chatbot error:", error);
       const errorMessage: Message = {
         role: "assistant",
-        content: "Sorry, I'm having trouble responding right now. Please try again in a moment.",
+        content:
+          "Sorry, I'm having trouble responding right now. Please try again in a moment.",
         timestamp: new Date(),
-        isError: true
+        isError: true,
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -361,64 +379,71 @@ export function ChatbotWidget({
     }
   };
 
-  const handleFeedback = (index: number, feedback: "helpful" | "not-helpful") => {
-    setMessages(prev => prev.map((m, i) =>
-      i === index ? { ...m, feedback } : m
-    ));
+  const handleFeedback = (
+    index: number,
+    feedback: "helpful" | "not-helpful",
+  ) => {
+    setMessages((prev) =>
+      prev.map((m, i) => (i === index ? { ...m, feedback } : m)),
+    );
   };
 
   // Handle navigation follow-up after user clicks an action button
-  const handleNavigationFollowUp = useCallback(async (
-    action: ChatbotAction,
-    originalQuestion: string,
-    previousPage: string
-  ) => {
-    if (isFollowUpLoading || isLoading) return;
+  const handleNavigationFollowUp = useCallback(
+    async (
+      action: ChatbotAction,
+      originalQuestion: string,
+      previousPage: string,
+    ) => {
+      if (isFollowUpLoading || isLoading) return;
 
-    setIsFollowUpLoading(true);
+      setIsFollowUpLoading(true);
 
-    try {
-      const res = await apiRequest(
-        "POST",
-        "/api/chatbot",
-        {
+      try {
+        const res = await apiRequest("POST", "/api/chatbot", {
           message: "[NAVIGATION_FOLLOW_UP]",
-          context: `${context}:${action.target.replace('/', '').split('?')[0]}`,
+          context: `${context}:${action.target.replace("/", "").split("?")[0]}`,
           photographerName,
-          history: messages.map(m => ({ role: m.role, content: m.content })),
+          history: messages.map((m) => ({ role: m.role, content: m.content })),
           navigationContext: {
             navigatedTo: action.target,
             actionLabel: action.label,
             previousPage: previousPage,
             originalUserQuestion: originalQuestion,
-            isFollowUp: true
-          }
-        }
-      );
+            isFollowUp: true,
+          },
+        });
 
-      const response = await res.json() as { message: string; actions?: ChatbotAction[] };
+        const response = (await res.json()) as {
+          message: string;
+          actions?: ChatbotAction[];
+        };
 
-      const followUpMessage: Message = {
-        role: "assistant",
-        content: response.message,
-        timestamp: new Date(),
-        actions: response.actions
-      };
+        const followUpMessage: Message = {
+          role: "assistant",
+          content: response.message,
+          timestamp: new Date(),
+          actions: response.actions,
+        };
 
-      setMessages(prev => [...prev, followUpMessage]);
-    } catch (error) {
-      // Silent fail - follow-ups are bonus UX, not critical
-      console.error("Navigation follow-up error:", error);
-    } finally {
-      setIsFollowUpLoading(false);
-      setPendingFollowUp(null);
-    }
-  }, [isFollowUpLoading, isLoading, context, photographerName, messages]);
+        setMessages((prev) => [...prev, followUpMessage]);
+      } catch (error) {
+        // Silent fail - follow-ups are bonus UX, not critical
+        console.error("Navigation follow-up error:", error);
+      } finally {
+        setIsFollowUpLoading(false);
+        setPendingFollowUp(null);
+      }
+    },
+    [isFollowUpLoading, isLoading, context, photographerName, messages],
+  );
 
   const handleActionClick = (action: ChatbotAction) => {
     if (action.type === "navigate") {
       // Find the last user message to understand context
-      const lastUserMessage = [...messages].reverse().find(m => m.role === "user");
+      const lastUserMessage = [...messages]
+        .reverse()
+        .find((m) => m.role === "user");
       const originalQuestion = lastUserMessage?.content || "";
       const previousPage = getCurrentPage();
 
@@ -427,28 +452,28 @@ export function ChatbotWidget({
 
       // Only trigger follow-up for actionable routes
       const actionableRoutes = [
-        '/automations',
-        '/smart-files',
-        '/templates',
-        '/projects',
-        '/contacts',
-        '/galleries',
-        '/scheduling',
-        '/settings',
-        '/lead-forms',
-        '/packages',
-        '/add-ons',
-        '/drip-campaigns',
-        '/questionnaires'
+        "/automations",
+        "/smart-files",
+        "/templates",
+        "/projects",
+        "/contacts",
+        "/galleries",
+        "/scheduling",
+        "/settings",
+        "/lead-forms",
+        "/packages",
+        "/add-ons",
+        "/drip-campaigns",
+        "/questionnaires",
       ];
 
-      const targetPath = action.target.split('?')[0];
-      if (actionableRoutes.some(route => targetPath.startsWith(route))) {
+      const targetPath = action.target.split("?")[0];
+      if (actionableRoutes.some((route) => targetPath.startsWith(route))) {
         // Set pending follow-up (will be triggered by useEffect after delay)
         setPendingFollowUp({
           action,
           originalQuestion,
-          previousPage
+          previousPage,
         });
       }
     } else if (action.type === "external") {
@@ -464,7 +489,7 @@ export function ChatbotWidget({
         handleNavigationFollowUp(
           pendingFollowUp.action,
           pendingFollowUp.originalQuestion,
-          pendingFollowUp.previousPage
+          pendingFollowUp.previousPage,
         );
       }, 500);
 
@@ -485,8 +510,12 @@ export function ChatbotWidget({
 
     if (diffMins < 1) return "Just now";
     if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffMins < 1440) return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    if (diffMins < 1440)
+      return date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    return date.toLocaleDateString([], { month: "short", day: "numeric" });
   };
 
   const nudge = getNudgeMessage();
@@ -503,8 +532,12 @@ export function ChatbotWidget({
                 <HelpCircle className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold text-sm text-gray-900 dark:text-white">Help Assistant</h3>
-                <p className="text-xs text-gray-500">Ask me anything about thePhotoCrm</p>
+                <h3 className="font-semibold text-sm text-gray-900 dark:text-white">
+                  Help Assistant
+                </h3>
+                <p className="text-xs text-gray-500">
+                  Ask me anything about thePhotoCrm
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -535,7 +568,9 @@ export function ChatbotWidget({
               <div className="flex items-start gap-2.5">
                 <Lightbulb className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-amber-800 dark:text-amber-200">{nudge.message}</p>
+                  <p className="text-xs text-amber-800 dark:text-amber-200">
+                    {nudge.message}
+                  </p>
                   <button
                     onClick={() => {
                       handleSend(nudge.question);
@@ -564,7 +599,7 @@ export function ChatbotWidget({
                   key={index}
                   className={cn(
                     "flex flex-col gap-1",
-                    message.role === "user" ? "items-end" : "items-start"
+                    message.role === "user" ? "items-end" : "items-start",
                   )}
                   onMouseEnter={() => setHoveredMessageIndex(index)}
                   onMouseLeave={() => setHoveredMessageIndex(null)}
@@ -576,8 +611,8 @@ export function ChatbotWidget({
                       message.role === "user"
                         ? "bg-primary text-primary-foreground rounded-br-md"
                         : message.isError
-                        ? "bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-bl-md"
-                        : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-md"
+                          ? "bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-bl-md"
+                          : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-md",
                     )}
                   >
                     {message.isError && (
@@ -591,7 +626,9 @@ export function ChatbotWidget({
                         <ReactMarkdown>{message.content}</ReactMarkdown>
                       </div>
                     ) : (
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      <p className="text-sm whitespace-pre-wrap">
+                        {message.content}
+                      </p>
                     )}
                   </div>
 
@@ -616,44 +653,60 @@ export function ChatbotWidget({
                   )}
 
                   {/* Timestamp - show on hover or for messages older than 5 min */}
-                  <span className={cn(
-                    "text-[10px] text-gray-400 px-2 transition-opacity duration-150",
-                    (hoveredMessageIndex === index || (new Date().getTime() - message.timestamp.getTime() > 300000))
-                      ? "opacity-100"
-                      : "opacity-0"
-                  )}>
+                  <span
+                    className={cn(
+                      "text-[10px] text-gray-400 px-2 transition-opacity duration-150",
+                      hoveredMessageIndex === index ||
+                        new Date().getTime() - message.timestamp.getTime() >
+                          300000
+                        ? "opacity-100"
+                        : "opacity-0",
+                    )}
+                  >
                     {formatTimestamp(message.timestamp)}
                   </span>
 
                   {/* Feedback buttons for assistant messages */}
-                  {message.role === "assistant" && !message.isError && index > 0 && (
-                    <div className={cn(
-                      "flex items-center gap-1 px-2 transition-opacity",
-                      hoveredMessageIndex === index || message.feedback ? "opacity-100" : "opacity-0"
-                    )}>
-                      {message.feedback ? (
-                        <span className="text-[10px] text-gray-400">
-                          {message.feedback === "helpful" ? "Thanks for the feedback!" : "We'll try to improve"}
-                        </span>
-                      ) : (
-                        <>
-                          <span className="text-[10px] text-gray-400 mr-1">Helpful?</span>
-                          <button
-                            onClick={() => handleFeedback(index, "helpful")}
-                            className="p-1 rounded hover:bg-green-100 dark:hover:bg-green-900 text-gray-400 hover:text-green-600 transition-colors"
-                          >
-                            <ThumbsUp className="w-3 h-3" />
-                          </button>
-                          <button
-                            onClick={() => handleFeedback(index, "not-helpful")}
-                            className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-900 text-gray-400 hover:text-red-600 transition-colors"
-                          >
-                            <ThumbsDown className="w-3 h-3" />
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  )}
+                  {message.role === "assistant" &&
+                    !message.isError &&
+                    index > 0 && (
+                      <div
+                        className={cn(
+                          "flex items-center gap-1 px-2 transition-opacity",
+                          hoveredMessageIndex === index || message.feedback
+                            ? "opacity-100"
+                            : "opacity-0",
+                        )}
+                      >
+                        {message.feedback ? (
+                          <span className="text-[10px] text-gray-400">
+                            {message.feedback === "helpful"
+                              ? "Thanks for the feedback!"
+                              : "We'll try to improve"}
+                          </span>
+                        ) : (
+                          <>
+                            <span className="text-[10px] text-gray-400 mr-1">
+                              Helpful?
+                            </span>
+                            <button
+                              onClick={() => handleFeedback(index, "helpful")}
+                              className="p-1 rounded hover:bg-green-100 dark:hover:bg-green-900 text-gray-400 hover:text-green-600 transition-colors"
+                            >
+                              <ThumbsUp className="w-3 h-3" />
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleFeedback(index, "not-helpful")
+                              }
+                              className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-900 text-gray-400 hover:text-red-600 transition-colors"
+                            >
+                              <ThumbsDown className="w-3 h-3" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    )}
                 </div>
               ))}
 
@@ -662,9 +715,18 @@ export function ChatbotWidget({
                 <div className="flex items-start">
                   <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl rounded-bl-md px-4 py-3">
                     <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "0ms" }}
+                      />
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "150ms" }}
+                      />
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "300ms" }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -722,7 +784,8 @@ export function ChatbotWidget({
               </Button>
             </div>
             <p className="text-[10px] text-gray-400 mt-1.5 text-center">
-              Press Enter to send · <span className="hidden md:inline">⌘/ to toggle</span>
+              Press Enter to send ·{" "}
+              <span className="hidden md:inline">⌘/ to toggle</span>
             </p>
           </div>
         </div>
@@ -733,7 +796,7 @@ export function ChatbotWidget({
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40",
-          hideOnMobile && "hidden md:flex"
+          hideOnMobile && "hidden md:flex",
         )}
         size="icon"
         data-testid="button-toggle-chatbot"

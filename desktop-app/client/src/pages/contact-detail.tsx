@@ -9,13 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  ArrowLeft, 
-  Mail, 
-  Phone, 
-  Calendar, 
-  MapPin, 
-  User, 
+import {
+  ArrowLeft,
+  Mail,
+  Phone,
+  Calendar,
+  MapPin,
+  User,
   Send,
   FileText,
   DollarSign,
@@ -25,16 +25,49 @@ import {
   MoreHorizontal,
   Eye,
   Plus,
-  Trash2
+  Trash2,
 } from "lucide-react";
-import { type ContactWithProjects, type Estimate, type Message, type TimelineEvent, type Stage, type EmailHistory } from "@shared/schema";
+import {
+  type ContactWithProjects,
+  type Estimate,
+  type Message,
+  type TimelineEvent,
+  type Stage,
+  type EmailHistory,
+} from "@shared/schema";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function ContactDetail() {
   // ALL HOOKS MUST BE AT THE TOP - Rules of Hooks!
@@ -50,82 +83,89 @@ export default function ContactDetail() {
 
   const { data: client, isLoading } = useQuery<ContactWithProjects>({
     queryKey: ["/api/contacts", clientId],
-    enabled: !!user && !!clientId
+    enabled: !!user && !!clientId,
   });
 
   const { data: proposals } = useQuery<Estimate[]>({
     queryKey: ["/api/proposals", "client", clientId],
-    enabled: !!user && !!clientId
+    enabled: !!user && !!clientId,
   });
 
-  const { data: clientHistory = [], refetch: refetchHistory } = useQuery<TimelineEvent[]>({
+  const { data: clientHistory = [], refetch: refetchHistory } = useQuery<
+    TimelineEvent[]
+  >({
     queryKey: ["/api/contacts", clientId, "history"],
-    enabled: !!user && !!clientId
+    enabled: !!user && !!clientId,
   });
 
-  const { data: messages = [], refetch: refetchMessages } = useQuery<Message[]>({
-    queryKey: ["/api/contacts", clientId, "messages"],
-    enabled: !!user && !!clientId
-  });
+  const { data: messages = [], refetch: refetchMessages } = useQuery<Message[]>(
+    {
+      queryKey: ["/api/contacts", clientId, "messages"],
+      enabled: !!user && !!clientId,
+    },
+  );
 
   const { data: emailHistory = [] } = useQuery<EmailHistory[]>({
     queryKey: ["/api/contacts", clientId, "email-history"],
-    enabled: !!user && !!clientId
+    enabled: !!user && !!clientId,
   });
 
   const { data: stages = [] } = useQuery<Stage[]>({
     queryKey: ["/api/stages"],
-    enabled: !!user
+    enabled: !!user,
   });
-
 
   const sendLoginLinkMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest("POST", `/api/contacts/${clientId}/send-login-link`);
+      const response = await apiRequest(
+        "POST",
+        `/api/contacts/${clientId}/send-login-link`,
+      );
       return response;
     },
     onSuccess: (data: any) => {
-      console.log('Send login link success:', data);
-      
+      console.log("Send login link success:", data);
+
       let title = "Login link sent";
-      let description = "Contact will receive an email with their portal access link.";
-      
+      let description =
+        "Contact will receive an email with their portal access link.";
+
       // Handle development mode responses
       if (data?.loginUrl) {
         title = "Login link generated";
         description = data.message || "Login link created successfully.";
-        
+
         // In development, show the actual login URL
         if (data.debugInfo) {
           description += ` \n\nDevelopment URL: ${data.loginUrl}`;
         }
       }
-      
+
       toast({
         title,
         description,
       });
     },
     onError: async (error: any) => {
-      console.error('Send login link error:', error);
-      
+      console.error("Send login link error:", error);
+
       let title = "Error";
       let description = "Failed to send login link. Please try again.";
-      
+
       try {
         // Try to parse backend error response
         if (error?.response) {
           const errorData = await error.response.json();
-          console.log('Backend error data:', errorData);
-          
+          console.log("Backend error data:", errorData);
+
           title = errorData.error ? "Email Service Error" : "Error";
           description = errorData.message || errorData.error || description;
-          
+
           // If backend provided a login URL in error response (development mode)
           if (errorData.loginUrl) {
             description += `\n\nDevelopment URL: ${errorData.loginUrl}`;
           }
-          
+
           if (errorData.warning) {
             description += `\n\n${errorData.warning}`;
           }
@@ -133,8 +173,8 @@ export default function ContactDetail() {
           description = error.message;
         }
       } catch (parseError) {
-        console.warn('Could not parse error response:', parseError);
-        
+        console.warn("Could not parse error response:", parseError);
+
         // Fallback: try to get error text directly
         try {
           if (error?.response) {
@@ -144,57 +184,67 @@ export default function ContactDetail() {
             }
           }
         } catch (textError) {
-          console.warn('Could not get error text:', textError);
+          console.warn("Could not get error text:", textError);
         }
       }
-      
+
       toast({
         title,
         description,
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   // Send proposal mutation
   const sendProposalMutation = useMutation({
-    mutationFn: (proposalId: string) => apiRequest("POST", `/api/proposals/${proposalId}/send`, {}),
+    mutationFn: (proposalId: string) =>
+      apiRequest("POST", `/api/proposals/${proposalId}/send`, {}),
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Proposal sent to contact successfully!"
+        description: "Proposal sent to contact successfully!",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/proposals", "client", clientId] });
-      queryClient.invalidateQueries({ queryKey: ["/api/contacts", clientId, "history"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/proposals", "client", clientId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/contacts", clientId, "history"],
+      });
     },
     onError: (error: any) => {
       toast({
         title: "Error",
         description: error.message || "Failed to send proposal",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
-  // Delete proposal mutation  
+  // Delete proposal mutation
   const deleteProposalMutation = useMutation({
-    mutationFn: (proposalId: string) => apiRequest("DELETE", `/api/proposals/${proposalId}`, {}),
+    mutationFn: (proposalId: string) =>
+      apiRequest("DELETE", `/api/proposals/${proposalId}`, {}),
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Proposal deleted successfully!"
+        description: "Proposal deleted successfully!",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/proposals", "client", clientId] });
-      queryClient.invalidateQueries({ queryKey: ["/api/contacts", clientId, "history"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/proposals", "client", clientId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/contacts", clientId, "history"],
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/proposals"] }); // Keep global proposals list consistent
     },
     onError: (error: any) => {
       toast({
         title: "Error",
         description: error.message || "Failed to delete proposal",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const sendMessageMutation = useMutation({
@@ -203,7 +253,7 @@ export default function ContactDetail() {
         clientId,
         content,
         channel: "INTERNAL",
-        sentByPhotographer: true
+        sentByPhotographer: true,
       });
     },
     onSuccess: () => {
@@ -211,20 +261,24 @@ export default function ContactDetail() {
       setShowMessageForm(false);
       refetchMessages();
       refetchHistory();
-      queryClient.invalidateQueries({ queryKey: ["/api/contacts", clientId, "messages"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/contacts", clientId, "history"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/contacts", clientId, "messages"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/contacts", clientId, "history"],
+      });
       toast({
         title: "Message sent",
-        description: "Your message has been sent to the client."
+        description: "Your message has been sent to the client.",
       });
     },
     onError: () => {
       toast({
         title: "Error",
         description: "Failed to send message. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   // ALL CONDITIONAL LOGIC AFTER ALL HOOKS
@@ -258,8 +312,13 @@ export default function ContactDetail() {
         <div className="flex items-center justify-center h-full">
           <div className="text-center">
             <h2 className="text-2xl font-semibold mb-2">Contact not found</h2>
-            <p className="text-muted-foreground mb-4">The contact you're looking for doesn't exist.</p>
-            <Button onClick={() => setLocation("/contacts")} data-testid="button-back-to-contacts">
+            <p className="text-muted-foreground mb-4">
+              The contact you're looking for doesn't exist.
+            </p>
+            <Button
+              onClick={() => setLocation("/contacts")}
+              data-testid="button-back-to-contacts"
+            >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Contacts
             </Button>
@@ -270,13 +329,13 @@ export default function ContactDetail() {
   }
 
   const formatDate = (date: string | Date) => {
-    return new Date(date).toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric', 
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false // Military time (24-hour format)
+    return new Date(date).toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false, // Military time (24-hour format)
     });
   };
 
@@ -286,255 +345,300 @@ export default function ContactDetail() {
 
   return (
     <SidebarInset>
-        {/* Header */}
-        <header className="bg-card border-b border-border px-4 md:px-6 py-4">
-          {/* Desktop: Row layout */}
-          <div className="hidden md:flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setLocation("/contacts")}
-                data-testid="button-back-to-contacts"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Contacts
-              </Button>
-              <div>
-                <h1 className="text-2xl font-semibold">
-                  {client.firstName} {client.lastName}
-                </h1>
-                <p className="text-muted-foreground">Contact Details & History</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              <Button
-                variant="outline"
-                onClick={() => sendLoginLinkMutation.mutate()}
-                disabled={sendLoginLinkMutation.isPending || !client.email}
-                data-testid="button-send-login-link"
-              >
-                <LinkIcon className="w-4 h-4 mr-2" />
-                {sendLoginLinkMutation.isPending ? "Sending..." : "Send Login Link"}
-              </Button>
-              <Button 
-                onClick={() => setShowMessageForm(true)}
-                data-testid="button-send-message"
-              >
-                <MessageSquare className="w-4 h-4 mr-2" />
-                Message Contact
-              </Button>
-            </div>
-          </div>
-
-          {/* Mobile: Column layout */}
-          <div className="md:hidden space-y-3">
-            <div className="flex items-center justify-between">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setLocation("/contacts")}
-                data-testid="button-back-to-contacts"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Contacts
-              </Button>
-            </div>
-            
+      {/* Header */}
+      <header className="bg-card border-b border-border px-4 md:px-6 py-4">
+        {/* Desktop: Row layout */}
+        <div className="hidden md:flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setLocation("/contacts")}
+              data-testid="button-back-to-contacts"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Contacts
+            </Button>
             <div>
               <h1 className="text-2xl font-semibold">
                 {client.firstName} {client.lastName}
               </h1>
-              <p className="text-sm text-muted-foreground">Contact Details & History</p>
-            </div>
-            
-            <div className="flex flex-col gap-2">
-              <Button
-                variant="outline"
-                onClick={() => sendLoginLinkMutation.mutate()}
-                disabled={sendLoginLinkMutation.isPending || !client.email}
-                data-testid="button-send-login-link"
-                className="w-full"
-              >
-                <LinkIcon className="w-4 h-4 mr-2" />
-                {sendLoginLinkMutation.isPending ? "Sending..." : "Send Login Link"}
-              </Button>
-              <Button 
-                onClick={() => setShowMessageForm(true)}
-                data-testid="button-send-message"
-                className="w-full"
-              >
-                <MessageSquare className="w-4 h-4 mr-2" />
-                Message Contact
-              </Button>
+              <p className="text-muted-foreground">Contact Details & History</p>
             </div>
           </div>
-        </header>
 
-        <div className="p-6 space-y-6">
-          {/* Contact Overview */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Basic Info */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <User className="w-5 h-5 mr-2" />
-                  Contact Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+          <div className="flex items-center space-x-3">
+            <Button
+              variant="outline"
+              onClick={() => sendLoginLinkMutation.mutate()}
+              disabled={sendLoginLinkMutation.isPending || !client.email}
+              data-testid="button-send-login-link"
+            >
+              <LinkIcon className="w-4 h-4 mr-2" />
+              {sendLoginLinkMutation.isPending
+                ? "Sending..."
+                : "Send Login Link"}
+            </Button>
+            <Button
+              onClick={() => setShowMessageForm(true)}
+              data-testid="button-send-message"
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Message Contact
+            </Button>
+          </div>
+        </div>
+
+        {/* Mobile: Column layout */}
+        <div className="md:hidden space-y-3">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setLocation("/contacts")}
+              data-testid="button-back-to-contacts"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Contacts
+            </Button>
+          </div>
+
+          <div>
+            <h1 className="text-2xl font-semibold">
+              {client.firstName} {client.lastName}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Contact Details & History
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Button
+              variant="outline"
+              onClick={() => sendLoginLinkMutation.mutate()}
+              disabled={sendLoginLinkMutation.isPending || !client.email}
+              data-testid="button-send-login-link"
+              className="w-full"
+            >
+              <LinkIcon className="w-4 h-4 mr-2" />
+              {sendLoginLinkMutation.isPending
+                ? "Sending..."
+                : "Send Login Link"}
+            </Button>
+            <Button
+              onClick={() => setShowMessageForm(true)}
+              data-testid="button-send-message"
+              className="w-full"
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Message Contact
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <div className="p-6 space-y-6">
+        {/* Contact Overview */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Basic Info */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <User className="w-5 h-5 mr-2" />
+                Contact Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Name
+                </p>
+                <p className="text-base" data-testid="text-client-name">
+                  {client.firstName} {client.lastName}
+                </p>
+              </div>
+
+              {client.email && (
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Name</p>
-                  <p className="text-base" data-testid="text-client-name">
-                    {client.firstName} {client.lastName}
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Email
                   </p>
+                  <div className="flex items-center space-x-2">
+                    <Mail className="w-4 h-4 text-muted-foreground" />
+                    <p className="text-base" data-testid="text-client-email">
+                      {client.email}
+                    </p>
+                  </div>
                 </div>
-                
-                {client.email && (
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Email</p>
-                    <div className="flex items-center space-x-2">
-                      <Mail className="w-4 h-4 text-muted-foreground" />
-                      <p className="text-base" data-testid="text-client-email">{client.email}</p>
-                    </div>
-                  </div>
-                )}
-                
-                {client.phone && (
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Phone</p>
-                    <div className="flex items-center space-x-2">
-                      <Phone className="w-4 h-4 text-muted-foreground" />
-                      <p className="text-base" data-testid="text-client-phone">{client.phone}</p>
-                    </div>
-                  </div>
-                )}
-                
-                {client.eventDate && (
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Event Date</p>
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="w-4 h-4 text-muted-foreground" />
-                      <p className="text-base" data-testid="text-wedding-date">
-                        {formatEventDate(client.eventDate)}
-                      </p>
-                    </div>
-                  </div>
-                )}
-                
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Contact Since</p>
-                  <p className="text-base">{client.createdAt ? formatDate(client.createdAt) : 'Unknown'}</p>
-                </div>
-              </CardContent>
-            </Card>
+              )}
 
-            {/* Projects */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Projects</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {client.projects && client.projects.length > 0 ? (
-                  <div className="space-y-3">
-                    {client.projects.map((project) => {
-                      const stage = stages.find(s => s.id === project.stageId);
-                      return (
-                        <div
-                          key={project.id}
-                          className="flex items-center justify-between p-3 border rounded-lg hover:shadow-md transition-all duration-200 bg-gradient-to-r from-white to-purple-50/30 dark:from-slate-900 dark:to-purple-950/20 hover:border-purple-200 dark:hover:border-purple-800 cursor-pointer"
-                          onClick={() => setLocation(`/projects/${project.id}`)}
-                          data-testid={`project-${project.id}`}
-                        >
-                          <div className="space-y-1">
-                            <p className="font-medium text-sm">{project.title}</p>
-                            <p className="text-xs text-muted-foreground">{project.projectType}</p>
-                            {project.eventDate && (
-                              <p className="text-xs text-muted-foreground">
-                                {formatEventDate(project.eventDate)}
-                              </p>
-                            )}
-                          </div>
-                          {stage ? (
-                            <Badge 
-                              className="text-xs px-2 py-1" 
-                              style={{
-                                backgroundColor: stage.color ? `${stage.color}20` : undefined, 
-                                color: stage.color || undefined, 
-                                borderColor: stage.color || undefined
-                              }}
-                              data-testid={`badge-project-stage-${project.id}`}
-                            >
-                              {stage.name}
-                            </Badge>
-                          ) : (
-                            <Badge variant="outline" className="text-xs px-2 py-1">
-                              No Stage
-                            </Badge>
+              {client.phone && (
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Phone
+                  </p>
+                  <div className="flex items-center space-x-2">
+                    <Phone className="w-4 h-4 text-muted-foreground" />
+                    <p className="text-base" data-testid="text-client-phone">
+                      {client.phone}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {client.eventDate && (
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Event Date
+                  </p>
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="w-4 h-4 text-muted-foreground" />
+                    <p className="text-base" data-testid="text-wedding-date">
+                      {formatEventDate(client.eventDate)}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Contact Since
+                </p>
+                <p className="text-base">
+                  {client.createdAt ? formatDate(client.createdAt) : "Unknown"}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Projects */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Projects</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {client.projects && client.projects.length > 0 ? (
+                <div className="space-y-3">
+                  {client.projects.map((project) => {
+                    const stage = stages.find((s) => s.id === project.stageId);
+                    return (
+                      <div
+                        key={project.id}
+                        className="flex items-center justify-between p-3 border rounded-lg hover:shadow-md transition-all duration-200 bg-gradient-to-r from-white to-purple-50/30 dark:from-slate-900 dark:to-purple-950/20 hover:border-purple-200 dark:hover:border-purple-800 cursor-pointer"
+                        onClick={() => setLocation(`/projects/${project.id}`)}
+                        data-testid={`project-${project.id}`}
+                      >
+                        <div className="space-y-1">
+                          <p className="font-medium text-sm">{project.title}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {project.projectType}
+                          </p>
+                          {project.eventDate && (
+                            <p className="text-xs text-muted-foreground">
+                              {formatEventDate(project.eventDate)}
+                            </p>
                           )}
                         </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="text-center py-4">
-                    <p className="text-muted-foreground">No projects yet</p>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="mt-2" 
-                      onClick={() => setLocation(`/projects?clientId=${clientId}`)}
-                      data-testid="button-add-project"
-                    >
-                      Add Project
-                    </Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                        {stage ? (
+                          <Badge
+                            className="text-xs px-2 py-1"
+                            style={{
+                              backgroundColor: stage.color
+                                ? `${stage.color}20`
+                                : undefined,
+                              color: stage.color || undefined,
+                              borderColor: stage.color || undefined,
+                            }}
+                            data-testid={`badge-project-stage-${project.id}`}
+                          >
+                            {stage.name}
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant="outline"
+                            className="text-xs px-2 py-1"
+                          >
+                            No Stage
+                          </Badge>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-muted-foreground">No projects yet</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                    onClick={() =>
+                      setLocation(`/projects?clientId=${clientId}`)
+                    }
+                    data-testid="button-add-project"
+                  >
+                    Add Project
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
-            {/* Quick Stats */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Overview</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <FileText className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">Proposals</span>
-                  </div>
-                  <span className="font-medium" data-testid="text-proposals-count">
-                    {proposals?.length || 0}
-                  </span>
+          {/* Quick Stats */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Overview</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <FileText className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm">Proposals</span>
                 </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <DollarSign className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">Total Value</span>
-                  </div>
-                  <span className="font-medium" data-testid="text-total-value">
-                    {proposals ? formatCurrency(proposals.reduce((sum: number, est: any) => sum + (est.totalCents || 0), 0)) : "$0.00"}
-                  </span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <MessageSquare className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">Messages</span>
-                  </div>
-                  <span className="font-medium" data-testid="text-messages-count">
-                    {messages.length}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                <span
+                  className="font-medium"
+                  data-testid="text-proposals-count"
+                >
+                  {proposals?.length || 0}
+                </span>
+              </div>
 
-          {/* Form Submissions */}
-          {client.projects && client.projects.some((p: any) => p.leadFormId && p.formSubmissionData) && (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <DollarSign className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm">Total Value</span>
+                </div>
+                <span className="font-medium" data-testid="text-total-value">
+                  {proposals
+                    ? formatCurrency(
+                        proposals.reduce(
+                          (sum: number, est: any) =>
+                            sum + (est.totalCents || 0),
+                          0,
+                        ),
+                      )
+                    : "$0.00"}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <MessageSquare className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm">Messages</span>
+                </div>
+                <span className="font-medium" data-testid="text-messages-count">
+                  {messages.length}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Form Submissions */}
+        {client.projects &&
+          client.projects.some(
+            (p: any) => p.leadFormId && p.formSubmissionData,
+          ) && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
@@ -547,32 +651,50 @@ export default function ContactDetail() {
                   {client.projects
                     .filter((p: any) => p.leadFormId && p.formSubmissionData)
                     .map((project: any) => (
-                      <div key={project.id} className="border rounded-lg p-4 space-y-3">
+                      <div
+                        key={project.id}
+                        className="border rounded-lg p-4 space-y-3"
+                      >
                         <div className="flex items-center justify-between border-b pb-2">
                           <div>
                             <h4 className="font-medium">{project.title}</h4>
                             <p className="text-xs text-muted-foreground mt-1">
-                              {project.createdAt ? formatDate(project.createdAt) : 'Unknown date'}
+                              {project.createdAt
+                                ? formatDate(project.createdAt)
+                                : "Unknown date"}
                             </p>
                           </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {Object.entries(project.formSubmissionData || {}).map(([fieldId, value]: [string, any]) => {
-                            // Skip system fields
-                            if (fieldId === 'firstName' || fieldId === 'email') return null;
-                            
-                            // Format the field label (remove field- prefix and capitalize)
-                            const label = fieldId.replace('field-', '').replace(/([A-Z])/g, ' $1').trim();
-                            
-                            return (
-                              <div key={fieldId} className="space-y-1">
-                                <p className="text-sm font-medium text-muted-foreground capitalize">{label}</p>
-                                <p className="text-sm">
-                                  {Array.isArray(value) ? value.join(', ') : value || '-'}
-                                </p>
-                              </div>
-                            );
-                          })}
+                          {Object.entries(project.formSubmissionData || {}).map(
+                            ([fieldId, value]: [string, any]) => {
+                              // Skip system fields
+                              if (
+                                fieldId === "firstName" ||
+                                fieldId === "email"
+                              )
+                                return null;
+
+                              // Format the field label (remove field- prefix and capitalize)
+                              const label = fieldId
+                                .replace("field-", "")
+                                .replace(/([A-Z])/g, " $1")
+                                .trim();
+
+                              return (
+                                <div key={fieldId} className="space-y-1">
+                                  <p className="text-sm font-medium text-muted-foreground capitalize">
+                                    {label}
+                                  </p>
+                                  <p className="text-sm">
+                                    {Array.isArray(value)
+                                      ? value.join(", ")
+                                      : value || "-"}
+                                  </p>
+                                </div>
+                              );
+                            },
+                          )}
                         </div>
                       </div>
                     ))}
@@ -581,427 +703,561 @@ export default function ContactDetail() {
             </Card>
           )}
 
-          {/* Proposals Section */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Proposals</CardTitle>
-                <Button 
-                  onClick={() => setLocation(`/proposals/new?clientId=${clientId}`)}
-                  size="sm"
-                  data-testid="button-create-proposal"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Proposal
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {proposals && proposals.length > 0 ? (
-                <div className="space-y-4">
-                  {proposals.map((estimate) => (
-                    <div 
-                      key={estimate.id} 
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50"
-                      data-testid={`proposal-${estimate.id}`}
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          estimate.status === 'SIGNED' ? 'bg-green-100' :
-                          estimate.sentAt ? 'bg-blue-100' :
-                          'bg-gray-100'
-                        }`}>
-                          {estimate.status === 'SIGNED' ? (
-                            <FileText className="w-5 h-5 text-green-600" />
-                          ) : estimate.sentAt ? (
-                            <Send className="w-5 h-5 text-blue-600" />
-                          ) : (
-                            <FileText className="w-5 h-5 text-gray-600" />
+        {/* Proposals Section */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Proposals</CardTitle>
+              <Button
+                onClick={() =>
+                  setLocation(`/proposals/new?clientId=${clientId}`)
+                }
+                size="sm"
+                data-testid="button-create-proposal"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create Proposal
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {proposals && proposals.length > 0 ? (
+              <div className="space-y-4">
+                {proposals.map((estimate) => (
+                  <div
+                    key={estimate.id}
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50"
+                    data-testid={`proposal-${estimate.id}`}
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                          estimate.status === "SIGNED"
+                            ? "bg-green-100"
+                            : estimate.sentAt
+                              ? "bg-blue-100"
+                              : "bg-gray-100"
+                        }`}
+                      >
+                        {estimate.status === "SIGNED" ? (
+                          <FileText className="w-5 h-5 text-green-600" />
+                        ) : estimate.sentAt ? (
+                          <Send className="w-5 h-5 text-blue-600" />
+                        ) : (
+                          <FileText className="w-5 h-5 text-gray-600" />
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="font-medium">{estimate.title}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          ${((estimate.totalCents || 0) / 100).toFixed(2)}
+                        </p>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <Badge
+                            variant={
+                              estimate.status === "SIGNED"
+                                ? "default"
+                                : estimate.sentAt
+                                  ? "secondary"
+                                  : "outline"
+                            }
+                          >
+                            {estimate.sentAt
+                              ? estimate.status === "SIGNED"
+                                ? "Signed"
+                                : "Sent"
+                              : "Draft"}
+                          </Badge>
+                          {estimate.sentAt && (
+                            <span className="text-xs text-muted-foreground">
+                              Sent{" "}
+                              {new Date(estimate.sentAt).toLocaleDateString()}
+                            </span>
                           )}
                         </div>
-                        <div>
-                          <h3 className="font-medium">{estimate.title}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            ${((estimate.totalCents || 0) / 100).toFixed(2)}
-                          </p>
-                          <div className="flex items-center space-x-2 mt-1">
-                            <Badge variant={
-                              estimate.status === 'SIGNED' ? 'default' : 
-                              estimate.sentAt ? 'secondary' : 'outline'
-                            }>
-                              {estimate.sentAt ? (
-                                estimate.status === 'SIGNED' ? 'Signed' : 'Sent'
-                              ) : 'Draft'}
-                            </Badge>
-                            {estimate.sentAt && (
-                              <span className="text-xs text-muted-foreground">
-                                Sent {new Date(estimate.sentAt).toLocaleDateString()}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        {!estimate.sentAt && (
-                          <Button 
-                            size="sm" 
-                            onClick={() => sendProposalMutation.mutate(estimate.id)}
-                            disabled={sendProposalMutation.isPending}
-                            data-testid={`send-proposal-${estimate.id}`}
-                          >
-                            <Send className="w-4 h-4 mr-2" />
-                            {sendProposalMutation.isPending ? 'Sending...' : 'Send'}
-                          </Button>
-                        )}
-                        
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" data-testid={`menu-proposal-${estimate.id}`}>
-                              <MoreHorizontal className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => window.open(`/public/proposals/${estimate.token}`, '_blank')}>
-                              <Eye className="w-4 h-4 mr-2" />
-                              Preview
-                            </DropdownMenuItem>
-                            {estimate.sentAt && (
-                              <DropdownMenuItem onClick={() => sendProposalMutation.mutate(estimate.id)}>
-                                <Send className="w-4 h-4 mr-2" />
-                                Resend
-                              </DropdownMenuItem>
-                            )}
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} data-testid={`delete-proposal-${estimate.id}`}>
-                                  <Trash2 className="w-4 h-4 mr-2" />
-                                  Delete
-                                </DropdownMenuItem>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Delete Proposal</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Are you sure you want to delete "{estimate.title}"? This action cannot be undone.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel data-testid="cancel-delete-proposal">Cancel</AlertDialogCancel>
-                                  <AlertDialogAction 
-                                    onClick={() => deleteProposalMutation.mutate(estimate.id)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                    data-testid="confirm-delete-proposal"
-                                  >
-                                    Delete
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
                       </div>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground mb-4">No proposals created yet</p>
-                  <Button 
-                    onClick={() => setLocation(`/proposals/new?clientId=${clientId}`)}
-                    data-testid="button-create-first-proposal"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create First Proposal
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
 
-          {/* History Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Contact History</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {clientHistory && clientHistory.length > 0 ? (
-                  clientHistory.map((event: TimelineEvent) => (
-                    <div key={event.id} className="flex items-center justify-between p-4 border rounded-lg" data-testid={`history-${event.type}-${event.id}`}>
-                      <div className="flex items-center space-x-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                          event.type === 'message' ? 'bg-green-100' : 
-                          event.type === 'email' ? 'bg-blue-100' :
-                          event.type === 'sms' ? 'bg-purple-100' :
-                          event.type === 'proposal' ? 'bg-orange-100' :
-                          event.type === 'payment' ? 'bg-emerald-100' :
-                          'bg-gray-100'
-                        }`}>
-                          {event.type === 'message' ? <MessageSquare className={`w-4 h-4 ${event.type === 'message' ? 'text-green-600' : 'text-gray-600'}`} /> :
-                           event.type === 'email' ? <Mail className="w-4 h-4 text-blue-600" /> :
-                           event.type === 'sms' ? <Phone className="w-4 h-4 text-purple-600" /> :
-                           event.type === 'proposal' ? <FileText className="w-4 h-4 text-orange-600" /> :
-                           event.type === 'payment' ? <DollarSign className="w-4 h-4 text-emerald-600" /> :
-                           <FileText className="w-4 h-4 text-gray-600" />}
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-medium">{event.title}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {event.description}
-                          </p>
-                          
-                          {/* Enhanced information for email and SMS */}
-                          {(event.type === 'email' || event.type === 'sms') && (
-                            <div className="mt-2 space-y-1">
-                              {event.type === 'email' && event.templateSubject && (
-                                <p className="text-xs font-medium text-blue-600" data-testid="email-subject">
+                    <div className="flex items-center space-x-2">
+                      {!estimate.sentAt && (
+                        <Button
+                          size="sm"
+                          onClick={() =>
+                            sendProposalMutation.mutate(estimate.id)
+                          }
+                          disabled={sendProposalMutation.isPending}
+                          data-testid={`send-proposal-${estimate.id}`}
+                        >
+                          <Send className="w-4 h-4 mr-2" />
+                          {sendProposalMutation.isPending
+                            ? "Sending..."
+                            : "Send"}
+                        </Button>
+                      )}
+
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            data-testid={`menu-proposal-${estimate.id}`}
+                          >
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() =>
+                              window.open(
+                                `/public/proposals/${estimate.token}`,
+                                "_blank",
+                              )
+                            }
+                          >
+                            <Eye className="w-4 h-4 mr-2" />
+                            Preview
+                          </DropdownMenuItem>
+                          {estimate.sentAt && (
+                            <DropdownMenuItem
+                              onClick={() =>
+                                sendProposalMutation.mutate(estimate.id)
+                              }
+                            >
+                              <Send className="w-4 h-4 mr-2" />
+                              Resend
+                            </DropdownMenuItem>
+                          )}
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                                data-testid={`delete-proposal-${estimate.id}`}
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Delete Proposal
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete "
+                                  {estimate.title}"? This action cannot be
+                                  undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel data-testid="cancel-delete-proposal">
+                                  Cancel
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() =>
+                                    deleteProposalMutation.mutate(estimate.id)
+                                  }
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  data-testid="confirm-delete-proposal"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground mb-4">
+                  No proposals created yet
+                </p>
+                <Button
+                  onClick={() =>
+                    setLocation(`/proposals/new?clientId=${clientId}`)
+                  }
+                  data-testid="button-create-first-proposal"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create First Proposal
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* History Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Contact History</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {clientHistory && clientHistory.length > 0 ? (
+                clientHistory.map((event: TimelineEvent) => (
+                  <div
+                    key={event.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                    data-testid={`history-${event.type}-${event.id}`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                          event.type === "message"
+                            ? "bg-green-100"
+                            : event.type === "email"
+                              ? "bg-blue-100"
+                              : event.type === "sms"
+                                ? "bg-purple-100"
+                                : event.type === "proposal"
+                                  ? "bg-orange-100"
+                                  : event.type === "payment"
+                                    ? "bg-emerald-100"
+                                    : "bg-gray-100"
+                        }`}
+                      >
+                        {event.type === "message" ? (
+                          <MessageSquare
+                            className={`w-4 h-4 ${event.type === "message" ? "text-green-600" : "text-gray-600"}`}
+                          />
+                        ) : event.type === "email" ? (
+                          <Mail className="w-4 h-4 text-blue-600" />
+                        ) : event.type === "sms" ? (
+                          <Phone className="w-4 h-4 text-purple-600" />
+                        ) : event.type === "proposal" ? (
+                          <FileText className="w-4 h-4 text-orange-600" />
+                        ) : event.type === "payment" ? (
+                          <DollarSign className="w-4 h-4 text-emerald-600" />
+                        ) : (
+                          <FileText className="w-4 h-4 text-gray-600" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium">{event.title}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {event.description}
+                        </p>
+
+                        {/* Enhanced information for email and SMS */}
+                        {(event.type === "email" || event.type === "sms") && (
+                          <div className="mt-2 space-y-1">
+                            {event.type === "email" &&
+                              event.templateSubject && (
+                                <p
+                                  className="text-xs font-medium text-blue-600"
+                                  data-testid="email-subject"
+                                >
                                   📧 Subject: {event.templateSubject}
                                 </p>
                               )}
-                              {event.templatePreview && (
-                                <p className="text-xs text-gray-600 bg-gray-50 p-2 rounded border" data-testid="message-preview">
-                                  {event.templatePreview}
-                                </p>
-                              )}
-                              {event.automationName && (
-                                <p className="text-xs text-purple-600" data-testid="automation-name">
-                                  🔄 Automation: {event.automationName}
-                                </p>
-                              )}
+                            {event.templatePreview && (
+                              <p
+                                className="text-xs text-gray-600 bg-gray-50 p-2 rounded border"
+                                data-testid="message-preview"
+                              >
+                                {event.templatePreview}
+                              </p>
+                            )}
+                            {event.automationName && (
+                              <p
+                                className="text-xs text-purple-600"
+                                data-testid="automation-name"
+                              >
+                                🔄 Automation: {event.automationName}
+                              </p>
+                            )}
+                          </div>
+                        )}
+
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {event.createdAt
+                            ? formatDate(event.createdAt)
+                            : "Unknown"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      {"status" in event && (
+                        <Badge
+                          variant={
+                            event.status === "SENT"
+                              ? "secondary"
+                              : event.status === "SIGNED"
+                                ? "default"
+                                : "outline"
+                          }
+                        >
+                          {event.status}
+                        </Badge>
+                      )}
+                      {"totalCents" in event && (
+                        <span className="font-medium">
+                          ${((event.totalCents || 0) / 100).toFixed(2)}
+                        </span>
+                      )}
+                      {"amountCents" in event && (
+                        <span className="font-medium">
+                          ${((event.amountCents || 0) / 100).toFixed(2)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">No activity yet</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Messages, proposals, and other interactions will appear here
+                  </p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Email History Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Email History</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {emailHistory && emailHistory.length > 0 ? (
+                emailHistory.map((email: EmailHistory) => (
+                  <div
+                    key={email.id}
+                    className="flex items-start justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                    data-testid={`email-${email.id}`}
+                  >
+                    <div className="flex items-start space-x-3 flex-1">
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center mt-1 ${
+                          email.direction === "OUTBOUND"
+                            ? "bg-blue-100"
+                            : "bg-green-100"
+                        }`}
+                      >
+                        <Mail
+                          className={`w-4 h-4 ${
+                            email.direction === "OUTBOUND"
+                              ? "text-blue-600"
+                              : "text-green-600"
+                          }`}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <p className="font-medium truncate">
+                            {email.subject || "(No Subject)"}
+                          </p>
+                          <Badge
+                            variant={
+                              email.direction === "OUTBOUND"
+                                ? "default"
+                                : "secondary"
+                            }
+                            className="text-xs shrink-0"
+                          >
+                            {email.direction === "OUTBOUND"
+                              ? "Sent"
+                              : "Received"}
+                          </Badge>
+                        </div>
+
+                        <div className="text-sm text-muted-foreground space-y-1">
+                          <div className="flex items-center space-x-2 text-xs">
+                            {email.direction === "OUTBOUND" ? (
+                              <>
+                                <span>To:</span>
+                                <span className="font-medium">
+                                  {email.recipientEmail}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <span>From:</span>
+                                <span className="font-medium">
+                                  {email.fromEmail}
+                                </span>
+                              </>
+                            )}
+                          </div>
+
+                          {email.source && (
+                            <div className="flex items-center space-x-2">
+                              <Badge variant="outline" className="text-xs">
+                                {email.source === "AUTOMATION"
+                                  ? "🔄 Automation"
+                                  : email.source === "DRIP_CAMPAIGN"
+                                    ? "💧 Drip Campaign"
+                                    : email.source === "MANUAL"
+                                      ? "✍️ Manual"
+                                      : email.source === "CLIENT_REPLY"
+                                        ? "💬 Reply"
+                                        : email.source}
+                              </Badge>
                             </div>
                           )}
-                          
+
                           <p className="text-xs text-muted-foreground mt-2">
-                            {event.createdAt ? formatDate(event.createdAt) : 'Unknown'}
+                            {email.sentAt
+                              ? formatDate(email.sentAt)
+                              : "Unknown"}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-3">
-                        {'status' in event && (
-                          <Badge variant={event.status === 'SENT' ? 'secondary' : event.status === 'SIGNED' ? 'default' : 'outline'}>
-                            {event.status}
-                          </Badge>
-                        )}
-                        {'totalCents' in event && (
-                          <span className="font-medium">
-                            ${((event.totalCents || 0) / 100).toFixed(2)}
-                          </span>
-                        )}
-                        {'amountCents' in event && (
-                          <span className="font-medium">
-                            ${((event.amountCents || 0) / 100).toFixed(2)}
-                          </span>
-                        )}
-                      </div>
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8">
-                    <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">No activity yet</p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Messages, proposals, and other interactions will appear here
-                    </p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
 
-          {/* Email History Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Email History</CardTitle>
-            </CardHeader>
-            <CardContent>
+                    {email.gmailMessageId && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          if (email.gmailThreadId) {
+                            window.open(
+                              `https://mail.google.com/mail/u/0/#all/${email.gmailThreadId}`,
+                              "_blank",
+                            );
+                          }
+                        }}
+                        data-testid={`view-email-${email.id}`}
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <Mail className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">
+                    No emails sent or received yet
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Email communications will appear here once you start using
+                    automations or send manual emails
+                  </p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Messaging Section */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Messages</CardTitle>
+              {!showMessageForm && messages.length > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowMessageForm(true)}
+                  data-testid="button-new-message"
+                >
+                  <Send className="w-4 h-4 mr-2" />
+                  New Message
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            {messages.length === 0 && !showMessageForm ? (
+              <div className="text-center py-8">
+                <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">No messages yet</p>
+                <Button
+                  className="mt-4"
+                  onClick={() => setShowMessageForm(true)}
+                  data-testid="button-start-conversation"
+                >
+                  <Send className="w-4 h-4 mr-2" />
+                  Start Conversation
+                </Button>
+              </div>
+            ) : (
               <div className="space-y-4">
-                {emailHistory && emailHistory.length > 0 ? (
-                  emailHistory.map((email: EmailHistory) => (
-                    <div key={email.id} className="flex items-start justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors" data-testid={`email-${email.id}`}>
-                      <div className="flex items-start space-x-3 flex-1">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center mt-1 ${
-                          email.direction === 'OUTBOUND' ? 'bg-blue-100' : 'bg-green-100'
-                        }`}>
-                          <Mail className={`w-4 h-4 ${
-                            email.direction === 'OUTBOUND' ? 'text-blue-600' : 'text-green-600'
-                          }`} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <p className="font-medium truncate">{email.subject || '(No Subject)'}</p>
-                            <Badge variant={email.direction === 'OUTBOUND' ? 'default' : 'secondary'} className="text-xs shrink-0">
-                              {email.direction === 'OUTBOUND' ? 'Sent' : 'Received'}
-                            </Badge>
-                          </div>
-                          
-                          <div className="text-sm text-muted-foreground space-y-1">
-                            <div className="flex items-center space-x-2 text-xs">
-                              {email.direction === 'OUTBOUND' ? (
-                                <>
-                                  <span>To:</span>
-                                  <span className="font-medium">{email.recipientEmail}</span>
-                                </>
-                              ) : (
-                                <>
-                                  <span>From:</span>
-                                  <span className="font-medium">{email.fromEmail}</span>
-                                </>
+                {/* Message List */}
+                {messages.length > 0 && (
+                  <ScrollArea className="h-64 pr-4">
+                    <div className="space-y-3">
+                      {messages.map((message) => (
+                        <div
+                          key={message.id}
+                          className={`flex ${message.sentByPhotographer ? "justify-end" : "justify-start"}`}
+                          data-testid={`message-${message.id}`}
+                        >
+                          <div
+                            className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                              message.sentByPhotographer
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-muted"
+                            }`}
+                          >
+                            <p className="text-sm">{message.content}</p>
+                            <p className="text-xs mt-1 opacity-70">
+                              {message.createdAt
+                                ? formatDate(message.createdAt)
+                                : "Unknown"}
+                              {message.sentByPhotographer && (
+                                <span className="ml-1">(You)</span>
                               )}
-                            </div>
-                            
-                            {email.source && (
-                              <div className="flex items-center space-x-2">
-                                <Badge variant="outline" className="text-xs">
-                                  {email.source === 'AUTOMATION' ? '🔄 Automation' :
-                                   email.source === 'DRIP_CAMPAIGN' ? '💧 Drip Campaign' :
-                                   email.source === 'MANUAL' ? '✍️ Manual' :
-                                   email.source === 'CLIENT_REPLY' ? '💬 Reply' : email.source}
-                                </Badge>
-                              </div>
-                            )}
-                            
-                            <p className="text-xs text-muted-foreground mt-2">
-                              {email.sentAt ? formatDate(email.sentAt) : 'Unknown'}
                             </p>
                           </div>
                         </div>
-                      </div>
-                      
-                      {email.gmailMessageId && (
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => {
-                            if (email.gmailThreadId) {
-                              window.open(`https://mail.google.com/mail/u/0/#all/${email.gmailThreadId}`, '_blank');
-                            }
-                          }}
-                          data-testid={`view-email-${email.id}`}
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </Button>
-                      )}
+                      ))}
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8">
-                    <Mail className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">No emails sent or received yet</p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Email communications will appear here once you start using automations or send manual emails
-                    </p>
+                  </ScrollArea>
+                )}
+
+                {/* Message Form */}
+                {showMessageForm && (
+                  <div className="border-t pt-4 mt-4">
+                    <div className="space-y-3">
+                      <Textarea
+                        placeholder="Type your message..."
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        className="min-h-[100px]"
+                        data-testid="textarea-message-content"
+                      />
+                      <div className="flex justify-end space-x-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setShowMessageForm(false);
+                            setNewMessage("");
+                          }}
+                          data-testid="button-cancel-message"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={() => sendMessageMutation.mutate(newMessage)}
+                          disabled={
+                            !newMessage.trim() || sendMessageMutation.isPending
+                          }
+                          data-testid="button-submit-message"
+                        >
+                          <Send className="w-4 h-4 mr-2" />
+                          {sendMessageMutation.isPending
+                            ? "Sending..."
+                            : "Send Message"}
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Messaging Section */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Messages</CardTitle>
-                {!showMessageForm && messages.length > 0 && (
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => setShowMessageForm(true)}
-                    data-testid="button-new-message"
-                  >
-                    <Send className="w-4 h-4 mr-2" />
-                    New Message
-                  </Button>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent>
-              {messages.length === 0 && !showMessageForm ? (
-                <div className="text-center py-8">
-                  <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">No messages yet</p>
-                  <Button 
-                    className="mt-4" 
-                    onClick={() => setShowMessageForm(true)}
-                    data-testid="button-start-conversation"
-                  >
-                    <Send className="w-4 h-4 mr-2" />
-                    Start Conversation
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {/* Message List */}
-                  {messages.length > 0 && (
-                    <ScrollArea className="h-64 pr-4">
-                      <div className="space-y-3">
-                        {messages.map((message) => (
-                          <div 
-                            key={message.id} 
-                            className={`flex ${message.sentByPhotographer ? 'justify-end' : 'justify-start'}`}
-                            data-testid={`message-${message.id}`}
-                          >
-                            <div 
-                              className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                                message.sentByPhotographer 
-                                  ? 'bg-primary text-primary-foreground' 
-                                  : 'bg-muted'
-                              }`}
-                            >
-                              <p className="text-sm">{message.content}</p>
-                              <p className="text-xs mt-1 opacity-70">
-                                {message.createdAt ? formatDate(message.createdAt) : 'Unknown'}
-                                {message.sentByPhotographer && (
-                                  <span className="ml-1">(You)</span>
-                                )}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </ScrollArea>
-                  )}
-                  
-                  {/* Message Form */}
-                  {showMessageForm && (
-                    <div className="border-t pt-4 mt-4">
-                      <div className="space-y-3">
-                        <Textarea
-                          placeholder="Type your message..."
-                          value={newMessage}
-                          onChange={(e) => setNewMessage(e.target.value)}
-                          className="min-h-[100px]"
-                          data-testid="textarea-message-content"
-                        />
-                        <div className="flex justify-end space-x-2">
-                          <Button 
-                            variant="outline" 
-                            onClick={() => {
-                              setShowMessageForm(false);
-                              setNewMessage("");
-                            }}
-                            data-testid="button-cancel-message"
-                          >
-                            Cancel
-                          </Button>
-                          <Button 
-                            onClick={() => sendMessageMutation.mutate(newMessage)}
-                            disabled={!newMessage.trim() || sendMessageMutation.isPending}
-                            data-testid="button-submit-message"
-                          >
-                            <Send className="w-4 h-4 mr-2" />
-                            {sendMessageMutation.isPending ? "Sending..." : "Send Message"}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </SidebarInset>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </SidebarInset>
   );
 }

@@ -1,6 +1,19 @@
 import { SiTiktok } from "react-icons/si";
-import { TrendingUp, Target, DollarSign, Users, BarChart3, Video } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  TrendingUp,
+  Target,
+  DollarSign,
+  Users,
+  BarChart3,
+  Video,
+} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function TikTokAds() {
   return (
@@ -13,7 +26,10 @@ export default function TikTokAds() {
           </div>
           <div>
             <h1 className="text-3xl font-bold">TikTok Ads</h1>
-            <p className="text-muted-foreground">Connect with Gen Z and millennial couples on the fastest-growing platform</p>
+            <p className="text-muted-foreground">
+              Connect with Gen Z and millennial couples on the fastest-growing
+              platform
+            </p>
           </div>
         </div>
       </div>
@@ -27,7 +43,8 @@ export default function TikTokAds() {
             </div>
             <CardTitle className="text-lg">Video-First Ads</CardTitle>
             <CardDescription>
-              Create engaging short-form video ads that showcase your photography style and personality
+              Create engaging short-form video ads that showcase your
+              photography style and personality
             </CardDescription>
           </CardHeader>
         </Card>
@@ -39,7 +56,8 @@ export default function TikTokAds() {
             </div>
             <CardTitle className="text-lg">Younger Demographic</CardTitle>
             <CardDescription>
-              Reach millennial and Gen Z couples who are getting married and actively browsing wedding content
+              Reach millennial and Gen Z couples who are getting married and
+              actively browsing wedding content
             </CardDescription>
           </CardHeader>
         </Card>
@@ -51,7 +69,8 @@ export default function TikTokAds() {
             </div>
             <CardTitle className="text-lg">Viral Potential</CardTitle>
             <CardDescription>
-              Leverage TikTok's algorithm to reach millions with creative content that resonates
+              Leverage TikTok's algorithm to reach millions with creative
+              content that resonates
             </CardDescription>
           </CardHeader>
         </Card>
@@ -63,7 +82,8 @@ export default function TikTokAds() {
             </div>
             <CardTitle className="text-lg">Competitive Pricing</CardTitle>
             <CardDescription>
-              Lower advertising costs compared to Facebook and Instagram for reaching younger audiences
+              Lower advertising costs compared to Facebook and Instagram for
+              reaching younger audiences
             </CardDescription>
           </CardHeader>
         </Card>
@@ -75,7 +95,8 @@ export default function TikTokAds() {
             </div>
             <CardTitle className="text-lg">Precise Targeting</CardTitle>
             <CardDescription>
-              Target by interests, behaviors, and demographics to reach engaged couples in your area
+              Target by interests, behaviors, and demographics to reach engaged
+              couples in your area
             </CardDescription>
           </CardHeader>
         </Card>
@@ -87,7 +108,8 @@ export default function TikTokAds() {
             </div>
             <CardTitle className="text-lg">Real-Time Metrics</CardTitle>
             <CardDescription>
-              Track video views, engagement, and conversions with TikTok's comprehensive analytics
+              Track video views, engagement, and conversions with TikTok's
+              comprehensive analytics
             </CardDescription>
           </CardHeader>
         </Card>
@@ -102,7 +124,8 @@ export default function TikTokAds() {
             </div>
             <h2 className="text-2xl font-bold mb-3">Coming Soon</h2>
             <p className="text-muted-foreground max-w-md mx-auto mb-6">
-              We're building an amazing TikTok Ads integration that will help you reach the next generation of couples. Stay tuned!
+              We're building an amazing TikTok Ads integration that will help
+              you reach the next generation of couples. Stay tuned!
             </p>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />

@@ -13,11 +13,11 @@ export interface InvoiceLineItem {
 }
 
 export interface InvoiceCalculationResult {
-  subtotal: number;      // in cents
+  subtotal: number; // in cents
   taxableSubtotal: number; // in cents
-  tax: number;           // in cents
-  discount: number;      // in cents
-  total: number;         // in cents
+  tax: number; // in cents
+  discount: number; // in cents
+  total: number; // in cents
 }
 
 /**
@@ -28,22 +28,24 @@ export function calculateInvoiceTotals(
   lineItems: InvoiceLineItem[],
   taxPercent: number,
   discountAmount: number,
-  discountType: 'AMOUNT' | 'PERCENT'
+  discountType: "AMOUNT" | "PERCENT",
 ): InvoiceCalculationResult {
-  const subtotal = lineItems.reduce((sum, item) =>
-    sum + (item.quantity * item.unitPrice), 0);
+  const subtotal = lineItems.reduce(
+    (sum, item) => sum + item.quantity * item.unitPrice,
+    0,
+  );
 
   const taxableSubtotal = lineItems
-    .filter(item => item.taxable)
-    .reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+    .filter((item) => item.taxable)
+    .reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
 
-  const tax = taxPercent > 0
-    ? Math.round(taxableSubtotal * (taxPercent / 100))
-    : 0;
+  const tax =
+    taxPercent > 0 ? Math.round(taxableSubtotal * (taxPercent / 100)) : 0;
 
-  const discount = discountType === 'PERCENT'
-    ? Math.round(subtotal * (discountAmount / 100))
-    : discountAmount || 0;
+  const discount =
+    discountType === "PERCENT"
+      ? Math.round(subtotal * (discountAmount / 100))
+      : discountAmount || 0;
 
   const total = subtotal + tax - discount;
 

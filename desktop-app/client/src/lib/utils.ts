@@ -1,8 +1,8 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 /**
@@ -12,14 +12,17 @@ export function cn(...inputs: ClassValue[]) {
  */
 export function formatEventDate(
   date: string | Date | null | undefined,
-  options?: Intl.DateTimeFormatOptions
+  options?: Intl.DateTimeFormatOptions,
 ): string {
-  if (!date) return '';
+  if (!date) return "";
   // Extract YYYY-MM-DD and parse as local date to avoid UTC timezone issues
-  const dateStr = typeof date === 'string' ? date : date.toISOString();
-  const datePart = dateStr.split('T')[0];
-  const [year, month, day] = datePart.split('-').map(Number);
-  if (isNaN(year) || isNaN(month) || isNaN(day)) return '';
+  const dateStr = typeof date === "string" ? date : date.toISOString();
+  const datePart = dateStr.split("T")[0];
+  const [year, month, day] = datePart.split("-").map(Number);
+  if (isNaN(year) || isNaN(month) || isNaN(day)) return "";
   const localDate = new Date(year, month - 1, day);
-  return localDate.toLocaleDateString('en-US', options || { month: 'long', day: 'numeric', year: 'numeric' });
+  return localDate.toLocaleDateString(
+    "en-US",
+    options || { month: "long", day: "numeric", year: "numeric" },
+  );
 }

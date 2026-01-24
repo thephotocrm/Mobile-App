@@ -15,7 +15,10 @@
       "Bash(EXPO_TOKEN=8H-LYKK5M0DxyE5xMzVL-R3FxqvYlk79h3R7Hae7 EXPO_PUBLIC_EAS_PROJECT_ID=cbbce86b-1967-4eec-a895-b1954270f408 eas env:list:*)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:api.github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npm ls:*)",
+      "Bash(npx expo install:*)",
+      "Bash(npx eslint:*)"
     ]
   }
 }

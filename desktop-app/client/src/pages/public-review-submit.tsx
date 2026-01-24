@@ -27,7 +27,11 @@ import { useToast } from "@/hooks/use-toast";
 
 const reviewSchema = z.object({
   clientName: z.string().min(2, "Name must be at least 2 characters"),
-  clientEmail: z.string().email("Please enter a valid email").optional().or(z.literal("")),
+  clientEmail: z
+    .string()
+    .email("Please enter a valid email")
+    .optional()
+    .or(z.literal("")),
   rating: z.number().min(1).max(5),
   testimonialText: z.string().min(10, "Please share at least 10 characters"),
   eventDate: z.string().optional(),
@@ -134,7 +138,10 @@ export default function PublicReviewSubmit() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
                 <FormField
                   control={form.control}
                   name="clientName"

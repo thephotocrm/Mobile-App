@@ -1,42 +1,42 @@
-import { useEditor, EditorContent } from '@tiptap/react';
-import { Extension } from '@tiptap/core';
-import StarterKit from '@tiptap/starter-kit';
-import { TextStyle } from '@tiptap/extension-text-style';
-import { Color } from '@tiptap/extension-color';
-import { TextAlign } from '@tiptap/extension-text-align';
-import { Underline } from '@tiptap/extension-underline';
-import { Placeholder } from '@tiptap/extension-placeholder';
-import { FontFamily } from '@tiptap/extension-font-family';
-import { 
-  Bold, 
-  Italic, 
-  Underline as UnderlineIcon, 
-  AlignLeft, 
-  AlignCenter, 
+import { useEditor, EditorContent } from "@tiptap/react";
+import { Extension } from "@tiptap/core";
+import StarterKit from "@tiptap/starter-kit";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { Color } from "@tiptap/extension-color";
+import { TextAlign } from "@tiptap/extension-text-align";
+import { Underline } from "@tiptap/extension-underline";
+import { Placeholder } from "@tiptap/extension-placeholder";
+import { FontFamily } from "@tiptap/extension-font-family";
+import {
+  Bold,
+  Italic,
+  Underline as UnderlineIcon,
+  AlignLeft,
+  AlignCenter,
   AlignRight,
   List,
   ListOrdered,
   Undo,
   Redo,
   ChevronDown,
-  Minus
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+  Minus,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
-import { useEffect, useCallback, useState } from 'react';
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { useEffect, useCallback, useState } from "react";
 
-declare module '@tiptap/core' {
+declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     fontSize: {
       setFontSize: (size: string) => ReturnType;
@@ -46,11 +46,11 @@ declare module '@tiptap/core' {
 }
 
 const FontSize = Extension.create({
-  name: 'fontSize',
+  name: "fontSize",
 
   addOptions() {
     return {
-      types: ['textStyle'],
+      types: ["textStyle"],
     };
   },
 
@@ -61,7 +61,8 @@ const FontSize = Extension.create({
         attributes: {
           fontSize: {
             default: null,
-            parseHTML: (element) => element.style.fontSize?.replace(/['"]+/g, ''),
+            parseHTML: (element) =>
+              element.style.fontSize?.replace(/['"]+/g, ""),
             renderHTML: (attributes) => {
               if (!attributes.fontSize) {
                 return {};
@@ -81,31 +82,43 @@ const FontSize = Extension.create({
       setFontSize:
         (fontSize: string) =>
         ({ chain }) => {
-          return chain().setMark('textStyle', { fontSize }).run();
+          return chain().setMark("textStyle", { fontSize }).run();
         },
       unsetFontSize:
         () =>
         ({ chain }) => {
-          return chain().setMark('textStyle', { fontSize: null }).removeEmptyTextStyle().run();
+          return chain()
+            .setMark("textStyle", { fontSize: null })
+            .removeEmptyTextStyle()
+            .run();
         },
     };
   },
 });
 
-const FONT_SIZES = ['12', '14', '16', '18', '20', '24', '28', '32', '36', '48'];
+const FONT_SIZES = ["12", "14", "16", "18", "20", "24", "28", "32", "36", "48"];
 
 const FONT_FAMILIES = [
-  { label: 'Default', value: '' },
-  { label: 'Sans Serif', value: 'Inter, sans-serif' },
-  { label: 'Serif', value: 'Georgia, serif' },
-  { label: 'Monospace', value: 'monospace' },
-  { label: 'Cursive', value: 'cursive' },
+  { label: "Default", value: "" },
+  { label: "Sans Serif", value: "Inter, sans-serif" },
+  { label: "Serif", value: "Georgia, serif" },
+  { label: "Monospace", value: "monospace" },
+  { label: "Cursive", value: "cursive" },
 ];
 
 const TEXT_COLORS = [
-  '#000000', '#374151', '#6B7280', '#9CA3AF',
-  '#EF4444', '#F97316', '#EAB308', '#22C55E',
-  '#3B82F6', '#8B5CF6', '#EC4899', '#14B8A6',
+  "#000000",
+  "#374151",
+  "#6B7280",
+  "#9CA3AF",
+  "#EF4444",
+  "#F97316",
+  "#EAB308",
+  "#22C55E",
+  "#3B82F6",
+  "#8B5CF6",
+  "#EC4899",
+  "#14B8A6",
 ];
 
 interface RichTextEditorProps {
@@ -118,11 +131,11 @@ interface RichTextEditorProps {
 export function RichTextEditor({
   value,
   onChange,
-  placeholder = 'Start typing...',
+  placeholder = "Start typing...",
   className,
 }: RichTextEditorProps) {
-  const [currentFontSize, setCurrentFontSize] = useState('16');
-  
+  const [currentFontSize, setCurrentFontSize] = useState("16");
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -136,55 +149,56 @@ export function RichTextEditor({
       FontFamily,
       FontSize,
       TextAlign.configure({
-        types: ['heading', 'paragraph'],
+        types: ["heading", "paragraph"],
       }),
       Placeholder.configure({
         placeholder,
       }),
     ],
-    content: value || '',
+    content: value || "",
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
-      const attrs = editor.getAttributes('textStyle');
+      const attrs = editor.getAttributes("textStyle");
       if (attrs.fontSize) {
-        setCurrentFontSize(attrs.fontSize.replace('px', ''));
+        setCurrentFontSize(attrs.fontSize.replace("px", ""));
       }
     },
     onSelectionUpdate: ({ editor }) => {
-      const attrs = editor.getAttributes('textStyle');
+      const attrs = editor.getAttributes("textStyle");
       if (attrs.fontSize) {
-        setCurrentFontSize(attrs.fontSize.replace('px', ''));
+        setCurrentFontSize(attrs.fontSize.replace("px", ""));
       } else {
-        setCurrentFontSize('16');
+        setCurrentFontSize("16");
       }
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm max-w-none focus:outline-none min-h-[120px] px-3 py-2',
+        class:
+          "prose prose-sm max-w-none focus:outline-none min-h-[120px] px-3 py-2",
       },
     },
   });
 
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
-      editor.commands.setContent(value || '');
+      editor.commands.setContent(value || "");
     }
   }, [value, editor]);
 
   const getCurrentHeadingLevel = useCallback(() => {
-    if (!editor) return 'Paragraph';
-    if (editor.isActive('heading', { level: 1 })) return 'Heading 1';
-    if (editor.isActive('heading', { level: 2 })) return 'Heading 2';
-    if (editor.isActive('heading', { level: 3 })) return 'Heading 3';
-    return 'Paragraph';
+    if (!editor) return "Paragraph";
+    if (editor.isActive("heading", { level: 1 })) return "Heading 1";
+    if (editor.isActive("heading", { level: 2 })) return "Heading 2";
+    if (editor.isActive("heading", { level: 3 })) return "Heading 3";
+    return "Paragraph";
   }, [editor]);
 
   const getCurrentFontFamily = useCallback(() => {
-    if (!editor) return 'Default';
-    const attrs = editor.getAttributes('textStyle');
-    const family = attrs.fontFamily || '';
-    const found = FONT_FAMILIES.find(f => f.value === family);
-    return found?.label || 'Default';
+    if (!editor) return "Default";
+    const attrs = editor.getAttributes("textStyle");
+    const family = attrs.fontFamily || "";
+    const found = FONT_FAMILIES.find((f) => f.value === family);
+    return found?.label || "Default";
   }, [editor]);
 
   if (!editor) {
@@ -192,7 +206,9 @@ export function RichTextEditor({
   }
 
   return (
-    <div className={cn('border rounded-lg bg-white overflow-hidden', className)}>
+    <div
+      className={cn("border rounded-lg bg-white overflow-hidden", className)}
+    >
       <div className="flex items-center gap-0.5 px-2 py-1.5 border-b bg-gray-50 flex-wrap">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -208,26 +224,32 @@ export function RichTextEditor({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
-            <DropdownMenuItem 
+            <DropdownMenuItem
               onClick={() => editor.chain().focus().setParagraph().run()}
               data-testid="menu-item-paragraph"
             >
               Paragraph
             </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+            <DropdownMenuItem
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 1 }).run()
+              }
               data-testid="menu-item-heading1"
             >
               <span className="text-2xl font-bold">Heading 1</span>
             </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            <DropdownMenuItem
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 2 }).run()
+              }
               data-testid="menu-item-heading2"
             >
               <span className="text-xl font-bold">Heading 2</span>
             </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+            <DropdownMenuItem
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 3 }).run()
+              }
               data-testid="menu-item-heading3"
             >
               <span className="text-lg font-bold">Heading 3</span>
@@ -259,8 +281,8 @@ export function RichTextEditor({
                     editor.chain().focus().unsetFontFamily().run();
                   }
                 }}
-                style={{ fontFamily: font.value || 'inherit' }}
-                data-testid={`menu-item-font-${font.label.toLowerCase().replace(' ', '-')}`}
+                style={{ fontFamily: font.value || "inherit" }}
+                data-testid={`menu-item-font-${font.label.toLowerCase().replace(" ", "-")}`}
               >
                 {font.label}
               </DropdownMenuItem>
@@ -281,7 +303,10 @@ export function RichTextEditor({
               <ChevronDown className="w-3 h-3" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="max-h-[200px] overflow-y-auto">
+          <DropdownMenuContent
+            align="start"
+            className="max-h-[200px] overflow-y-auto"
+          >
             {FONT_SIZES.map((size) => (
               <DropdownMenuItem
                 key={size}
@@ -289,7 +314,7 @@ export function RichTextEditor({
                   editor.chain().focus().setFontSize(`${size}px`).run();
                   setCurrentFontSize(size);
                 }}
-                className={cn(currentFontSize === size && 'bg-muted')}
+                className={cn(currentFontSize === size && "bg-muted")}
                 data-testid={`menu-item-size-${size}`}
               >
                 {size}
@@ -304,7 +329,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="icon"
-          className={cn('h-8 w-8', editor.isActive('bold') && 'bg-muted')}
+          className={cn("h-8 w-8", editor.isActive("bold") && "bg-muted")}
           onClick={() => editor.chain().focus().toggleBold().run()}
           data-testid="button-bold"
         >
@@ -315,7 +340,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="icon"
-          className={cn('h-8 w-8', editor.isActive('italic') && 'bg-muted')}
+          className={cn("h-8 w-8", editor.isActive("italic") && "bg-muted")}
           onClick={() => editor.chain().focus().toggleItalic().run()}
           data-testid="button-italic"
         >
@@ -326,7 +351,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="icon"
-          className={cn('h-8 w-8', editor.isActive('underline') && 'bg-muted')}
+          className={cn("h-8 w-8", editor.isActive("underline") && "bg-muted")}
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           data-testid="button-underline"
         >
@@ -344,9 +369,12 @@ export function RichTextEditor({
             >
               <div className="flex flex-col items-center">
                 <span className="text-sm font-bold">A</span>
-                <div 
-                  className="w-4 h-1 rounded-sm -mt-0.5" 
-                  style={{ backgroundColor: editor.getAttributes('textStyle').color || '#000000' }}
+                <div
+                  className="w-4 h-1 rounded-sm -mt-0.5"
+                  style={{
+                    backgroundColor:
+                      editor.getAttributes("textStyle").color || "#000000",
+                  }}
                 />
               </div>
             </Button>
@@ -360,7 +388,7 @@ export function RichTextEditor({
                   className="w-6 h-6 rounded border border-gray-200 hover:scale-110 transition-transform"
                   style={{ backgroundColor: color }}
                   onClick={() => editor.chain().focus().setColor(color).run()}
-                  data-testid={`color-${color.replace('#', '')}`}
+                  data-testid={`color-${color.replace("#", "")}`}
                 />
               ))}
             </div>
@@ -373,8 +401,11 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="icon"
-          className={cn('h-8 w-8', editor.isActive({ textAlign: 'left' }) && 'bg-muted')}
-          onClick={() => editor.chain().focus().setTextAlign('left').run()}
+          className={cn(
+            "h-8 w-8",
+            editor.isActive({ textAlign: "left" }) && "bg-muted",
+          )}
+          onClick={() => editor.chain().focus().setTextAlign("left").run()}
           data-testid="button-align-left"
         >
           <AlignLeft className="w-4 h-4" />
@@ -384,8 +415,11 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="icon"
-          className={cn('h-8 w-8', editor.isActive({ textAlign: 'center' }) && 'bg-muted')}
-          onClick={() => editor.chain().focus().setTextAlign('center').run()}
+          className={cn(
+            "h-8 w-8",
+            editor.isActive({ textAlign: "center" }) && "bg-muted",
+          )}
+          onClick={() => editor.chain().focus().setTextAlign("center").run()}
           data-testid="button-align-center"
         >
           <AlignCenter className="w-4 h-4" />
@@ -395,8 +429,11 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="icon"
-          className={cn('h-8 w-8', editor.isActive({ textAlign: 'right' }) && 'bg-muted')}
-          onClick={() => editor.chain().focus().setTextAlign('right').run()}
+          className={cn(
+            "h-8 w-8",
+            editor.isActive({ textAlign: "right" }) && "bg-muted",
+          )}
+          onClick={() => editor.chain().focus().setTextAlign("right").run()}
           data-testid="button-align-right"
         >
           <AlignRight className="w-4 h-4" />
@@ -408,7 +445,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="icon"
-          className={cn('h-8 w-8', editor.isActive('bulletList') && 'bg-muted')}
+          className={cn("h-8 w-8", editor.isActive("bulletList") && "bg-muted")}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           data-testid="button-bullet-list"
         >
@@ -419,7 +456,10 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="icon"
-          className={cn('h-8 w-8', editor.isActive('orderedList') && 'bg-muted')}
+          className={cn(
+            "h-8 w-8",
+            editor.isActive("orderedList") && "bg-muted",
+          )}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           data-testid="button-ordered-list"
         >

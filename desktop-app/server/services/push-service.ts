@@ -25,13 +25,17 @@ export interface PushPayload {
  * Send push notification to all registered devices for a photographer
  * Uses Expo Push API to deliver to both iOS and Android devices
  */
-export async function sendPushNotification(payload: PushPayload): Promise<void> {
+export async function sendPushNotification(
+  payload: PushPayload,
+): Promise<void> {
   try {
     // Get all push tokens for this photographer
     const tokens = await storage.getPushTokens(payload.photographerId);
 
     if (!tokens.length) {
-      console.log(`[PUSH] No push tokens registered for photographer ${payload.photographerId}`);
+      console.log(
+        `[PUSH] No push tokens registered for photographer ${payload.photographerId}`,
+      );
       return;
     }
 
@@ -49,7 +53,9 @@ export async function sendPushNotification(payload: PushPayload): Promise<void> 
       }));
 
     if (!messages.length) {
-      console.log(`[PUSH] No valid push tokens for photographer ${payload.photographerId}`);
+      console.log(
+        `[PUSH] No valid push tokens for photographer ${payload.photographerId}`,
+      );
       return;
     }
 
@@ -72,10 +78,14 @@ export async function sendPushNotification(payload: PushPayload): Promise<void> 
               // Token is invalid, should be removed from storage
               const invalidToken = chunk[index]?.to;
               if (invalidToken && typeof invalidToken === "string") {
-                console.log(`[PUSH] Removing invalid token: ${invalidToken.slice(0, 20)}...`);
-                storage.unregisterPushToken(payload.photographerId, invalidToken).catch((err) => {
-                  console.error("[PUSH] Error removing invalid token:", err);
-                });
+                console.log(
+                  `[PUSH] Removing invalid token: ${invalidToken.slice(0, 20)}...`,
+                );
+                storage
+                  .unregisterPushToken(payload.photographerId, invalidToken)
+                  .catch((err) => {
+                    console.error("[PUSH] Error removing invalid token:", err);
+                  });
               }
             }
           }
@@ -94,7 +104,7 @@ export async function sendPushNotification(payload: PushPayload): Promise<void> 
  * Useful for batch operations
  */
 export async function sendPushNotificationToMany(
-  payloads: PushPayload[]
+  payloads: PushPayload[],
 ): Promise<void> {
   // Process in parallel but limit concurrency
   const batchSize = 10;

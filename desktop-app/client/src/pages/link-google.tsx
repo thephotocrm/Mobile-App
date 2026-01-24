@@ -4,7 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Camera, Eye, EyeOff, ShieldCheck, Link as LinkIcon } from "lucide-react";
+import {
+  Camera,
+  Eye,
+  EyeOff,
+  ShieldCheck,
+  Link as LinkIcon,
+} from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 
 export default function LinkGoogle() {
@@ -21,24 +27,25 @@ export default function LinkGoogle() {
     const params = new URLSearchParams(search);
     const linkToken = params.get("token");
     const email = params.get("email");
-    
+
     if (!linkToken) {
       toast({
         title: "Invalid link",
-        description: "No linking token found. Please try signing in with Google again.",
+        description:
+          "No linking token found. Please try signing in with Google again.",
         variant: "destructive",
       });
       setLocation("/login");
       return;
     }
-    
+
     setToken(linkToken);
     setUserEmail(email);
   }, [search]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!token) {
       toast({
         title: "Error",
@@ -63,7 +70,7 @@ export default function LinkGoogle() {
         title: "Success!",
         description: "Your Google account has been linked successfully.",
       });
-      
+
       window.location.href = "/dashboard";
     } catch (error: any) {
       toast({
@@ -83,7 +90,10 @@ export default function LinkGoogle() {
   return (
     <>
       {/* Mobile View - Full Screen */}
-      <div className="md:hidden w-full flex flex-col" style={{ backgroundColor: '#F5F1E8', minHeight: '100dvh' }}>
+      <div
+        className="md:hidden w-full flex flex-col"
+        style={{ backgroundColor: "#F5F1E8", minHeight: "100dvh" }}
+      >
         <div className="flex-1 px-6 flex flex-col justify-between pb-8 pt-16">
           <div>
             {/* Security Icon */}
@@ -107,16 +117,23 @@ export default function LinkGoogle() {
                 <LinkIcon className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-sm text-gray-700">
-                    To link your Google account to your existing account, please verify your password.
+                    To link your Google account to your existing account, please
+                    verify your password.
                   </p>
                 </div>
               </div>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-5 max-w-md mx-auto">
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-5 max-w-md mx-auto"
+            >
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-xs text-gray-600 font-normal">
+                <Label
+                  htmlFor="password"
+                  className="text-xs text-gray-600 font-normal"
+                >
                   Confirm Your Password
                 </Label>
                 <div className="relative">
@@ -137,7 +154,11 @@ export default function LinkGoogle() {
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
                     data-testid="button-toggle-password"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -179,18 +200,25 @@ export default function LinkGoogle() {
       </div>
 
       {/* Desktop View - Split Screen */}
-      <div className="hidden md:flex min-h-screen w-full items-center justify-center p-4 md:p-8" style={{ backgroundColor: '#9CA3AF' }}>
+      <div
+        className="hidden md:flex min-h-screen w-full items-center justify-center p-4 md:p-8"
+        style={{ backgroundColor: "#9CA3AF" }}
+      >
         <div className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[600px]">
-          
           {/* Left Side - Form */}
-          <div className="w-full md:w-3/5 p-8 md:p-12 flex flex-col" style={{ backgroundColor: '#F5F1E8' }}>
+          <div
+            className="w-full md:w-3/5 p-8 md:p-12 flex flex-col"
+            style={{ backgroundColor: "#F5F1E8" }}
+          >
             {/* Logo */}
             <div className="mb-8">
               <div className="inline-flex items-center gap-2 px-4 py-2 border-2 border-gray-800 rounded-full">
                 <Camera className="w-5 h-5" />
                 <span className="font-semibold text-lg">thePhotoCrm</span>
               </div>
-              <p className="text-sm text-gray-600 mt-3 ml-1">CRM for Wedding Photographers</p>
+              <p className="text-sm text-gray-600 mt-3 ml-1">
+                CRM for Wedding Photographers
+              </p>
             </div>
 
             {/* Form Content */}
@@ -202,7 +230,9 @@ export default function LinkGoogle() {
               </div>
 
               <div className="mb-8 text-center">
-                <h1 className="text-3xl md:text-4xl font-bold mb-3">Link Google Account</h1>
+                <h1 className="text-3xl md:text-4xl font-bold mb-3">
+                  Link Google Account
+                </h1>
                 <p className="text-gray-600">
                   An account with {userEmail || "this email"} already exists
                 </p>
@@ -214,7 +244,9 @@ export default function LinkGoogle() {
                   <LinkIcon className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="text-sm text-gray-700">
-                      To link your Google account to your existing account, please verify your password. After linking, you can sign in with either method.
+                      To link your Google account to your existing account,
+                      please verify your password. After linking, you can sign
+                      in with either method.
                     </p>
                   </div>
                 </div>
@@ -222,7 +254,10 @@ export default function LinkGoogle() {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="password-desktop" className="text-sm font-medium text-gray-700">
+                  <Label
+                    htmlFor="password-desktop"
+                    className="text-sm font-medium text-gray-700"
+                  >
                     Confirm Your Password
                   </Label>
                   <div className="relative">
@@ -243,7 +278,11 @@ export default function LinkGoogle() {
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                       data-testid="button-toggle-password-desktop"
                     >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -275,9 +314,12 @@ export default function LinkGoogle() {
           <div className="hidden md:block md:w-2/5 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 p-12 flex flex-col justify-center text-white relative overflow-hidden">
             <div className="relative z-10">
               <ShieldCheck className="w-16 h-16 mb-6" />
-              <h2 className="text-3xl font-bold mb-4">Secure Account Linking</h2>
+              <h2 className="text-3xl font-bold mb-4">
+                Secure Account Linking
+              </h2>
               <p className="text-blue-100 text-lg mb-6">
-                Link your Google account for faster sign-ins while keeping your existing account secure.
+                Link your Google account for faster sign-ins while keeping your
+                existing account secure.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">

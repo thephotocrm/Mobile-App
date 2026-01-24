@@ -23,33 +23,37 @@ function ClientPortalGuard({ children }: { children: ReactNode }) {
   const [, setLocation] = useLocation();
   const hasRedirected = useRef(false);
 
-  console.log('🛡️ [CLIENT-GUARD] Render check:', {
+  console.log("🛡️ [CLIENT-GUARD] Render check:", {
     loading,
     hasUser: !!user,
     userRole: user?.role,
-    hasRedirected: hasRedirected.current
+    hasRedirected: hasRedirected.current,
   });
 
   // Use useEffect for redirect to prevent React error #185
   useEffect(() => {
-    console.log('🛡️ [CLIENT-GUARD] Auth check effect:', {
+    console.log("🛡️ [CLIENT-GUARD] Auth check effect:", {
       loading,
       hasUser: !!user,
       userRole: user?.role,
-      hasRedirected: hasRedirected.current
+      hasRedirected: hasRedirected.current,
     });
 
-    if (!loading && (!user || user.role !== 'CLIENT') && !hasRedirected.current) {
-      console.warn('⚠️ [CLIENT-GUARD] Unauthorized - redirecting to login');
+    if (
+      !loading &&
+      (!user || user.role !== "CLIENT") &&
+      !hasRedirected.current
+    ) {
+      console.warn("⚠️ [CLIENT-GUARD] Unauthorized - redirecting to login");
       hasRedirected.current = true;
       setLocation("/login");
-    } else if (!loading && user && user.role === 'CLIENT') {
-      console.log('✅ [CLIENT-GUARD] Authorized CLIENT user - allowing access');
+    } else if (!loading && user && user.role === "CLIENT") {
+      console.log("✅ [CLIENT-GUARD] Authorized CLIENT user - allowing access");
     }
   }, [loading, user, setLocation]);
 
   if (loading) {
-    console.log('⏳ [CLIENT-GUARD] Still loading auth...');
+    console.log("⏳ [CLIENT-GUARD] Still loading auth...");
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-lg">Loading...</div>
@@ -57,8 +61,10 @@ function ClientPortalGuard({ children }: { children: ReactNode }) {
     );
   }
 
-  if (!user || user.role !== 'CLIENT') {
-    console.log('🚫 [CLIENT-GUARD] No user or wrong role - showing redirect screen');
+  if (!user || user.role !== "CLIENT") {
+    console.log(
+      "🚫 [CLIENT-GUARD] No user or wrong role - showing redirect screen",
+    );
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-lg">Redirecting...</div>
@@ -66,7 +72,7 @@ function ClientPortalGuard({ children }: { children: ReactNode }) {
     );
   }
 
-  console.log('✅ [CLIENT-GUARD] Rendering protected content');
+  console.log("✅ [CLIENT-GUARD] Rendering protected content");
   return <>{children}</>;
 }
 
@@ -95,31 +101,43 @@ export function ClientPortalRouter() {
             <ClientPortalSettings />
           </ClientPortalGuard>
         </Route>
-        
+
         {/* Magic link validation routes - token-based, no auth required */}
         <Route path="/client-portal/validate/:token" component={Portal} />
         <Route path="/portal/:token" component={Portal} />
-        
+
         {/* Public Smart File routes - token-based, no auth required */}
         <Route path="/smart-file/:token/success" component={SmartFileSuccess} />
         <Route path="/smart-file/:token" component={PublicSmartFile} />
-        
+
         {/* Public Booking routes - token-based, no auth required */}
         <Route path="/public/booking/:token" component={PublicBooking} />
-        <Route path="/booking/calendar/:publicToken" component={PublicBookingCalendar} />
+        <Route
+          path="/booking/calendar/:publicToken"
+          component={PublicBookingCalendar}
+        />
         <Route path="/book" component={SlugBookingCalendar} />
         <Route path="/booking/confirmation" component={BookingConfirmation} />
-        
+
         {/* Public Gallery routes - token-based or photographer-level access */}
-        <Route path="/public/galleries/:photographerPublicToken" component={PublicGalleries} />
-        <Route path="/client/galleries/:galleryId" component={ClientGalleryView} />
-        
+        <Route
+          path="/public/galleries/:photographerPublicToken"
+          component={PublicGalleries}
+        />
+        <Route
+          path="/client/galleries/:galleryId"
+          component={ClientGalleryView}
+        />
+
         {/* Public Review submission */}
-        <Route path="/reviews/submit/:photographerId" component={PublicReviewSubmit} />
-        
+        <Route
+          path="/reviews/submit/:photographerId"
+          component={PublicReviewSubmit}
+        />
+
         {/* Login fallback for protected client routes */}
         <Route path="/login" component={Login} />
-        
+
         {/* Catch-all */}
         <Route component={NotFound} />
       </Switch>

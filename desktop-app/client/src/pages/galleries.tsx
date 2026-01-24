@@ -6,12 +6,37 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Images, Plus, Search, Eye, Calendar, Globe, Lock, Trash2, RotateCcw, Camera, Aperture } from "lucide-react";
+import {
+  Images,
+  Plus,
+  Search,
+  Eye,
+  Calendar,
+  Globe,
+  Lock,
+  Trash2,
+  RotateCcw,
+  Camera,
+  Aperture,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { format } from "date-fns";
@@ -87,33 +112,40 @@ export default function Galleries() {
   // Handle ?new=true query param to auto-open dialog
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('new') === 'true') {
+    if (urlParams.get("new") === "true") {
       setCreateModalOpen(true);
-      window.history.replaceState({}, '', window.location.pathname);
+      window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);
 
   // Fetch active galleries
   const { data: galleries = [], isLoading } = useQuery<GalleryWithRelations[]>({
     queryKey: ["/api/galleries"],
-    enabled: !!user && activeTab === "active"
+    enabled: !!user && activeTab === "active",
   });
 
   // Fetch deleted galleries (trash)
-  const { data: deletedGalleries = [], isLoading: isLoadingTrash } = useQuery<GalleryWithRelations[]>({
+  const { data: deletedGalleries = [], isLoading: isLoadingTrash } = useQuery<
+    GalleryWithRelations[]
+  >({
     queryKey: ["/api/galleries-trash"],
-    enabled: !!user && activeTab === "trash"
+    enabled: !!user && activeTab === "trash",
   });
 
   // Fetch projects for gallery creation
   const { data: projects = [] } = useQuery<ProjectWithClient[]>({
     queryKey: ["/api/projects"],
-    enabled: createModalOpen && !!user
+    enabled: createModalOpen && !!user,
   });
 
   // Create gallery mutation
   const createGalleryMutation = useMutation({
-    mutationFn: async (data: { projectId: string | null; title: string; status: string; isPublic: boolean }) => {
+    mutationFn: async (data: {
+      projectId: string | null;
+      title: string;
+      status: string;
+      isPublic: boolean;
+    }) => {
       const response = await apiRequest("POST", "/api/galleries", data);
       return response.json();
     },
@@ -139,7 +171,13 @@ export default function Galleries() {
 
   // Toggle public/private - removed from list, only in detail page now
   const togglePrivacyMutation = useMutation({
-    mutationFn: async ({ galleryId, isPublic }: { galleryId: string; isPublic: boolean }) => {
+    mutationFn: async ({
+      galleryId,
+      isPublic,
+    }: {
+      galleryId: string;
+      isPublic: boolean;
+    }) => {
       return apiRequest("PUT", `/api/galleries/${galleryId}`, { isPublic });
     },
     onSuccess: () => {
@@ -187,12 +225,15 @@ export default function Galleries() {
       setGalleryTitle("");
       return;
     }
-    const project = projects.find(p => p.id === projectId);
+    const project = projects.find((p) => p.id === projectId);
     if (project) {
-      const clientName = project.client?.firstName && project.client?.lastName
-        ? `${project.client.firstName} ${project.client.lastName}`
-        : null;
-      setGalleryTitle(project.title || (clientName ? `${clientName} Gallery` : ""));
+      const clientName =
+        project.client?.firstName && project.client?.lastName
+          ? `${project.client.firstName} ${project.client.lastName}`
+          : null;
+      setGalleryTitle(
+        project.title || (clientName ? `${clientName} Gallery` : ""),
+      );
     }
   };
 
@@ -208,7 +249,8 @@ export default function Galleries() {
     }
 
     createGalleryMutation.mutate({
-      projectId: selectedProjectId === "STANDALONE" ? null : selectedProjectId || null,
+      projectId:
+        selectedProjectId === "STANDALONE" ? null : selectedProjectId || null,
       title: galleryTitle,
       status: "DRAFT",
       isPublic: false,
@@ -217,14 +259,21 @@ export default function Galleries() {
 
   // Filter galleries
   const filteredGalleries = galleries.filter((gallery) => {
-    const matchesSearch = !searchQuery ||
+    const matchesSearch =
+      !searchQuery ||
       gallery.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      gallery.project?.client?.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      gallery.project?.client?.lastName?.toLowerCase().includes(searchQuery.toLowerCase());
+      gallery.project?.client?.firstName
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      gallery.project?.client?.lastName
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase());
 
-    const matchesStatus = statusFilter === "ALL" || gallery.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "ALL" || gallery.status === statusFilter;
 
-    const matchesPrivacy = privacyFilter === "all" ||
+    const matchesPrivacy =
+      privacyFilter === "all" ||
       (privacyFilter === "public" && gallery.isPublic) ||
       (privacyFilter === "private" && !gallery.isPublic);
 
@@ -240,7 +289,7 @@ export default function Galleries() {
   const formatDate = (dateStr: string | Date | null | undefined) => {
     if (!dateStr) return "Unknown date";
     try {
-      return format(new Date(dateStr), 'MMM d, yyyy');
+      return format(new Date(dateStr), "MMM d, yyyy");
     } catch {
       return "Invalid date";
     }
@@ -258,7 +307,9 @@ export default function Galleries() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold">Galleries</h1>
-                <p className="text-sm text-muted-foreground">Share beautiful photos with your clients</p>
+                <p className="text-sm text-muted-foreground">
+                  Share beautiful photos with your clients
+                </p>
               </div>
             </div>
             <Button
@@ -284,7 +335,10 @@ export default function Galleries() {
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-[180px]" data-testid="select-status-filter">
+              <SelectTrigger
+                className="w-full sm:w-[180px]"
+                data-testid="select-status-filter"
+              >
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -301,7 +355,11 @@ export default function Galleries() {
       {/* Gallery Grid */}
       <div className="flex-1 p-4 sm:p-6 overflow-auto">
         <div className="max-w-[1400px] mx-auto">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
             <TabsList className="mb-6">
               <TabsTrigger value="active" data-testid="tab-active-galleries">
                 <Images className="w-4 h-4 mr-2" />
@@ -316,7 +374,11 @@ export default function Galleries() {
             {/* Active Galleries Tab */}
             <TabsContent value="active">
               {/* Privacy Filter Tabs */}
-              <Tabs value={privacyFilter} onValueChange={setPrivacyFilter} className="mb-6">
+              <Tabs
+                value={privacyFilter}
+                onValueChange={setPrivacyFilter}
+                className="mb-6"
+              >
                 <TabsList>
                   <TabsTrigger value="all" data-testid="tab-filter-all">
                     All Galleries
@@ -346,7 +408,9 @@ export default function Galleries() {
                         <Aperture className="w-10 h-10 text-purple-500" />
                       </div>
                       <h3 className="text-xl font-semibold mb-2">
-                        {searchQuery || statusFilter !== "ALL" ? "No galleries found" : "Create your first gallery"}
+                        {searchQuery || statusFilter !== "ALL"
+                          ? "No galleries found"
+                          : "Create your first gallery"}
                       </h3>
                       <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
                         {searchQuery || statusFilter !== "ALL"
@@ -369,7 +433,8 @@ export default function Galleries() {
               ) : (
                 <>
                   <div className="mb-4 text-sm text-muted-foreground">
-                    {filteredGalleries.length} {filteredGalleries.length === 1 ? 'gallery' : 'galleries'}
+                    {filteredGalleries.length}{" "}
+                    {filteredGalleries.length === 1 ? "gallery" : "galleries"}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -406,13 +471,17 @@ export default function Galleries() {
                           {/* Status Badge - Top Right */}
                           <div className="absolute top-3 right-3">
                             <Badge
-                              variant={gallery.status === 'SHARED' ? 'default' : 'secondary'}
+                              variant={
+                                gallery.status === "SHARED"
+                                  ? "default"
+                                  : "secondary"
+                              }
                               className={`${
-                                gallery.status === 'SHARED'
-                                  ? 'bg-green-600 hover:bg-green-700'
-                                  : gallery.status === 'READY'
-                                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                                  : ''
+                                gallery.status === "SHARED"
+                                  ? "bg-green-600 hover:bg-green-700"
+                                  : gallery.status === "READY"
+                                    ? "bg-blue-600 hover:bg-blue-700 text-white"
+                                    : ""
                               }`}
                               data-testid={`badge-status-${gallery.id}`}
                             >
@@ -426,8 +495,8 @@ export default function Galleries() {
                               variant="secondary"
                               className={`${
                                 gallery.isPublic
-                                  ? 'bg-white/90 text-green-700 dark:bg-black/50 dark:text-green-400'
-                                  : 'bg-white/90 text-slate-700 dark:bg-black/50 dark:text-slate-300'
+                                  ? "bg-white/90 text-green-700 dark:bg-black/50 dark:text-green-400"
+                                  : "bg-white/90 text-slate-700 dark:bg-black/50 dark:text-slate-300"
                               }`}
                             >
                               {gallery.isPublic ? (
@@ -446,7 +515,10 @@ export default function Galleries() {
 
                           {/* Image count overlay */}
                           <div className="absolute bottom-3 right-3">
-                            <Badge variant="secondary" className="bg-black/60 text-white border-0">
+                            <Badge
+                              variant="secondary"
+                              className="bg-black/60 text-white border-0"
+                            >
                               <Images className="w-3 h-3 mr-1" />
                               {gallery.imageCount || 0}
                             </Badge>
@@ -455,12 +527,16 @@ export default function Galleries() {
 
                         {/* Gallery Info */}
                         <CardContent className="p-4">
-                          <h3 className="font-bold text-lg mb-1 truncate group-hover:text-purple-600 transition-colors" data-testid={`text-gallery-title-${gallery.id}`}>
+                          <h3
+                            className="font-bold text-lg mb-1 truncate group-hover:text-purple-600 transition-colors"
+                            data-testid={`text-gallery-title-${gallery.id}`}
+                          >
                             {gallery.title}
                           </h3>
 
                           <p className="text-sm text-muted-foreground mb-3 truncate">
-                            {gallery.project?.client?.firstName && gallery.project?.client?.lastName
+                            {gallery.project?.client?.firstName &&
+                            gallery.project?.client?.lastName
                               ? `${gallery.project.client.firstName} ${gallery.project.client.lastName}`
                               : "Portfolio Gallery"}
                           </p>
@@ -468,13 +544,17 @@ export default function Galleries() {
                           <div className="flex items-center justify-between text-xs text-muted-foreground">
                             <div className="flex items-center gap-1">
                               <Eye className="w-3 h-3" />
-                              <span data-testid={`text-view-count-${gallery.id}`}>
+                              <span
+                                data-testid={`text-view-count-${gallery.id}`}
+                              >
                                 {gallery.viewCount || 0} views
                               </span>
                             </div>
                             <div className="flex items-center gap-1">
                               <Calendar className="w-3 h-3" />
-                              <span data-testid={`text-created-date-${gallery.id}`}>
+                              <span
+                                data-testid={`text-created-date-${gallery.id}`}
+                              >
                                 {formatDate(gallery.createdAt)}
                               </span>
                             </div>
@@ -502,9 +582,12 @@ export default function Galleries() {
                       <div className="mx-auto w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-6">
                         <Trash2 className="w-10 h-10 text-slate-400" />
                       </div>
-                      <h3 className="text-xl font-semibold mb-2">Trash is empty</h3>
+                      <h3 className="text-xl font-semibold mb-2">
+                        Trash is empty
+                      </h3>
                       <p className="text-muted-foreground max-w-sm mx-auto">
-                        Deleted galleries will appear here. You have 30 days to recover them before they're permanently removed.
+                        Deleted galleries will appear here. You have 30 days to
+                        recover them before they're permanently removed.
                       </p>
                     </div>
                   </CardContent>
@@ -512,7 +595,9 @@ export default function Galleries() {
               ) : (
                 <>
                   <div className="mb-4 text-sm text-muted-foreground">
-                    {deletedGalleries.length} {deletedGalleries.length === 1 ? 'gallery' : 'galleries'} in trash
+                    {deletedGalleries.length}{" "}
+                    {deletedGalleries.length === 1 ? "gallery" : "galleries"} in
+                    trash
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -553,12 +638,16 @@ export default function Galleries() {
 
                         {/* Gallery Info */}
                         <CardContent className="p-4">
-                          <h3 className="font-bold text-lg mb-1 truncate" data-testid={`text-deleted-gallery-title-${gallery.id}`}>
+                          <h3
+                            className="font-bold text-lg mb-1 truncate"
+                            data-testid={`text-deleted-gallery-title-${gallery.id}`}
+                          >
                             {gallery.title}
                           </h3>
 
                           <p className="text-sm text-muted-foreground mb-3">
-                            {gallery.project?.client?.firstName && gallery.project?.client?.lastName
+                            {gallery.project?.client?.firstName &&
+                            gallery.project?.client?.lastName
                               ? `${gallery.project.client.firstName} ${gallery.project.client.lastName}`
                               : "Portfolio Gallery"}
                           </p>
@@ -586,7 +675,9 @@ export default function Galleries() {
                             data-testid={`button-restore-gallery-${gallery.id}`}
                           >
                             <RotateCcw className="w-4 h-4 mr-2" />
-                            {restoreGalleryMutation.isPending ? "Restoring..." : "Restore Gallery"}
+                            {restoreGalleryMutation.isPending
+                              ? "Restoring..."
+                              : "Restore Gallery"}
                           </Button>
                         </CardContent>
                       </Card>
@@ -601,14 +692,18 @@ export default function Galleries() {
 
       {/* Create Gallery Modal */}
       <Dialog open={createModalOpen} onOpenChange={setCreateModalOpen}>
-        <DialogContent className="sm:max-w-[500px]" data-testid="dialog-create-gallery">
+        <DialogContent
+          className="sm:max-w-[500px]"
+          data-testid="dialog-create-gallery"
+        >
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Camera className="w-5 h-5 text-purple-600" />
               Create New Gallery
             </DialogTitle>
             <DialogDescription>
-              Create a gallery for a client project or a standalone portfolio to showcase your work.
+              Create a gallery for a client project or a standalone portfolio to
+              showcase your work.
             </DialogDescription>
           </DialogHeader>
 
@@ -631,13 +726,17 @@ export default function Galleries() {
                   </SelectItem>
                   {projects.map((project) => (
                     <SelectItem key={project.id} value={project.id}>
-                      {project.title} {project.client ? `- ${project.client.firstName} ${project.client.lastName}` : ""}
+                      {project.title}{" "}
+                      {project.client
+                        ? `- ${project.client.firstName} ${project.client.lastName}`
+                        : ""}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground">
-                Linking to a project will auto-fill the title and associate the gallery with your client.
+                Linking to a project will auto-fill the title and associate the
+                gallery with your client.
               </p>
             </div>
 
@@ -667,7 +766,9 @@ export default function Galleries() {
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
               data-testid="button-submit-create"
             >
-              {createGalleryMutation.isPending ? "Creating..." : "Create Gallery"}
+              {createGalleryMutation.isPending
+                ? "Creating..."
+                : "Create Gallery"}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -6,16 +6,27 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ButtonRichTextEditor } from "@/components/ButtonRichTextEditor";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { 
-  Zap, 
-  Users, 
-  Clock, 
-  Mail, 
-  MessageSquare, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Zap,
+  Users,
+  Clock,
+  Mail,
+  MessageSquare,
   FileText,
   ArrowRight,
   ArrowLeft,
@@ -33,37 +44,53 @@ import {
   Smartphone,
   Link2,
   Wand2,
-  Loader2
+  Loader2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import Confetti from 'react-confetti';
+import Confetti from "react-confetti";
 
 // Available template variables for personalization (these map to backend variables)
 const TEMPLATE_VARIABLES = [
-  { key: 'first_name', label: 'Client First Name', example: 'Sarah' },
-  { key: 'last_name', label: 'Client Last Name', example: 'Johnson' },
-  { key: 'email', label: 'Client Email', example: 'sarah@email.com' },
-  { key: 'phone', label: 'Client Phone', example: '(555) 123-4567' },
-  { key: 'photographer_name', label: 'Your Name', example: 'Your Studio' },
-  { key: 'event_date', label: 'Event Date', example: 'June 15, 2026' },
+  { key: "first_name", label: "Client First Name", example: "Sarah" },
+  { key: "last_name", label: "Client Last Name", example: "Johnson" },
+  { key: "email", label: "Client Email", example: "sarah@email.com" },
+  { key: "phone", label: "Client Phone", example: "(555) 123-4567" },
+  { key: "photographer_name", label: "Your Name", example: "Your Studio" },
+  { key: "event_date", label: "Event Date", example: "June 15, 2026" },
 ];
 
 // Button destination options for the Add Button modal
 const BUTTON_DESTINATIONS = [
-  { key: 'CALENDAR', label: 'Booking Calendar', description: 'Your booking/scheduling page' },
-  { key: 'SMART_FILE', label: 'View Proposal', description: 'Client\'s proposal or invoice' },
-  { key: 'GALLERY', label: 'View Gallery', description: 'Client\'s photo gallery' },
-  { key: 'TESTIMONIALS', label: 'Leave Review', description: 'Review/testimonial submission page' },
-  { key: 'CUSTOM', label: 'Custom URL', description: 'Enter your own link' },
+  {
+    key: "CALENDAR",
+    label: "Booking Calendar",
+    description: "Your booking/scheduling page",
+  },
+  {
+    key: "SMART_FILE",
+    label: "View Proposal",
+    description: "Client's proposal or invoice",
+  },
+  {
+    key: "GALLERY",
+    label: "View Gallery",
+    description: "Client's photo gallery",
+  },
+  {
+    key: "TESTIMONIALS",
+    label: "Leave Review",
+    description: "Review/testimonial submission page",
+  },
+  { key: "CUSTOM", label: "Custom URL", description: "Enter your own link" },
 ];
 
 // Regex to parse button markers: [[BUTTON:LINKTYPE:ButtonText]] or [[BUTTON:CUSTOM:ButtonText:url]]
 const BUTTON_MARKER_REGEX = /\[\[BUTTON:([A-Z_]+):([^\]]+?)(?::([^\]]+))?\]\]/g;
 
-type WizardStep = 'welcome' | 'trigger' | 'action' | 'configure' | 'review';
+type WizardStep = "welcome" | "trigger" | "action" | "configure" | "review";
 
-type TriggerMode = 'STAGE' | 'BUSINESS' | 'TIME';
-type Channel = 'EMAIL' | 'SMS';
+type TriggerMode = "STAGE" | "BUSINESS" | "TIME";
+type Channel = "EMAIL" | "SMS";
 
 interface Stage {
   id: string;
@@ -85,15 +112,17 @@ interface WizardFormData {
   delayDays: number;
   delayHours: number;
   delayMinutes: number;
-  timingMode: 'immediate' | 'delayed' | null;
+  timingMode: "immediate" | "delayed" | null;
   daysBefore: number;
-  triggerTiming: 'BEFORE' | 'AFTER';
+  triggerTiming: "BEFORE" | "AFTER";
   includeHeader: boolean;
   includeFooter: boolean;
 }
 
 // Helper to parse button markers from text content
-const parseButtonMarkers = (text: string): Array<{
+const parseButtonMarkers = (
+  text: string,
+): Array<{
   fullMatch: string;
   linkType: string;
   buttonText: string;
@@ -110,7 +139,7 @@ const parseButtonMarkers = (text: string): Array<{
     endIndex: number;
   }> = [];
   let match;
-  const regex = new RegExp(BUTTON_MARKER_REGEX.source, 'g');
+  const regex = new RegExp(BUTTON_MARKER_REGEX.source, "g");
   while ((match = regex.exec(text)) !== null) {
     buttons.push({
       fullMatch: match[0],
@@ -137,74 +166,78 @@ interface AutomationWizardProps {
 }
 
 const TRIGGER_OPTIONS = [
-  { 
-    id: 'STAGE', 
-    label: 'Stage Entry', 
-    description: 'When a client enters a pipeline stage',
-    example: 'e.g., Client fills out inquiry form and becomes a new lead',
+  {
+    id: "STAGE",
+    label: "Stage Entry",
+    description: "When a client enters a pipeline stage",
+    example: "e.g., Client fills out inquiry form and becomes a new lead",
     icon: Users,
-    color: 'from-blue-500 to-blue-600',
-    bgColor: 'bg-blue-100 dark:bg-blue-900/30'
+    color: "from-blue-500 to-blue-600",
+    bgColor: "bg-blue-100 dark:bg-blue-900/30",
   },
-  { 
-    id: 'BUSINESS', 
-    label: 'Business Event', 
-    description: 'When a specific action happens',
-    example: 'e.g., Client makes a payment or signs a contract',
+  {
+    id: "BUSINESS",
+    label: "Business Event",
+    description: "When a specific action happens",
+    example: "e.g., Client makes a payment or signs a contract",
     icon: Zap,
-    color: 'from-purple-500 to-purple-600',
-    bgColor: 'bg-purple-100 dark:bg-purple-900/30'
+    color: "from-purple-500 to-purple-600",
+    bgColor: "bg-purple-100 dark:bg-purple-900/30",
   },
-  { 
-    id: 'TIME', 
-    label: 'Date-Based', 
-    description: 'Before or after an event date',
-    example: 'e.g., 3 days before their wedding day',
+  {
+    id: "TIME",
+    label: "Date-Based",
+    description: "Before or after an event date",
+    example: "e.g., 3 days before their wedding day",
     icon: Calendar,
-    color: 'from-amber-500 to-orange-600',
-    bgColor: 'bg-amber-100 dark:bg-amber-900/30'
+    color: "from-amber-500 to-orange-600",
+    bgColor: "bg-amber-100 dark:bg-amber-900/30",
   },
 ];
 
 const ACTION_OPTIONS = [
-  { 
-    id: 'EMAIL', 
-    label: 'Send Email', 
-    description: 'Automatically send an email to your client',
+  {
+    id: "EMAIL",
+    label: "Send Email",
+    description: "Automatically send an email to your client",
     icon: Mail,
-    color: 'from-blue-500 to-cyan-600',
-    bgColor: 'bg-blue-100 dark:bg-blue-900/30'
+    color: "from-blue-500 to-cyan-600",
+    bgColor: "bg-blue-100 dark:bg-blue-900/30",
   },
-  { 
-    id: 'SMS', 
-    label: 'Send SMS', 
-    description: 'Send a text message to their phone',
+  {
+    id: "SMS",
+    label: "Send SMS",
+    description: "Send a text message to their phone",
     icon: MessageSquare,
-    color: 'from-green-500 to-emerald-600',
-    bgColor: 'bg-green-100 dark:bg-green-900/30'
+    color: "from-green-500 to-emerald-600",
+    bgColor: "bg-green-100 dark:bg-green-900/30",
   },
-  { 
-    id: 'PIPELINE', 
-    label: 'Move in Pipeline', 
-    description: 'Automatically move to another stage',
+  {
+    id: "PIPELINE",
+    label: "Move in Pipeline",
+    description: "Automatically move to another stage",
     icon: ArrowRight,
-    color: 'from-violet-500 to-purple-600',
-    bgColor: 'bg-violet-100 dark:bg-violet-900/30'
+    color: "from-violet-500 to-purple-600",
+    bgColor: "bg-violet-100 dark:bg-violet-900/30",
   },
 ];
 
 const BUSINESS_EVENTS = [
-  { value: 'ANY_PAYMENT_MADE', label: 'Any Payment Made', emoji: '💰' },
-  { value: 'DEPOSIT_PAID', label: 'Deposit Payment Received', emoji: '💳' },
-  { value: 'FULL_PAYMENT_MADE', label: 'Full Payment Completed', emoji: '✅' },
-  { value: 'PROJECT_BOOKED', label: 'Project Booked/Contract Signed', emoji: '📋' },
-  { value: 'SMART_FILE_ACCEPTED', label: 'Smart File Accepted', emoji: '📄' },
-  { value: 'SMART_FILE_SENT', label: 'Smart File Sent', emoji: '📤' },
-  { value: 'EVENT_DATE_REACHED', label: 'Event Date Reached', emoji: '📅' },
-  { value: 'PROJECT_DELIVERED', label: 'Project Delivered', emoji: '📦' },
-  { value: 'CLIENT_ONBOARDED', label: 'Client Onboarded', emoji: '🎯' },
-  { value: 'APPOINTMENT_BOOKED', label: 'Appointment Booked', emoji: '📅' },
-  { value: 'GALLERY_SHARED', label: 'Gallery Shared', emoji: '🖼️' },
+  { value: "ANY_PAYMENT_MADE", label: "Any Payment Made", emoji: "💰" },
+  { value: "DEPOSIT_PAID", label: "Deposit Payment Received", emoji: "💳" },
+  { value: "FULL_PAYMENT_MADE", label: "Full Payment Completed", emoji: "✅" },
+  {
+    value: "PROJECT_BOOKED",
+    label: "Project Booked/Contract Signed",
+    emoji: "📋",
+  },
+  { value: "SMART_FILE_ACCEPTED", label: "Smart File Accepted", emoji: "📄" },
+  { value: "SMART_FILE_SENT", label: "Smart File Sent", emoji: "📤" },
+  { value: "EVENT_DATE_REACHED", label: "Event Date Reached", emoji: "📅" },
+  { value: "PROJECT_DELIVERED", label: "Project Delivered", emoji: "📦" },
+  { value: "CLIENT_ONBOARDED", label: "Client Onboarded", emoji: "🎯" },
+  { value: "APPOINTMENT_BOOKED", label: "Appointment Booked", emoji: "📅" },
+  { value: "GALLERY_SHARED", label: "Gallery Shared", emoji: "🖼️" },
 ];
 
 export default function AutomationWizard({
@@ -216,21 +249,21 @@ export default function AutomationWizard({
   projectTypeName,
   automationCount,
   isAutomationCountLoading = true, // Default to true (loading) so confirmation checkbox never appears if not explicitly passed
-  onOpenAiBuilder
+  onOpenAiBuilder,
 }: AutomationWizardProps) {
-  const [currentStep, setCurrentStep] = useState<WizardStep>('welcome');
+  const [currentStep, setCurrentStep] = useState<WizardStep>("welcome");
   const [showConfetti, setShowConfetti] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const [cachedAutoName, setCachedAutoName] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [confirmAutoSend, setConfirmAutoSend] = useState(false);
-  
+
   // AI Help Me Write state
   const [showAiHelper, setShowAiHelper] = useState(false);
-  const [aiPrompt, setAiPrompt] = useState('');
+  const [aiPrompt, setAiPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
-  
+
   // Fetch photographer data for branded preview
   const { data: photographer } = useQuery<{
     businessName?: string;
@@ -243,123 +276,161 @@ export default function AutomationWizard({
     website?: string;
     businessAddress?: string;
   }>({
-    queryKey: ['/api/photographers/me'],
+    queryKey: ["/api/photographers/me"],
   });
-  
+
   // Refs for inserting variables at cursor position
   const emailBodyRef = useRef<HTMLDivElement>(null);
   const smsBodyRef = useRef<HTMLTextAreaElement>(null);
   const emailSubjectRef = useRef<HTMLInputElement>(null);
-  
+
   // Helper function to insert variable at cursor position
-  const insertVariable = (variableKey: string, field: 'subject' | 'body') => {
+  const insertVariable = (variableKey: string, field: "subject" | "body") => {
     const variable = `{{${variableKey}}}`;
-    
-    if (formData.channel === 'EMAIL' && field === 'subject') {
+
+    if (formData.channel === "EMAIL" && field === "subject") {
       const input = emailSubjectRef.current;
       if (input) {
         const start = input.selectionStart || 0;
         const end = input.selectionEnd || 0;
-        const newValue = formData.templateSubject.substring(0, start) + variable + formData.templateSubject.substring(end);
+        const newValue =
+          formData.templateSubject.substring(0, start) +
+          variable +
+          formData.templateSubject.substring(end);
         setFormData({ ...formData, templateSubject: newValue });
         // Restore cursor position after state update
         setTimeout(() => {
           input.focus();
-          input.setSelectionRange(start + variable.length, start + variable.length);
+          input.setSelectionRange(
+            start + variable.length,
+            start + variable.length,
+          );
         }, 0);
       }
-    } else if (formData.channel === 'EMAIL' && field === 'body') {
+    } else if (formData.channel === "EMAIL" && field === "body") {
       // For email body with rich editor, use the insertText method exposed by ButtonRichTextEditor
       const editorContainer = emailBodyRef.current;
       if (editorContainer) {
         // The actual editor is the first child with contenteditable
-        const editor = editorContainer.querySelector('[contenteditable="true"]') as HTMLDivElement & { insertText?: (text: string) => void };
+        const editor = editorContainer.querySelector(
+          '[contenteditable="true"]',
+        ) as HTMLDivElement & { insertText?: (text: string) => void };
         if (editor?.insertText) {
           editor.insertText(variable);
         } else {
           // Fallback: focus and use execCommand
           editor?.focus();
-          document.execCommand('insertText', false, variable);
+          document.execCommand("insertText", false, variable);
         }
       } else {
         // Fallback: append to end
-        setFormData({ ...formData, templateBody: formData.templateBody + variable });
+        setFormData({
+          ...formData,
+          templateBody: formData.templateBody + variable,
+        });
       }
-    } else if (formData.channel === 'SMS') {
+    } else if (formData.channel === "SMS") {
       const textarea = smsBodyRef.current;
       if (textarea) {
         const start = textarea.selectionStart || 0;
         const end = textarea.selectionEnd || 0;
-        const newValue = formData.templateBody.substring(0, start) + variable + formData.templateBody.substring(end);
+        const newValue =
+          formData.templateBody.substring(0, start) +
+          variable +
+          formData.templateBody.substring(end);
         setFormData({ ...formData, templateBody: newValue });
         setTimeout(() => {
           textarea.focus();
-          textarea.setSelectionRange(start + variable.length, start + variable.length);
+          textarea.setSelectionRange(
+            start + variable.length,
+            start + variable.length,
+          );
         }, 0);
       }
     }
   };
-  
+
   // Helper to replace variables with example values for preview (used for subject line and SMS)
   const getPreviewContent = (content: string) => {
     let preview = content;
-    TEMPLATE_VARIABLES.forEach(v => {
-      preview = preview.replace(new RegExp(`\\{\\{${v.key}\\}\\}`, 'g'), v.example);
+    TEMPLATE_VARIABLES.forEach((v) => {
+      preview = preview.replace(
+        new RegExp(`\\{\\{${v.key}\\}\\}`, "g"),
+        v.example,
+      );
     });
     // For text preview, strip button markers and just show button text in brackets
-    preview = preview.replace(/\[\[BUTTON:[A-Z_]+:([^\]]+?)(?::[^\]]+)?\]\]/g, '[$1]');
+    preview = preview.replace(
+      /\[\[BUTTON:[A-Z_]+:([^\]]+?)(?::[^\]]+)?\]\]/g,
+      "[$1]",
+    );
     return preview;
   };
-  
+
   // Helper to render email preview with variable replacements AND button rendering
   const renderEmailBodyPreview = (content: string) => {
     // Replace text variables with example values
     let processedContent = content;
-    TEMPLATE_VARIABLES.forEach(v => {
-      processedContent = processedContent.replace(new RegExp(`\\{\\{${v.key}\\}\\}`, 'g'), v.example);
+    TEMPLATE_VARIABLES.forEach((v) => {
+      processedContent = processedContent.replace(
+        new RegExp(`\\{\\{${v.key}\\}\\}`, "g"),
+        v.example,
+      );
     });
-    
+
     // Parse button markers and split content into segments
     const buttons = parseButtonMarkers(processedContent);
-    
+
     if (buttons.length === 0) {
-      return <p className="whitespace-pre-wrap text-gray-800 dark:text-gray-200">{processedContent || '(No message body)'}</p>;
+      return (
+        <p className="whitespace-pre-wrap text-gray-800 dark:text-gray-200">
+          {processedContent || "(No message body)"}
+        </p>
+      );
     }
-    
+
     // Build segments: text and buttons interleaved
-    const segments: Array<{ type: 'text' | 'button'; content: string; linkType?: string }> = [];
+    const segments: Array<{
+      type: "text" | "button";
+      content: string;
+      linkType?: string;
+    }> = [];
     let lastIndex = 0;
-    
+
     buttons.forEach((btn) => {
       // Add text before this button
       if (btn.startIndex > lastIndex) {
         segments.push({
-          type: 'text',
+          type: "text",
           content: processedContent.substring(lastIndex, btn.startIndex),
         });
       }
       // Add the button
       segments.push({
-        type: 'button',
+        type: "button",
         content: btn.buttonText,
         linkType: btn.linkType,
       });
       lastIndex = btn.endIndex;
     });
-    
+
     // Add remaining text after last button
     if (lastIndex < processedContent.length) {
       segments.push({
-        type: 'text',
+        type: "text",
         content: processedContent.substring(lastIndex),
       });
     }
-    
+
     return (
       <div className="text-gray-800 dark:text-gray-200">
         {segments.map((seg, idx) => {
-          if (seg.type === 'text') {
-            return <span key={idx} className="whitespace-pre-wrap">{seg.content}</span>;
+          if (seg.type === "text") {
+            return (
+              <span key={idx} className="whitespace-pre-wrap">
+                {seg.content}
+              </span>
+            );
           }
           // Render button inline
           return (
@@ -371,15 +442,15 @@ export default function AutomationWizard({
             </span>
           );
         })}
-        {!processedContent && '(No message body)'}
+        {!processedContent && "(No message body)"}
       </div>
     );
   };
-  
+
   // Check if this is user's first automation (only true when loaded and count is 0)
   // Don't show confirmation checkbox while loading to avoid flash
   const isFirstAutomation = !isAutomationCountLoading && automationCount === 0;
-  
+
   // Reset confirmAutoSend when automationCount transitions to > 0
   useEffect(() => {
     if (automationCount !== undefined && automationCount > 0) {
@@ -389,100 +460,106 @@ export default function AutomationWizard({
 
   // Skip welcome screen for users with existing automations
   useEffect(() => {
-    if (!isAutomationCountLoading && automationCount !== undefined && automationCount > 0 && currentStep === 'welcome') {
-      setCurrentStep('trigger');
+    if (
+      !isAutomationCountLoading &&
+      automationCount !== undefined &&
+      automationCount > 0 &&
+      currentStep === "welcome"
+    ) {
+      setCurrentStep("trigger");
     }
   }, [automationCount, isAutomationCountLoading, currentStep]);
 
   // Form state
   const [formData, setFormData] = useState<WizardFormData>({
-    name: '',
-    triggerMode: 'STAGE',
+    name: "",
+    triggerMode: "STAGE",
     triggerStageId: null,
     triggerEvent: null,
     stageCondition: null,
-    channel: 'EMAIL',
+    channel: "EMAIL",
     enableCommunication: true,
     enablePipeline: false,
     moveToStageId: null,
-    templateSubject: '',
-    templateBody: '',
+    templateSubject: "",
+    templateBody: "",
     delayDays: 0,
     delayHours: 0,
     delayMinutes: 0,
     timingMode: null,
     daysBefore: 7,
-    triggerTiming: 'BEFORE',
+    triggerTiming: "BEFORE",
     includeHeader: false,
     includeFooter: true,
   });
-  
+
   // State for button popover
   const [showButtonPopover, setShowButtonPopover] = useState(false);
-  const [buttonText, setButtonText] = useState('');
-  const [buttonDestination, setButtonDestination] = useState('CALENDAR');
-  const [buttonCustomUrl, setButtonCustomUrl] = useState('');
-  const [buttonUrlError, setButtonUrlError] = useState('');
+  const [buttonText, setButtonText] = useState("");
+  const [buttonDestination, setButtonDestination] = useState("CALENDAR");
+  const [buttonCustomUrl, setButtonCustomUrl] = useState("");
+  const [buttonUrlError, setButtonUrlError] = useState("");
 
   // URL validation helper - validates format and restricts to http/https
   const validateButtonUrl = (url: string): string => {
-    if (!url.trim()) return '';
+    if (!url.trim()) return "";
     try {
       const parsed = new URL(url);
-      if (!['http:', 'https:'].includes(parsed.protocol)) {
-        return 'URL must use http or https protocol';
+      if (!["http:", "https:"].includes(parsed.protocol)) {
+        return "URL must use http or https protocol";
       }
-      return '';
+      return "";
     } catch {
-      return 'Please enter a valid URL (e.g., https://example.com)';
+      return "Please enter a valid URL (e.g., https://example.com)";
     }
   };
 
   // Window size for confetti
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-      const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
+      const handleResize = () =>
+        setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
     }
   }, []);
 
   // Escape key handler
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && open) {
+      if (e.key === "Escape" && open) {
         onClose();
       }
     };
     if (open) {
-      document.addEventListener('keydown', handleEscape);
-      return () => document.removeEventListener('keydown', handleEscape);
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
     }
   }, [open, onClose]);
 
   // Reset form when dialog opens
   useEffect(() => {
     if (open) {
-      setCurrentStep('welcome');
+      setCurrentStep("welcome");
       setFormData({
-        name: '',
-        triggerMode: 'STAGE',
+        name: "",
+        triggerMode: "STAGE",
         triggerStageId: null,
         triggerEvent: null,
         stageCondition: null,
-        channel: 'EMAIL',
+        channel: "EMAIL",
         enableCommunication: true,
         enablePipeline: false,
         moveToStageId: null,
-        templateSubject: '',
-        templateBody: '',
+        templateSubject: "",
+        templateBody: "",
         delayDays: 0,
         delayHours: 0,
         delayMinutes: 0,
         timingMode: null,
         daysBefore: 7,
-        triggerTiming: 'BEFORE',
+        triggerTiming: "BEFORE",
         includeHeader: false,
         includeFooter: true,
       });
@@ -490,56 +567,60 @@ export default function AutomationWizard({
       setConfirmAutoSend(false);
       setShowPreview(false);
       setShowButtonPopover(false);
-      setButtonText('');
-      setButtonDestination('CALENDAR');
-      setButtonCustomUrl('');
+      setButtonText("");
+      setButtonDestination("CALENDAR");
+      setButtonCustomUrl("");
     }
   }, [open]);
 
   // Auto-generate name based on selections
   const autoGeneratedName = useMemo(() => {
     const parts: string[] = [];
-    
+
     // Trigger part
-    if (formData.triggerMode === 'STAGE' && formData.triggerStageId) {
-      const stage = stages.find(s => s.id === formData.triggerStageId);
-      parts.push(stage?.name || 'Stage Entry');
-    } else if (formData.triggerMode === 'BUSINESS' && formData.triggerEvent) {
-      const event = BUSINESS_EVENTS.find(e => e.value === formData.triggerEvent);
-      parts.push(event?.label || 'Business Event');
-    } else if (formData.triggerMode === 'TIME') {
-      parts.push(`${formData.daysBefore} Days ${formData.triggerTiming === 'BEFORE' ? 'Before' : 'After'} Event`);
+    if (formData.triggerMode === "STAGE" && formData.triggerStageId) {
+      const stage = stages.find((s) => s.id === formData.triggerStageId);
+      parts.push(stage?.name || "Stage Entry");
+    } else if (formData.triggerMode === "BUSINESS" && formData.triggerEvent) {
+      const event = BUSINESS_EVENTS.find(
+        (e) => e.value === formData.triggerEvent,
+      );
+      parts.push(event?.label || "Business Event");
+    } else if (formData.triggerMode === "TIME") {
+      parts.push(
+        `${formData.daysBefore} Days ${formData.triggerTiming === "BEFORE" ? "Before" : "After"} Event`,
+      );
     }
-    
+
     // Action part
     if (formData.enableCommunication) {
       parts.push(`Send ${formData.channel}`);
     }
     if (formData.enablePipeline && formData.moveToStageId) {
-      const stage = stages.find(s => s.id === formData.moveToStageId);
-      parts.push(`Move to ${stage?.name || 'Stage'}`);
+      const stage = stages.find((s) => s.id === formData.moveToStageId);
+      parts.push(`Move to ${stage?.name || "Stage"}`);
     }
-    
+
     // Timing part
     if (formData.enableCommunication && formData.timingMode) {
-      if (formData.timingMode === 'immediate') {
-        parts.push('(Immediate)');
-      } else if (formData.timingMode === 'delayed') {
+      if (formData.timingMode === "immediate") {
+        parts.push("(Immediate)");
+      } else if (formData.timingMode === "delayed") {
         const timing: string[] = [];
         if (formData.delayDays > 0) timing.push(`${formData.delayDays}d`);
         if (formData.delayHours > 0) timing.push(`${formData.delayHours}h`);
         if (timing.length > 0) {
-          parts.push(`(After ${timing.join(' ')})`);
+          parts.push(`(After ${timing.join(" ")})`);
         }
       }
     }
-    
-    return parts.join(' → ') || 'New Automation';
+
+    return parts.join(" → ") || "New Automation";
   }, [formData, stages]);
 
   // Cache the auto-name when entering review step if not already cached
   useEffect(() => {
-    if (currentStep === 'review' && !cachedAutoName && !formData.name) {
+    if (currentStep === "review" && !cachedAutoName && !formData.name) {
       setCachedAutoName(autoGeneratedName);
     }
   }, [currentStep, cachedAutoName, formData.name, autoGeneratedName]);
@@ -548,47 +629,72 @@ export default function AutomationWizard({
 
   // Get trigger description for breadcrumb
   const triggerBreadcrumb = useMemo(() => {
-    if (formData.triggerMode === 'STAGE' && formData.triggerStageId) {
-      const stage = stages.find(s => s.id === formData.triggerStageId);
-      return `Stage Entry → ${stage?.name || 'Selected Stage'}`;
+    if (formData.triggerMode === "STAGE" && formData.triggerStageId) {
+      const stage = stages.find((s) => s.id === formData.triggerStageId);
+      return `Stage Entry → ${stage?.name || "Selected Stage"}`;
     }
-    if (formData.triggerMode === 'BUSINESS' && formData.triggerEvent) {
-      const event = BUSINESS_EVENTS.find(e => e.value === formData.triggerEvent);
-      return `Business Event → ${event?.label || 'Selected Event'}`;
+    if (formData.triggerMode === "BUSINESS" && formData.triggerEvent) {
+      const event = BUSINESS_EVENTS.find(
+        (e) => e.value === formData.triggerEvent,
+      );
+      return `Business Event → ${event?.label || "Selected Event"}`;
     }
-    if (formData.triggerMode === 'TIME') {
+    if (formData.triggerMode === "TIME") {
       return `Date-Based → ${formData.daysBefore} days ${formData.triggerTiming.toLowerCase()} event`;
     }
     return null;
-  }, [formData.triggerMode, formData.triggerStageId, formData.triggerEvent, formData.daysBefore, formData.triggerTiming, stages]);
+  }, [
+    formData.triggerMode,
+    formData.triggerStageId,
+    formData.triggerEvent,
+    formData.daysBefore,
+    formData.triggerTiming,
+    stages,
+  ]);
 
-  const steps: WizardStep[] = ['welcome', 'trigger', 'action', 'configure', 'review'];
+  const steps: WizardStep[] = [
+    "welcome",
+    "trigger",
+    "action",
+    "configure",
+    "review",
+  ];
   const stepIndex = steps.indexOf(currentStep);
-  const progress = ((stepIndex) / (steps.length - 1)) * 100;
+  const progress = (stepIndex / (steps.length - 1)) * 100;
 
   const canProceed = (): boolean => {
     switch (currentStep) {
-      case 'welcome':
+      case "welcome":
         return true;
-      case 'trigger':
-        if (formData.triggerMode === 'STAGE') return !!formData.triggerStageId;
-        if (formData.triggerMode === 'BUSINESS') return !!formData.triggerEvent;
-        if (formData.triggerMode === 'TIME') return formData.daysBefore > 0;
+      case "trigger":
+        if (formData.triggerMode === "STAGE") return !!formData.triggerStageId;
+        if (formData.triggerMode === "BUSINESS") return !!formData.triggerEvent;
+        if (formData.triggerMode === "TIME") return formData.daysBefore > 0;
         return false;
-      case 'action':
+      case "action":
         return formData.enableCommunication || formData.enablePipeline;
-      case 'configure':
+      case "configure":
         // For STAGE/BUSINESS triggers with communication, require timing mode selection
         // TIME triggers don't need timing mode (timing is already defined by daysBefore)
-        if (formData.enableCommunication && formData.triggerMode !== 'TIME' && !formData.timingMode) return false;
+        if (
+          formData.enableCommunication &&
+          formData.triggerMode !== "TIME" &&
+          !formData.timingMode
+        )
+          return false;
         if (formData.enablePipeline && !formData.moveToStageId) return false;
         // Require content for communication automations
         if (formData.enableCommunication) {
-          if (formData.channel === 'SMS' && !formData.templateBody.trim()) return false;
-          if (formData.channel === 'EMAIL' && (!formData.templateSubject.trim() || !formData.templateBody.trim())) return false;
+          if (formData.channel === "SMS" && !formData.templateBody.trim())
+            return false;
+          if (
+            formData.channel === "EMAIL" &&
+            (!formData.templateSubject.trim() || !formData.templateBody.trim())
+          )
+            return false;
         }
         return true;
-      case 'review':
+      case "review":
         return true;
       default:
         return false;
@@ -596,7 +702,13 @@ export default function AutomationWizard({
   };
 
   const handleNext = () => {
-    const stepOrder: WizardStep[] = ['welcome', 'trigger', 'action', 'configure', 'review'];
+    const stepOrder: WizardStep[] = [
+      "welcome",
+      "trigger",
+      "action",
+      "configure",
+      "review",
+    ];
     const currentIndex = stepOrder.indexOf(currentStep);
     if (currentIndex < stepOrder.length - 1) {
       setCurrentStep(stepOrder[currentIndex + 1]);
@@ -604,7 +716,13 @@ export default function AutomationWizard({
   };
 
   const handleBack = () => {
-    const stepOrder: WizardStep[] = ['welcome', 'trigger', 'action', 'configure', 'review'];
+    const stepOrder: WizardStep[] = [
+      "welcome",
+      "trigger",
+      "action",
+      "configure",
+      "review",
+    ];
     const currentIndex = stepOrder.indexOf(currentStep);
     if (currentIndex > 0) {
       setCurrentStep(stepOrder[currentIndex - 1]);
@@ -614,7 +732,7 @@ export default function AutomationWizard({
   const handleSubmit = () => {
     const finalData = {
       ...formData,
-      name: displayName
+      name: displayName,
     };
     onSubmit(finalData);
   };
@@ -631,11 +749,17 @@ export default function AutomationWizard({
           numberOfPieces={500}
         />
       )}
-      
-      {/* Dark backdrop overlay */}
-      <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="fixed inset-0 z-50 bg-gradient-to-br from-slate-50 via-white to-purple-50 dark:from-slate-950 dark:via-gray-900 dark:to-purple-950 overflow-hidden" data-testid="automation-wizard">
+      {/* Dark backdrop overlay */}
+      <div
+        className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      <div
+        className="fixed inset-0 z-50 bg-gradient-to-br from-slate-50 via-white to-purple-50 dark:from-slate-950 dark:via-gray-900 dark:to-purple-950 overflow-hidden"
+        data-testid="automation-wizard"
+      >
         {/* Close button */}
         <Button
           variant="ghost"
@@ -646,7 +770,7 @@ export default function AutomationWizard({
         >
           <X className="h-10 w-10" />
         </Button>
-        
+
         {/* Background decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-purple-100/40 to-pink-100/40 dark:from-purple-900/20 dark:to-pink-900/20 rounded-full blur-3xl" />
@@ -655,9 +779,9 @@ export default function AutomationWizard({
         </div>
 
         {/* Progress bar */}
-        {currentStep !== 'welcome' && (
+        {currentStep !== "welcome" && (
           <div className="absolute top-0 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-800">
-            <motion.div 
+            <motion.div
               className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
@@ -670,7 +794,7 @@ export default function AutomationWizard({
         <div className="relative h-full flex items-center justify-center p-4 md:p-8 overflow-y-auto">
           <AnimatePresence mode="wait">
             {/* Welcome Step */}
-            {currentStep === 'welcome' && (
+            {currentStep === "welcome" && (
               <motion.div
                 key="welcome"
                 initial={{ opacity: 0, y: 20 }}
@@ -706,10 +830,12 @@ export default function AutomationWizard({
                   transition={{ delay: 0.4, duration: 0.4 }}
                   className="text-xl text-gray-600 dark:text-gray-300 mb-4 leading-relaxed"
                 >
-                  We'll guide you through setting up an automated workflow<br />
-                  for your {projectTypeName.toLowerCase()} projects in just a few steps.
+                  We'll guide you through setting up an automated workflow
+                  <br />
+                  for your {projectTypeName.toLowerCase()} projects in just a
+                  few steps.
                 </motion.p>
-                
+
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -765,7 +891,7 @@ export default function AutomationWizard({
             )}
 
             {/* Trigger Step */}
-            {currentStep === 'trigger' && (
+            {currentStep === "trigger" && (
               <motion.div
                 key="trigger"
                 initial={{ opacity: 0, x: 50 }}
@@ -780,8 +906,15 @@ export default function AutomationWizard({
                       <Target className="w-7 h-7 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="text-trigger-title">When should this trigger?</h2>
-                      <p className="text-gray-500 dark:text-gray-400">Choose what event will start this automation</p>
+                      <h2
+                        className="text-2xl font-bold text-gray-900 dark:text-white"
+                        data-testid="text-trigger-title"
+                      >
+                        When should this trigger?
+                      </h2>
+                      <p className="text-gray-500 dark:text-gray-400">
+                        Choose what event will start this automation
+                      </p>
                     </div>
                   </div>
 
@@ -789,29 +922,44 @@ export default function AutomationWizard({
                     {TRIGGER_OPTIONS.map((option) => (
                       <motion.button
                         key={option.id}
-                        onClick={() => setFormData({ ...formData, triggerMode: option.id as TriggerMode })}
+                        onClick={() =>
+                          setFormData({
+                            ...formData,
+                            triggerMode: option.id as TriggerMode,
+                          })
+                        }
                         className={`w-full p-4 rounded-2xl border-2 transition-all text-left flex items-center gap-4 ${
                           formData.triggerMode === option.id
-                            ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
-                            : 'border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700'
+                            ? "border-purple-500 bg-purple-50 dark:bg-purple-900/20"
+                            : "border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700"
                         }`}
                         whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.99 }}
                         data-testid={`button-trigger-${option.id.toLowerCase()}`}
                       >
-                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${option.color} flex items-center justify-center shadow-md`}>
+                        <div
+                          className={`w-12 h-12 rounded-xl bg-gradient-to-br ${option.color} flex items-center justify-center shadow-md`}
+                        >
                           <option.icon className="w-6 h-6 text-white" />
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900 dark:text-white">{option.label}</h3>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{option.description}</p>
-                          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 italic">{option.example}</p>
+                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                            {option.label}
+                          </h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {option.description}
+                          </p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 italic">
+                            {option.example}
+                          </p>
                         </div>
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                          formData.triggerMode === option.id
-                            ? 'border-purple-500 bg-purple-500'
-                            : 'border-gray-300 dark:border-gray-600'
-                        }`}>
+                        <div
+                          className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                            formData.triggerMode === option.id
+                              ? "border-purple-500 bg-purple-500"
+                              : "border-gray-300 dark:border-gray-600"
+                          }`}
+                        >
                           {formData.triggerMode === option.id && (
                             <div className="w-2.5 h-2.5 rounded-full bg-white" />
                           )}
@@ -821,24 +969,35 @@ export default function AutomationWizard({
                   </div>
 
                   {/* Stage selector */}
-                  {formData.triggerMode === 'STAGE' && (
+                  {formData.triggerMode === "STAGE" && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
+                      animate={{ opacity: 1, height: "auto" }}
                       className="space-y-3 mt-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl"
                     >
-                      <Label className="text-sm font-medium">Which stage triggers this?</Label>
-                      <Select 
-                        value={formData.triggerStageId || ""} 
-                        onValueChange={(value) => setFormData({ ...formData, triggerStageId: value })}
+                      <Label className="text-sm font-medium">
+                        Which stage triggers this?
+                      </Label>
+                      <Select
+                        value={formData.triggerStageId || ""}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, triggerStageId: value })
+                        }
                       >
-                        <SelectTrigger className="h-12" data-testid="select-wizard-trigger-stage">
+                        <SelectTrigger
+                          className="h-12"
+                          data-testid="select-wizard-trigger-stage"
+                        >
                           <SelectValue placeholder="Select a stage..." />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="global">All Stages (Global trigger)</SelectItem>
+                          <SelectItem value="global">
+                            All Stages (Global trigger)
+                          </SelectItem>
                           {stages.map((stage) => (
-                            <SelectItem key={stage.id} value={stage.id}>{stage.name}</SelectItem>
+                            <SelectItem key={stage.id} value={stage.id}>
+                              {stage.name}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -846,18 +1005,25 @@ export default function AutomationWizard({
                   )}
 
                   {/* Business event selector */}
-                  {formData.triggerMode === 'BUSINESS' && (
+                  {formData.triggerMode === "BUSINESS" && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
+                      animate={{ opacity: 1, height: "auto" }}
                       className="space-y-3 mt-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl"
                     >
-                      <Label className="text-sm font-medium">Which business event?</Label>
-                      <Select 
-                        value={formData.triggerEvent || ""} 
-                        onValueChange={(value) => setFormData({ ...formData, triggerEvent: value })}
+                      <Label className="text-sm font-medium">
+                        Which business event?
+                      </Label>
+                      <Select
+                        value={formData.triggerEvent || ""}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, triggerEvent: value })
+                        }
                       >
-                        <SelectTrigger className="h-12" data-testid="select-wizard-trigger-event">
+                        <SelectTrigger
+                          className="h-12"
+                          data-testid="select-wizard-trigger-event"
+                        >
                           <SelectValue placeholder="Select an event..." />
                         </SelectTrigger>
                         <SelectContent>
@@ -872,40 +1038,52 @@ export default function AutomationWizard({
                   )}
 
                   {/* Stage condition for business triggers */}
-                  {formData.triggerMode === 'BUSINESS' && formData.triggerEvent && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      className="space-y-3 mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800"
-                    >
-                      <Label className="text-sm font-medium">Only when in stage (optional)</Label>
-                      <Select
-                        value={formData.stageCondition || "all"}
-                        onValueChange={(value) => setFormData({ ...formData, stageCondition: value === "all" ? null : value })}
+                  {formData.triggerMode === "BUSINESS" &&
+                    formData.triggerEvent && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        className="space-y-3 mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800"
                       >
-                        <SelectTrigger className="h-12" data-testid="select-wizard-stage-condition">
-                          <SelectValue placeholder="All Stages" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Stages</SelectItem>
-                          {stages?.map((stage) => (
-                            <SelectItem key={stage.id} value={stage.id}>
-                              {stage.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <p className="text-xs text-muted-foreground">
-                        Optionally limit this automation to only fire when the client is in a specific stage
-                      </p>
-                    </motion.div>
-                  )}
+                        <Label className="text-sm font-medium">
+                          Only when in stage (optional)
+                        </Label>
+                        <Select
+                          value={formData.stageCondition || "all"}
+                          onValueChange={(value) =>
+                            setFormData({
+                              ...formData,
+                              stageCondition: value === "all" ? null : value,
+                            })
+                          }
+                        >
+                          <SelectTrigger
+                            className="h-12"
+                            data-testid="select-wizard-stage-condition"
+                          >
+                            <SelectValue placeholder="All Stages" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Stages</SelectItem>
+                            {stages?.map((stage) => (
+                              <SelectItem key={stage.id} value={stage.id}>
+                                {stage.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground">
+                          Optionally limit this automation to only fire when the
+                          client is in a specific stage
+                        </p>
+                      </motion.div>
+                    )}
 
                   {/* Time-based selector */}
-                  {formData.triggerMode === 'TIME' && (
+                  {formData.triggerMode === "TIME" && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
+                      animate={{ opacity: 1, height: "auto" }}
                       className="space-y-4 mt-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl"
                     >
                       <div className="flex items-center gap-4">
@@ -915,22 +1093,34 @@ export default function AutomationWizard({
                             type="number"
                             min="1"
                             value={formData.daysBefore}
-                            onChange={(e) => setFormData({ ...formData, daysBefore: parseInt(e.target.value) || 7 })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                daysBefore: parseInt(e.target.value) || 7,
+                              })
+                            }
                             className="h-12 mt-1"
                             data-testid="input-wizard-days"
                           />
                         </div>
                         <div className="flex-1">
                           <Label className="text-sm font-medium">Timing</Label>
-                          <Select 
-                            value={formData.triggerTiming} 
-                            onValueChange={(value: 'BEFORE' | 'AFTER') => setFormData({ ...formData, triggerTiming: value })}
+                          <Select
+                            value={formData.triggerTiming}
+                            onValueChange={(value: "BEFORE" | "AFTER") =>
+                              setFormData({ ...formData, triggerTiming: value })
+                            }
                           >
-                            <SelectTrigger className="h-12 mt-1" data-testid="select-wizard-trigger-timing">
+                            <SelectTrigger
+                              className="h-12 mt-1"
+                              data-testid="select-wizard-trigger-timing"
+                            >
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="BEFORE">Before event</SelectItem>
+                              <SelectItem value="BEFORE">
+                                Before event
+                              </SelectItem>
                               <SelectItem value="AFTER">After event</SelectItem>
                             </SelectContent>
                           </Select>
@@ -941,7 +1131,11 @@ export default function AutomationWizard({
 
                   {/* Navigation */}
                   <div className="flex justify-between mt-8 pt-6 border-t dark:border-gray-700">
-                    <Button variant="outline" onClick={handleBack} data-testid="button-wizard-back">
+                    <Button
+                      variant="outline"
+                      onClick={handleBack}
+                      data-testid="button-wizard-back"
+                    >
                       <ArrowLeft className="w-4 h-4 mr-2" />
                       Back
                     </Button>
@@ -959,7 +1153,7 @@ export default function AutomationWizard({
                   {/* AI Helper prompt */}
                   {onOpenAiBuilder && (
                     <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-4">
-                      Not sure where to start? Let our{' '}
+                      Not sure where to start? Let our{" "}
                       <button
                         onClick={() => {
                           onClose();
@@ -968,8 +1162,8 @@ export default function AutomationWizard({
                         className="text-purple-500 hover:text-purple-600 dark:text-purple-400 dark:hover:text-purple-300 underline underline-offset-2"
                       >
                         AI assistant
-                      </button>
-                      {' '}build it for you.
+                      </button>{" "}
+                      build it for you.
                     </p>
                   )}
                 </div>
@@ -977,7 +1171,7 @@ export default function AutomationWizard({
             )}
 
             {/* Action Step */}
-            {currentStep === 'action' && (
+            {currentStep === "action" && (
               <motion.div
                 key="action"
                 initial={{ opacity: 0, x: 50 }}
@@ -995,30 +1189,41 @@ export default function AutomationWizard({
                       <span>{triggerBreadcrumb}</span>
                     </div>
                   )}
-                  
+
                   <div className="flex items-center gap-4 mb-8">
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center shadow-lg shadow-pink-500/25">
                       <Send className="w-7 h-7 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="text-action-title">What should happen?</h2>
-                      <p className="text-gray-500 dark:text-gray-400">Choose what action to take when triggered</p>
+                      <h2
+                        className="text-2xl font-bold text-gray-900 dark:text-white"
+                        data-testid="text-action-title"
+                      >
+                        What should happen?
+                      </h2>
+                      <p className="text-gray-500 dark:text-gray-400">
+                        Choose what action to take when triggered
+                      </p>
                     </div>
                   </div>
 
                   <div className="space-y-4 mb-6">
                     {/* Email option */}
                     <motion.button
-                      onClick={() => setFormData({ 
-                        ...formData, 
-                        enableCommunication: true,
-                        enablePipeline: false,
-                        channel: 'EMAIL'
-                      })}
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          enableCommunication: true,
+                          enablePipeline: false,
+                          channel: "EMAIL",
+                        })
+                      }
                       className={`w-full p-4 rounded-2xl border-2 transition-all text-left flex items-center gap-4 ${
-                        formData.enableCommunication && formData.channel === 'EMAIL' && !formData.enablePipeline
-                          ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20'
-                          : 'border-gray-200 dark:border-gray-700 hover:border-pink-300 dark:hover:border-pink-700'
+                        formData.enableCommunication &&
+                        formData.channel === "EMAIL" &&
+                        !formData.enablePipeline
+                          ? "border-pink-500 bg-pink-50 dark:bg-pink-900/20"
+                          : "border-gray-200 dark:border-gray-700 hover:border-pink-300 dark:hover:border-pink-700"
                       }`}
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.99 }}
@@ -1028,32 +1233,46 @@ export default function AutomationWizard({
                         <Mail className="w-6 h-6 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">Send Email</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Automatically send an email to your client</p>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                          Send Email
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Automatically send an email to your client
+                        </p>
                       </div>
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                        formData.enableCommunication && formData.channel === 'EMAIL' && !formData.enablePipeline
-                          ? 'border-pink-500 bg-pink-500'
-                          : 'border-gray-300 dark:border-gray-600'
-                      }`}>
-                        {formData.enableCommunication && formData.channel === 'EMAIL' && !formData.enablePipeline && (
-                          <div className="w-2.5 h-2.5 rounded-full bg-white" />
-                        )}
+                      <div
+                        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                          formData.enableCommunication &&
+                          formData.channel === "EMAIL" &&
+                          !formData.enablePipeline
+                            ? "border-pink-500 bg-pink-500"
+                            : "border-gray-300 dark:border-gray-600"
+                        }`}
+                      >
+                        {formData.enableCommunication &&
+                          formData.channel === "EMAIL" &&
+                          !formData.enablePipeline && (
+                            <div className="w-2.5 h-2.5 rounded-full bg-white" />
+                          )}
                       </div>
                     </motion.button>
 
                     {/* SMS option */}
                     <motion.button
-                      onClick={() => setFormData({ 
-                        ...formData, 
-                        enableCommunication: true,
-                        enablePipeline: false,
-                        channel: 'SMS'
-                      })}
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          enableCommunication: true,
+                          enablePipeline: false,
+                          channel: "SMS",
+                        })
+                      }
                       className={`w-full p-4 rounded-2xl border-2 transition-all text-left flex items-center gap-4 ${
-                        formData.enableCommunication && formData.channel === 'SMS' && !formData.enablePipeline
-                          ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20'
-                          : 'border-gray-200 dark:border-gray-700 hover:border-pink-300 dark:hover:border-pink-700'
+                        formData.enableCommunication &&
+                        formData.channel === "SMS" &&
+                        !formData.enablePipeline
+                          ? "border-pink-500 bg-pink-50 dark:bg-pink-900/20"
+                          : "border-gray-200 dark:border-gray-700 hover:border-pink-300 dark:hover:border-pink-700"
                       }`}
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.99 }}
@@ -1063,31 +1282,43 @@ export default function AutomationWizard({
                         <MessageSquare className="w-6 h-6 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">Send SMS</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Send a text message to their phone</p>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                          Send SMS
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Send a text message to their phone
+                        </p>
                       </div>
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                        formData.enableCommunication && formData.channel === 'SMS' && !formData.enablePipeline
-                          ? 'border-pink-500 bg-pink-500'
-                          : 'border-gray-300 dark:border-gray-600'
-                      }`}>
-                        {formData.enableCommunication && formData.channel === 'SMS' && !formData.enablePipeline && (
-                          <div className="w-2.5 h-2.5 rounded-full bg-white" />
-                        )}
+                      <div
+                        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                          formData.enableCommunication &&
+                          formData.channel === "SMS" &&
+                          !formData.enablePipeline
+                            ? "border-pink-500 bg-pink-500"
+                            : "border-gray-300 dark:border-gray-600"
+                        }`}
+                      >
+                        {formData.enableCommunication &&
+                          formData.channel === "SMS" &&
+                          !formData.enablePipeline && (
+                            <div className="w-2.5 h-2.5 rounded-full bg-white" />
+                          )}
                       </div>
                     </motion.button>
 
                     {/* Pipeline option */}
                     <motion.button
-                      onClick={() => setFormData({ 
-                        ...formData, 
-                        enableCommunication: false,
-                        enablePipeline: true
-                      })}
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          enableCommunication: false,
+                          enablePipeline: true,
+                        })
+                      }
                       className={`w-full p-4 rounded-2xl border-2 transition-all text-left flex items-center gap-4 ${
                         formData.enablePipeline && !formData.enableCommunication
-                          ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20'
-                          : 'border-gray-200 dark:border-gray-700 hover:border-pink-300 dark:hover:border-pink-700'
+                          ? "border-pink-500 bg-pink-50 dark:bg-pink-900/20"
+                          : "border-gray-200 dark:border-gray-700 hover:border-pink-300 dark:hover:border-pink-700"
                       }`}
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.99 }}
@@ -1097,29 +1328,41 @@ export default function AutomationWizard({
                         <ArrowRight className="w-6 h-6 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">Move in Pipeline</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Automatically move client to another stage</p>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                          Move in Pipeline
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Automatically move client to another stage
+                        </p>
                       </div>
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                        formData.enablePipeline && !formData.enableCommunication
-                          ? 'border-pink-500 bg-pink-500'
-                          : 'border-gray-300 dark:border-gray-600'
-                      }`}>
-                        {formData.enablePipeline && !formData.enableCommunication && (
-                          <div className="w-2.5 h-2.5 rounded-full bg-white" />
-                        )}
+                      <div
+                        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                          formData.enablePipeline &&
+                          !formData.enableCommunication
+                            ? "border-pink-500 bg-pink-500"
+                            : "border-gray-300 dark:border-gray-600"
+                        }`}
+                      >
+                        {formData.enablePipeline &&
+                          !formData.enableCommunication && (
+                            <div className="w-2.5 h-2.5 rounded-full bg-white" />
+                          )}
                       </div>
                     </motion.button>
                   </div>
 
                   {/* Navigation */}
                   <div className="flex justify-between mt-8 pt-6 border-t dark:border-gray-700">
-                    <Button variant="outline" onClick={handleBack} data-testid="button-wizard-back">
+                    <Button
+                      variant="outline"
+                      onClick={handleBack}
+                      data-testid="button-wizard-back"
+                    >
                       <ArrowLeft className="w-4 h-4 mr-2" />
                       Back
                     </Button>
-                    <Button 
-                      onClick={handleNext} 
+                    <Button
+                      onClick={handleNext}
                       disabled={!canProceed()}
                       className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                       data-testid="button-wizard-next"
@@ -1133,7 +1376,7 @@ export default function AutomationWizard({
             )}
 
             {/* Configure Step */}
-            {currentStep === 'configure' && (
+            {currentStep === "configure" && (
               <motion.div
                 key="configure"
                 initial={{ opacity: 0, x: 50 }}
@@ -1151,14 +1394,21 @@ export default function AutomationWizard({
                       <span>{triggerBreadcrumb}</span>
                     </div>
                   )}
-                  
+
                   <div className="flex items-center gap-4 mb-8">
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/25">
                       <Clock className="w-7 h-7 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="text-configure-title">Configure the details</h2>
-                      <p className="text-gray-500 dark:text-gray-400">Set up timing and content for your automation</p>
+                      <h2
+                        className="text-2xl font-bold text-gray-900 dark:text-white"
+                        data-testid="text-configure-title"
+                      >
+                        Configure the details
+                      </h2>
+                      <p className="text-gray-500 dark:text-gray-400">
+                        Set up timing and content for your automation
+                      </p>
                     </div>
                   </div>
 
@@ -1166,45 +1416,68 @@ export default function AutomationWizard({
                   {formData.enableCommunication && (
                     <div className="space-y-6">
                       <div className="space-y-4">
-                        <Label className="text-base font-semibold">When should the message be sent?</Label>
+                        <Label className="text-base font-semibold">
+                          When should the message be sent?
+                        </Label>
                         <div className="grid grid-cols-2 gap-4">
                           <motion.button
-                            onClick={() => setFormData({ ...formData, timingMode: 'immediate', delayDays: 0, delayHours: 0, delayMinutes: 0 })}
+                            onClick={() =>
+                              setFormData({
+                                ...formData,
+                                timingMode: "immediate",
+                                delayDays: 0,
+                                delayHours: 0,
+                                delayMinutes: 0,
+                              })
+                            }
                             className={`p-4 rounded-xl border-2 transition-all text-center ${
-                              formData.timingMode === 'immediate'
-                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
-                                : 'border-gray-200 dark:border-gray-700 hover:border-orange-300'
+                              formData.timingMode === "immediate"
+                                ? "border-orange-500 bg-orange-50 dark:bg-orange-900/20"
+                                : "border-gray-200 dark:border-gray-700 hover:border-orange-300"
                             }`}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             data-testid="button-timing-immediate"
                           >
                             <Zap className="w-8 h-8 mx-auto mb-2 text-orange-500" />
-                            <h3 className="font-semibold text-gray-900 dark:text-white">Immediately</h3>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">Send right away</p>
+                            <h3 className="font-semibold text-gray-900 dark:text-white">
+                              Immediately
+                            </h3>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Send right away
+                            </p>
                           </motion.button>
                           <motion.button
-                            onClick={() => setFormData({ ...formData, timingMode: 'delayed' })}
+                            onClick={() =>
+                              setFormData({
+                                ...formData,
+                                timingMode: "delayed",
+                              })
+                            }
                             className={`p-4 rounded-xl border-2 transition-all text-center ${
-                              formData.timingMode === 'delayed'
-                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
-                                : 'border-gray-200 dark:border-gray-700 hover:border-orange-300'
+                              formData.timingMode === "delayed"
+                                ? "border-orange-500 bg-orange-50 dark:bg-orange-900/20"
+                                : "border-gray-200 dark:border-gray-700 hover:border-orange-300"
                             }`}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             data-testid="button-timing-delayed"
                           >
                             <Clock className="w-8 h-8 mx-auto mb-2 text-blue-500" />
-                            <h3 className="font-semibold text-gray-900 dark:text-white">After Delay</h3>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">Wait before sending</p>
+                            <h3 className="font-semibold text-gray-900 dark:text-white">
+                              After Delay
+                            </h3>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Wait before sending
+                            </p>
                           </motion.button>
                         </div>
                       </div>
 
-                      {formData.timingMode === 'delayed' && (
+                      {formData.timingMode === "delayed" && (
                         <motion.div
                           initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
+                          animate={{ opacity: 1, height: "auto" }}
                           className="grid grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl"
                         >
                           <div>
@@ -1213,7 +1486,12 @@ export default function AutomationWizard({
                               type="number"
                               min="0"
                               value={formData.delayDays}
-                              onChange={(e) => setFormData({ ...formData, delayDays: parseInt(e.target.value) || 0 })}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  delayDays: parseInt(e.target.value) || 0,
+                                })
+                              }
                               className="h-12 mt-1"
                               data-testid="input-wizard-delay-days"
                             />
@@ -1225,7 +1503,12 @@ export default function AutomationWizard({
                               min="0"
                               max="23"
                               value={formData.delayHours}
-                              onChange={(e) => setFormData({ ...formData, delayHours: parseInt(e.target.value) || 0 })}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  delayHours: parseInt(e.target.value) || 0,
+                                })
+                              }
                               className="h-12 mt-1"
                               data-testid="input-wizard-delay-hours"
                             />
@@ -1237,11 +1520,17 @@ export default function AutomationWizard({
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
                           <Label className="text-base font-semibold flex items-center gap-2">
-                            {formData.channel === 'EMAIL' ? <Mail className="w-5 h-5 text-blue-500" /> : <MessageSquare className="w-5 h-5 text-green-500" />}
-                            {formData.channel === 'EMAIL' ? 'Email Content' : 'SMS Message'}
+                            {formData.channel === "EMAIL" ? (
+                              <Mail className="w-5 h-5 text-blue-500" />
+                            ) : (
+                              <MessageSquare className="w-5 h-5 text-green-500" />
+                            )}
+                            {formData.channel === "EMAIL"
+                              ? "Email Content"
+                              : "SMS Message"}
                           </Label>
                           <div className="flex items-center gap-2">
-                            {formData.channel === 'EMAIL' && (
+                            {formData.channel === "EMAIL" && (
                               <Button
                                 type="button"
                                 variant="outline"
@@ -1267,26 +1556,40 @@ export default function AutomationWizard({
                             </Button>
                           </div>
                         </div>
-                        
-                        {formData.channel === 'EMAIL' && (
+
+                        {formData.channel === "EMAIL" && (
                           <div className="space-y-3">
                             <div>
-                              <Label className="text-sm font-medium text-gray-600 dark:text-gray-400">Subject Line</Label>
+                              <Label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                                Subject Line
+                              </Label>
                               <Input
                                 ref={emailSubjectRef}
                                 value={formData.templateSubject}
-                                onChange={(e) => setFormData({ ...formData, templateSubject: e.target.value })}
+                                onChange={(e) =>
+                                  setFormData({
+                                    ...formData,
+                                    templateSubject: e.target.value,
+                                  })
+                                }
                                 placeholder="e.g., Thanks for your inquiry!"
                                 className="h-12 mt-1"
                                 data-testid="input-wizard-email-subject"
                               />
                             </div>
                             <div>
-                              <Label className="text-sm font-medium text-gray-600 dark:text-gray-400">Message Body</Label>
+                              <Label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                                Message Body
+                              </Label>
                               <div className="mt-1" ref={emailBodyRef}>
                                 <ButtonRichTextEditor
                                   value={formData.templateBody}
-                                  onChange={(value) => setFormData({ ...formData, templateBody: value })}
+                                  onChange={(value) =>
+                                    setFormData({
+                                      ...formData,
+                                      templateBody: value,
+                                    })
+                                  }
                                   placeholder="Hi {{first_name}},
 
 Thank you for reaching out! I'm excited to learn more about your special day..."
@@ -1295,7 +1598,8 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                                 />
                               </div>
                               <p className="text-xs text-gray-400 mt-1">
-                                Click a variable below to insert it. If a value is missing, it will be left blank.
+                                Click a variable below to insert it. If a value
+                                is missing, it will be left blank.
                               </p>
                               {/* Clickable variable chips for email body */}
                               <div className="flex flex-wrap gap-1.5 mt-2">
@@ -1303,7 +1607,9 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                                   <button
                                     key={v.key}
                                     type="button"
-                                    onClick={() => insertVariable(v.key, 'body')}
+                                    onClick={() =>
+                                      insertVariable(v.key, "body")
+                                    }
                                     className="px-2 py-1 text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
                                     data-testid={`button-insert-var-${v.key}`}
                                   >
@@ -1316,9 +1622,9 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    setButtonText('');
-                                    setButtonDestination('CALENDAR');
-                                    setButtonCustomUrl('');
+                                    setButtonText("");
+                                    setButtonDestination("CALENDAR");
+                                    setButtonCustomUrl("");
                                     setShowButtonPopover(true);
                                   }}
                                   className="px-3 py-1.5 text-xs bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-md hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors flex items-center gap-1.5 font-medium"
@@ -1328,43 +1634,63 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                                   Add a Button
                                 </button>
                               </div>
-                              
+
                               {/* Header/Footer toggles */}
                               <div className="flex items-center gap-6 mt-4 pt-3 border-t border-gray-100 dark:border-gray-800">
                                 <label className="flex items-center gap-2 cursor-pointer">
                                   <Checkbox
                                     checked={formData.includeHeader}
-                                    onCheckedChange={(checked) => setFormData({ ...formData, includeHeader: !!checked })}
+                                    onCheckedChange={(checked) =>
+                                      setFormData({
+                                        ...formData,
+                                        includeHeader: !!checked,
+                                      })
+                                    }
                                     data-testid="checkbox-include-header"
                                   />
-                                  <span className="text-sm text-gray-600 dark:text-gray-400">Include Header</span>
+                                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                                    Include Header
+                                  </span>
                                 </label>
                                 <label className="flex items-center gap-2 cursor-pointer">
                                   <Checkbox
                                     checked={formData.includeFooter}
-                                    onCheckedChange={(checked) => setFormData({ ...formData, includeFooter: !!checked })}
+                                    onCheckedChange={(checked) =>
+                                      setFormData({
+                                        ...formData,
+                                        includeFooter: !!checked,
+                                      })
+                                    }
                                     data-testid="checkbox-include-footer"
                                   />
-                                  <span className="text-sm text-gray-600 dark:text-gray-400">Include Footer</span>
+                                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                                    Include Footer
+                                  </span>
                                 </label>
                               </div>
                             </div>
                           </div>
                         )}
-                        
-                        {formData.channel === 'SMS' && (
+
+                        {formData.channel === "SMS" && (
                           <div>
                             {/* SMS Warning */}
                             <div className="mb-3 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg flex items-start gap-2">
                               <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
                               <p className="text-xs text-amber-700 dark:text-amber-300">
-                                SMS messages are sent immediately and cannot be recalled.
+                                SMS messages are sent immediately and cannot be
+                                recalled.
                               </p>
                             </div>
                             <Textarea
                               ref={smsBodyRef}
                               value={formData.templateBody}
-                              onChange={(e) => setFormData({ ...formData, templateBody: e.target.value })}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  templateBody: e.target.value,
+                                })
+                              }
                               placeholder="Hi {{first_name}}, thank you for reaching out! I'll be in touch soon to discuss your special day. - Your Photographer"
                               className="min-h-[100px] resize-none"
                               maxLength={160}
@@ -1374,7 +1700,9 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                               <p className="text-xs text-gray-400">
                                 If a value is missing, it will be left blank.
                               </p>
-                              <p className={`text-xs font-medium ${formData.templateBody.length > 140 ? 'text-amber-500' : 'text-gray-400'}`}>
+                              <p
+                                className={`text-xs font-medium ${formData.templateBody.length > 140 ? "text-amber-500" : "text-gray-400"}`}
+                              >
                                 {formData.templateBody.length}/160
                               </p>
                             </div>
@@ -1384,7 +1712,7 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                                 <button
                                   key={v.key}
                                   type="button"
-                                  onClick={() => insertVariable(v.key, 'body')}
+                                  onClick={() => insertVariable(v.key, "body")}
                                   className="px-2 py-1 text-xs bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-md hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors"
                                   data-testid={`button-insert-var-sms-${v.key}`}
                                 >
@@ -1401,17 +1729,26 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                   {/* Pipeline configuration */}
                   {formData.enablePipeline && (
                     <div className="space-y-4">
-                      <Label className="text-base font-semibold">Move to which stage?</Label>
-                      <Select 
-                        value={formData.moveToStageId || ""} 
-                        onValueChange={(value) => setFormData({ ...formData, moveToStageId: value })}
+                      <Label className="text-base font-semibold">
+                        Move to which stage?
+                      </Label>
+                      <Select
+                        value={formData.moveToStageId || ""}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, moveToStageId: value })
+                        }
                       >
-                        <SelectTrigger className="h-12" data-testid="select-wizard-move-stage">
+                        <SelectTrigger
+                          className="h-12"
+                          data-testid="select-wizard-move-stage"
+                        >
                           <SelectValue placeholder="Select destination stage..." />
                         </SelectTrigger>
                         <SelectContent>
                           {stages.map((stage) => (
-                            <SelectItem key={stage.id} value={stage.id}>{stage.name}</SelectItem>
+                            <SelectItem key={stage.id} value={stage.id}>
+                              {stage.name}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -1420,12 +1757,16 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
 
                   {/* Navigation */}
                   <div className="flex justify-between mt-8 pt-6 border-t dark:border-gray-700">
-                    <Button variant="outline" onClick={handleBack} data-testid="button-wizard-back">
+                    <Button
+                      variant="outline"
+                      onClick={handleBack}
+                      data-testid="button-wizard-back"
+                    >
                       <ArrowLeft className="w-4 h-4 mr-2" />
                       Back
                     </Button>
-                    <Button 
-                      onClick={handleNext} 
+                    <Button
+                      onClick={handleNext}
                       disabled={!canProceed()}
                       className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                       data-testid="button-wizard-next"
@@ -1439,7 +1780,7 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
             )}
 
             {/* Review Step */}
-            {currentStep === 'review' && (
+            {currentStep === "review" && (
               <motion.div
                 key="review"
                 initial={{ opacity: 0, x: 50 }}
@@ -1457,29 +1798,41 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                       <span>{triggerBreadcrumb}</span>
                     </div>
                   )}
-                  
+
                   <div className="flex items-center gap-4 mb-8">
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/25">
                       <Rocket className="w-7 h-7 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="text-review-title">Ready to launch!</h2>
-                      <p className="text-gray-500 dark:text-gray-400">Review your automation and give it a name</p>
+                      <h2
+                        className="text-2xl font-bold text-gray-900 dark:text-white"
+                        data-testid="text-review-title"
+                      >
+                        Ready to launch!
+                      </h2>
+                      <p className="text-gray-500 dark:text-gray-400">
+                        Review your automation and give it a name
+                      </p>
                     </div>
                   </div>
 
                   {/* Editable name */}
                   <div className="space-y-3 mb-6">
-                    <Label className="text-base font-semibold">Automation Name</Label>
+                    <Label className="text-base font-semibold">
+                      Automation Name
+                    </Label>
                     <Input
-                      value={formData.name || cachedAutoName || ''}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      value={formData.name || cachedAutoName || ""}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       placeholder={autoGeneratedName}
                       className="h-12 text-lg font-medium"
                       data-testid="input-wizard-name"
                     />
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      We've suggested a name based on your choices, but feel free to change it
+                      We've suggested a name based on your choices, but feel
+                      free to change it
                     </p>
                   </div>
 
@@ -1489,7 +1842,7 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                       <Sparkles className="w-5 h-5 text-purple-500" />
                       Automation Summary
                     </h3>
-                    
+
                     <div className="space-y-3">
                       {/* Trigger */}
                       <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg">
@@ -1497,16 +1850,37 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                           <Target className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                         </div>
                         <div>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Trigger</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Trigger
+                          </p>
                           <p className="font-medium text-gray-900 dark:text-white">
-                            {formData.triggerMode === 'STAGE' && (
-                              <>When client enters: {stages.find(s => s.id === formData.triggerStageId)?.name || 'Any Stage'}</>
+                            {formData.triggerMode === "STAGE" && (
+                              <>
+                                When client enters:{" "}
+                                {stages.find(
+                                  (s) => s.id === formData.triggerStageId,
+                                )?.name || "Any Stage"}
+                              </>
                             )}
-                            {formData.triggerMode === 'BUSINESS' && (
-                              <>{BUSINESS_EVENTS.find(e => e.value === formData.triggerEvent)?.emoji} {BUSINESS_EVENTS.find(e => e.value === formData.triggerEvent)?.label}</>
+                            {formData.triggerMode === "BUSINESS" && (
+                              <>
+                                {
+                                  BUSINESS_EVENTS.find(
+                                    (e) => e.value === formData.triggerEvent,
+                                  )?.emoji
+                                }{" "}
+                                {
+                                  BUSINESS_EVENTS.find(
+                                    (e) => e.value === formData.triggerEvent,
+                                  )?.label
+                                }
+                              </>
                             )}
-                            {formData.triggerMode === 'TIME' && (
-                              <>{formData.daysBefore} days {formData.triggerTiming.toLowerCase()} event</>
+                            {formData.triggerMode === "TIME" && (
+                              <>
+                                {formData.daysBefore} days{" "}
+                                {formData.triggerTiming.toLowerCase()} event
+                              </>
                             )}
                           </p>
                         </div>
@@ -1516,7 +1890,7 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                       <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg">
                         <div className="w-10 h-10 rounded-lg bg-pink-100 dark:bg-pink-900/50 flex items-center justify-center">
                           {formData.enableCommunication ? (
-                            formData.channel === 'EMAIL' ? (
+                            formData.channel === "EMAIL" ? (
                               <Mail className="w-5 h-5 text-pink-600 dark:text-pink-400" />
                             ) : (
                               <MessageSquare className="w-5 h-5 text-pink-600 dark:text-pink-400" />
@@ -1526,10 +1900,14 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                           )}
                         </div>
                         <div>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Action</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Action
+                          </p>
                           <p className="font-medium text-gray-900 dark:text-white">
-                            {formData.enableCommunication && `Send ${formData.channel}`}
-                            {formData.enablePipeline && `Move to: ${stages.find(s => s.id === formData.moveToStageId)?.name}`}
+                            {formData.enableCommunication &&
+                              `Send ${formData.channel}`}
+                            {formData.enablePipeline &&
+                              `Move to: ${stages.find((s) => s.id === formData.moveToStageId)?.name}`}
                           </p>
                         </div>
                       </div>
@@ -1541,29 +1919,43 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                             <Clock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
                           </div>
                           <div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Timing</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              Timing
+                            </p>
                             <p className="font-medium text-gray-900 dark:text-white">
-                              {formData.timingMode === 'immediate' ? 'Immediately' : 
-                                `After ${formData.delayDays > 0 ? `${formData.delayDays} day${formData.delayDays > 1 ? 's' : ''}` : ''}${formData.delayDays > 0 && formData.delayHours > 0 ? ', ' : ''}${formData.delayHours > 0 ? `${formData.delayHours} hour${formData.delayHours > 1 ? 's' : ''}` : ''}`.trim() || 'Immediately'
-                              }
+                              {formData.timingMode === "immediate"
+                                ? "Immediately"
+                                : `After ${formData.delayDays > 0 ? `${formData.delayDays} day${formData.delayDays > 1 ? "s" : ""}` : ""}${formData.delayDays > 0 && formData.delayHours > 0 ? ", " : ""}${formData.delayHours > 0 ? `${formData.delayHours} hour${formData.delayHours > 1 ? "s" : ""}` : ""}`.trim() ||
+                                  "Immediately"}
                             </p>
                           </div>
                         </div>
                       )}
                     </div>
-                    
+
                     {/* Repeat behavior clarification */}
                     <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                       <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
                         <Play className="w-4 h-4 text-blue-500" />
-                        {formData.triggerMode === 'STAGE' && (
-                          <>Runs every time a client enters the <span className="font-medium">{stages.find(s => s.id === formData.triggerStageId)?.name || 'selected'}</span> stage</>
+                        {formData.triggerMode === "STAGE" && (
+                          <>
+                            Runs every time a client enters the{" "}
+                            <span className="font-medium">
+                              {stages.find(
+                                (s) => s.id === formData.triggerStageId,
+                              )?.name || "selected"}
+                            </span>{" "}
+                            stage
+                          </>
                         )}
-                        {formData.triggerMode === 'BUSINESS' && (
+                        {formData.triggerMode === "BUSINESS" && (
                           <>Runs once each time this event occurs</>
                         )}
-                        {formData.triggerMode === 'TIME' && (
-                          <>Runs once per client, {formData.daysBefore} days {formData.triggerTiming.toLowerCase()} their event</>
+                        {formData.triggerMode === "TIME" && (
+                          <>
+                            Runs once per client, {formData.daysBefore} days{" "}
+                            {formData.triggerTiming.toLowerCase()} their event
+                          </>
                         )}
                       </p>
                     </div>
@@ -1575,7 +1967,9 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                       <label className="flex items-start gap-3 cursor-pointer">
                         <Checkbox
                           checked={confirmAutoSend}
-                          onCheckedChange={(checked) => setConfirmAutoSend(checked === true)}
+                          onCheckedChange={(checked) =>
+                            setConfirmAutoSend(checked === true)
+                          }
                           className="mt-0.5"
                           data-testid="checkbox-confirm-auto-send"
                         />
@@ -1584,7 +1978,11 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                             I understand this will send messages automatically
                           </p>
                           <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
-                            When triggered, this automation will send {formData.channel === 'EMAIL' ? 'emails' : 'text messages'} to your clients without further confirmation.
+                            When triggered, this automation will send{" "}
+                            {formData.channel === "EMAIL"
+                              ? "emails"
+                              : "text messages"}{" "}
+                            to your clients without further confirmation.
                           </p>
                         </div>
                       </label>
@@ -1593,7 +1991,11 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
 
                   {/* Navigation */}
                   <div className="flex justify-between mt-8 pt-6 border-t dark:border-gray-700">
-                    <Button variant="outline" onClick={handleBack} data-testid="button-wizard-back">
+                    <Button
+                      variant="outline"
+                      onClick={handleBack}
+                      data-testid="button-wizard-back"
+                    >
                       <ArrowLeft className="w-4 h-4 mr-2" />
                       Back
                     </Button>
@@ -1601,9 +2003,15 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      <Button 
+                      <Button
                         onClick={handleSubmit}
-                        disabled={isPending || (isFirstAutomation && !isAutomationCountLoading && formData.enableCommunication && !confirmAutoSend)}
+                        disabled={
+                          isPending ||
+                          (isFirstAutomation &&
+                            !isAutomationCountLoading &&
+                            formData.enableCommunication &&
+                            !confirmAutoSend)
+                        }
                         className="px-8 py-6 text-lg bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-lg shadow-green-500/25"
                         data-testid="button-wizard-launch"
                       >
@@ -1627,7 +2035,7 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
           </AnimatePresence>
         </div>
       </div>
-      
+
       {/* Preview Modal */}
       {/* Add Button Modal */}
       <Dialog open={showButtonPopover} onOpenChange={setShowButtonPopover}>
@@ -1638,7 +2046,7 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
               Add Button
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4 mt-4">
             <div>
               <Label className="text-sm font-medium">Button Text</Label>
@@ -1650,11 +2058,17 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                 data-testid="input-button-text"
               />
             </div>
-            
+
             <div>
               <Label className="text-sm font-medium">Link Destination</Label>
-              <Select value={buttonDestination} onValueChange={setButtonDestination}>
-                <SelectTrigger className="mt-1" data-testid="select-button-destination">
+              <Select
+                value={buttonDestination}
+                onValueChange={setButtonDestination}
+              >
+                <SelectTrigger
+                  className="mt-1"
+                  data-testid="select-button-destination"
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1666,11 +2080,14 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                 </SelectContent>
               </Select>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {BUTTON_DESTINATIONS.find(d => d.key === buttonDestination)?.description}
+                {
+                  BUTTON_DESTINATIONS.find((d) => d.key === buttonDestination)
+                    ?.description
+                }
               </p>
             </div>
-            
-            {buttonDestination === 'CUSTOM' && (
+
+            {buttonDestination === "CUSTOM" && (
               <div>
                 <Label className="text-sm font-medium">URL</Label>
                 <Input
@@ -1681,7 +2098,7 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                     setButtonUrlError(validateButtonUrl(url));
                   }}
                   placeholder="https://example.com"
-                  className={`mt-1 ${buttonUrlError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                  className={`mt-1 ${buttonUrlError ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                   data-testid="input-button-custom-url"
                 />
                 {buttonUrlError && (
@@ -1689,16 +2106,16 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                 )}
               </div>
             )}
-            
+
             <div className="flex gap-2 justify-end">
               <Button
                 variant="outline"
                 onClick={() => {
                   setShowButtonPopover(false);
-                  setButtonText('');
-                  setButtonDestination('CALENDAR');
-                  setButtonCustomUrl('');
-                  setButtonUrlError('');
+                  setButtonText("");
+                  setButtonDestination("CALENDAR");
+                  setButtonCustomUrl("");
+                  setButtonUrlError("");
                 }}
                 data-testid="button-cancel-insert"
               >
@@ -1706,35 +2123,51 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
               </Button>
               <Button
                 onClick={() => {
-                  if (buttonText.trim() && (buttonDestination !== 'CUSTOM' || (buttonCustomUrl.trim() && !buttonUrlError))) {
+                  if (
+                    buttonText.trim() &&
+                    (buttonDestination !== "CUSTOM" ||
+                      (buttonCustomUrl.trim() && !buttonUrlError))
+                  ) {
                     // Get the rich text editor and call its insertButton method
                     const editorContainer = emailBodyRef.current;
                     if (editorContainer) {
                       // Find the contentEditable div inside the container
-                      const editor = editorContainer.querySelector('[contenteditable="true"]') as HTMLElement;
+                      const editor = editorContainer.querySelector(
+                        '[contenteditable="true"]',
+                      ) as HTMLElement;
                       if (editor && (editor as any).insertButton) {
                         (editor as any).insertButton(
                           buttonDestination,
                           buttonText.trim(),
-                          buttonDestination === 'CUSTOM' ? buttonCustomUrl.trim() : undefined
+                          buttonDestination === "CUSTOM"
+                            ? buttonCustomUrl.trim()
+                            : undefined,
                         );
                       } else {
                         // Fallback: append marker to templateBody
-                        const marker = buttonDestination === 'CUSTOM'
-                          ? `[[BUTTON:CUSTOM:${buttonText.trim()}:${buttonCustomUrl.trim()}]]`
-                          : `[[BUTTON:${buttonDestination}:${buttonText.trim()}]]`;
-                        setFormData({ ...formData, templateBody: formData.templateBody + marker });
+                        const marker =
+                          buttonDestination === "CUSTOM"
+                            ? `[[BUTTON:CUSTOM:${buttonText.trim()}:${buttonCustomUrl.trim()}]]`
+                            : `[[BUTTON:${buttonDestination}:${buttonText.trim()}]]`;
+                        setFormData({
+                          ...formData,
+                          templateBody: formData.templateBody + marker,
+                        });
                       }
                     }
 
                     setShowButtonPopover(false);
-                    setButtonText('');
-                    setButtonDestination('CALENDAR');
-                    setButtonCustomUrl('');
-                    setButtonUrlError('');
+                    setButtonText("");
+                    setButtonDestination("CALENDAR");
+                    setButtonCustomUrl("");
+                    setButtonUrlError("");
                   }
                 }}
-                disabled={!buttonText.trim() || (buttonDestination === 'CUSTOM' && (!buttonCustomUrl.trim() || !!buttonUrlError))}
+                disabled={
+                  !buttonText.trim() ||
+                  (buttonDestination === "CUSTOM" &&
+                    (!buttonCustomUrl.trim() || !!buttonUrlError))
+                }
                 className="bg-purple-600 hover:bg-purple-700"
                 data-testid="button-confirm-insert"
               >
@@ -1744,12 +2177,12 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
           </div>
         </DialogContent>
       </Dialog>
-      
+
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              {formData.channel === 'EMAIL' ? (
+              {formData.channel === "EMAIL" ? (
                 <>
                   <Mail className="w-5 h-5 text-blue-500" />
                   Email Preview
@@ -1762,44 +2195,49 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
               )}
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="mt-4">
-            {formData.channel === 'EMAIL' ? (
+            {formData.channel === "EMAIL" ? (
               <div className="border dark:border-gray-700 rounded-lg overflow-hidden">
                 {/* Email branding header - uses photographer's actual branding */}
                 {formData.includeHeader && (
-                  <div 
+                  <div
                     className="p-4 text-center"
-                    style={{ 
-                      background: photographer?.brandPrimary 
+                    style={{
+                      background: photographer?.brandPrimary
                         ? `linear-gradient(135deg, ${photographer.brandPrimary} 0%, ${photographer.brandSecondary || photographer.brandPrimary} 100%)`
-                        : 'linear-gradient(135deg, #9333ea 0%, #ec4899 100%)'
+                        : "linear-gradient(135deg, #9333ea 0%, #ec4899 100%)",
                     }}
                   >
                     {photographer?.logoUrl ? (
-                      <img 
-                        src={photographer.logoUrl} 
-                        alt={photographer.businessName || 'Logo'} 
+                      <img
+                        src={photographer.logoUrl}
+                        alt={photographer.businessName || "Logo"}
                         className="h-12 mx-auto mb-2 object-contain"
                       />
                     ) : (
                       <div className="w-12 h-12 mx-auto bg-white/20 rounded-lg flex items-center justify-center mb-2">
                         <span className="text-white text-xl font-bold">
-                          {(photographer?.businessName || 'YS').slice(0, 2).toUpperCase()}
+                          {(photographer?.businessName || "YS")
+                            .slice(0, 2)
+                            .toUpperCase()}
                         </span>
                       </div>
                     )}
                     <p className="text-white text-sm font-medium">
-                      {photographer?.businessName || 'Your Studio'}
+                      {photographer?.businessName || "Your Studio"}
                     </p>
                   </div>
                 )}
                 {/* Email subject line */}
                 <div className="p-4 bg-gray-50 dark:bg-gray-800/50 border-b dark:border-gray-700">
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-gray-500 dark:text-gray-400 w-16">Subject:</span>
+                    <span className="text-gray-500 dark:text-gray-400 w-16">
+                      Subject:
+                    </span>
                     <span className="font-medium text-gray-900 dark:text-white">
-                      {getPreviewContent(formData.templateSubject) || '(No subject)'}
+                      {getPreviewContent(formData.templateSubject) ||
+                        "(No subject)"}
                     </span>
                   </div>
                 </div>
@@ -1811,11 +2249,18 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                 {formData.includeFooter && (
                   <div className="p-4 bg-gray-50 dark:bg-gray-800/50 border-t dark:border-gray-700 text-center">
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {photographer?.businessName || 'Your Studio Photography'}<br />
-                      {photographer?.businessAddress || '123 Main Street, City, State 12345'}<br />
+                      {photographer?.businessName || "Your Studio Photography"}
+                      <br />
+                      {photographer?.businessAddress ||
+                        "123 Main Street, City, State 12345"}
+                      <br />
                       {photographer?.website && (
-                        <span style={{ color: photographer?.brandPrimary || '#9333ea' }}>
-                          {photographer.website.replace(/^https?:\/\//, '')}
+                        <span
+                          style={{
+                            color: photographer?.brandPrimary || "#9333ea",
+                          }}
+                        >
+                          {photographer.website.replace(/^https?:\/\//, "")}
                         </span>
                       )}
                       {!photographer?.website && (
@@ -1824,9 +2269,15 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                     </p>
                     {(photographer?.phone || photographer?.email) && (
                       <p className="text-xs text-gray-400 mt-1">
-                        {photographer?.phone && <span>{photographer.phone}</span>}
-                        {photographer?.phone && photographer?.email && <span> • </span>}
-                        {photographer?.email && <span>{photographer.email}</span>}
+                        {photographer?.phone && (
+                          <span>{photographer.phone}</span>
+                        )}
+                        {photographer?.phone && photographer?.email && (
+                          <span> • </span>
+                        )}
+                        {photographer?.email && (
+                          <span>{photographer.email}</span>
+                        )}
                       </p>
                     )}
                   </div>
@@ -1844,11 +2295,14 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                   <div className="flex justify-end mb-2">
                     <div className="bg-green-500 text-white rounded-2xl rounded-br-sm px-4 py-2 max-w-[90%]">
                       <p className="text-sm whitespace-pre-wrap">
-                        {getPreviewContent(formData.templateBody) || '(No message)'}
+                        {getPreviewContent(formData.templateBody) ||
+                          "(No message)"}
                       </p>
                     </div>
                   </div>
-                  <p className="text-xs text-center text-gray-400 mt-4">Delivered</p>
+                  <p className="text-xs text-center text-gray-400 mt-4">
+                    Delivered
+                  </p>
                 </div>
                 {/* Home indicator */}
                 <div className="h-6 flex items-center justify-center">
@@ -1857,10 +2311,11 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
               </div>
             )}
           </div>
-          
+
           <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
             <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              Variables like {"{{first_name}}"} are shown with sample values. Actual values will be filled from client data.
+              Variables like {"{{first_name}}"} are shown with sample values.
+              Actual values will be filled from client data.
             </p>
           </div>
         </DialogContent>
@@ -1875,14 +2330,17 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
               Help Me Write
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4 mt-4">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Describe what you want your email to say, and AI will write a professional email with personalization variables and buttons.
+              Describe what you want your email to say, and AI will write a
+              professional email with personalization variables and buttons.
             </p>
-            
+
             <div className="space-y-2">
-              <Label className="text-sm font-medium">What should this email do?</Label>
+              <Label className="text-sm font-medium">
+                What should this email do?
+              </Label>
               <Textarea
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
@@ -1891,24 +2349,26 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                 data-testid="input-ai-prompt"
               />
               <p className="text-xs text-gray-400">
-                Examples: "Thank client for booking and share next steps", "Follow up after consultation", "Remind about upcoming event"
+                Examples: "Thank client for booking and share next steps",
+                "Follow up after consultation", "Remind about upcoming event"
               </p>
             </div>
 
             <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3">
               <p className="text-xs text-purple-700 dark:text-purple-300">
                 <Sparkles className="w-3 h-3 inline mr-1" />
-                AI will use personalization like {"{{first_name}}"} and can include action buttons
+                AI will use personalization like {"{{first_name}}"} and can
+                include action buttons
               </p>
             </div>
           </div>
-          
+
           <div className="flex justify-end gap-2 mt-4">
             <Button
               variant="outline"
               onClick={() => {
                 setShowAiHelper(false);
-                setAiPrompt('');
+                setAiPrompt("");
               }}
               disabled={isGenerating}
               data-testid="button-cancel-ai"
@@ -1918,20 +2378,28 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
             <Button
               onClick={async () => {
                 if (!aiPrompt.trim()) return;
-                
+
                 setIsGenerating(true);
                 try {
                   // Build context from current form state
                   const context: Record<string, string> = {};
-                  
-                  if (formData.triggerMode === 'STAGE' && formData.triggerStageId) {
-                    const selectedStage = stages?.find(s => s.id === formData.triggerStageId);
+
+                  if (
+                    formData.triggerMode === "STAGE" &&
+                    formData.triggerStageId
+                  ) {
+                    const selectedStage = stages?.find(
+                      (s) => s.id === formData.triggerStageId,
+                    );
                     if (selectedStage) {
                       context.stageName = selectedStage.name;
                     }
                   }
-                  
-                  if (formData.triggerMode === 'BUSINESS' && formData.triggerEvent) {
+
+                  if (
+                    formData.triggerMode === "BUSINESS" &&
+                    formData.triggerEvent
+                  ) {
                     context.triggerType = formData.triggerEvent;
                   }
 
@@ -1940,55 +2408,65 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                   }
 
                   // Build timing description
-                  if (formData.timingMode === 'immediate') {
-                    context.timing = 'Immediately after trigger';
-                  } else if (formData.delayDays > 0 || formData.delayHours > 0) {
+                  if (formData.timingMode === "immediate") {
+                    context.timing = "Immediately after trigger";
+                  } else if (
+                    formData.delayDays > 0 ||
+                    formData.delayHours > 0
+                  ) {
                     const parts = [];
-                    if (formData.delayDays > 0) parts.push(`${formData.delayDays} day(s)`);
-                    if (formData.delayHours > 0) parts.push(`${formData.delayHours} hour(s)`);
-                    context.timing = `${parts.join(' and ')} after trigger`;
+                    if (formData.delayDays > 0)
+                      parts.push(`${formData.delayDays} day(s)`);
+                    if (formData.delayHours > 0)
+                      parts.push(`${formData.delayHours} hour(s)`);
+                    context.timing = `${parts.join(" and ")} after trigger`;
                   }
-                  
-                  const response = await fetch('/api/automations/generate-email-content', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                      prompt: aiPrompt,
-                      context
-                    })
-                  });
-                  
+
+                  const response = await fetch(
+                    "/api/automations/generate-email-content",
+                    {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      credentials: "include",
+                      body: JSON.stringify({
+                        prompt: aiPrompt,
+                        context,
+                      }),
+                    },
+                  );
+
                   if (!response.ok) {
-                    throw new Error('Failed to generate content');
+                    throw new Error("Failed to generate content");
                   }
-                  
+
                   const result = await response.json();
-                  
+
                   // Check if AI actually generated content
                   if (!result.subject && !result.body) {
-                    throw new Error('AI did not generate any content');
+                    throw new Error("AI did not generate any content");
                   }
-                  
+
                   // Update form with generated content
                   setFormData({
                     ...formData,
                     templateSubject: result.subject || formData.templateSubject,
-                    templateBody: result.body || formData.templateBody
+                    templateBody: result.body || formData.templateBody,
                   });
-                  
+
                   toast({
                     title: "Content generated!",
-                    description: "Your email has been written. Feel free to edit it.",
+                    description:
+                      "Your email has been written. Feel free to edit it.",
                   });
-                  
+
                   setShowAiHelper(false);
-                  setAiPrompt('');
+                  setAiPrompt("");
                 } catch (error) {
-                  console.error('AI generation error:', error);
+                  console.error("AI generation error:", error);
                   toast({
                     title: "Generation failed",
-                    description: "Could not generate email content. Please try again.",
+                    description:
+                      "Could not generate email content. Please try again.",
                     variant: "destructive",
                   });
                 } finally {

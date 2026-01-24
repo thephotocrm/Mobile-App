@@ -14,11 +14,11 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { 
+import {
   User,
-  Mail, 
-  Phone, 
-  Calendar, 
+  Mail,
+  Phone,
+  Calendar,
   MapPin,
   CheckCircle,
   Clock,
@@ -26,7 +26,7 @@ import {
   DollarSign,
   MessageSquare,
   ExternalLink,
-  Edit
+  Edit,
 } from "lucide-react";
 import ContactForm from "../forms/contact-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -42,22 +42,41 @@ interface ContactModalProps {
   onClose: () => void;
 }
 
-export default function ContactModal({ contactId, isOpen, onClose }: ContactModalProps) {
+export default function ContactModal({
+  contactId,
+  isOpen,
+  onClose,
+}: ContactModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
 
   const { data: contact, isLoading } = useQuery<ContactWithStage>({
     queryKey: [`/api/contacts/${contactId}`],
-    enabled: !!contactId && isOpen
+    enabled: !!contactId && isOpen,
   });
 
   // Mock data for demonstration - in reality these would be separate API calls
   const mockChecklistItems = [
-    { id: "1", title: "Send welcome packet", completedAt: "2024-01-15", orderIndex: 0 },
-    { id: "2", title: "Schedule consultation call", completedAt: null, orderIndex: 1 },
+    {
+      id: "1",
+      title: "Send welcome packet",
+      completedAt: "2024-01-15",
+      orderIndex: 0,
+    },
+    {
+      id: "2",
+      title: "Schedule consultation call",
+      completedAt: null,
+      orderIndex: 1,
+    },
     { id: "3", title: "Send questionnaire", completedAt: null, orderIndex: 2 },
-    { id: "4", title: "Create and send proposal", completedAt: null, orderIndex: 3 }
+    {
+      id: "4",
+      title: "Create and send proposal",
+      completedAt: null,
+      orderIndex: 3,
+    },
   ];
 
   const mockCommunicationHistory = [
@@ -66,15 +85,15 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
       type: "email",
       subject: "Welcome to thePhotoCrm Studio",
       sentAt: "2024-01-15T10:00:00",
-      status: "opened"
+      status: "opened",
     },
     {
       id: "2",
       type: "sms",
       message: "Thank you for your inquiry!",
       sentAt: "2024-01-15T10:05:00",
-      status: "delivered"
-    }
+      status: "delivered",
+    },
   ];
 
   const mockEstimates = [
@@ -83,14 +102,14 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
       title: "Gold Wedding Package",
       status: "SENT",
       totalCents: 450000,
-      createdAt: "2024-01-10"
-    }
+      createdAt: "2024-01-10",
+    },
   ];
 
   const mockQuickLinks = [
     { id: "1", title: "Contact Portal", url: "/client-portal" },
     { id: "2", title: "Wedding Planning Guide", url: "#" },
-    { id: "3", title: "Portfolio Gallery", url: "#" }
+    { id: "3", title: "Portfolio Gallery", url: "#" },
   ];
 
   const updateContactMutation = useMutation({
@@ -99,7 +118,9 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/contacts"] });
-      queryClient.invalidateQueries({ queryKey: [`/api/contacts/${contactId}`] });
+      queryClient.invalidateQueries({
+        queryKey: [`/api/contacts/${contactId}`],
+      });
       setIsEditing(false);
       toast({
         title: "Contact updated",
@@ -110,9 +131,9 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
       toast({
         title: "Error",
         description: "Failed to update contact. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const toggleChecklistItemMutation = useMutation({
@@ -125,15 +146,15 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
         title: "Checklist updated",
         description: "Checklist item has been updated.",
       });
-    }
+    },
   });
 
   if (!contactId) return null;
 
   const formatPrice = (cents: number) => {
-    return (cents / 100).toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD'
+    return (cents / 100).toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
     });
   };
 
@@ -145,7 +166,9 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
-  const completedItems = mockChecklistItems.filter(item => item.completedAt).length;
+  const completedItems = mockChecklistItems.filter(
+    (item) => item.completedAt,
+  ).length;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -153,11 +176,13 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span>
-              {contact ? `${contact.firstName} ${contact.lastName}` : "Loading..."}
+              {contact
+                ? `${contact.firstName} ${contact.lastName}`
+                : "Loading..."}
             </span>
             {contact && !isEditing && (
               <Button
-                variant="outline" 
+                variant="outline"
                 size="sm"
                 onClick={() => setIsEditing(true)}
                 data-testid="button-edit-contact"
@@ -193,10 +218,14 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
                 emailOptIn: contact.emailOptIn,
                 smsOptIn: contact.smsOptIn,
               }}
-              onSubmit={(data) => updateContactMutation.mutate({
-                ...data,
-                weddingDate: data.weddingDate ? new Date(data.weddingDate) : undefined
-              })}
+              onSubmit={(data) =>
+                updateContactMutation.mutate({
+                  ...data,
+                  weddingDate: data.weddingDate
+                    ? new Date(data.weddingDate)
+                    : undefined,
+                })
+              }
               isLoading={updateContactMutation.isPending}
               submitText="Update Contact"
             />
@@ -231,12 +260,18 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <p className="text-sm text-muted-foreground">Name</p>
-                        <p className="font-medium">{contact.firstName} {contact.lastName}</p>
+                        <p className="font-medium">
+                          {contact.firstName} {contact.lastName}
+                        </p>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Current Stage</p>
+                        <p className="text-sm text-muted-foreground">
+                          Current Stage
+                        </p>
                         <div className="flex items-center space-x-2">
-                          <Badge variant="secondary">{contact.stage?.name || "No stage"}</Badge>
+                          <Badge variant="secondary">
+                            {contact.stage?.name || "No stage"}
+                          </Badge>
                           <span className="text-xs text-muted-foreground">
                             {getDaysInStage()} days
                           </span>
@@ -249,7 +284,10 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
                         <div className="flex items-center space-x-2">
                           <Mail className="w-4 h-4 text-muted-foreground" />
                           <span className="text-sm">{contact.email}</span>
-                          <Badge variant={contact.emailOptIn ? "default" : "outline"} className="text-xs">
+                          <Badge
+                            variant={contact.emailOptIn ? "default" : "outline"}
+                            className="text-xs"
+                          >
                             {contact.emailOptIn ? "Opted in" : "Opted out"}
                           </Badge>
                         </div>
@@ -258,7 +296,10 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
                         <div className="flex items-center space-x-2">
                           <Phone className="w-4 h-4 text-muted-foreground" />
                           <span className="text-sm">{contact.phone}</span>
-                          <Badge variant={contact.smsOptIn ? "default" : "outline"} className="text-xs">
+                          <Badge
+                            variant={contact.smsOptIn ? "default" : "outline"}
+                            className="text-xs"
+                          >
                             {contact.smsOptIn ? "Opted in" : "Opted out"}
                           </Badge>
                         </div>
@@ -269,20 +310,26 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
                       <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4 text-muted-foreground" />
                         <span className="text-sm">
-                          Wedding: {new Date(contact.weddingDate).toLocaleDateString()}
+                          Wedding:{" "}
+                          {new Date(contact.weddingDate).toLocaleDateString()}
                         </span>
                       </div>
                     )}
 
                     {contact.notes && (
                       <div>
-                        <p className="text-sm text-muted-foreground mb-2">Notes</p>
-                        <p className="text-sm bg-muted p-3 rounded-md">{contact.notes}</p>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          Notes
+                        </p>
+                        <p className="text-sm bg-muted p-3 rounded-md">
+                          {contact.notes}
+                        </p>
                       </div>
                     )}
 
                     <div className="pt-2 text-xs text-muted-foreground">
-                      Contact since: {new Date(contact.createdAt).toLocaleDateString()}
+                      Contact since:{" "}
+                      {new Date(contact.createdAt).toLocaleDateString()}
                     </div>
                   </CardContent>
                 </Card>
@@ -294,15 +341,26 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
                       <CardTitle>Quick Actions</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                      <Button className="w-full" data-testid="button-create-estimate">
+                      <Button
+                        className="w-full"
+                        data-testid="button-create-estimate"
+                      >
                         <DollarSign className="w-4 h-4 mr-2" />
                         Create Estimate
                       </Button>
-                      <Button variant="outline" className="w-full" data-testid="button-send-template">
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        data-testid="button-send-template"
+                      >
                         <MessageSquare className="w-4 h-4 mr-2" />
                         Send Template
                       </Button>
-                      <Button variant="outline" className="w-full" data-testid="button-schedule-call">
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        data-testid="button-schedule-call"
+                      >
                         <Calendar className="w-4 h-4 mr-2" />
                         Schedule Call
                       </Button>
@@ -347,18 +405,30 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
                 <CardContent>
                   <div className="space-y-3">
                     {mockChecklistItems.map((item) => (
-                      <div key={item.id} className="flex items-center space-x-3 p-3 border border-border rounded-lg">
-                        <Checkbox 
+                      <div
+                        key={item.id}
+                        className="flex items-center space-x-3 p-3 border border-border rounded-lg"
+                      >
+                        <Checkbox
                           checked={!!item.completedAt}
-                          onCheckedChange={() => toggleChecklistItemMutation.mutate(item.id)}
+                          onCheckedChange={() =>
+                            toggleChecklistItemMutation.mutate(item.id)
+                          }
                           data-testid={`checklist-item-${item.id}`}
                         />
-                        <span className={item.completedAt ? "line-through text-muted-foreground flex-1" : "flex-1"}>
+                        <span
+                          className={
+                            item.completedAt
+                              ? "line-through text-muted-foreground flex-1"
+                              : "flex-1"
+                          }
+                        >
                           {item.title}
                         </span>
                         {item.completedAt && (
                           <div className="text-xs text-muted-foreground">
-                            Completed {new Date(item.completedAt).toLocaleDateString()}
+                            Completed{" "}
+                            {new Date(item.completedAt).toLocaleDateString()}
                           </div>
                         )}
                       </div>
@@ -376,26 +446,35 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
                 <CardContent>
                   <div className="space-y-4">
                     {mockCommunicationHistory.map((comm) => (
-                      <div key={comm.id} className="flex items-start space-x-3 p-3 border border-border rounded-lg">
-                        <div className={`w-2 h-2 rounded-full mt-2 ${
-                          comm.type === 'email' ? 'bg-blue-400' : 'bg-green-400'
-                        }`} />
+                      <div
+                        key={comm.id}
+                        className="flex items-start space-x-3 p-3 border border-border rounded-lg"
+                      >
+                        <div
+                          className={`w-2 h-2 rounded-full mt-2 ${
+                            comm.type === "email"
+                              ? "bg-blue-400"
+                              : "bg-green-400"
+                          }`}
+                        />
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-1">
-                            {comm.type === 'email' ? (
+                            {comm.type === "email" ? (
                               <Mail className="w-4 h-4" />
                             ) : (
                               <MessageSquare className="w-4 h-4" />
                             )}
                             <span className="font-medium">
-                              {comm.type === 'email' ? comm.subject : 'SMS'}
+                              {comm.type === "email" ? comm.subject : "SMS"}
                             </span>
                             <Badge variant="outline" className="text-xs">
                               {comm.status}
                             </Badge>
                           </div>
-                          {comm.type === 'sms' && (
-                            <p className="text-sm text-muted-foreground">{(comm as any).message}</p>
+                          {comm.type === "sms" && (
+                            <p className="text-sm text-muted-foreground">
+                              {(comm as any).message}
+                            </p>
                           )}
                           <p className="text-xs text-muted-foreground">
                             {new Date(comm.sentAt).toLocaleString()}
@@ -419,28 +498,43 @@ export default function ContactModal({ contactId, isOpen, onClose }: ContactModa
                 <CardContent>
                   <div className="space-y-3">
                     {mockEstimates.map((estimate) => (
-                      <div key={estimate.id} className="flex items-center justify-between p-3 border border-border rounded-lg">
+                      <div
+                        key={estimate.id}
+                        className="flex items-center justify-between p-3 border border-border rounded-lg"
+                      >
                         <div>
                           <h4 className="font-medium">{estimate.title}</h4>
                           <p className="text-sm text-muted-foreground">
-                            Created: {new Date(estimate.createdAt).toLocaleDateString()}
+                            Created:{" "}
+                            {new Date(estimate.createdAt).toLocaleDateString()}
                           </p>
-                          <p className="font-mono">{formatPrice(estimate.totalCents)}</p>
+                          <p className="font-mono">
+                            {formatPrice(estimate.totalCents)}
+                          </p>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Badge variant="secondary">{estimate.status}</Badge>
-                          <Button variant="outline" size="sm" data-testid={`view-estimate-${estimate.id}`}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            data-testid={`view-estimate-${estimate.id}`}
+                          >
                             View
                           </Button>
                         </div>
                       </div>
                     ))}
-                    
+
                     {mockEstimates.length === 0 && (
                       <div className="text-center py-8">
                         <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                        <p className="text-muted-foreground">No documents yet.</p>
-                        <Button className="mt-2" data-testid="button-create-first-estimate">
+                        <p className="text-muted-foreground">
+                          No documents yet.
+                        </p>
+                        <Button
+                          className="mt-2"
+                          data-testid="button-create-first-estimate"
+                        >
                           Create First Estimate
                         </Button>
                       </div>

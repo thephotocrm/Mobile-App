@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import {
+  Elements,
+  PaymentElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, CreditCard } from "lucide-react";
 
 // Load Stripe
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || '');
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "");
 
 const CheckoutForm = () => {
   const stripe = useStripe();
@@ -54,8 +59,8 @@ const CheckoutForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <PaymentElement />
-      <Button 
-        type="submit" 
+      <Button
+        type="submit"
         disabled={!stripe || isLoading}
         className="w-full"
         data-testid="button-submit-payment"
@@ -84,21 +89,21 @@ export default function Checkout() {
   useEffect(() => {
     // Get the estimate token from URL params or state
     const urlParams = new URLSearchParams(window.location.search);
-    const amount = urlParams.get('amount');
-    
+    const amount = urlParams.get("amount");
+
     if (!amount) {
       toast({
         title: "Error",
         description: "No payment amount specified",
-        variant: "destructive"
+        variant: "destructive",
       });
       setLocation("/");
       return;
     }
 
     // Create PaymentIntent
-    apiRequest("POST", "/api/create-payment-intent", { 
-      amount: parseFloat(amount) 
+    apiRequest("POST", "/api/create-payment-intent", {
+      amount: parseFloat(amount),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -108,7 +113,7 @@ export default function Checkout() {
         toast({
           title: "Error",
           description: "Failed to initialize payment",
-          variant: "destructive"
+          variant: "destructive",
         });
         console.error("Payment initialization error:", error);
       });
@@ -139,13 +144,13 @@ export default function Checkout() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Elements 
-            stripe={stripePromise} 
-            options={{ 
+          <Elements
+            stripe={stripePromise}
+            options={{
               clientSecret,
               appearance: {
-                theme: 'stripe'
-              }
+                theme: "stripe",
+              },
             }}
           >
             <CheckoutForm />

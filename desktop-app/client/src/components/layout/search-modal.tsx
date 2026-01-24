@@ -1,18 +1,9 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useLocation } from "wouter";
-import {
-  Dialog,
-  DialogContent,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Search,
-  FolderOpen,
-  FileText,
-  Loader2,
-  Clock,
-} from "lucide-react";
+import { Search, FolderOpen, FileText, Loader2, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGlobalSearch, useRecentItems } from "@/hooks/use-global-search";
 
@@ -47,8 +38,13 @@ function formatDate(dateStr: string | null): string {
 
 export function SearchModal({ open, onOpenChange }: SearchModalProps) {
   const [, navigate] = useLocation();
-  const { query, setQuery, results, isLoading, isSearching, hasResults } = useGlobalSearch(open);
-  const { recentContacts, recentProjects, isLoading: recentLoading } = useRecentItems(open);
+  const { query, setQuery, results, isLoading, isSearching, hasResults } =
+    useGlobalSearch(open);
+  const {
+    recentContacts,
+    recentProjects,
+    isLoading: recentLoading,
+  } = useRecentItems(open);
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -113,48 +109,57 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
     setSelectedIndex(0);
   }, [results, recentProjects, recentContacts]);
 
-  const handleNavigate = useCallback((item: ResultItem) => {
-    onOpenChange(false);
-    switch (item.type) {
-      case "contact":
-        navigate(`/contacts/${item.id}`);
-        break;
-      case "project":
-        navigate(`/projects/${item.id}`);
-        break;
-      case "smartFile":
-        navigate(`/smart-files/${item.id}`);
-        break;
-    }
-  }, [navigate, onOpenChange]);
+  const handleNavigate = useCallback(
+    (item: ResultItem) => {
+      onOpenChange(false);
+      switch (item.type) {
+        case "contact":
+          navigate(`/contacts/${item.id}`);
+          break;
+        case "project":
+          navigate(`/projects/${item.id}`);
+          break;
+        case "smartFile":
+          navigate(`/smart-files/${item.id}`);
+          break;
+      }
+    },
+    [navigate, onOpenChange],
+  );
 
   // Keyboard navigation
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (!allResults.length) return;
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!allResults.length) return;
 
-    switch (e.key) {
-      case "ArrowDown":
-        e.preventDefault();
-        setSelectedIndex((prev) => (prev + 1) % allResults.length);
-        break;
-      case "ArrowUp":
-        e.preventDefault();
-        setSelectedIndex((prev) => (prev - 1 + allResults.length) % allResults.length);
-        break;
-      case "Enter":
-        e.preventDefault();
-        if (allResults[selectedIndex]) {
-          handleNavigate(allResults[selectedIndex]);
-        }
-        break;
-    }
-  }, [allResults, selectedIndex, handleNavigate]);
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          setSelectedIndex((prev) => (prev + 1) % allResults.length);
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          setSelectedIndex(
+            (prev) => (prev - 1 + allResults.length) % allResults.length,
+          );
+          break;
+        case "Enter":
+          e.preventDefault();
+          if (allResults[selectedIndex]) {
+            handleNavigate(allResults[selectedIndex]);
+          }
+          break;
+      }
+    },
+    [allResults, selectedIndex, handleNavigate],
+  );
 
   // Get current index offset for each section (for search results)
   const getSearchGlobalIndex = (type: string, localIndex: number): number => {
     let offset = 0;
     if (type === "smartFile") offset = results.projects.length;
-    if (type === "contact") offset = results.projects.length + results.smartFiles.length;
+    if (type === "contact")
+      offset = results.projects.length + results.smartFiles.length;
     return offset + localIndex;
   };
 
@@ -211,23 +216,34 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                         return (
                           <div
                             key={project.id}
-                            onClick={() => handleNavigate({ type: "project", id: project.id, label: project.title, sublabel: "" })}
+                            onClick={() =>
+                              handleNavigate({
+                                type: "project",
+                                id: project.id,
+                                label: project.title,
+                                sublabel: "",
+                              })
+                            }
                             className={cn(
                               "flex items-center gap-3 p-2 rounded-md cursor-pointer transition-colors",
                               globalIdx === selectedIndex
                                 ? "bg-primary/10 ring-1 ring-primary/20"
-                                : "hover:bg-muted"
+                                : "hover:bg-muted",
                             )}
                           >
                             <div className="w-10 h-10 rounded bg-blue-100 flex items-center justify-center shrink-0">
                               <FolderOpen className="h-5 w-5 text-blue-600" />
                             </div>
                             <div className="min-w-0 flex-1">
-                              <p className="font-medium truncate">{project.title}</p>
+                              <p className="font-medium truncate">
+                                {project.title}
+                              </p>
                               <p className="text-sm text-muted-foreground">
                                 {project.projectType || "Project"}
-                                {project.clientFirstName && ` | ${project.clientFirstName} ${project.clientLastName}`}
-                                {project.eventDate && ` | ${new Date(project.eventDate).toLocaleDateString()}`}
+                                {project.clientFirstName &&
+                                  ` | ${project.clientFirstName} ${project.clientLastName}`}
+                                {project.eventDate &&
+                                  ` | ${new Date(project.eventDate).toLocaleDateString()}`}
                               </p>
                             </div>
                           </div>
@@ -245,28 +261,43 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                     </p>
                     <div className="space-y-1">
                       {results.smartFiles.map((file, idx) => {
-                        const globalIdx = getSearchGlobalIndex("smartFile", idx);
+                        const globalIdx = getSearchGlobalIndex(
+                          "smartFile",
+                          idx,
+                        );
                         return (
                           <div
                             key={file.id}
-                            onClick={() => handleNavigate({ type: "smartFile", id: file.id, label: file.name, sublabel: file.status })}
+                            onClick={() =>
+                              handleNavigate({
+                                type: "smartFile",
+                                id: file.id,
+                                label: file.name,
+                                sublabel: file.status,
+                              })
+                            }
                             className={cn(
                               "flex items-center gap-3 p-2 rounded-md cursor-pointer transition-colors",
                               globalIdx === selectedIndex
                                 ? "bg-primary/10 ring-1 ring-primary/20"
-                                : "hover:bg-muted"
+                                : "hover:bg-muted",
                             )}
                           >
                             <div className="w-10 h-10 rounded bg-pink-100 flex items-center justify-center shrink-0">
                               <FileText className="h-5 w-5 text-pink-600" />
                             </div>
                             <div className="min-w-0 flex-1">
-                              <p className="font-medium truncate">{file.name}</p>
+                              <p className="font-medium truncate">
+                                {file.name}
+                              </p>
                               <div className="flex items-center gap-2">
-                                <span className={cn(
-                                  "text-xs px-2 py-0.5 rounded-full font-medium",
-                                  statusColors[file.status] || "bg-gray-100 text-gray-700"
-                                )}>
+                                <span
+                                  className={cn(
+                                    "text-xs px-2 py-0.5 rounded-full font-medium",
+                                    statusColors[file.status] ||
+                                      "bg-gray-100 text-gray-700",
+                                  )}
+                                >
                                   {file.status}
                                 </span>
                               </div>
@@ -290,21 +321,31 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                         return (
                           <div
                             key={contact.id}
-                            onClick={() => handleNavigate({ type: "contact", id: contact.id, label: `${contact.firstName} ${contact.lastName}`, sublabel: contact.email || "" })}
+                            onClick={() =>
+                              handleNavigate({
+                                type: "contact",
+                                id: contact.id,
+                                label: `${contact.firstName} ${contact.lastName}`,
+                                sublabel: contact.email || "",
+                              })
+                            }
                             className={cn(
                               "flex items-center gap-3 p-2 rounded-md cursor-pointer transition-colors",
                               globalIdx === selectedIndex
                                 ? "bg-primary/10 ring-1 ring-primary/20"
-                                : "hover:bg-muted"
+                                : "hover:bg-muted",
                             )}
                           >
                             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shrink-0">
                               <span className="text-white font-medium text-sm">
-                                {contact.firstName?.[0] || ''}{contact.lastName?.[0] || ''}
+                                {contact.firstName?.[0] || ""}
+                                {contact.lastName?.[0] || ""}
                               </span>
                             </div>
                             <div className="min-w-0 flex-1">
-                              <p className="font-medium truncate">{contact.firstName} {contact.lastName}</p>
+                              <p className="font-medium truncate">
+                                {contact.firstName} {contact.lastName}
+                              </p>
                               <p className="text-sm text-muted-foreground truncate">
                                 {contact.email}
                                 {contact.email && contact.phone && " | "}
@@ -322,7 +363,9 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                 {!hasResults && (
                   <div className="py-12 text-center">
                     <Search className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-sm font-medium text-muted-foreground">No results found</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      No results found
+                    </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       Try searching by name, email, or project title
                     </p>
@@ -337,13 +380,17 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                 {recentLoading ? (
                   <div className="py-8 text-center">
                     <Loader2 className="h-10 w-10 text-muted-foreground/50 mx-auto mb-3 animate-spin" />
-                    <p className="text-sm text-muted-foreground">Loading recent items...</p>
+                    <p className="text-sm text-muted-foreground">
+                      Loading recent items...
+                    </p>
                   </div>
                 ) : (
                   <>
                     <div className="flex items-center gap-2 mb-4">
                       <Clock className="h-4 w-4 text-muted-foreground" />
-                      <p className="text-sm font-medium text-muted-foreground">Recently viewed</p>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Recently viewed
+                      </p>
                     </div>
 
                     {/* Recent Projects */}
@@ -354,26 +401,39 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                         </p>
                         <div className="space-y-1">
                           {recentProjects.map((project, idx) => {
-                            const globalIdx = getRecentGlobalIndex("project", idx);
+                            const globalIdx = getRecentGlobalIndex(
+                              "project",
+                              idx,
+                            );
                             return (
                               <div
                                 key={project.id}
-                                onClick={() => handleNavigate({ type: "project", id: project.id, label: project.title, sublabel: "" })}
+                                onClick={() =>
+                                  handleNavigate({
+                                    type: "project",
+                                    id: project.id,
+                                    label: project.title,
+                                    sublabel: "",
+                                  })
+                                }
                                 className={cn(
                                   "flex items-center gap-3 p-2 rounded-md cursor-pointer transition-colors",
                                   globalIdx === selectedIndex
                                     ? "bg-primary/10 ring-1 ring-primary/20"
-                                    : "hover:bg-muted"
+                                    : "hover:bg-muted",
                                 )}
                               >
                                 <div className="w-10 h-10 rounded bg-blue-100 flex items-center justify-center shrink-0">
                                   <FolderOpen className="h-5 w-5 text-blue-600" />
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                  <p className="font-medium truncate">{project.title}</p>
+                                  <p className="font-medium truncate">
+                                    {project.title}
+                                  </p>
                                   <p className="text-sm text-muted-foreground">
                                     {project.projectType || "Project"}
-                                    {project.clientFirstName && ` | ${project.clientFirstName} ${project.clientLastName}`}
+                                    {project.clientFirstName &&
+                                      ` | ${project.clientFirstName} ${project.clientLastName}`}
                                   </p>
                                 </div>
                               </div>
@@ -391,25 +451,38 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                         </p>
                         <div className="space-y-1">
                           {recentContacts.map((contact, idx) => {
-                            const globalIdx = getRecentGlobalIndex("contact", idx);
+                            const globalIdx = getRecentGlobalIndex(
+                              "contact",
+                              idx,
+                            );
                             return (
                               <div
                                 key={contact.id}
-                                onClick={() => handleNavigate({ type: "contact", id: contact.id, label: `${contact.firstName} ${contact.lastName}`, sublabel: contact.email || "" })}
+                                onClick={() =>
+                                  handleNavigate({
+                                    type: "contact",
+                                    id: contact.id,
+                                    label: `${contact.firstName} ${contact.lastName}`,
+                                    sublabel: contact.email || "",
+                                  })
+                                }
                                 className={cn(
                                   "flex items-center gap-3 p-2 rounded-md cursor-pointer transition-colors",
                                   globalIdx === selectedIndex
                                     ? "bg-primary/10 ring-1 ring-primary/20"
-                                    : "hover:bg-muted"
+                                    : "hover:bg-muted",
                                 )}
                               >
                                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shrink-0">
                                   <span className="text-white font-medium text-sm">
-                                    {contact.firstName?.[0] || ''}{contact.lastName?.[0] || ''}
+                                    {contact.firstName?.[0] || ""}
+                                    {contact.lastName?.[0] || ""}
                                   </span>
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                  <p className="font-medium truncate">{contact.firstName} {contact.lastName}</p>
+                                  <p className="font-medium truncate">
+                                    {contact.firstName} {contact.lastName}
+                                  </p>
                                   <p className="text-sm text-muted-foreground truncate">
                                     {contact.email}
                                     {contact.email && contact.phone && " | "}
@@ -424,14 +497,15 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                     )}
 
                     {/* Empty state when no recent items */}
-                    {recentProjects.length === 0 && recentContacts.length === 0 && (
-                      <div className="py-8 text-center">
-                        <Search className="h-10 w-10 text-muted-foreground/50 mx-auto mb-3" />
-                        <p className="text-sm text-muted-foreground">
-                          Type to search for clients, projects, or proposals
-                        </p>
-                      </div>
-                    )}
+                    {recentProjects.length === 0 &&
+                      recentContacts.length === 0 && (
+                        <div className="py-8 text-center">
+                          <Search className="h-10 w-10 text-muted-foreground/50 mx-auto mb-3" />
+                          <p className="text-sm text-muted-foreground">
+                            Type to search for clients, projects, or proposals
+                          </p>
+                        </div>
+                      )}
                   </>
                 )}
               </>
@@ -440,9 +514,24 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
             {/* Keyboard hint */}
             {allResults.length > 0 && (
               <div className="flex items-center justify-center gap-4 pt-2 text-xs text-muted-foreground border-t mt-4">
-                <span><kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">↑↓</kbd> to navigate</span>
-                <span><kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">Enter</kbd> to select</span>
-                <span><kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">Esc</kbd> to close</span>
+                <span>
+                  <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">
+                    ↑↓
+                  </kbd>{" "}
+                  to navigate
+                </span>
+                <span>
+                  <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">
+                    Enter
+                  </kbd>{" "}
+                  to select
+                </span>
+                <span>
+                  <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">
+                    Esc
+                  </kbd>{" "}
+                  to close
+                </span>
               </div>
             )}
           </div>

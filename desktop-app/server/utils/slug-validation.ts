@@ -4,9 +4,23 @@
 
 // Reserved slug names that cannot be used
 const RESERVED_SLUGS = [
-  'www', 'api', 'admin', 'app', 'mail', 'ftp', 'smtp',
-  'portal', 'client', 'dashboard', 'login', 'signup',
-  'help', 'support', 'docs', 'blog', 'status'
+  "www",
+  "api",
+  "admin",
+  "app",
+  "mail",
+  "ftp",
+  "smtp",
+  "portal",
+  "client",
+  "dashboard",
+  "login",
+  "signup",
+  "help",
+  "support",
+  "docs",
+  "blog",
+  "status",
 ];
 
 /**
@@ -17,37 +31,43 @@ const RESERVED_SLUGS = [
  * - Cannot start or end with hyphen
  * - Cannot be a reserved word
  */
-export function validatePortalSlug(slug: string): { valid: boolean; error?: string } {
-  if (!slug || slug.trim() === '') {
-    return { valid: false, error: 'Slug cannot be empty' };
+export function validatePortalSlug(slug: string): {
+  valid: boolean;
+  error?: string;
+} {
+  if (!slug || slug.trim() === "") {
+    return { valid: false, error: "Slug cannot be empty" };
   }
-  
+
   const normalized = slug.toLowerCase().trim();
-  
+
   // Check length
   if (normalized.length < 3) {
-    return { valid: false, error: 'Slug must be at least 3 characters long' };
+    return { valid: false, error: "Slug must be at least 3 characters long" };
   }
-  
+
   if (normalized.length > 63) {
-    return { valid: false, error: 'Slug must be 63 characters or less' };
+    return { valid: false, error: "Slug must be 63 characters or less" };
   }
-  
+
   // Check format (only a-z, 0-9, and hyphens)
   if (!/^[a-z0-9-]+$/.test(normalized)) {
-    return { valid: false, error: 'Slug can only contain lowercase letters, numbers, and hyphens' };
+    return {
+      valid: false,
+      error: "Slug can only contain lowercase letters, numbers, and hyphens",
+    };
   }
-  
+
   // Cannot start or end with hyphen
-  if (normalized.startsWith('-') || normalized.endsWith('-')) {
-    return { valid: false, error: 'Slug cannot start or end with a hyphen' };
+  if (normalized.startsWith("-") || normalized.endsWith("-")) {
+    return { valid: false, error: "Slug cannot start or end with a hyphen" };
   }
-  
+
   // Check for reserved words
   if (RESERVED_SLUGS.includes(normalized)) {
-    return { valid: false, error: 'This slug is reserved and cannot be used' };
+    return { valid: false, error: "This slug is reserved and cannot be used" };
   }
-  
+
   return { valid: true };
 }
 
@@ -60,14 +80,14 @@ export function generateSlugFromBusinessName(businessName: string): string {
     .toLowerCase()
     .trim()
     // Replace apostrophes and other punctuation with nothing
-    .replace(/['']/g, '')
+    .replace(/['']/g, "")
     // Replace spaces and other non-alphanumeric chars with hyphens
-    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/[^a-z0-9]+/g, "-")
     // Remove leading/trailing hyphens
-    .replace(/^-+|-+$/g, '')
+    .replace(/^-+|-+$/g, "")
     // Limit to 63 characters
     .substring(0, 63);
-  
+
   return slug;
 }
 
@@ -76,8 +96,8 @@ export function generateSlugFromBusinessName(businessName: string): string {
  * Format: studio-XXXXXX (6 random alphanumeric chars)
  */
 export function generateRandomSlug(): string {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let suffix = '';
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let suffix = "";
   for (let i = 0; i < 6; i++) {
     suffix += chars.charAt(Math.floor(Math.random() * chars.length));
   }
@@ -91,11 +111,11 @@ export function generateRandomSlug(): string {
 export function generateSafeSlug(businessName: string): string {
   const derivedSlug = generateSlugFromBusinessName(businessName);
   const validation = validatePortalSlug(derivedSlug);
-  
+
   if (validation.valid) {
     return derivedSlug;
   }
-  
+
   // Fall back to random slug for invalid or reserved slugs
   return generateRandomSlug();
 }

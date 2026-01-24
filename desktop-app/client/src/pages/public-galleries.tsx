@@ -32,7 +32,9 @@ export default function PublicGalleries() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="text-lg" data-testid="loading-state">Loading...</div>
+        <div className="text-lg" data-testid="loading-state">
+          Loading...
+        </div>
       </div>
     );
   }
@@ -42,7 +44,12 @@ export default function PublicGalleries() {
       <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
           <Images className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-          <h3 className="text-lg font-semibold mb-2" data-testid="error-message">Photographer not found</h3>
+          <h3
+            className="text-lg font-semibold mb-2"
+            data-testid="error-message"
+          >
+            Photographer not found
+          </h3>
           <p className="text-sm text-muted-foreground">
             The gallery link you followed may be invalid or expired
           </p>
@@ -56,7 +63,7 @@ export default function PublicGalleries() {
   // Assign varying heights to create mosaic effect
   const galleriesWithHeights = galleries.map((gallery, index) => ({
     ...gallery,
-    height: index % 3 === 0 ? 'tall' : index % 3 === 1 ? 'short' : 'medium'
+    height: index % 3 === 0 ? "tall" : index % 3 === 1 ? "short" : "medium",
   }));
 
   // Filter galleries by search query
@@ -77,7 +84,10 @@ export default function PublicGalleries() {
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="flex items-center gap-2">
               <Images className="w-6 h-6 text-purple-600" />
-              <h1 className="text-xl md:text-2xl font-semibold" data-testid="photographer-name">
+              <h1
+                className="text-xl md:text-2xl font-semibold"
+                data-testid="photographer-name"
+              >
                 {photographer.businessName}
               </h1>
             </div>
@@ -105,10 +115,16 @@ export default function PublicGalleries() {
               <CardContent className="py-12">
                 <div className="text-center">
                   <Images className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-                  <h3 className="text-lg font-semibold mb-2" data-testid="empty-state-title">
+                  <h3
+                    className="text-lg font-semibold mb-2"
+                    data-testid="empty-state-title"
+                  >
                     No Public Galleries Yet
                   </h3>
-                  <p className="text-sm text-muted-foreground" data-testid="empty-state-description">
+                  <p
+                    className="text-sm text-muted-foreground"
+                    data-testid="empty-state-description"
+                  >
                     Check back soon for beautiful gallery showcases
                   </p>
                 </div>
@@ -117,29 +133,45 @@ export default function PublicGalleries() {
           ) : filteredGalleries.length === 0 ? (
             <div className="text-center py-12">
               <Search className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-              <h3 className="text-lg font-semibold mb-2" data-testid="no-results-title">No galleries found</h3>
-              <p className="text-sm text-muted-foreground" data-testid="no-results-description">
+              <h3
+                className="text-lg font-semibold mb-2"
+                data-testid="no-results-title"
+              >
+                No galleries found
+              </h3>
+              <p
+                className="text-sm text-muted-foreground"
+                data-testid="no-results-description"
+              >
                 Try adjusting your search query
               </p>
             </div>
           ) : (
             <div>
-              <div className="mb-4 text-sm text-muted-foreground" data-testid="gallery-count">
-                {filteredGalleries.length} {filteredGalleries.length === 1 ? 'gallery' : 'galleries'} found
+              <div
+                className="mb-4 text-sm text-muted-foreground"
+                data-testid="gallery-count"
+              >
+                {filteredGalleries.length}{" "}
+                {filteredGalleries.length === 1 ? "gallery" : "galleries"} found
               </div>
-              
+
               {/* Masonry/Mosaic Grid Layout */}
               <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
                 {filteredGalleries.map((gallery) => {
                   const GalleryCard = (
-                    <Card className={`hover:shadow-xl transition-all duration-300 group ${gallery.galleryUrl ? 'cursor-pointer' : ''}`}>
+                    <Card
+                      className={`hover:shadow-xl transition-all duration-300 group ${gallery.galleryUrl ? "cursor-pointer" : ""}`}
+                    >
                       <div className="relative overflow-hidden">
                         {/* Varying height based on tile size */}
-                        <div 
+                        <div
                           className={`relative bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 flex items-center justify-center ${
-                            gallery.height === 'tall' ? 'h-80' : 
-                            gallery.height === 'short' ? 'h-48' : 
-                            'h-64'
+                            gallery.height === "tall"
+                              ? "h-80"
+                              : gallery.height === "short"
+                                ? "h-48"
+                                : "h-64"
                           }`}
                         >
                           <Images className="w-12 h-12 text-purple-400 opacity-50" />
@@ -151,29 +183,31 @@ export default function PublicGalleries() {
                         )}
                       </div>
                       <CardContent className="p-4">
-                        <h3 
-                          className={`font-semibold text-lg mb-1 transition-colors ${gallery.galleryUrl ? 'group-hover:text-purple-600' : ''}`}
+                        <h3
+                          className={`font-semibold text-lg mb-1 transition-colors ${gallery.galleryUrl ? "group-hover:text-purple-600" : ""}`}
                           data-testid={`gallery-title-${gallery.id}`}
                         >
                           {gallery.title}
                         </h3>
                         {gallery.client && (
-                          <p 
-                            className="text-sm text-muted-foreground mb-3" 
+                          <p
+                            className="text-sm text-muted-foreground mb-3"
                             data-testid={`gallery-client-${gallery.id}`}
                           >
                             {gallery.client.firstName} {gallery.client.lastName}
                           </p>
                         )}
-                        
+
                         <div className="flex items-center justify-between">
                           {gallery.galleryCreatedAt && (
-                            <div 
+                            <div
                               className="flex items-center gap-1 text-xs text-muted-foreground"
                               data-testid={`gallery-date-${gallery.id}`}
                             >
                               <Calendar className="w-3 h-3" />
-                              {new Date(gallery.galleryCreatedAt).toLocaleDateString()}
+                              {new Date(
+                                gallery.galleryCreatedAt,
+                              ).toLocaleDateString()}
                             </div>
                           )}
                         </div>

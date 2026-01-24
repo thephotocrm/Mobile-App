@@ -79,32 +79,123 @@ const mockProject = {
 };
 
 const mockContacts = [
-  { id: "1", name: "Sarah Johnson", email: "sarah@email.com", phone: "(555) 123-4567", role: "Primary", initials: "SJ" },
-  { id: "2", name: "Michael Chen", email: "michael@email.com", phone: "(555) 987-6543", role: "Partner", initials: "MC" },
+  {
+    id: "1",
+    name: "Sarah Johnson",
+    email: "sarah@email.com",
+    phone: "(555) 123-4567",
+    role: "Primary",
+    initials: "SJ",
+  },
+  {
+    id: "2",
+    name: "Michael Chen",
+    email: "michael@email.com",
+    phone: "(555) 987-6543",
+    role: "Partner",
+    initials: "MC",
+  },
 ];
 
 const mockFiles = [
-  { id: "1", title: "Wedding Photography Proposal", status: "VIEWED", sentDate: "Sent Jan 10, 2026", value: 8500 },
-  { id: "2", title: "Engagement Session Contract", status: "SIGNED", sentDate: "Sent Jan 8, 2026", value: 500 },
-  { id: "3", title: "Wedding Day Timeline", status: "DRAFT", sentDate: null, value: 0 },
+  {
+    id: "1",
+    title: "Wedding Photography Proposal",
+    status: "VIEWED",
+    sentDate: "Sent Jan 10, 2026",
+    value: 8500,
+  },
+  {
+    id: "2",
+    title: "Engagement Session Contract",
+    status: "SIGNED",
+    sentDate: "Sent Jan 8, 2026",
+    value: 500,
+  },
+  {
+    id: "3",
+    title: "Wedding Day Timeline",
+    status: "DRAFT",
+    sentDate: null,
+    value: 0,
+  },
 ];
 
 const mockActivity = [
-  { id: "1", type: "EMAIL_SENT", title: "Proposal sent", description: "Wedding Photography Proposal was sent to Sarah Johnson", time: "2 hours ago", icon: Mail },
-  { id: "2", type: "SMART_FILE_VIEWED", title: "Proposal viewed", description: "Sarah Johnson viewed the proposal", time: "1 hour ago", icon: Eye },
-  { id: "3", type: "EMAIL_RECEIVED", title: "Email received", description: "Re: Wedding Photography Proposal", time: "45 min ago", icon: Mail },
-  { id: "4", type: "SMS_SENT", title: "SMS sent", description: "Reminder about proposal expiration", time: "30 min ago", icon: MessageSquare },
+  {
+    id: "1",
+    type: "EMAIL_SENT",
+    title: "Proposal sent",
+    description: "Wedding Photography Proposal was sent to Sarah Johnson",
+    time: "2 hours ago",
+    icon: Mail,
+  },
+  {
+    id: "2",
+    type: "SMART_FILE_VIEWED",
+    title: "Proposal viewed",
+    description: "Sarah Johnson viewed the proposal",
+    time: "1 hour ago",
+    icon: Eye,
+  },
+  {
+    id: "3",
+    type: "EMAIL_RECEIVED",
+    title: "Email received",
+    description: "Re: Wedding Photography Proposal",
+    time: "45 min ago",
+    icon: Mail,
+  },
+  {
+    id: "4",
+    type: "SMS_SENT",
+    title: "SMS sent",
+    description: "Reminder about proposal expiration",
+    time: "30 min ago",
+    icon: MessageSquare,
+  },
 ];
 
 const mockPayments = [
-  { id: "1", type: "Deposit", amount: 2500, status: "PAID", date: "Jan 12, 2026", method: "Credit Card" },
-  { id: "2", type: "Balance", amount: 3000, status: "PENDING", date: "May 14, 2026", method: "Due" },
-  { id: "3", type: "Final Payment", amount: 3000, status: "PENDING", date: "Jun 21, 2026", method: "Due" },
+  {
+    id: "1",
+    type: "Deposit",
+    amount: 2500,
+    status: "PAID",
+    date: "Jan 12, 2026",
+    method: "Credit Card",
+  },
+  {
+    id: "2",
+    type: "Balance",
+    amount: 3000,
+    status: "PENDING",
+    date: "May 14, 2026",
+    method: "Due",
+  },
+  {
+    id: "3",
+    type: "Final Payment",
+    amount: 3000,
+    status: "PENDING",
+    date: "Jun 21, 2026",
+    method: "Due",
+  },
 ];
 
 const mockNotes = [
-  { id: "1", content: "Bride prefers candid shots over posed photos. Mentioned wanting golden hour portraits.", date: "Jan 15, 2026" },
-  { id: "2", content: "Groom's family flying in from overseas - confirm family portrait timing.", date: "Jan 10, 2026" },
+  {
+    id: "1",
+    content:
+      "Bride prefers candid shots over posed photos. Mentioned wanting golden hour portraits.",
+    date: "Jan 15, 2026",
+  },
+  {
+    id: "2",
+    content:
+      "Groom's family flying in from overseas - confirm family portrait timing.",
+    date: "Jan 10, 2026",
+  },
 ];
 
 const mockTags = [
@@ -113,9 +204,23 @@ const mockTags = [
   { id: "3", name: "Referral", color: "bg-green-500" },
 ];
 
-const tabs = ["Activity", "Files", "Tasks", "Financials", "Notes", "Gallery", "Details"];
+const tabs = [
+  "Activity",
+  "Files",
+  "Tasks",
+  "Financials",
+  "Notes",
+  "Gallery",
+  "Details",
+];
 
-const stages = ["New Inquiry", "Consultation", "Proposal Sent", "Booked", "Completed"];
+const stages = [
+  "New Inquiry",
+  "Consultation",
+  "Proposal Sent",
+  "Booked",
+  "Completed",
+];
 
 // Sidebar navigation
 const coreNavigation = [
@@ -127,9 +232,24 @@ const coreNavigation = [
 ];
 
 const groupedNavigation = [
-  { id: "delivery", name: "Client Delivery", icon: Send, items: [{ href: "/smart-files" }] },
-  { id: "marketing", name: "Marketing", icon: Target, items: [{ href: "/automations" }] },
-  { id: "business", name: "Business Tools", icon: BarChart3, items: [{ href: "/reports" }] },
+  {
+    id: "delivery",
+    name: "Client Delivery",
+    icon: Send,
+    items: [{ href: "/smart-files" }],
+  },
+  {
+    id: "marketing",
+    name: "Marketing",
+    icon: Target,
+    items: [{ href: "/automations" }],
+  },
+  {
+    id: "business",
+    name: "Business Tools",
+    icon: BarChart3,
+    items: [{ href: "/reports" }],
+  },
 ];
 
 export default function ProjectDetailPreview() {
@@ -139,7 +259,9 @@ export default function ProjectDetailPreview() {
   const [selectedStage, setSelectedStage] = useState(mockProject.stage);
 
   // Calculate payment progress
-  const paymentProgress = Math.round((mockProject.amountCollected / mockProject.totalValue) * 100);
+  const paymentProgress = Math.round(
+    (mockProject.amountCollected / mockProject.totalValue) * 100,
+  );
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -150,7 +272,9 @@ export default function ProjectDetailPreview() {
             <div className="bg-white border border-gray-200 rounded-xl p-4">
               <div className="flex items-center gap-3">
                 <Avatar className="w-8 h-8">
-                  <AvatarFallback className="bg-gray-200 text-gray-600 text-xs">You</AvatarFallback>
+                  <AvatarFallback className="bg-gray-200 text-gray-600 text-xs">
+                    You
+                  </AvatarFallback>
                 </Avatar>
                 <input
                   type="text"
@@ -171,14 +295,22 @@ export default function ProjectDetailPreview() {
                   <div key={activity.id} className="flex gap-4">
                     {/* Timeline line */}
                     <div className="flex flex-col items-center">
-                      <div className={cn(
-                        "w-10 h-10 rounded-full flex items-center justify-center",
-                        activity.type.includes("RECEIVED") ? "bg-green-100" : "bg-gray-100"
-                      )}>
-                        <Icon className={cn(
-                          "w-5 h-5",
-                          activity.type.includes("RECEIVED") ? "text-green-600" : "text-gray-500"
-                        )} />
+                      <div
+                        className={cn(
+                          "w-10 h-10 rounded-full flex items-center justify-center",
+                          activity.type.includes("RECEIVED")
+                            ? "bg-green-100"
+                            : "bg-gray-100",
+                        )}
+                      >
+                        <Icon
+                          className={cn(
+                            "w-5 h-5",
+                            activity.type.includes("RECEIVED")
+                              ? "text-green-600"
+                              : "text-gray-500",
+                          )}
+                        />
                       </div>
                       {index < mockActivity.length - 1 && (
                         <div className="w-px h-full bg-gray-200 my-2" />
@@ -189,10 +321,16 @@ export default function ProjectDetailPreview() {
                     <div className="flex-1 bg-white border border-gray-200 rounded-xl p-4 mb-3">
                       <div className="flex items-start justify-between">
                         <div>
-                          <h4 className="font-medium text-gray-900">{activity.title}</h4>
-                          <p className="text-sm text-gray-500 mt-0.5">{activity.description}</p>
+                          <h4 className="font-medium text-gray-900">
+                            {activity.title}
+                          </h4>
+                          <p className="text-sm text-gray-500 mt-0.5">
+                            {activity.description}
+                          </p>
                         </div>
-                        <span className="text-xs text-gray-400">{activity.time}</span>
+                        <span className="text-xs text-gray-400">
+                          {activity.time}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -211,35 +349,59 @@ export default function ProjectDetailPreview() {
                 className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white border border-gray-200 rounded-xl px-4 sm:px-5 py-4 hover:border-gray-300 hover:shadow-sm transition-all gap-3 sm:gap-0"
               >
                 <div className="flex items-center gap-4">
-                  <div className={cn(
-                    "w-11 h-11 rounded-lg flex items-center justify-center",
-                    file.status === "DRAFT" ? "bg-gray-100" : "bg-orange-50"
-                  )}>
-                    <FileText className={cn(
-                      "w-5 h-5",
-                      file.status === "DRAFT" ? "text-gray-400" : "text-orange-500"
-                    )} />
+                  <div
+                    className={cn(
+                      "w-11 h-11 rounded-lg flex items-center justify-center",
+                      file.status === "DRAFT" ? "bg-gray-100" : "bg-orange-50",
+                    )}
+                  >
+                    <FileText
+                      className={cn(
+                        "w-5 h-5",
+                        file.status === "DRAFT"
+                          ? "text-gray-400"
+                          : "text-orange-500",
+                      )}
+                    />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">{file.title}</h3>
+                    <h3 className="font-semibold text-gray-900">
+                      {file.title}
+                    </h3>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className={cn(
-                        "px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wide",
-                        file.status === "SIGNED" ? "bg-green-100 text-green-700" :
-                        file.status === "VIEWED" ? "bg-blue-100 text-blue-700" :
-                        file.status === "DRAFT" ? "bg-gray-100 text-gray-500" :
-                        "bg-orange-100 text-orange-700"
-                      )}>
+                      <span
+                        className={cn(
+                          "px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wide",
+                          file.status === "SIGNED"
+                            ? "bg-green-100 text-green-700"
+                            : file.status === "VIEWED"
+                              ? "bg-blue-100 text-blue-700"
+                              : file.status === "DRAFT"
+                                ? "bg-gray-100 text-gray-500"
+                                : "bg-orange-100 text-orange-700",
+                        )}
+                      >
                         {file.status}
                       </span>
-                      {file.sentDate && <span className="text-xs text-gray-400">{file.sentDate}</span>}
-                      {file.value > 0 && <span className="text-xs font-medium text-gray-600">${file.value.toLocaleString()}</span>}
+                      {file.sentDate && (
+                        <span className="text-xs text-gray-400">
+                          {file.sentDate}
+                        </span>
+                      )}
+                      {file.value > 0 && (
+                        <span className="text-xs font-medium text-gray-600">
+                          ${file.value.toLocaleString()}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 self-end sm:self-auto">
                   {file.status === "DRAFT" ? (
-                    <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white">
+                    <Button
+                      size="sm"
+                      className="bg-orange-500 hover:bg-orange-600 text-white"
+                    >
                       <Send className="w-4 h-4 mr-1.5" />
                       Send
                     </Button>
@@ -270,25 +432,35 @@ export default function ProjectDetailPreview() {
             {/* Financial Summary Card */}
             <div className="bg-white border border-gray-200 rounded-xl p-5">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900">Payment Overview</h3>
+                <h3 className="font-semibold text-gray-900">
+                  Payment Overview
+                </h3>
                 <div className="flex items-center gap-2">
                   <div className="w-12 h-12 rounded-full border-4 border-orange-500 flex items-center justify-center">
-                    <span className="text-sm font-bold text-orange-500">{paymentProgress}%</span>
+                    <span className="text-sm font-bold text-orange-500">
+                      {paymentProgress}%
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <p className="text-2xl font-bold text-gray-900">${mockProject.totalValue.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    ${mockProject.totalValue.toLocaleString()}
+                  </p>
                   <p className="text-xs text-gray-500 mt-1">Total Value</p>
                 </div>
                 <div className="text-center p-3 bg-green-50 rounded-lg">
-                  <p className="text-2xl font-bold text-green-600">${mockProject.amountCollected.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    ${mockProject.amountCollected.toLocaleString()}
+                  </p>
                   <p className="text-xs text-gray-500 mt-1">Collected</p>
                 </div>
                 <div className="text-center p-3 bg-orange-50 rounded-lg">
-                  <p className="text-2xl font-bold text-orange-500">${mockProject.amountOutstanding.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-orange-500">
+                    ${mockProject.amountOutstanding.toLocaleString()}
+                  </p>
                   <p className="text-xs text-gray-500 mt-1">Outstanding</p>
                 </div>
               </div>
@@ -297,16 +469,25 @@ export default function ProjectDetailPreview() {
             {/* Payment Schedule */}
             <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100">
-                <h3 className="font-semibold text-gray-900">Payment Schedule</h3>
+                <h3 className="font-semibold text-gray-900">
+                  Payment Schedule
+                </h3>
               </div>
               <div className="divide-y divide-gray-100">
                 {mockPayments.map((payment) => (
-                  <div key={payment.id} className="px-5 py-4 flex items-center justify-between">
+                  <div
+                    key={payment.id}
+                    className="px-5 py-4 flex items-center justify-between"
+                  >
                     <div className="flex items-center gap-4">
-                      <div className={cn(
-                        "w-10 h-10 rounded-full flex items-center justify-center",
-                        payment.status === "PAID" ? "bg-green-100" : "bg-gray-100"
-                      )}>
+                      <div
+                        className={cn(
+                          "w-10 h-10 rounded-full flex items-center justify-center",
+                          payment.status === "PAID"
+                            ? "bg-green-100"
+                            : "bg-gray-100",
+                        )}
+                      >
                         {payment.status === "PAID" ? (
                           <CheckCircle2 className="w-5 h-5 text-green-600" />
                         ) : (
@@ -314,16 +495,24 @@ export default function ProjectDetailPreview() {
                         )}
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{payment.type}</p>
+                        <p className="font-medium text-gray-900">
+                          {payment.type}
+                        </p>
                         <p className="text-sm text-gray-500">{payment.date}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-gray-900">${payment.amount.toLocaleString()}</p>
-                      <p className={cn(
-                        "text-xs",
-                        payment.status === "PAID" ? "text-green-600" : "text-gray-400"
-                      )}>
+                      <p className="font-semibold text-gray-900">
+                        ${payment.amount.toLocaleString()}
+                      </p>
+                      <p
+                        className={cn(
+                          "text-xs",
+                          payment.status === "PAID"
+                            ? "text-green-600"
+                            : "text-gray-400",
+                        )}
+                      >
                         {payment.status === "PAID" ? payment.method : "Pending"}
                       </p>
                     </div>
@@ -354,10 +543,19 @@ export default function ProjectDetailPreview() {
 
             {/* Notes List */}
             {mockNotes.map((note) => (
-              <div key={note.id} className="bg-white border border-gray-200 rounded-xl p-4">
+              <div
+                key={note.id}
+                className="bg-white border border-gray-200 rounded-xl p-4"
+              >
                 <div className="flex items-start justify-between">
-                  <p className="text-gray-700 leading-relaxed">{note.content}</p>
-                  <Button variant="ghost" size="icon" className="w-8 h-8 -mt-1 -mr-1">
+                  <p className="text-gray-700 leading-relaxed">
+                    {note.content}
+                  </p>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="w-8 h-8 -mt-1 -mr-1"
+                  >
                     <Trash2 className="w-4 h-4 text-gray-400" />
                   </Button>
                 </div>
@@ -378,7 +576,9 @@ export default function ProjectDetailPreview() {
                     <Images className="w-5 h-5 text-orange-500" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Wedding Gallery</h3>
+                    <h3 className="font-semibold text-gray-900">
+                      Wedding Gallery
+                    </h3>
                     <p className="text-sm text-gray-500">0 photos uploaded</p>
                   </div>
                 </div>
@@ -389,7 +589,9 @@ export default function ProjectDetailPreview() {
 
               <div className="border-2 border-dashed border-gray-200 rounded-xl py-10 text-center">
                 <Upload className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500 mb-3">Drag and drop photos or click to upload</p>
+                <p className="text-gray-500 mb-3">
+                  Drag and drop photos or click to upload
+                </p>
                 <Button variant="outline">
                   <Upload className="w-4 h-4 mr-2" />
                   Upload Photos
@@ -399,7 +601,9 @@ export default function ProjectDetailPreview() {
 
             {/* External Gallery */}
             <div className="bg-white border border-gray-200 rounded-xl p-5">
-              <h3 className="font-semibold text-gray-900 mb-4">External Gallery Link</h3>
+              <h3 className="font-semibold text-gray-900 mb-4">
+                External Gallery Link
+              </h3>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -420,10 +624,14 @@ export default function ProjectDetailPreview() {
           <div className="space-y-6">
             {/* Event Details */}
             <div className="bg-white border border-gray-200 rounded-xl p-5">
-              <h3 className="font-semibold text-gray-900 mb-4">Event Details</h3>
+              <h3 className="font-semibold text-gray-900 mb-4">
+                Event Details
+              </h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Event Date</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Event Date
+                  </label>
                   <div className="relative">
                     <input
                       type="text"
@@ -435,7 +643,9 @@ export default function ProjectDetailPreview() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Venue</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Venue
+                  </label>
                   <input
                     type="text"
                     value={mockProject.venue}
@@ -456,7 +666,10 @@ export default function ProjectDetailPreview() {
               </div>
               <div className="space-y-3">
                 {mockContacts.map((contact) => (
-                  <div key={contact.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div
+                    key={contact.id}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
                       <Avatar className="w-10 h-10">
                         <AvatarFallback className="bg-orange-100 text-orange-600 text-sm font-medium">
@@ -464,7 +677,9 @@ export default function ProjectDetailPreview() {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-medium text-gray-900">{contact.name}</p>
+                        <p className="font-medium text-gray-900">
+                          {contact.name}
+                        </p>
                         <p className="text-sm text-gray-500">{contact.email}</p>
                       </div>
                     </div>
@@ -484,9 +699,12 @@ export default function ProjectDetailPreview() {
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="w-8 h-8 text-gray-300" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Tasks Coming Soon</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">
+              Tasks Coming Soon
+            </h3>
             <p className="text-gray-500 text-sm max-w-sm mx-auto">
-              Track your to-dos and project milestones. This feature is currently in development.
+              Track your to-dos and project milestones. This feature is
+              currently in development.
             </p>
           </div>
         );
@@ -500,14 +718,19 @@ export default function ProjectDetailPreview() {
     <div className="min-h-screen bg-gray-50 flex">
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
-        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
       )}
 
       {/* Sidebar - Icons Only, Dark Charcoal */}
-      <aside className={cn(
-        "fixed lg:sticky top-0 left-0 z-50 h-screen w-16 bg-[#1a1a1a] flex flex-col transition-transform duration-300 lg:translate-x-0",
-        sidebarOpen ? "translate-x-0" : "-translate-x-full"
-      )}>
+      <aside
+        className={cn(
+          "fixed lg:sticky top-0 left-0 z-50 h-screen w-16 bg-[#1a1a1a] flex flex-col transition-transform duration-300 lg:translate-x-0",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full",
+        )}
+      >
         <div className="flex items-center justify-center py-4">
           <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
             <Camera className="w-6 h-6 text-[#1a1a1a]" />
@@ -525,7 +748,9 @@ export default function ProjectDetailPreview() {
                   title={item.name}
                   className={cn(
                     "relative flex items-center justify-center w-12 h-12 rounded-xl transition-colors mx-auto",
-                    item.active ? "bg-white/10 text-white" : "text-white/60 hover:bg-white/5 hover:text-white"
+                    item.active
+                      ? "bg-white/10 text-white"
+                      : "text-white/60 hover:bg-white/5 hover:text-white",
                   )}
                 >
                   <Icon className="w-5 h-5" />
@@ -559,7 +784,11 @@ export default function ProjectDetailPreview() {
         </nav>
 
         <div className="py-4 px-2 space-y-2">
-          <a href="/settings" title="Settings" className="flex items-center justify-center w-12 h-12 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-colors mx-auto">
+          <a
+            href="/settings"
+            title="Settings"
+            className="flex items-center justify-center w-12 h-12 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-colors mx-auto"
+          >
             <Settings className="w-5 h-5" />
           </a>
           <div className="flex items-center justify-center">
@@ -576,20 +805,26 @@ export default function ProjectDetailPreview() {
         <div
           className="relative h-44 sm:h-52 md:h-60 bg-cover bg-center flex-shrink-0"
           style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1600&h=400&fit=crop')",
-            backgroundColor: "#374151"
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1600&h=400&fit=crop')",
+            backgroundColor: "#374151",
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/20" />
 
           {/* Back Button */}
           <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
-            <button className="lg:hidden p-2 bg-white/90 backdrop-blur-sm rounded-lg hover:bg-white transition-colors" onClick={() => setSidebarOpen(true)}>
+            <button
+              className="lg:hidden p-2 bg-white/90 backdrop-blur-sm rounded-lg hover:bg-white transition-colors"
+              onClick={() => setSidebarOpen(true)}
+            >
               <Menu className="w-5 h-5 text-gray-700" />
             </button>
             <button className="flex items-center gap-2 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-lg hover:bg-white transition-colors">
               <ArrowLeft className="w-4 h-4 text-gray-700" />
-              <span className="text-sm font-medium text-gray-700 hidden sm:inline">Projects</span>
+              <span className="text-sm font-medium text-gray-700 hidden sm:inline">
+                Projects
+              </span>
             </button>
           </div>
 
@@ -597,26 +832,37 @@ export default function ProjectDetailPreview() {
           <div className="absolute top-4 right-4 z-20">
             <div className="px-3 py-2 bg-white/90 backdrop-blur-sm rounded-lg">
               <p className="text-xs text-gray-500">Days until event</p>
-              <p className="text-xl font-bold text-gray-900">{mockProject.eventDateCountdown}</p>
+              <p className="text-xl font-bold text-gray-900">
+                {mockProject.eventDateCountdown}
+              </p>
             </div>
           </div>
 
           {/* Title Section */}
           <div className="absolute inset-x-0 bottom-0 z-10 px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-white tracking-tight drop-shadow-lg" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+            <h1
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-white tracking-tight drop-shadow-lg"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
               {mockProject.title}
             </h1>
             <div className="flex flex-wrap items-center gap-3 mt-2 sm:mt-3">
               <div className="flex items-center gap-1.5">
                 <Heart className="w-4 h-4 text-orange-400 fill-orange-400" />
-                <span className="text-sm font-medium text-white">{mockProject.projectType}</span>
+                <span className="text-sm font-medium text-white">
+                  {mockProject.projectType}
+                </span>
               </div>
               <span className="text-white/50">•</span>
-              <span className="text-sm text-white/80">{mockProject.eventDate}</span>
+              <span className="text-sm text-white/80">
+                {mockProject.eventDate}
+              </span>
               <span className="text-white/50">•</span>
               <div className="flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5 text-white/60" />
-                <span className="text-sm text-white/80">{mockProject.venue}</span>
+                <span className="text-sm text-white/80">
+                  {mockProject.venue}
+                </span>
               </div>
             </div>
           </div>
@@ -631,11 +877,15 @@ export default function ProjectDetailPreview() {
                 onClick={() => setActiveTab(tab)}
                 className={cn(
                   "px-4 py-3 text-sm font-medium relative transition-colors whitespace-nowrap",
-                  activeTab === tab ? "text-gray-900" : "text-gray-500 hover:text-gray-700"
+                  activeTab === tab
+                    ? "text-gray-900"
+                    : "text-gray-500 hover:text-gray-700",
                 )}
               >
                 {tab}
-                {activeTab === tab && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-orange-500" />}
+                {activeTab === tab && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-orange-500" />
+                )}
               </button>
             ))}
           </div>
@@ -645,13 +895,30 @@ export default function ProjectDetailPreview() {
         <div className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-3 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
-              <Button variant="outline" size="sm"><Calendar className="w-4 h-4 sm:mr-1.5" /><span className="hidden sm:inline">Schedule</span></Button>
-              <Button variant="outline" size="sm"><Paperclip className="w-4 h-4 sm:mr-1.5" /><span className="hidden sm:inline">Attach</span></Button>
-              <Button variant="outline" size="sm"><MessageSquare className="w-4 h-4 sm:mr-1.5" /><span className="hidden sm:inline">Message</span></Button>
+              <Button variant="outline" size="sm">
+                <Calendar className="w-4 h-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">Schedule</span>
+              </Button>
+              <Button variant="outline" size="sm">
+                <Paperclip className="w-4 h-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">Attach</span>
+              </Button>
+              <Button variant="outline" size="sm">
+                <MessageSquare className="w-4 h-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">Message</span>
+              </Button>
               <div className="w-px h-6 bg-gray-200 mx-1 hidden sm:block" />
-              <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white"><FileText className="w-4 h-4 sm:mr-1.5" /><span className="hidden sm:inline">Create File</span></Button>
+              <Button
+                size="sm"
+                className="bg-orange-500 hover:bg-orange-600 text-white"
+              >
+                <FileText className="w-4 h-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">Create File</span>
+              </Button>
             </div>
-            <Button variant="ghost" size="sm" className="text-gray-500"><Archive className="w-4 h-4" /></Button>
+            <Button variant="ghost" size="sm" className="text-gray-500">
+              <Archive className="w-4 h-4" />
+            </Button>
           </div>
         </div>
 
@@ -667,14 +934,18 @@ export default function ProjectDetailPreview() {
             <div className="p-4 sm:p-5 space-y-6">
               {/* Stage Selector */}
               <div>
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Stage</label>
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  Stage
+                </label>
                 <select
                   value={selectedStage}
                   onChange={(e) => setSelectedStage(e.target.value)}
                   className="mt-2 w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                 >
                   {stages.map((stage) => (
-                    <option key={stage} value={stage}>{stage}</option>
+                    <option key={stage} value={stage}>
+                      {stage}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -682,41 +953,67 @@ export default function ProjectDetailPreview() {
               {/* Quick Stats */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-green-50 rounded-xl p-3 text-center">
-                  <p className="text-lg font-bold text-green-600">${mockProject.amountCollected.toLocaleString()}</p>
+                  <p className="text-lg font-bold text-green-600">
+                    ${mockProject.amountCollected.toLocaleString()}
+                  </p>
                   <p className="text-xs text-gray-500">Collected</p>
                 </div>
                 <div className="bg-orange-50 rounded-xl p-3 text-center">
-                  <p className="text-lg font-bold text-orange-500">${mockProject.amountOutstanding.toLocaleString()}</p>
+                  <p className="text-lg font-bold text-orange-500">
+                    ${mockProject.amountOutstanding.toLocaleString()}
+                  </p>
                   <p className="text-xs text-gray-500">Outstanding</p>
                 </div>
               </div>
 
               {/* Primary Contact */}
               <div>
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Primary Contact</label>
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  Primary Contact
+                </label>
                 <div className="mt-2 p-3 bg-gray-50 rounded-xl">
                   <div className="flex items-center gap-3">
                     <Avatar className="w-10 h-10">
-                      <AvatarFallback className="bg-orange-100 text-orange-600 font-medium">SJ</AvatarFallback>
+                      <AvatarFallback className="bg-orange-100 text-orange-600 font-medium">
+                        SJ
+                      </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 truncate">Sarah Johnson</p>
-                      <p className="text-sm text-gray-500 truncate">sarah@email.com</p>
+                      <p className="font-medium text-gray-900 truncate">
+                        Sarah Johnson
+                      </p>
+                      <p className="text-sm text-gray-500 truncate">
+                        sarah@email.com
+                      </p>
                     </div>
                   </div>
                   <div className="flex gap-2 mt-3">
-                    <Button variant="outline" size="sm" className="flex-1"><Mail className="w-4 h-4 mr-1.5" />Email</Button>
-                    <Button variant="outline" size="sm" className="flex-1"><Phone className="w-4 h-4 mr-1.5" />Call</Button>
+                    <Button variant="outline" size="sm" className="flex-1">
+                      <Mail className="w-4 h-4 mr-1.5" />
+                      Email
+                    </Button>
+                    <Button variant="outline" size="sm" className="flex-1">
+                      <Phone className="w-4 h-4 mr-1.5" />
+                      Call
+                    </Button>
                   </div>
                 </div>
               </div>
 
               {/* Tags */}
               <div>
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Tags</label>
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  Tags
+                </label>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {mockTags.map((tag) => (
-                    <span key={tag.id} className={cn("px-2.5 py-1 text-xs font-medium text-white rounded-full", tag.color)}>
+                    <span
+                      key={tag.id}
+                      className={cn(
+                        "px-2.5 py-1 text-xs font-medium text-white rounded-full",
+                        tag.color,
+                      )}
+                    >
                       {tag.name}
                     </span>
                   ))}
@@ -728,26 +1025,44 @@ export default function ProjectDetailPreview() {
 
               {/* Client Portal */}
               <div>
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Client Portal</label>
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  Client Portal
+                </label>
                 <div className="mt-2 p-3 bg-gray-50 rounded-xl">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-mono text-gray-500 truncate">sarah-michael.tpcportal.co</span>
+                    <span className="text-xs font-mono text-gray-500 truncate">
+                      sarah-michael.tpcportal.co
+                    </span>
                     <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="icon" className="w-7 h-7"><Copy className="w-3.5 h-3.5" /></Button>
-                      <Button variant="ghost" size="icon" className="w-7 h-7"><ExternalLink className="w-3.5 h-3.5" /></Button>
+                      <Button variant="ghost" size="icon" className="w-7 h-7">
+                        <Copy className="w-3.5 h-3.5" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="w-7 h-7">
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </Button>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-700">Include in emails</span>
-                    <Switch checked={includePortalLinks} onCheckedChange={setIncludePortalLinks} className="data-[state=checked]:bg-orange-500" />
+                    <span className="text-sm text-gray-700">
+                      Include in emails
+                    </span>
+                    <Switch
+                      checked={includePortalLinks}
+                      onCheckedChange={setIncludePortalLinks}
+                      className="data-[state=checked]:bg-orange-500"
+                    />
                   </div>
                 </div>
               </div>
 
               {/* Lead Source */}
               <div>
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Lead Source</label>
-                <p className="mt-1 text-sm text-gray-900">{mockProject.leadSource}</p>
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  Lead Source
+                </label>
+                <p className="mt-1 text-sm text-gray-900">
+                  {mockProject.leadSource}
+                </p>
               </div>
             </div>
           </div>

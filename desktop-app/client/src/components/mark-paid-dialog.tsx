@@ -38,24 +38,29 @@ const PAYMENT_METHODS = [
   { value: "OTHER", label: "Other" },
 ] as const;
 
-type PaymentMethod = typeof PAYMENT_METHODS[number]["value"];
+type PaymentMethod = (typeof PAYMENT_METHODS)[number]["value"];
 
-const markPaidSchema = z.object({
-  amountType: z.enum(["full", "partial"]),
-  partialAmountDollars: z.string().optional(),
-  paymentMethod: z.string().min(1, "Payment method is required"),
-  note: z.string().optional(),
-  paidAt: z.string().min(1, "Date is required"),
-}).refine((data) => {
-  if (data.amountType === "partial") {
-    const amount = parseFloat(data.partialAmountDollars || "0");
-    return amount > 0;
-  }
-  return true;
-}, {
-  message: "Partial amount must be greater than 0",
-  path: ["partialAmountDollars"],
-});
+const markPaidSchema = z
+  .object({
+    amountType: z.enum(["full", "partial"]),
+    partialAmountDollars: z.string().optional(),
+    paymentMethod: z.string().min(1, "Payment method is required"),
+    note: z.string().optional(),
+    paidAt: z.string().min(1, "Date is required"),
+  })
+  .refine(
+    (data) => {
+      if (data.amountType === "partial") {
+        const amount = parseFloat(data.partialAmountDollars || "0");
+        return amount > 0;
+      }
+      return true;
+    },
+    {
+      message: "Partial amount must be greater than 0",
+      path: ["partialAmountDollars"],
+    },
+  );
 
 type MarkPaidFormData = z.infer<typeof markPaidSchema>;
 
@@ -107,9 +112,10 @@ export function MarkPaidDialog({
 
   const markPaidMutation = useMutation({
     mutationFn: async (data: MarkPaidFormData) => {
-      const amountCents = data.amountType === "full"
-        ? remainingCents
-        : Math.round(parseFloat(data.partialAmountDollars || "0") * 100);
+      const amountCents =
+        data.amountType === "full"
+          ? remainingCents
+          : Math.round(parseFloat(data.partialAmountDollars || "0") * 100);
 
       const response = await apiRequest(
         "POST",
@@ -120,7 +126,7 @@ export function MarkPaidDialog({
           paymentMethod: data.paymentMethod,
           note: data.note || undefined,
           paidAt: data.paidAt,
-        }
+        },
       );
       return response.json();
     },
@@ -130,10 +136,14 @@ export function MarkPaidDialog({
         description: `${formatPrice(
           amountType === "full"
             ? remainingCents
-            : Math.round(parseFloat(form.getValues("partialAmountDollars") || "0") * 100)
+            : Math.round(
+                parseFloat(form.getValues("partialAmountDollars") || "0") * 100,
+              ),
         )} marked as paid`,
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/projects", projectId, "payment-summary"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/projects", projectId, "payment-summary"],
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/projects", projectId] });
       form.reset();
       onSuccess();
@@ -150,7 +160,9 @@ export function MarkPaidDialog({
   const handleSubmit = form.handleSubmit((data) => {
     // Validate partial amount doesn't exceed remaining
     if (data.amountType === "partial") {
-      const partialCents = Math.round(parseFloat(data.partialAmountDollars || "0") * 100);
+      const partialCents = Math.round(
+        parseFloat(data.partialAmountDollars || "0") * 100,
+      );
       if (partialCents > remainingCents) {
         form.setError("partialAmountDollars", {
           message: `Amount cannot exceed ${formatPrice(remainingCents)}`,
@@ -169,9 +181,7 @@ export function MarkPaidDialog({
             <DollarSign className="w-5 h-5 text-green-600" />
             Record Payment
           </DialogTitle>
-          <DialogDescription>
-            Mark this payment as received
-          </DialogDescription>
+          <DialogDescription>Mark this payment as received</DialogDescription>
         </DialogHeader>
 
         {/* Payment Info */}
@@ -182,11 +192,15 @@ export function MarkPaidDialog({
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">Amount Due</span>
-            <span className="font-semibold text-lg">{formatPrice(remainingCents)}</span>
+            <span className="font-semibold text-lg">
+              {formatPrice(remainingCents)}
+            </span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">Due Date</span>
-            <span className="text-sm">{format(new Date(installment.dueDate), "MMM d, yyyy")}</span>
+            <span className="text-sm">
+              {format(new Date(installment.dueDate), "MMM d, yyyy")}
+            </span>
           </div>
         </div>
 
@@ -196,7 +210,9 @@ export function MarkPaidDialog({
             <Label>Amount Paid</Label>
             <RadioGroup
               value={amountType}
-              onValueChange={(value) => form.setValue("amountType", value as "full" | "partial")}
+              onValueChange={(value) =>
+                form.setValue("amountType", value as "full" | "partial")
+              }
               className="space-y-2"
             >
               <div className="flex items-center space-x-2">
@@ -216,7 +232,9 @@ export function MarkPaidDialog({
             {amountType === "partial" && (
               <div className="pl-6 pt-2">
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    $
+                  </span>
                   <Input
                     type="number"
                     step="0.01"
@@ -277,10 +295,7 @@ export function MarkPaidDialog({
               <Calendar className="w-4 h-4" />
               Date Paid
             </Label>
-            <Input
-              type="date"
-              {...form.register("paidAt")}
-            />
+            <Input type="date" {...form.register("paidAt")} />
             {form.formState.errors.paidAt && (
               <p className="text-sm text-destructive">
                 {form.formState.errors.paidAt.message}

@@ -2,13 +2,30 @@ import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, User, Mail, Phone, Save, CreditCard, Trash2, Star, Shield, Plus } from "lucide-react";
+import {
+  Loader2,
+  User,
+  Mail,
+  Phone,
+  Save,
+  CreditCard,
+  Trash2,
+  Star,
+  Shield,
+  Plus,
+} from "lucide-react";
 import { ClientPortalLayout } from "@/components/layout/client-portal-layout";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { z } from "zod";
@@ -78,14 +95,15 @@ export default function ClientPortalSettings() {
   // Fetch client contact information
   const { data: clientInfo, isLoading } = useQuery<ClientInfo>({
     queryKey: ["/api/client-portal/contact-info"],
-    enabled: !!user
+    enabled: !!user,
   });
 
   // Fetch saved payment methods
-  const { data: paymentMethodsData, isLoading: isLoadingPaymentMethods } = useQuery<PaymentMethodsData>({
-    queryKey: ["/api/client-portal/payment-methods"],
-    enabled: !!user
-  });
+  const { data: paymentMethodsData, isLoading: isLoadingPaymentMethods } =
+    useQuery<PaymentMethodsData>({
+      queryKey: ["/api/client-portal/payment-methods"],
+      enabled: !!user,
+    });
 
   const form = useForm<SettingsFormData>({
     resolver: zodResolver(settingsFormSchema),
@@ -114,7 +132,9 @@ export default function ClientPortalSettings() {
       return await apiRequest("PUT", "/api/client-portal/contact-info", data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/client-portal/contact-info"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/client-portal/contact-info"],
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       toast({
         title: "Success",
@@ -133,10 +153,15 @@ export default function ClientPortalSettings() {
   // Delete payment method mutation
   const deletePaymentMethodMutation = useMutation({
     mutationFn: async (methodId: string) => {
-      return await apiRequest("DELETE", `/api/client-portal/payment-methods/${methodId}`);
+      return await apiRequest(
+        "DELETE",
+        `/api/client-portal/payment-methods/${methodId}`,
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/client-portal/payment-methods"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/client-portal/payment-methods"],
+      });
       toast({
         title: "Success",
         description: "Payment method has been removed.",
@@ -156,10 +181,16 @@ export default function ClientPortalSettings() {
   // Set default payment method mutation
   const setDefaultPaymentMethodMutation = useMutation({
     mutationFn: async (methodId: string) => {
-      return await apiRequest("POST", "/api/client-portal/set-default-payment-method", { paymentMethodId: methodId });
+      return await apiRequest(
+        "POST",
+        "/api/client-portal/set-default-payment-method",
+        { paymentMethodId: methodId },
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/client-portal/payment-methods"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/client-portal/payment-methods"],
+      });
       toast({
         title: "Success",
         description: "Default payment method updated.",
@@ -214,7 +245,9 @@ export default function ClientPortalSettings() {
         <div className="max-w-2xl mx-auto space-y-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-            <p className="text-gray-600 mt-2">Manage your contact information and preferences.</p>
+            <p className="text-gray-600 mt-2">
+              Manage your contact information and preferences.
+            </p>
           </div>
 
           <Card className="bg-white border-gray-200">
@@ -229,7 +262,10 @@ export default function ClientPortalSettings() {
             </CardHeader>
             <CardContent>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4"
+                >
                   {/* Name Fields */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
@@ -239,8 +275,8 @@ export default function ClientPortalSettings() {
                         <FormItem>
                           <FormLabel>First Name</FormLabel>
                           <FormControl>
-                            <Input 
-                              {...field} 
+                            <Input
+                              {...field}
                               data-testid="input-first-name"
                               placeholder="Enter your first name"
                             />
@@ -249,7 +285,7 @@ export default function ClientPortalSettings() {
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={form.control}
                       name="lastName"
@@ -257,8 +293,8 @@ export default function ClientPortalSettings() {
                         <FormItem>
                           <FormLabel>Last Name</FormLabel>
                           <FormControl>
-                            <Input 
-                              {...field} 
+                            <Input
+                              {...field}
                               data-testid="input-last-name"
                               placeholder="Enter your last name"
                             />
@@ -279,8 +315,8 @@ export default function ClientPortalSettings() {
                         <FormControl>
                           <div className="relative">
                             <Mail className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                            <Input 
-                              {...field} 
+                            <Input
+                              {...field}
                               type="email"
                               className="pl-10"
                               data-testid="input-email"
@@ -303,8 +339,8 @@ export default function ClientPortalSettings() {
                         <FormControl>
                           <div className="relative">
                             <Phone className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                            <Input 
-                              {...field} 
+                            <Input
+                              {...field}
                               type="tel"
                               className="pl-10"
                               data-testid="input-phone"
@@ -319,8 +355,8 @@ export default function ClientPortalSettings() {
 
                   {/* Submit Button */}
                   <div className="flex justify-end pt-4">
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       disabled={updateMutation.isPending}
                       data-testid="button-save-settings"
                     >
@@ -363,13 +399,14 @@ export default function ClientPortalSettings() {
                   <CreditCard className="w-12 h-12 mx-auto text-gray-300 mb-3" />
                   <p className="text-gray-600 mb-2">No saved payment methods</p>
                   <p className="text-sm text-gray-500">
-                    Your cards will appear here after you make a payment with the "Save card" option selected.
+                    Your cards will appear here after you make a payment with
+                    the "Save card" option selected.
                   </p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {savedMethods.map((method) => (
-                    <div 
+                    <div
                       key={method.id}
                       className="flex items-center justify-between p-4 border rounded-lg bg-gray-50"
                       data-testid={`payment-method-${method.id}`}
@@ -378,7 +415,11 @@ export default function ClientPortalSettings() {
                         {getCardBrandIcon(method.cardBrand)}
                         <div>
                           <div className="font-medium flex items-center gap-2">
-                            {method.cardBrand ? method.cardBrand.charAt(0).toUpperCase() + method.cardBrand.slice(1) : 'Card'} •••• {method.cardLast4}
+                            {method.cardBrand
+                              ? method.cardBrand.charAt(0).toUpperCase() +
+                                method.cardBrand.slice(1)
+                              : "Card"}{" "}
+                            •••• {method.cardLast4}
                             {method.isDefault && (
                               <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded flex items-center gap-1">
                                 <Star className="w-3 h-3" />
@@ -420,16 +461,21 @@ export default function ClientPortalSettings() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Remove payment method?</AlertDialogTitle>
+                              <AlertDialogTitle>
+                                Remove payment method?
+                              </AlertDialogTitle>
                               <AlertDialogDescription>
-                                This will remove the card ending in {method.cardLast4} from your account. 
-                                You can always add it again later.
+                                This will remove the card ending in{" "}
+                                {method.cardLast4} from your account. You can
+                                always add it again later.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
-                                onClick={() => handleDeletePaymentMethod(method.id)}
+                                onClick={() =>
+                                  handleDeletePaymentMethod(method.id)
+                                }
                                 className="bg-red-600 hover:bg-red-700"
                               >
                                 {deletingMethodId === method.id ? (
@@ -451,7 +497,10 @@ export default function ClientPortalSettings() {
                   {/* Security note */}
                   <div className="flex items-center gap-2 text-xs text-gray-500 pt-4 border-t mt-4">
                     <Shield className="w-4 h-4" />
-                    <span>Your card information is securely stored by Stripe. We never have access to your full card number.</span>
+                    <span>
+                      Your card information is securely stored by Stripe. We
+                      never have access to your full card number.
+                    </span>
                   </div>
                 </div>
               )}

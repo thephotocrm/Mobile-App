@@ -10,12 +10,15 @@ export default function SmartFileSuccess() {
 
   const { data, isLoading } = useQuery<any>({
     queryKey: [`/api/public/smart-files/${params?.token}`],
-    enabled: !!params?.token
+    enabled: !!params?.token,
   });
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background" data-testid="loading-state">
+      <div
+        className="min-h-screen flex items-center justify-center bg-background"
+        data-testid="loading-state"
+      >
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
           <p className="text-muted-foreground">Loading...</p>
@@ -35,14 +38,17 @@ export default function SmartFileSuccess() {
             Payment Successful!
           </CardTitle>
         </CardHeader>
-        
+
         <CardContent className="space-y-6 text-center">
           <div className="space-y-2">
             <p className="text-muted-foreground" data-testid="text-message">
-              Thank you for your payment. Your deposit has been processed successfully.
+              Thank you for your payment. Your deposit has been processed
+              successfully.
             </p>
             <p className="text-muted-foreground">
-              {data?.photographer?.businessName} will be in touch soon with next steps for your {data?.project?.projectType?.toLowerCase()} project.
+              {data?.photographer?.businessName} will be in touch soon with next
+              steps for your {data?.project?.projectType?.toLowerCase()}{" "}
+              project.
             </p>
           </div>
 
@@ -54,7 +60,10 @@ export default function SmartFileSuccess() {
               <div className="text-left space-y-1">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Project:</span>
-                  <span className="font-medium" data-testid="text-project-title">
+                  <span
+                    className="font-medium"
+                    data-testid="text-project-title"
+                  >
                     {data.project.title}
                   </span>
                 </div>
@@ -67,7 +76,10 @@ export default function SmartFileSuccess() {
                 {data.projectSmartFile?.depositCents && (
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Deposit Paid:</span>
-                    <span className="font-medium text-green-600 dark:text-green-500" data-testid="text-deposit-amount">
+                    <span
+                      className="font-medium text-green-600 dark:text-green-500"
+                      data-testid="text-deposit-amount"
+                    >
                       ${(data.projectSmartFile.depositCents / 100).toFixed(2)}
                     </span>
                   </div>
@@ -78,7 +90,8 @@ export default function SmartFileSuccess() {
 
           <div className="pt-4 space-y-3">
             <p className="text-sm text-muted-foreground">
-              You'll receive a confirmation email shortly with your payment receipt and next steps.
+              You'll receive a confirmation email shortly with your payment
+              receipt and next steps.
             </p>
             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
               <Camera className="w-4 h-4" />

@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from "express";
 
 declare global {
   namespace Express {
     interface Request {
       domain?: {
-        type: 'photographer' | 'client_portal' | 'dev';
+        type: "photographer" | "client_portal" | "dev";
         photographerSlug?: string;
         isCustomSubdomain?: boolean;
       };
@@ -13,8 +13,8 @@ declare global {
 }
 
 // Domain configuration
-const PHOTOGRAPHER_DOMAIN = 'thephotocrm.com';
-const CLIENT_PORTAL_DOMAIN = 'tpcportal.co';
+const PHOTOGRAPHER_DOMAIN = "thephotocrm.com";
+const CLIENT_PORTAL_DOMAIN = "tpcportal.co";
 const DEV_DOMAIN_PATTERN = /\.replit\.dev$/;
 
 /**
@@ -22,73 +22,84 @@ const DEV_DOMAIN_PATTERN = /\.replit\.dev$/;
  */
 export function detectDomain(req: Request, res: Response, next: NextFunction) {
   const hostname = req.hostname.toLowerCase();
-  
-  console.log('🌐 Domain detection:', hostname);
-  
+
+  console.log("🌐 Domain detection:", hostname);
+
   // Check if it's a dev/replit domain or localhost
-  if (DEV_DOMAIN_PATTERN.test(hostname) || hostname === 'localhost' || hostname === '127.0.0.1') {
+  if (
+    DEV_DOMAIN_PATTERN.test(hostname) ||
+    hostname === "localhost" ||
+    hostname === "127.0.0.1"
+  ) {
     req.domain = {
-      type: 'dev'
+      type: "dev",
     };
-    console.log('  → Development domain detected');
+    console.log("  → Development domain detected");
     next();
     return;
   }
-  
+
   // Check if it's the photographer domain (includes app subdomain)
-  if (hostname === PHOTOGRAPHER_DOMAIN || 
-      hostname === `www.${PHOTOGRAPHER_DOMAIN}` || 
-      hostname === `app.${PHOTOGRAPHER_DOMAIN}`) {
+  if (
+    hostname === PHOTOGRAPHER_DOMAIN ||
+    hostname === `www.${PHOTOGRAPHER_DOMAIN}` ||
+    hostname === `app.${PHOTOGRAPHER_DOMAIN}`
+  ) {
     req.domain = {
-      type: 'photographer'
+      type: "photographer",
     };
-    console.log('  → Photographer domain detected');
+    console.log("  → Photographer domain detected");
     next();
     return;
   }
-  
+
   // Check if it's the client portal domain or a subdomain of it
   if (hostname.endsWith(CLIENT_PORTAL_DOMAIN)) {
     // Extract subdomain if present
-    const parts = hostname.split('.');
-    
+    const parts = hostname.split(".");
+
     // If it's just tpcportal.co (no subdomain)
     if (hostname === CLIENT_PORTAL_DOMAIN) {
       req.domain = {
-        type: 'client_portal',
-        isCustomSubdomain: false
+        type: "client_portal",
+        isCustomSubdomain: false,
       };
-      console.log('  → Client portal base domain detected (no photographer slug)');
+      console.log(
+        "  → Client portal base domain detected (no photographer slug)",
+      );
       next();
       return;
     }
-    
+
     // Extract photographer slug from subdomain (e.g., "johnsphotography.tpcportal.co")
     const photographerSlug = parts[0];
-    
+
     req.domain = {
-      type: 'client_portal',
+      type: "client_portal",
       photographerSlug,
-      isCustomSubdomain: true
+      isCustomSubdomain: true,
     };
     console.log(`  → Client portal subdomain detected: ${photographerSlug}`);
     next();
     return;
   }
-  
+
   // SECURITY: Unknown domain - do not default to 'dev' to prevent unauthorized access
   console.warn(`⚠️ Unknown domain detected: ${hostname} - blocking access`);
-  console.warn('  → Only thephotocrm.com, *.tpcportal.co, and *.replit.dev are supported');
-  
+  console.warn(
+    "  → Only thephotocrm.com, *.tpcportal.co, and *.replit.dev are supported",
+  );
+
   // Don't set req.domain for unknown domains - this will cause /api/domain to return 500
   // EXCEPTION: Allow /api/domain through so frontend can detect unknown domain and show error
-  if (req.path.startsWith('/api/') && req.path !== '/api/domain') {
-    return res.status(404).json({ 
-      error: 'UNSUPPORTED_DOMAIN',
-      message: 'This domain is not configured. Please use thephotocrm.com or your photographer portal link.'
+  if (req.path.startsWith("/api/") && req.path !== "/api/domain") {
+    return res.status(404).json({
+      error: "UNSUPPORTED_DOMAIN",
+      message:
+        "This domain is not configured. Please use thephotocrm.com or your photographer portal link.",
     });
   }
-  
+
   // For frontend requests and /api/domain, let them through so React can load and show error
   next();
 }
@@ -96,53 +107,67 @@ export function detectDomain(req: Request, res: Response, next: NextFunction) {
 /**
  * Middleware to load photographer info based on subdomain slug
  * Should be used after detectDomain and authenticateToken
- * 
+ *
  * IMPORTANT: Only applies photographer lookup to API routes.
  * Frontend routes (HTML/assets) pass through so React can load and handle errors in UI.
  */
-export async function loadPhotographerFromSubdomain(req: Request, res: Response, next: NextFunction) {
+export async function loadPhotographerFromSubdomain(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   // Only apply to client portal subdomains
-  if (req.domain?.type !== 'client_portal' || !req.domain.isCustomSubdomain || !req.domain.photographerSlug) {
+  if (
+    req.domain?.type !== "client_portal" ||
+    !req.domain.isCustomSubdomain ||
+    !req.domain.photographerSlug
+  ) {
     next();
     return;
   }
-  
+
   // CRITICAL: Skip frontend routes - let Vite/React handle these
   // Only validate photographer for API requests
-  if (!req.path.startsWith('/api/')) {
-    console.log(`  → Skipping photographer lookup for frontend route: ${req.path}`);
+  if (!req.path.startsWith("/api/")) {
+    console.log(
+      `  → Skipping photographer lookup for frontend route: ${req.path}`,
+    );
     next();
     return;
   }
-  
+
   try {
-    const { storage } = await import('../storage');
+    const { storage } = await import("../storage");
     const slug = req.domain.photographerSlug;
-    
-    console.log(`🔍 Looking up photographer by slug: ${slug} for API route: ${req.path}`);
-    
+
+    console.log(
+      `🔍 Looking up photographer by slug: ${slug} for API route: ${req.path}`,
+    );
+
     // Find photographer by portal slug
     const photographer = await storage.getPhotographerByPortalSlug(slug);
-    
+
     if (!photographer) {
       console.log(`❌ No photographer found for slug: ${slug}`);
-      return res.status(404).json({ 
-        message: 'Client portal not found',
-        error: 'NO_PHOTOGRAPHER_FOR_SUBDOMAIN'
+      return res.status(404).json({
+        message: "Client portal not found",
+        error: "NO_PHOTOGRAPHER_FOR_SUBDOMAIN",
       });
     }
-    
-    console.log(`✅ Found photographer: ${photographer.businessName} (ID: ${photographer.id})`);
-    
+
+    console.log(
+      `✅ Found photographer: ${photographer.businessName} (ID: ${photographer.id})`,
+    );
+
     // Attach photographer to request for downstream use
     // NOTE: Tenant authorization check happens in enforceSubdomainTenantAuth middleware
     // which runs AFTER authenticateToken, so req.user is available
     req.photographerFromSubdomain = photographer;
-    
+
     next();
   } catch (error) {
-    console.error('Error loading photographer from subdomain:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error("Error loading photographer from subdomain:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 }
 
@@ -151,34 +176,50 @@ export async function loadPhotographerFromSubdomain(req: Request, res: Response,
  * MUST run AFTER authenticateToken so req.user is available
  * Use this on protected client portal routes
  */
-export function enforceSubdomainTenantAuth(req: Request, res: Response, next: NextFunction) {
+export function enforceSubdomainTenantAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   // Only enforce on client portal subdomains with authenticated users
   if (!req.photographerFromSubdomain || !req.user) {
     next();
     return;
   }
-  
+
   const subdomainPhotographerId = req.photographerFromSubdomain.id;
-  
+
   // For photographer users, verify they own this photographer account
-  if (req.user.role === 'PHOTOGRAPHER' && req.user.photographerId !== subdomainPhotographerId) {
-    console.log(`❌ SECURITY: Photographer ${req.user.photographerId} trying to access ${subdomainPhotographerId}'s subdomain`);
-    return res.status(403).json({ 
-      message: 'Access denied - wrong photographer portal',
-      error: 'CROSS_TENANT_ACCESS_DENIED'
+  if (
+    req.user.role === "PHOTOGRAPHER" &&
+    req.user.photographerId !== subdomainPhotographerId
+  ) {
+    console.log(
+      `❌ SECURITY: Photographer ${req.user.photographerId} trying to access ${subdomainPhotographerId}'s subdomain`,
+    );
+    return res.status(403).json({
+      message: "Access denied - wrong photographer portal",
+      error: "CROSS_TENANT_ACCESS_DENIED",
     });
   }
-  
+
   // For client users, verify they belong to this photographer
-  if (req.user.role === 'CLIENT' && req.user.photographerId !== subdomainPhotographerId) {
-    console.log(`❌ SECURITY: Client of photographer ${req.user.photographerId} trying to access ${subdomainPhotographerId}'s subdomain`);
-    return res.status(403).json({ 
-      message: 'Access denied - wrong client portal',
-      error: 'CROSS_TENANT_ACCESS_DENIED'
+  if (
+    req.user.role === "CLIENT" &&
+    req.user.photographerId !== subdomainPhotographerId
+  ) {
+    console.log(
+      `❌ SECURITY: Client of photographer ${req.user.photographerId} trying to access ${subdomainPhotographerId}'s subdomain`,
+    );
+    return res.status(403).json({
+      message: "Access denied - wrong client portal",
+      error: "CROSS_TENANT_ACCESS_DENIED",
     });
   }
-  
-  console.log(`✅ SECURITY: User ${req.user.email} authorized for photographer ${subdomainPhotographerId}`);
+
+  console.log(
+    `✅ SECURITY: User ${req.user.email} authorized for photographer ${subdomainPhotographerId}`,
+  );
   next();
 }
 

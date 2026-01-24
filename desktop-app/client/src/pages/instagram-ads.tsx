@@ -1,6 +1,19 @@
 import { SiInstagram } from "react-icons/si";
-import { TrendingUp, Target, DollarSign, Users, BarChart3, Heart } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  TrendingUp,
+  Target,
+  DollarSign,
+  Users,
+  BarChart3,
+  Heart,
+} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function InstagramAds() {
   return (
@@ -13,7 +26,9 @@ export default function InstagramAds() {
           </div>
           <div>
             <h1 className="text-3xl font-bold">Instagram Ads</h1>
-            <p className="text-muted-foreground">Reach engaged couples on Instagram with stunning visual ads</p>
+            <p className="text-muted-foreground">
+              Reach engaged couples on Instagram with stunning visual ads
+            </p>
           </div>
         </div>
       </div>
@@ -27,7 +42,8 @@ export default function InstagramAds() {
             </div>
             <CardTitle className="text-lg">Visual Storytelling</CardTitle>
             <CardDescription>
-              Showcase your best photography work with Stories, Reels, and feed ads that capture attention
+              Showcase your best photography work with Stories, Reels, and feed
+              ads that capture attention
             </CardDescription>
           </CardHeader>
         </Card>
@@ -39,7 +55,8 @@ export default function InstagramAds() {
             </div>
             <CardTitle className="text-lg">Engaged Audience</CardTitle>
             <CardDescription>
-              Target recently engaged couples actively browsing wedding inspiration on Instagram
+              Target recently engaged couples actively browsing wedding
+              inspiration on Instagram
             </CardDescription>
           </CardHeader>
         </Card>
@@ -51,7 +68,8 @@ export default function InstagramAds() {
             </div>
             <CardTitle className="text-lg">Story & Reel Ads</CardTitle>
             <CardDescription>
-              Run high-converting ads in Stories and Reels where couples spend most of their time
+              Run high-converting ads in Stories and Reels where couples spend
+              most of their time
             </CardDescription>
           </CardHeader>
         </Card>
@@ -63,7 +81,8 @@ export default function InstagramAds() {
             </div>
             <CardTitle className="text-lg">Cost-Effective</CardTitle>
             <CardDescription>
-              Lower CPMs than other platforms with highly engaged audiences for wedding vendors
+              Lower CPMs than other platforms with highly engaged audiences for
+              wedding vendors
             </CardDescription>
           </CardHeader>
         </Card>
@@ -75,7 +94,8 @@ export default function InstagramAds() {
             </div>
             <CardTitle className="text-lg">Lead Forms</CardTitle>
             <CardDescription>
-              Capture leads directly in Instagram without leaving the app for seamless conversions
+              Capture leads directly in Instagram without leaving the app for
+              seamless conversions
             </CardDescription>
           </CardHeader>
         </Card>
@@ -87,7 +107,8 @@ export default function InstagramAds() {
             </div>
             <CardTitle className="text-lg">Performance Insights</CardTitle>
             <CardDescription>
-              Track engagement, reach, and lead quality with Instagram's powerful analytics
+              Track engagement, reach, and lead quality with Instagram's
+              powerful analytics
             </CardDescription>
           </CardHeader>
         </Card>
@@ -102,7 +123,9 @@ export default function InstagramAds() {
             </div>
             <h2 className="text-2xl font-bold mb-3">Coming Soon</h2>
             <p className="text-muted-foreground max-w-md mx-auto mb-6">
-              We're building an amazing Instagram Ads integration that will help you reach engaged couples with stunning visual campaigns. Stay tuned!
+              We're building an amazing Instagram Ads integration that will help
+              you reach engaged couples with stunning visual campaigns. Stay
+              tuned!
             </p>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />

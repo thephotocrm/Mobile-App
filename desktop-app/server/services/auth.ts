@@ -1,9 +1,9 @@
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { storage } from '../storage';
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { storage } from "../storage";
 
 if (!process.env.JWT_SECRET) {
-  throw new Error('JWT_SECRET environment variable must be set');
+  throw new Error("JWT_SECRET environment variable must be set");
 }
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -21,12 +21,15 @@ export async function hashPassword(password: string): Promise<string> {
   return await bcrypt.hash(password, 10);
 }
 
-export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+export async function verifyPassword(
+  password: string,
+  hash: string,
+): Promise<boolean> {
   return await bcrypt.compare(password, hash);
 }
 
 export function generateToken(payload: JwtPayload): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
 }
 
 export function verifyToken(token: string): JwtPayload | null {
@@ -37,29 +40,39 @@ export function verifyToken(token: string): JwtPayload | null {
   }
 }
 
-export async function authenticateUser(email: string, password: string, options?: { role?: string; photographerId?: string }) {
+export async function authenticateUser(
+  email: string,
+  password: string,
+  options?: { role?: string; photographerId?: string },
+) {
   let user: any;
-  
+
   // Role must always be provided to avoid ambiguous lookups
   if (!options?.role) {
     return null;
   }
-  
+
   // For CLIENT logins, photographerId is required for tenant isolation
-  if (options.role === 'CLIENT') {
+  if (options.role === "CLIENT") {
     if (!options.photographerId) {
-      console.error('CLIENT login attempted without photographerId - rejecting for security');
+      console.error(
+        "CLIENT login attempted without photographerId - rejecting for security",
+      );
       return null;
     }
-    user = await storage.getUserByEmailRolePhotographer(email, 'CLIENT', options.photographerId);
-  } else if (options.role === 'PHOTOGRAPHER' || options.role === 'ADMIN') {
+    user = await storage.getUserByEmailRolePhotographer(
+      email,
+      "CLIENT",
+      options.photographerId,
+    );
+  } else if (options.role === "PHOTOGRAPHER" || options.role === "ADMIN") {
     // For PHOTOGRAPHER/ADMIN, use role-specific lookup to avoid cross-tenant access
     user = await storage.getUserByEmailAndRole(email, options.role);
   } else {
     // Unknown role
     return null;
   }
-  
+
   if (!user) {
     return null;
   }
@@ -72,7 +85,7 @@ export async function authenticateUser(email: string, password: string, options?
   const payload: JwtPayload = {
     userId: user.id,
     role: user.role,
-    photographerId: user.photographerId || undefined
+    photographerId: user.photographerId || undefined,
   };
 
   const token = generateToken(payload);

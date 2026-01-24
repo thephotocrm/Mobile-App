@@ -80,14 +80,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         storedToken = await getSecureItem(TOKEN_KEY);
       } catch (storageError) {
-        console.warn("SecureStore token read failed, clearing auth:", storageError);
+        console.warn(
+          "SecureStore token read failed, clearing auth:",
+          storageError,
+        );
         storedToken = null;
       }
 
       try {
         storedUser = await getSecureItem(USER_KEY);
       } catch (storageError) {
-        console.warn("SecureStore user read failed, clearing auth:", storageError);
+        console.warn(
+          "SecureStore user read failed, clearing auth:",
+          storageError,
+        );
         storedUser = null;
       }
 

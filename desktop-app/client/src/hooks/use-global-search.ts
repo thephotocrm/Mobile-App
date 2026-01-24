@@ -32,10 +32,9 @@ export interface SearchResults {
 }
 
 async function fetchSearch(query: string): Promise<SearchResults> {
-  const response = await fetch(
-    `/api/search?q=${encodeURIComponent(query)}`,
-    { credentials: "include" }
-  );
+  const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
+    credentials: "include",
+  });
   if (!response.ok) {
     throw new Error("Search failed");
   }
@@ -53,11 +52,11 @@ export function useGlobalSearch(enabled: boolean = true) {
     staleTime: 30000,
   });
 
-  const hasResults = searchQuery.data && (
-    searchQuery.data.contacts.length > 0 ||
-    searchQuery.data.projects.length > 0 ||
-    searchQuery.data.smartFiles.length > 0
-  );
+  const hasResults =
+    searchQuery.data &&
+    (searchQuery.data.contacts.length > 0 ||
+      searchQuery.data.projects.length > 0 ||
+      searchQuery.data.smartFiles.length > 0);
 
   return {
     query,
@@ -66,7 +65,7 @@ export function useGlobalSearch(enabled: boolean = true) {
     isLoading: searchQuery.isLoading && debouncedQuery.length >= 2,
     error: searchQuery.error,
     hasResults,
-    isSearching: debouncedQuery.length >= 2
+    isSearching: debouncedQuery.length >= 2,
   };
 }
 
@@ -76,7 +75,9 @@ export function useRecentItems(enabled: boolean = true) {
   const contactsQuery = useQuery<SearchContact[]>({
     queryKey: ["/api/contacts/recent"],
     queryFn: async () => {
-      const response = await fetch("/api/contacts/recent", { credentials: "include" });
+      const response = await fetch("/api/contacts/recent", {
+        credentials: "include",
+      });
       if (!response.ok) throw new Error("Failed to fetch recent contacts");
       return response.json();
     },
@@ -89,7 +90,9 @@ export function useRecentItems(enabled: boolean = true) {
   const projectsQuery = useQuery<SearchProject[]>({
     queryKey: ["/api/projects/recent"],
     queryFn: async () => {
-      const response = await fetch("/api/projects/recent", { credentials: "include" });
+      const response = await fetch("/api/projects/recent", {
+        credentials: "include",
+      });
       if (!response.ok) throw new Error("Failed to fetch recent projects");
       return response.json();
     },

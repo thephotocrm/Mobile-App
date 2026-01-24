@@ -2,7 +2,13 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { apiRequest } from "@/lib/queryClient";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -74,16 +80,20 @@ export function StageManager() {
     queryKey: ["/api/stages"],
     queryFn: async () => {
       const response = await fetch(`/api/stages`, {
-        credentials: 'include'
+        credentials: "include",
       });
-      if (!response.ok) throw new Error('Failed to fetch stages');
+      if (!response.ok) throw new Error("Failed to fetch stages");
       return response.json();
     },
-    enabled: !!user
+    enabled: !!user,
   });
 
   const createStageMutation = useMutation({
-    mutationFn: async (data: { name: string; color: string; orderIndex: number }) => {
+    mutationFn: async (data: {
+      name: string;
+      color: string;
+      orderIndex: number;
+    }) => {
       return apiRequest("POST", "/api/stages", data);
     },
     onSuccess: () => {
@@ -94,12 +104,24 @@ export function StageManager() {
       toast({ title: "Stage created successfully" });
     },
     onError: (error: any) => {
-      toast({ title: "Failed to create stage", description: error.message, variant: "destructive" });
-    }
+      toast({
+        title: "Failed to create stage",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
 
   const updateStageMutation = useMutation({
-    mutationFn: async ({ id, ...data }: { id: string; name?: string; color?: string; orderIndex?: number }) => {
+    mutationFn: async ({
+      id,
+      ...data
+    }: {
+      id: string;
+      name?: string;
+      color?: string;
+      orderIndex?: number;
+    }) => {
       return apiRequest("PATCH", `/api/stages/${id}`, data);
     },
     onSuccess: () => {
@@ -109,13 +131,28 @@ export function StageManager() {
       toast({ title: "Stage updated successfully" });
     },
     onError: (error: any) => {
-      toast({ title: "Failed to update stage", description: error.message, variant: "destructive" });
-    }
+      toast({
+        title: "Failed to update stage",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
 
   const deleteStageMutation = useMutation({
-    mutationFn: async ({ id, reassignToStageId, force }: { id: string; reassignToStageId?: string; force?: boolean }) => {
-      return apiRequest("DELETE", `/api/stages/${id}`, { reassignToStageId, force });
+    mutationFn: async ({
+      id,
+      reassignToStageId,
+      force,
+    }: {
+      id: string;
+      reassignToStageId?: string;
+      force?: boolean;
+    }) => {
+      return apiRequest("DELETE", `/api/stages/${id}`, {
+        reassignToStageId,
+        force,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/stages"] });
@@ -126,17 +163,22 @@ export function StageManager() {
       toast({ title: "Stage deleted successfully" });
     },
     onError: (error: any) => {
-      toast({ title: "Failed to delete stage", description: error.message, variant: "destructive" });
-    }
+      toast({
+        title: "Failed to delete stage",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
 
   const handleAddStage = () => {
     if (!newStageName.trim()) return;
-    const maxOrder = stages.length > 0 ? Math.max(...stages.map(s => s.orderIndex)) : 0;
+    const maxOrder =
+      stages.length > 0 ? Math.max(...stages.map((s) => s.orderIndex)) : 0;
     createStageMutation.mutate({
       name: newStageName.trim(),
       color: newStageColor,
-      orderIndex: maxOrder + 1
+      orderIndex: maxOrder + 1,
     });
   };
 
@@ -145,7 +187,7 @@ export function StageManager() {
     updateStageMutation.mutate({
       id: editingStage.id,
       name: editStageName.trim(),
-      color: editStageColor
+      color: editStageColor,
     });
   };
 
@@ -159,7 +201,9 @@ export function StageManager() {
   const handleStartDelete = async (stage: Stage) => {
     setDeletingStage(stage);
     try {
-      const response = await fetch(`/api/stages/${stage.id}/usage`, { credentials: 'include' });
+      const response = await fetch(`/api/stages/${stage.id}/usage`, {
+        credentials: "include",
+      });
       if (response.ok) {
         const data = await response.json();
         setDeleteStats(data.stats);
@@ -172,28 +216,38 @@ export function StageManager() {
 
   const handleConfirmDelete = () => {
     if (!deletingStage) return;
-    
+
     const hasProjects = deleteStats && deleteStats.projectCount > 0;
     if (hasProjects && !reassignToStageId) {
-      toast({ 
-        title: "Please select a stage to reassign projects", 
-        variant: "destructive" 
+      toast({
+        title: "Please select a stage to reassign projects",
+        variant: "destructive",
       });
       return;
     }
-    
+
     deleteStageMutation.mutate({
       id: deletingStage.id,
       reassignToStageId: reassignToStageId || undefined,
-      force: true
+      force: true,
     });
   };
 
-  const availableReassignStages = stages.filter(s => s.id !== deletingStage?.id);
+  const availableReassignStages = stages.filter(
+    (s) => s.id !== deletingStage?.id,
+  );
 
   const predefinedColors = [
-    "#64748b", "#ef4444", "#f97316", "#eab308", "#22c55e", 
-    "#14b8a6", "#3b82f6", "#6366f1", "#a855f7", "#ec4899"
+    "#64748b",
+    "#ef4444",
+    "#f97316",
+    "#eab308",
+    "#22c55e",
+    "#14b8a6",
+    "#3b82f6",
+    "#6366f1",
+    "#a855f7",
+    "#ec4899",
   ];
 
   return (
@@ -204,8 +258,9 @@ export function StageManager() {
             <div>
               <CardTitle>Pipeline Stages</CardTitle>
               <CardDescription>
-                Manage the stages in your project pipeline. Projects move through these stages as they progress.
-                These stages apply to all project types.
+                Manage the stages in your project pipeline. Projects move
+                through these stages as they progress. These stages apply to all
+                project types.
               </CardDescription>
             </div>
             <Button
@@ -249,7 +304,9 @@ export function StageManager() {
                     <div className="flex items-center gap-2">
                       <span className="font-medium truncate">{stage.name}</span>
                       {stage.isDefault && (
-                        <Badge variant="secondary" className="text-xs">Default</Badge>
+                        <Badge variant="secondary" className="text-xs">
+                          Default
+                        </Badge>
                       )}
                     </div>
                     <span className="text-xs text-muted-foreground">
@@ -270,7 +327,11 @@ export function StageManager() {
                       size="icon"
                       onClick={() => handleStartDelete(stage)}
                       disabled={stages.length <= 1}
-                      title={stages.length <= 1 ? "Cannot delete the only stage" : undefined}
+                      title={
+                        stages.length <= 1
+                          ? "Cannot delete the only stage"
+                          : undefined
+                      }
                       data-testid={`button-delete-stage-${stage.id}`}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -288,7 +349,8 @@ export function StageManager() {
           <DialogHeader>
             <DialogTitle>Add New Stage</DialogTitle>
             <DialogDescription>
-              Create a new stage for your project pipeline. This stage will apply to all project types.
+              Create a new stage for your project pipeline. This stage will
+              apply to all project types.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -309,12 +371,14 @@ export function StageManager() {
                   <button
                     key={color}
                     className={`w-8 h-8 rounded-full border-2 transition-all ${
-                      newStageColor === color ? "border-foreground scale-110" : "border-transparent"
+                      newStageColor === color
+                        ? "border-foreground scale-110"
+                        : "border-transparent"
                     }`}
                     style={{ backgroundColor: color }}
                     onClick={() => setNewStageColor(color)}
                     type="button"
-                    data-testid={`color-option-${color.replace('#', '')}`}
+                    data-testid={`color-option-${color.replace("#", "")}`}
                   />
                 ))}
               </div>
@@ -360,7 +424,9 @@ export function StageManager() {
                   <button
                     key={color}
                     className={`w-8 h-8 rounded-full border-2 transition-all ${
-                      editStageColor === color ? "border-foreground scale-110" : "border-transparent"
+                      editStageColor === color
+                        ? "border-foreground scale-110"
+                        : "border-transparent"
                     }`}
                     style={{ backgroundColor: color }}
                     onClick={() => setEditStageColor(color)}
@@ -371,7 +437,10 @@ export function StageManager() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsEditDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button
@@ -385,7 +454,10 @@ export function StageManager() {
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
@@ -396,33 +468,50 @@ export function StageManager() {
               <div className="space-y-4">
                 {stages.length <= 1 ? (
                   <p className="text-destructive">
-                    You cannot delete the only stage. You need at least one stage in your pipeline.
+                    You cannot delete the only stage. You need at least one
+                    stage in your pipeline.
                   </p>
                 ) : (
                   <>
                     {deletingStage?.isDefault && (
                       <p className="text-amber-600 dark:text-amber-400 text-sm mb-2">
-                        Note: This is the default stage. Another stage will be promoted to default automatically.
+                        Note: This is the default stage. Another stage will be
+                        promoted to default automatically.
                       </p>
                     )}
-                    {deleteStats && (deleteStats.projectCount > 0 || deleteStats.automationCount > 0 || deleteStats.campaignCount > 0) ? (
+                    {deleteStats &&
+                    (deleteStats.projectCount > 0 ||
+                      deleteStats.automationCount > 0 ||
+                      deleteStats.campaignCount > 0) ? (
                       <div className="space-y-3">
                         <p>This stage is currently being used:</p>
                         <ul className="list-disc list-inside space-y-1 text-sm">
                           {deleteStats.projectCount > 0 && (
-                            <li>{deleteStats.projectCount} project{deleteStats.projectCount !== 1 ? 's' : ''}</li>
+                            <li>
+                              {deleteStats.projectCount} project
+                              {deleteStats.projectCount !== 1 ? "s" : ""}
+                            </li>
                           )}
                           {deleteStats.automationCount > 0 && (
-                            <li>{deleteStats.automationCount} automation{deleteStats.automationCount !== 1 ? 's' : ''}</li>
+                            <li>
+                              {deleteStats.automationCount} automation
+                              {deleteStats.automationCount !== 1 ? "s" : ""}
+                            </li>
                           )}
                           {deleteStats.campaignCount > 0 && (
-                            <li>{deleteStats.campaignCount} campaign{deleteStats.campaignCount !== 1 ? 's' : ''}</li>
+                            <li>
+                              {deleteStats.campaignCount} campaign
+                              {deleteStats.campaignCount !== 1 ? "s" : ""}
+                            </li>
                           )}
                         </ul>
                         {deleteStats.projectCount > 0 && (
                           <div className="space-y-2 pt-2">
                             <Label>Move projects to:</Label>
-                            <Select value={reassignToStageId} onValueChange={setReassignToStageId}>
+                            <Select
+                              value={reassignToStageId}
+                              onValueChange={setReassignToStageId}
+                            >
                               <SelectTrigger data-testid="select-reassign-stage">
                                 <SelectValue placeholder="Select a stage..." />
                               </SelectTrigger>
@@ -437,11 +526,15 @@ export function StageManager() {
                           </div>
                         )}
                         <p className="text-sm text-muted-foreground pt-2">
-                          Note: Automations and campaigns referencing this stage may need to be updated manually.
+                          Note: Automations and campaigns referencing this stage
+                          may need to be updated manually.
                         </p>
                       </div>
                     ) : (
-                      <p>Are you sure you want to delete this stage? This action cannot be undone.</p>
+                      <p>
+                        Are you sure you want to delete this stage? This action
+                        cannot be undone.
+                      </p>
                     )}
                   </>
                 )}
@@ -449,17 +542,22 @@ export function StageManager() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => {
-              setDeletingStage(null);
-              setDeleteStats(null);
-              setReassignToStageId("");
-            }}>
+            <AlertDialogCancel
+              onClick={() => {
+                setDeletingStage(null);
+                setDeleteStats(null);
+                setReassignToStageId("");
+              }}
+            >
               Cancel
             </AlertDialogCancel>
             {stages.length > 1 && (
               <AlertDialogAction
                 onClick={handleConfirmDelete}
-                disabled={deleteStageMutation.isPending || (deleteStats?.projectCount! > 0 && !reassignToStageId)}
+                disabled={
+                  deleteStageMutation.isPending ||
+                  (deleteStats?.projectCount! > 0 && !reassignToStageId)
+                }
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 data-testid="button-confirm-delete-stage"
               >

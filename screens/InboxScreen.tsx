@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -6,7 +6,6 @@ import {
   FlatList,
   RefreshControl,
   TextInput,
-  Alert,
 } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -14,6 +13,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { ConversationCard } from "@/components/ConversationCard";
+import { ContactPickerModal } from "@/components/ContactPickerModal";
 import { ThemedText } from "@/components/ThemedText";
 import { Skeleton } from "@/components/Skeleton";
 import { InboxStackParamList } from "@/navigation/InboxStackNavigator";
@@ -26,12 +26,14 @@ import {
 import { useTheme } from "@/hooks/useTheme";
 import { useScreenInsets } from "@/hooks/useScreenInsets";
 import { useAuth } from "@/contexts/AuthContext";
-import { inboxApi, createTenantContext } from "@/services/api";
+import { inboxApi, createTenantContext, Contact } from "@/services/api";
 
 type NavigationProp = NativeStackNavigationProp<
   InboxStackParamList,
   "InboxList"
 >;
+
+type FilterTab = "all" | "unread" | "archived";
 
 interface ConversationItem {
   contactId: string;
@@ -41,6 +43,7 @@ interface ConversationItem {
   unreadCount: number;
   channel: "SMS" | "EMAIL";
   isYou?: boolean;
+  isArchived?: boolean;
 }
 
 const formatTimestamp = (dateString?: string): string => {
@@ -105,6 +108,80 @@ const ConversationSkeleton = () => {
   );
 };
 
+// Filter tab component
+const FilterTabs = ({
+  activeTab,
+  onTabChange,
+  unreadCount,
+}: {
+  activeTab: FilterTab;
+  onTabChange: (tab: FilterTab) => void;
+  unreadCount: number;
+}) => {
+  const { theme, isDark } = useTheme();
+
+  const tabs: { key: FilterTab; label: string; badge?: number }[] = [
+    { key: "all", label: "All" },
+    {
+      key: "unread",
+      label: "Unread",
+      badge: unreadCount > 0 ? unreadCount : undefined,
+    },
+    { key: "archived", label: "Archived" },
+  ];
+
+  return (
+    <View style={styles.filterTabsContainer}>
+      {tabs.map((tab) => {
+        const isActive = activeTab === tab.key;
+        return (
+          <Pressable
+            key={tab.key}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              onTabChange(tab.key);
+            }}
+            style={[
+              styles.filterTab,
+              isActive && {
+                backgroundColor: isDark
+                  ? `${MessagingColors.primary}30`
+                  : `${MessagingColors.primary}15`,
+              },
+            ]}
+          >
+            <ThemedText
+              style={[
+                styles.filterTabText,
+                {
+                  color: isActive
+                    ? MessagingColors.primary
+                    : theme.textSecondary,
+                },
+                isActive && styles.filterTabTextActive,
+              ]}
+            >
+              {tab.label}
+            </ThemedText>
+            {tab.badge && (
+              <View
+                style={[
+                  styles.filterTabBadge,
+                  { backgroundColor: MessagingColors.primary },
+                ]}
+              >
+                <ThemedText style={styles.filterTabBadgeText}>
+                  {tab.badge > 99 ? "99+" : tab.badge}
+                </ThemedText>
+              </View>
+            )}
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+};
+
 export default function InboxScreen() {
   const { theme, isDark } = useTheme();
   const { token, user } = useAuth();
@@ -116,24 +193,85 @@ export default function InboxScreen() {
   const [allConversations, setAllConversations] = useState<ConversationItem[]>(
     [],
   );
+  const [archivedConversations, setArchivedConversations] = useState<
+    Set<string>
+  >(new Set());
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<FilterTab>("all");
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showContactPicker, setShowContactPicker] = useState(false);
 
   const searchInputRef = useRef<TextInput>(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const hasLoadedOnce = useRef(false);
 
-  // Filter conversations client-side (no API call)
-  const filteredConversations = React.useMemo(() => {
-    if (!searchQuery.trim()) return allConversations;
+  // Debounce search query
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
 
-    const query = searchQuery.trim().toLowerCase();
-    return allConversations.filter(
-      (conversation) =>
-        conversation.contactName.toLowerCase().includes(query) ||
-        conversation.lastMessage.toLowerCase().includes(query),
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [searchQuery]);
+
+  // Calculate total unread count
+  const totalUnreadCount = React.useMemo(() => {
+    return allConversations.reduce(
+      (sum, conv) =>
+        sum +
+        (!archivedConversations.has(conv.contactId) ? conv.unreadCount : 0),
+      0,
     );
-  }, [allConversations, searchQuery]);
+  }, [allConversations, archivedConversations]);
+
+  // Filter conversations based on search and tab
+  const filteredConversations = React.useMemo(() => {
+    let result = allConversations;
+
+    // Filter by tab
+    if (activeTab === "unread") {
+      result = result.filter(
+        (conv) =>
+          conv.unreadCount > 0 && !archivedConversations.has(conv.contactId),
+      );
+    } else if (activeTab === "archived") {
+      result = result.filter((conv) =>
+        archivedConversations.has(conv.contactId),
+      );
+    } else {
+      // "all" tab - exclude archived
+      result = result.filter(
+        (conv) => !archivedConversations.has(conv.contactId),
+      );
+    }
+
+    // Filter by search query
+    if (debouncedSearchQuery.trim()) {
+      const query = debouncedSearchQuery.trim().toLowerCase();
+      result = result.filter(
+        (conversation) =>
+          conversation.contactName.toLowerCase().includes(query) ||
+          conversation.lastMessage.toLowerCase().includes(query),
+      );
+    }
+
+    return result;
+  }, [
+    allConversations,
+    debouncedSearchQuery,
+    activeTab,
+    archivedConversations,
+  ]);
 
   const loadConversations = async (isRefresh = false) => {
     if (!token) {
@@ -142,7 +280,10 @@ export default function InboxScreen() {
     }
 
     try {
-      if (!isRefresh) setLoading(true);
+      // Only show skeleton on initial load, not on refocus
+      if (!isRefresh && !hasLoadedOnce.current) {
+        setLoading(true);
+      }
       setError(null);
 
       // Create tenant context for multi-tenant routing
@@ -173,6 +314,7 @@ export default function InboxScreen() {
       });
 
       setAllConversations(result);
+      hasLoadedOnce.current = true;
     } catch (err) {
       console.error("Error loading conversations:", err);
       setError("Failed to load conversations");
@@ -196,15 +338,70 @@ export default function InboxScreen() {
 
   const handleConversationPress = (conversation: ConversationItem) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    // Clear unread count locally when opening conversation
+    if (conversation.unreadCount > 0) {
+      setAllConversations((prev) =>
+        prev.map((conv) =>
+          conv.contactId === conversation.contactId
+            ? { ...conv, unreadCount: 0 }
+            : conv,
+        ),
+      );
+    }
+
     navigation.navigate("ThreadDetail", {
       conversationId: conversation.contactId,
       contactName: conversation.contactName,
     });
   };
 
+  const handleArchive = (contactId: string) => {
+    setArchivedConversations((prev) => {
+      const newSet = new Set(prev);
+      newSet.add(contactId);
+      return newSet;
+    });
+    // Show toast or feedback
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  };
+
+  const handleMarkUnread = (contactId: string) => {
+    setAllConversations((prev) =>
+      prev.map((conv) =>
+        conv.contactId === contactId
+          ? { ...conv, unreadCount: Math.max(conv.unreadCount, 1) }
+          : conv,
+      ),
+    );
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  };
+
+  const handleUnarchive = (contactId: string) => {
+    setArchivedConversations((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(contactId);
+      return newSet;
+    });
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  };
+
   const handleNewMessage = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    Alert.alert("New Message", "Select a contact to start a new conversation");
+    setShowContactPicker(true);
+  };
+
+  const handleSelectContact = (contact: Contact) => {
+    const contactName = `${contact.firstName} ${contact.lastName}`.trim();
+    navigation.navigate("ThreadDetail", {
+      conversationId: contact.id,
+      contactName,
+    });
+  };
+
+  const handleStartConversation = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setShowContactPicker(true);
   };
 
   useFocusEffect(
@@ -214,18 +411,30 @@ export default function InboxScreen() {
   );
 
   const renderConversation = useCallback(
-    ({ item, index }: { item: ConversationItem; index: number }) => (
-      <ConversationCard
-        contactName={item.contactName}
-        lastMessage={item.lastMessage}
-        timestamp={item.timestamp}
-        unreadCount={item.unreadCount}
-        isYou={item.isYou}
-        isLast={index === filteredConversations.length - 1}
-        onPress={() => handleConversationPress(item)}
-      />
-    ),
-    [filteredConversations.length],
+    ({ item, index }: { item: ConversationItem; index: number }) => {
+      const isArchived = archivedConversations.has(item.contactId);
+
+      return (
+        <ConversationCard
+          contactName={item.contactName}
+          lastMessage={item.lastMessage}
+          timestamp={item.timestamp}
+          unreadCount={item.unreadCount}
+          isYou={item.isYou}
+          isLast={index === filteredConversations.length - 1}
+          onPress={() => handleConversationPress(item)}
+          onArchive={
+            isArchived ? undefined : () => handleArchive(item.contactId)
+          }
+          onMarkUnread={
+            isArchived
+              ? () => handleUnarchive(item.contactId)
+              : () => handleMarkUnread(item.contactId)
+          }
+        />
+      );
+    },
+    [filteredConversations.length, archivedConversations],
   );
 
   const renderHeader = () => (
@@ -275,6 +484,13 @@ export default function InboxScreen() {
           </Pressable>
         )}
       </View>
+
+      {/* Filter tabs */}
+      <FilterTabs
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        unreadCount={totalUnreadCount}
+      />
     </View>
   );
 
@@ -286,16 +502,44 @@ export default function InboxScreen() {
           { backgroundColor: `${MessagingColors.primary}15` },
         ]}
       >
-        <Feather name="inbox" size={32} color={MessagingColors.primary} />
+        <Feather
+          name={activeTab === "archived" ? "archive" : "inbox"}
+          size={36}
+          color={MessagingColors.primary}
+        />
       </View>
       <ThemedText style={[styles.emptyTitle, { color: theme.text }]}>
-        {searchQuery ? "No results found" : "No conversations yet"}
+        {debouncedSearchQuery
+          ? "No results found"
+          : activeTab === "archived"
+            ? "No archived conversations"
+            : activeTab === "unread"
+              ? "All caught up!"
+              : "No conversations yet"}
       </ThemedText>
       <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
-        {searchQuery
-          ? `No conversations match "${searchQuery}"`
-          : "Start a conversation with a client to see it here"}
+        {debouncedSearchQuery
+          ? `No conversations match "${debouncedSearchQuery}"`
+          : activeTab === "archived"
+            ? "Archived conversations will appear here"
+            : activeTab === "unread"
+              ? "You have no unread messages"
+              : "Start messaging your clients to stay connected"}
       </ThemedText>
+      {!debouncedSearchQuery && activeTab === "all" && (
+        <Pressable
+          onPress={handleStartConversation}
+          style={[
+            styles.emptyButton,
+            { backgroundColor: MessagingColors.primary },
+          ]}
+        >
+          <Feather name="message-circle" size={18} color="#FFFFFF" />
+          <ThemedText style={styles.emptyButtonText}>
+            Start a Conversation
+          </ThemedText>
+        </Pressable>
+      )}
     </View>
   );
 
@@ -396,6 +640,13 @@ export default function InboxScreen() {
       >
         <Feather name="plus" size={24} color="#FFFFFF" />
       </Pressable>
+
+      {/* Contact Picker Modal */}
+      <ContactPickerModal
+        visible={showContactPicker}
+        onClose={() => setShowContactPicker(false)}
+        onSelectContact={handleSelectContact}
+      />
     </View>
   );
 }
@@ -414,7 +665,41 @@ const styles = StyleSheet.create({
   headerContainer: {
     paddingHorizontal: Spacing.screenHorizontal,
     paddingTop: Spacing.sm,
-    paddingBottom: Spacing.md,
+    paddingBottom: Spacing.sm,
+    gap: Spacing.sm,
+  },
+  // Filter tabs
+  filterTabsContainer: {
+    flexDirection: "row",
+    gap: Spacing.sm,
+  },
+  filterTab: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs + 2,
+    borderRadius: 20,
+    gap: 6,
+  },
+  filterTabText: {
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  filterTabTextActive: {
+    fontWeight: "600",
+  },
+  filterTabBadge: {
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 5,
+  },
+  filterTabBadgeText: {
+    color: "#FFFFFF",
+    fontSize: 11,
+    fontWeight: "700",
   },
   // Search styles
   searchWrapper: {
@@ -470,21 +755,35 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   emptyIconCircle: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     justifyContent: "center",
     alignItems: "center",
   },
   emptyTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "600",
     textAlign: "center",
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: 15,
     textAlign: "center",
-    lineHeight: 20,
+    lineHeight: 22,
+  },
+  emptyButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm + 2,
+    borderRadius: BorderRadius.md,
+    marginTop: Spacing.sm,
+  },
+  emptyButtonText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "600",
   },
   // Error state styles
   errorContainer: {

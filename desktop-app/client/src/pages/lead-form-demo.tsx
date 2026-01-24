@@ -127,7 +127,11 @@ export default function LeadFormDemo() {
                   data-testid="checkbox-smsoptin"
                 />
                 <span className="text-xs text-gray-700 leading-relaxed">
-                  By submitting this form, you agree to receive SMS messages from <strong>ThePhotoCRM</strong> at the phone number provided. Message & data rates may apply. Message frequency varies based on your interaction with us. You may reply STOP to unsubscribe or HELP for assistance. For details, view our{" "}
+                  By submitting this form, you agree to receive SMS messages
+                  from <strong>ThePhotoCRM</strong> at the phone number
+                  provided. Message & data rates may apply. Message frequency
+                  varies based on your interaction with us. You may reply STOP
+                  to unsubscribe or HELP for assistance. For details, view our{" "}
                   <a href="#" className="text-blue-600 underline">
                     Privacy Policy
                   </a>{" "}

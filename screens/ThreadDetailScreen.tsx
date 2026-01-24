@@ -13,25 +13,23 @@ import {
   Keyboard,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  ActionSheetIOS,
 } from "react-native";
-import { useRoute, RouteProp } from "@react-navigation/native";
+import { useRoute, RouteProp, useFocusEffect } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import * as Haptics from "expo-haptics";
+import * as Clipboard from "expo-clipboard";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemedText } from "@/components/ThemedText";
 import { Avatar } from "@/components/Avatar";
 import { Skeleton } from "@/components/Skeleton";
 import { QuickReplyTemplates } from "@/components/QuickReplyTemplates";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  Spacing,
-  GradientColors,
-  BorderRadius,
-  MessagingColors,
-} from "@/constants/theme";
+import { Spacing, GradientColors, MessagingColors } from "@/constants/theme";
 import { InboxStackParamList } from "@/navigation/InboxStackNavigator";
 import { inboxApi, createTenantContext } from "@/services/api";
 
@@ -53,6 +51,9 @@ interface DisplayMessage {
 
 // Message grouping threshold (2 minutes)
 const GROUP_THRESHOLD_SECONDS = 120;
+
+// AsyncStorage key prefix for drafts
+const DRAFT_KEY_PREFIX = "@inbox_draft_";
 
 const getDateSeparator = (timestamp: number): string => {
   const messageDate = new Date(timestamp * 1000);
@@ -144,17 +145,76 @@ export default function ThreadDetailScreen() {
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [showQuickReplies, setShowQuickReplies] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [draftLoaded, setDraftLoaded] = useState(false);
 
   const flatListRef = useRef<FlatList>(null);
   const scrollButtonOpacity = useRef(new Animated.Value(0)).current;
 
-  // Process messages with grouping info
+  // Draft persistence key
+  const draftKey = `${DRAFT_KEY_PREFIX}${conversationId}`;
+
+  // Load draft on mount
+  useEffect(() => {
+    const loadDraft = async () => {
+      try {
+        const savedDraft = await AsyncStorage.getItem(draftKey);
+        if (savedDraft) {
+          setMessage(savedDraft);
+        }
+      } catch (error) {
+        console.error("Error loading draft:", error);
+      } finally {
+        setDraftLoaded(true);
+      }
+    };
+    loadDraft();
+  }, [draftKey]);
+
+  // Save draft on blur or when message changes (debounced)
+  const saveDraftTimerRef = useRef<NodeJS.Timeout | null>(null);
+  useEffect(() => {
+    if (!draftLoaded) return;
+
+    if (saveDraftTimerRef.current) {
+      clearTimeout(saveDraftTimerRef.current);
+    }
+
+    saveDraftTimerRef.current = setTimeout(async () => {
+      try {
+        if (message.trim()) {
+          await AsyncStorage.setItem(draftKey, message);
+        } else {
+          await AsyncStorage.removeItem(draftKey);
+        }
+      } catch (error) {
+        console.error("Error saving draft:", error);
+      }
+    }, 500);
+
+    return () => {
+      if (saveDraftTimerRef.current) {
+        clearTimeout(saveDraftTimerRef.current);
+      }
+    };
+  }, [message, draftKey, draftLoaded]);
+
+  // Clear draft on successful send
+  const clearDraft = async () => {
+    try {
+      await AsyncStorage.removeItem(draftKey);
+    } catch (error) {
+      console.error("Error clearing draft:", error);
+    }
+  };
+
+  // Process messages with grouping info (reversed for inverted FlatList)
   const processedMessages = React.useMemo(() => {
-    return messages.map((msg, index) => {
+    // First process in normal order to calculate grouping
+    const processed = messages.map((msg, index) => {
       const prevMsg = index > 0 ? messages[index - 1] : null;
       const nextMsg = index < messages.length - 1 ? messages[index + 1] : null;
 
-      // Check if should show date separator
+      // Check if should show date separator (appears above this message in normal order)
       const showDateSeparator = shouldShowDateSeparator(msg, prevMsg);
       const dateSeparatorText =
         showDateSeparator && msg.createdAt
@@ -194,6 +254,9 @@ export default function ThreadDetailScreen() {
         dateSeparatorText,
       };
     });
+
+    // Reverse for inverted FlatList (newest first)
+    return processed.reverse();
   }, [messages]);
 
   const loadMessages = async () => {
@@ -250,9 +313,29 @@ export default function ThreadDetailScreen() {
     }
   };
 
+  // Mark messages as read when opening thread
+  const markMessagesAsRead = async () => {
+    if (!token) return;
+
+    try {
+      const tenant = createTenantContext(user);
+      await inboxApi.markRead(token, conversationId, tenant);
+    } catch (error) {
+      console.error("Error marking messages as read:", error);
+      // Don't show error to user - this is a background operation
+    }
+  };
+
   useEffect(() => {
     loadMessages();
   }, [conversationId, token, user]);
+
+  // Mark messages as read when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      markMessagesAsRead();
+    }, [conversationId, token, user]),
+  );
 
   // Track keyboard visibility
   useEffect(() => {
@@ -274,28 +357,19 @@ export default function ThreadDetailScreen() {
     };
   }, []);
 
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    if (messages.length > 0 && !loading) {
-      // Small delay to ensure FlatList has rendered
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: false });
-      }, 100);
-    }
-  }, [loading]);
-
+  // Scroll to bottom (offset 0 in inverted list)
   const scrollToBottom = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    flatListRef.current?.scrollToEnd({ animated: true });
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
   }, []);
 
+  // Handle scroll to show/hide scroll-to-bottom button
+  // In inverted list, offset 0 is the bottom (newest messages)
   const handleScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const { contentOffset, contentSize, layoutMeasurement } =
-        event.nativeEvent;
-      const distanceFromBottom =
-        contentSize.height - contentOffset.y - layoutMeasurement.height;
-      const shouldShow = distanceFromBottom > 200;
+      const { contentOffset } = event.nativeEvent;
+      // Show button when scrolled away from bottom (offset > threshold)
+      const shouldShow = contentOffset.y > 200;
 
       if (shouldShow !== showScrollButton) {
         setShowScrollButton(shouldShow);
@@ -315,6 +389,8 @@ export default function ThreadDetailScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     Keyboard.dismiss();
 
+    const messageText = message.trim();
+
     try {
       setSending(true);
       const tenant = createTenantContext(user);
@@ -322,7 +398,7 @@ export default function ThreadDetailScreen() {
       // Add the message locally for immediate feedback (optimistic update)
       const newMessage: DisplayMessage = {
         id: `temp-${Date.now()}`,
-        text: message.trim(),
+        text: messageText,
         isSent: true,
         timestamp: "Just now",
         createdAt: Math.floor(Date.now() / 1000),
@@ -331,16 +407,19 @@ export default function ThreadDetailScreen() {
       setMessages((prev) => [...prev, newMessage]);
       setMessage("");
 
-      // Scroll to the new message
+      // Clear draft on send
+      await clearDraft();
+
+      // Scroll to the new message (offset 0 in inverted list)
       setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
+        flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
       }, 50);
 
       // Send SMS via inbox API
       await inboxApi.sendSms(
         token,
         conversationId,
-        message.trim(),
+        messageText,
         undefined, // imageUrl - for MMS support
         tenant,
       );
@@ -360,8 +439,9 @@ export default function ThreadDetailScreen() {
       console.error("Error sending message:", error);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert("Send Failed", "Failed to send message. Please try again.");
-      // Remove the temp message on error
+      // Remove the temp message on error and restore the draft
       setMessages((prev) => prev.filter((m) => !m.id.startsWith("temp-")));
+      setMessage(messageText);
     } finally {
       setSending(false);
     }
@@ -371,6 +451,40 @@ export default function ThreadDetailScreen() {
     setMessage(templateMessage);
     // Focus the input so user can edit before sending
     setInputFocused(true);
+  };
+
+  // Copy message to clipboard
+  const handleCopyMessage = async (text: string) => {
+    try {
+      await Clipboard.setStringAsync(text);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (error) {
+      console.error("Error copying message:", error);
+    }
+  };
+
+  // Show message options (iOS ActionSheet or Android Alert)
+  const showMessageOptions = (msg: DisplayMessage) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    if (Platform.OS === "ios") {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: ["Cancel", "Copy"],
+          cancelButtonIndex: 0,
+        },
+        (buttonIndex) => {
+          if (buttonIndex === 1) {
+            handleCopyMessage(msg.text);
+          }
+        },
+      );
+    } else {
+      Alert.alert("Message Options", undefined, [
+        { text: "Cancel", style: "cancel" },
+        { text: "Copy", onPress: () => handleCopyMessage(msg.text) },
+      ]);
+    }
   };
 
   // Render status indicator
@@ -480,70 +594,83 @@ export default function ThreadDetailScreen() {
               <View style={styles.avatarPlaceholder} />
             )}
 
-            {/* Message bubble */}
-            {msg.isSent ? (
-              <LinearGradient
-                colors={
-                  isDark
-                    ? (GradientColors.messageSentDark as [string, string])
-                    : (GradientColors.messageSent as [string, string])
-                }
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={[
-                  styles.messageBubble,
-                  styles.sentMessage,
-                  isGroupedMessage && styles.sentMessageGrouped,
-                ]}
-              >
-                <ThemedText style={[styles.messageText, { color: "#FFFFFF" }]}>
-                  {msg.text}
-                </ThemedText>
+            {/* Message bubble with long-press for copy */}
+            <Pressable
+              onLongPress={() => showMessageOptions(msg)}
+              delayLongPress={300}
+              style={{ maxWidth: "75%" }}
+            >
+              {msg.isSent ? (
+                <LinearGradient
+                  colors={
+                    isDark
+                      ? (GradientColors.messageSentDark as [string, string])
+                      : (GradientColors.messageSent as [string, string])
+                  }
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={[
+                    styles.messageBubble,
+                    styles.sentMessage,
+                    isGroupedMessage && styles.sentMessageGrouped,
+                  ]}
+                >
+                  <ThemedText
+                    style={[styles.messageText, { color: "#FFFFFF" }]}
+                  >
+                    {msg.text}
+                  </ThemedText>
 
-                {/* Footer with timestamp and status - only on last message of group */}
-                {showTimestamp && (
-                  <View style={styles.messageFooter}>
-                    <ThemedText
-                      style={[
-                        styles.timestamp,
-                        { color: "rgba(255,255,255,0.7)" },
-                      ]}
-                    >
-                      {msg.timestamp}
-                    </ThemedText>
-                    {renderStatusIndicator(msg.status, msg.isSent)}
-                  </View>
-                )}
-              </LinearGradient>
-            ) : (
-              <View
-                style={[
-                  styles.messageBubble,
-                  {
-                    backgroundColor: isDark
-                      ? MessagingColors.receivedBubbleDark
-                      : MessagingColors.receivedBubble,
-                  },
-                  styles.receivedMessage,
-                  isGroupedMessage && styles.receivedMessageGrouped,
-                ]}
-              >
-                <ThemedText style={[styles.messageText, { color: theme.text }]}>
-                  {msg.text}
-                </ThemedText>
+                  {/* Footer with timestamp and status - only on last message of group */}
+                  {showTimestamp && (
+                    <View style={styles.messageFooter}>
+                      <ThemedText
+                        style={[
+                          styles.timestamp,
+                          { color: "rgba(255,255,255,0.7)" },
+                        ]}
+                      >
+                        {msg.timestamp}
+                      </ThemedText>
+                      {renderStatusIndicator(msg.status, msg.isSent)}
+                    </View>
+                  )}
+                </LinearGradient>
+              ) : (
+                <View
+                  style={[
+                    styles.messageBubble,
+                    {
+                      backgroundColor: isDark
+                        ? MessagingColors.receivedBubbleDark
+                        : MessagingColors.receivedBubble,
+                    },
+                    styles.receivedMessage,
+                    isGroupedMessage && styles.receivedMessageGrouped,
+                  ]}
+                >
+                  <ThemedText
+                    style={[styles.messageText, { color: theme.text }]}
+                  >
+                    {msg.text}
+                  </ThemedText>
 
-                {/* Footer with timestamp - only on last message of group */}
-                {showTimestamp && (
-                  <View style={styles.messageFooter}>
-                    <ThemedText
-                      style={[styles.timestamp, { color: theme.textSecondary }]}
-                    >
-                      {msg.timestamp}
-                    </ThemedText>
-                  </View>
-                )}
-              </View>
-            )}
+                  {/* Footer with timestamp - only on last message of group */}
+                  {showTimestamp && (
+                    <View style={styles.messageFooter}>
+                      <ThemedText
+                        style={[
+                          styles.timestamp,
+                          { color: theme.textSecondary },
+                        ]}
+                      >
+                        {msg.timestamp}
+                      </ThemedText>
+                    </View>
+                  )}
+                </View>
+              )}
+            </Pressable>
           </View>
         </View>
       );
@@ -604,6 +731,7 @@ export default function ThreadDetailScreen() {
             data={processedMessages}
             renderItem={renderMessage}
             keyExtractor={(item) => item.id}
+            inverted
             contentContainerStyle={[
               styles.messagesContainer,
               processedMessages.length === 0 && styles.emptyListContent,
@@ -613,9 +741,6 @@ export default function ThreadDetailScreen() {
             scrollEventThrottle={16}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
-            maintainVisibleContentPosition={{
-              minIndexForVisible: 0,
-            }}
           />
 
           {/* Scroll to bottom FAB */}
@@ -657,7 +782,7 @@ export default function ThreadDetailScreen() {
             backgroundColor: theme.backgroundDefault,
             borderTopColor: theme.border,
             paddingBottom: keyboardVisible
-              ? Spacing.sm
+              ? Spacing.md
               : tabBarHeight + Spacing.sm,
           },
         ]}
@@ -812,7 +937,6 @@ const styles = StyleSheet.create({
     width: 32,
   },
   messageBubble: {
-    maxWidth: "75%",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm + 2,
     borderRadius: 20,

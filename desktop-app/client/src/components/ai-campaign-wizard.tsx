@@ -2,8 +2,23 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Loader2, Send, Sparkles, Bot, User, Rocket, Mail, Clock, CheckCircle2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Loader2,
+  Send,
+  Sparkles,
+  Bot,
+  User,
+  Rocket,
+  Mail,
+  Clock,
+  CheckCircle2,
+} from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,7 +44,11 @@ const BUILDING_STEPS = [
   { icon: CheckCircle2, text: "Finalizing your campaign..." },
 ];
 
-export function AICampaignWizard({ open, onOpenChange, onCampaignCreated }: AICampaignWizardProps) {
+export function AICampaignWizard({
+  open,
+  onOpenChange,
+  onCampaignCreated,
+}: AICampaignWizardProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -63,7 +82,7 @@ export function AICampaignWizard({ open, onOpenChange, onCampaignCreated }: AICa
   useEffect(() => {
     if (phase === "building") {
       const interval = setInterval(() => {
-        setBuildingStep(prev => {
+        setBuildingStep((prev) => {
           if (prev < BUILDING_STEPS.length - 1) return prev + 1;
           return prev;
         });
@@ -78,19 +97,21 @@ export function AICampaignWizard({ open, onOpenChange, onCampaignCreated }: AICa
     try {
       const res = await apiRequest("POST", "/api/ai-campaign-wizard/start");
       const data = await res.json();
-      
+
       setConversationId(data.conversationId);
-      setMessages([{
-        id: "1",
-        role: "assistant",
-        content: data.message
-      }]);
+      setMessages([
+        {
+          id: "1",
+          role: "assistant",
+          content: data.message,
+        },
+      ]);
     } catch (error) {
       console.error("Failed to start conversation:", error);
       toast({
         title: "Error",
         description: "Failed to start AI wizard. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -103,32 +124,34 @@ export function AICampaignWizard({ open, onOpenChange, onCampaignCreated }: AICa
     const userMessage: Message = {
       id: Date.now().toString(),
       role: "user",
-      content: input.trim()
+      content: input.trim(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
 
     try {
       const res = await apiRequest("POST", "/api/ai-campaign-wizard/message", {
         conversationId,
-        message: userMessage.content
+        message: userMessage.content,
       });
-      
+
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({ message: "Unknown error" }));
+        const errorData = await res
+          .json()
+          .catch(() => ({ message: "Unknown error" }));
         throw new Error(errorData.message || "Failed to get response");
       }
-      
+
       const data = await res.json();
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: data.message
+        content: data.message,
       };
-      setMessages(prev => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, assistantMessage]);
 
       // Check if AI is ready to generate the campaign
       if (data.readyToGenerate) {
@@ -143,7 +166,7 @@ export function AICampaignWizard({ open, onOpenChange, onCampaignCreated }: AICa
       toast({
         title: "Error",
         description: "Failed to get AI response. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -156,14 +179,16 @@ export function AICampaignWizard({ open, onOpenChange, onCampaignCreated }: AICa
 
     try {
       const res = await apiRequest("POST", "/api/ai-campaign-wizard/generate", {
-        conversationId
+        conversationId,
       });
-      
+
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({ message: "Unknown error" }));
+        const errorData = await res
+          .json()
+          .catch(() => ({ message: "Unknown error" }));
         throw new Error(errorData.message || "Failed to generate campaign");
       }
-      
+
       const data = await res.json();
 
       if (data.campaignCreated && data.campaignId) {
@@ -179,7 +204,7 @@ export function AICampaignWizard({ open, onOpenChange, onCampaignCreated }: AICa
       toast({
         title: "Error",
         description: "Failed to generate campaign. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
       // Return to confirm phase so user can retry (not conversation)
       setBuildingStep(0);
@@ -256,7 +281,9 @@ export function AICampaignWizard({ open, onOpenChange, onCampaignCreated }: AICa
                             : "bg-muted"
                         }`}
                       >
-                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                        <p className="text-sm whitespace-pre-wrap">
+                          {message.content}
+                        </p>
                       </div>
                       {message.role === "user" && (
                         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center">
@@ -285,7 +312,11 @@ export function AICampaignWizard({ open, onOpenChange, onCampaignCreated }: AICa
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder={conversationId ? "Type your response..." : "Starting conversation..."}
+                    placeholder={
+                      conversationId
+                        ? "Type your response..."
+                        : "Starting conversation..."
+                    }
                     disabled={isLoading || !conversationId}
                     data-testid="input-ai-wizard-message"
                   />
@@ -322,21 +353,26 @@ export function AICampaignWizard({ open, onOpenChange, onCampaignCreated }: AICa
               >
                 <Rocket className="w-10 h-10 text-primary" />
               </motion.div>
-              
-              <h3 className="text-xl font-semibold mb-2 text-center">Ready to Build Your Campaign!</h3>
+
+              <h3 className="text-xl font-semibold mb-2 text-center">
+                Ready to Build Your Campaign!
+              </h3>
               <p className="text-muted-foreground text-center mb-6 max-w-md">
-                I've gathered all the details I need. Click below to generate your personalized email campaign.
+                I've gathered all the details I need. Click below to generate
+                your personalized email campaign.
               </p>
 
               <div className="bg-muted/50 rounded-lg p-4 mb-6 max-w-md w-full">
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{campaignSummary}</p>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {campaignSummary}
+                </p>
               </div>
 
               <div className="flex gap-3">
                 <Button variant="outline" onClick={goBackToConversation}>
                   Go Back
                 </Button>
-                <Button 
+                <Button
                   onClick={startBuildingCampaign}
                   className="gap-2"
                   data-testid="button-start-building-campaign"
@@ -362,26 +398,32 @@ export function AICampaignWizard({ open, onOpenChange, onCampaignCreated }: AICa
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                 className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary mb-8"
               />
-              
-              <h3 className="text-xl font-semibold mb-6 text-center">Building Your Campaign...</h3>
+
+              <h3 className="text-xl font-semibold mb-6 text-center">
+                Building Your Campaign...
+              </h3>
 
               <div className="space-y-3 w-full max-w-sm">
                 {BUILDING_STEPS.map((step, index) => {
                   const StepIcon = step.icon;
                   const isActive = index === buildingStep;
                   const isComplete = index < buildingStep;
-                  
+
                   return (
                     <motion.div
                       key={index}
                       initial={{ opacity: 0, x: -20 }}
-                      animate={{ 
+                      animate={{
                         opacity: isActive || isComplete ? 1 : 0.4,
-                        x: 0 
+                        x: 0,
                       }}
                       transition={{ delay: index * 0.1 }}
                       className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-                        isActive ? "bg-primary/10" : isComplete ? "bg-green-500/10" : "bg-muted/50"
+                        isActive
+                          ? "bg-primary/10"
+                          : isComplete
+                            ? "bg-green-500/10"
+                            : "bg-muted/50"
                       }`}
                     >
                       {isComplete ? (
@@ -391,7 +433,9 @@ export function AICampaignWizard({ open, onOpenChange, onCampaignCreated }: AICa
                       ) : (
                         <StepIcon className="w-5 h-5 text-muted-foreground flex-shrink-0" />
                       )}
-                      <span className={`text-sm ${isActive ? "text-primary font-medium" : isComplete ? "text-green-600" : "text-muted-foreground"}`}>
+                      <span
+                        className={`text-sm ${isActive ? "text-primary font-medium" : isComplete ? "text-green-600" : "text-muted-foreground"}`}
+                      >
                         {step.text}
                       </span>
                     </motion.div>
@@ -418,8 +462,10 @@ export function AICampaignWizard({ open, onOpenChange, onCampaignCreated }: AICa
               >
                 <CheckCircle2 className="w-12 h-12 text-green-500" />
               </motion.div>
-              
-              <h3 className="text-xl font-semibold mb-2 text-center">Campaign Created!</h3>
+
+              <h3 className="text-xl font-semibold mb-2 text-center">
+                Campaign Created!
+              </h3>
               <p className="text-muted-foreground text-center">
                 Taking you to the editor...
               </p>

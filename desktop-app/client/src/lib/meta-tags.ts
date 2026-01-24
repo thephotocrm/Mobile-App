@@ -19,45 +19,51 @@ export function updateMetaTags(options: MetaTagOptions) {
   // Update page title
   if (title) {
     document.title = title;
-    updateOrCreateMeta('og:title', title, 'property');
-    updateOrCreateMeta('twitter:title', title, 'name');
+    updateOrCreateMeta("og:title", title, "property");
+    updateOrCreateMeta("twitter:title", title, "name");
   }
 
   // Update description
   if (description) {
-    updateOrCreateMeta('description', description, 'name');
-    updateOrCreateMeta('og:description', description, 'property');
-    updateOrCreateMeta('twitter:description', description, 'name');
+    updateOrCreateMeta("description", description, "name");
+    updateOrCreateMeta("og:description", description, "property");
+    updateOrCreateMeta("twitter:description", description, "name");
   }
 
   // Update image (for link previews)
   if (image) {
-    updateOrCreateMeta('og:image', image, 'property');
-    updateOrCreateMeta('twitter:image', image, 'name');
-    updateOrCreateMeta('twitter:card', 'summary_large_image', 'name');
+    updateOrCreateMeta("og:image", image, "property");
+    updateOrCreateMeta("twitter:image", image, "name");
+    updateOrCreateMeta("twitter:card", "summary_large_image", "name");
   }
 
   // Update URL
   if (url) {
-    updateOrCreateMeta('og:url', url, 'property');
+    updateOrCreateMeta("og:url", url, "property");
   }
 
   // Set type
-  updateOrCreateMeta('og:type', 'website', 'property');
+  updateOrCreateMeta("og:type", "website", "property");
 }
 
 /**
  * Helper function to update or create a meta tag
  */
-function updateOrCreateMeta(key: string, value: string, attribute: 'name' | 'property') {
-  let element = document.querySelector(`meta[${attribute}="${key}"]`) as HTMLMetaElement;
-  
+function updateOrCreateMeta(
+  key: string,
+  value: string,
+  attribute: "name" | "property",
+) {
+  let element = document.querySelector(
+    `meta[${attribute}="${key}"]`,
+  ) as HTMLMetaElement;
+
   if (!element) {
-    element = document.createElement('meta');
+    element = document.createElement("meta");
     element.setAttribute(attribute, key);
     document.head.appendChild(element);
   }
-  
+
   element.content = value;
 }
 
@@ -66,18 +72,18 @@ function updateOrCreateMeta(key: string, value: string, attribute: 'name' | 'pro
  */
 export function clearDynamicMetaTags() {
   const metaKeys = [
-    'og:title',
-    'og:description', 
-    'og:image',
-    'og:url',
-    'og:type',
-    'twitter:title',
-    'twitter:description',
-    'twitter:image',
-    'twitter:card'
+    "og:title",
+    "og:description",
+    "og:image",
+    "og:url",
+    "og:type",
+    "twitter:title",
+    "twitter:description",
+    "twitter:image",
+    "twitter:card",
   ];
 
-  metaKeys.forEach(key => {
+  metaKeys.forEach((key) => {
     const property = document.querySelector(`meta[property="${key}"]`);
     const name = document.querySelector(`meta[name="${key}"]`);
     if (property) property.remove();

@@ -20,7 +20,11 @@ import {
 const contactFormSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Please enter a valid email").optional().or(z.literal("")),
+  email: z
+    .string()
+    .email("Please enter a valid email")
+    .optional()
+    .or(z.literal("")),
   phone: z.string().optional(),
   notes: z.string().optional(),
   emailOptIn: z.boolean().default(true),
@@ -36,11 +40,11 @@ interface ContactFormProps {
   submitText?: string;
 }
 
-export default function ContactForm({ 
-  initialData, 
-  onSubmit, 
+export default function ContactForm({
+  initialData,
+  onSubmit,
   isLoading = false,
-  submitText = "Save Contact"
+  submitText = "Save Contact",
 }: ContactFormProps) {
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
@@ -67,8 +71,8 @@ export default function ContactForm({
               <FormItem>
                 <FormLabel>First Name</FormLabel>
                 <FormControl>
-                  <Input 
-                    {...field} 
+                  <Input
+                    {...field}
                     data-testid="input-first-name"
                     placeholder="Enter first name"
                   />
@@ -77,7 +81,7 @@ export default function ContactForm({
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="lastName"
@@ -85,8 +89,8 @@ export default function ContactForm({
               <FormItem>
                 <FormLabel>Last Name</FormLabel>
                 <FormControl>
-                  <Input 
-                    {...field} 
+                  <Input
+                    {...field}
                     data-testid="input-last-name"
                     placeholder="Enter last name"
                   />
@@ -105,8 +109,8 @@ export default function ContactForm({
             <FormItem>
               <FormLabel>Email Address</FormLabel>
               <FormControl>
-                <Input 
-                  {...field} 
+                <Input
+                  {...field}
                   type="email"
                   data-testid="input-email"
                   placeholder="Enter email address"
@@ -124,8 +128,8 @@ export default function ContactForm({
             <FormItem>
               <FormLabel>Phone Number</FormLabel>
               <FormControl>
-                <Input 
-                  {...field} 
+                <Input
+                  {...field}
                   type="tel"
                   data-testid="input-phone"
                   placeholder="Enter phone number"
@@ -144,8 +148,8 @@ export default function ContactForm({
             <FormItem>
               <FormLabel>Notes</FormLabel>
               <FormControl>
-                <Textarea 
-                  {...field} 
+                <Textarea
+                  {...field}
                   data-testid="textarea-notes"
                   placeholder="Additional notes about the contact..."
                   rows={3}
@@ -159,12 +163,15 @@ export default function ContactForm({
         {/* Communication Preferences */}
         <div className="space-y-4">
           <div>
-            <Label className="text-sm font-medium">Communication Preferences</Label>
+            <Label className="text-sm font-medium">
+              Communication Preferences
+            </Label>
             <p className="text-xs text-muted-foreground mt-1">
-              Choose how you'd like to receive updates about your project. You can update these preferences at any time.
+              Choose how you'd like to receive updates about your project. You
+              can update these preferences at any time.
             </p>
           </div>
-          
+
           <FormField
             control={form.control}
             name="emailOptIn"
@@ -182,7 +189,8 @@ export default function ContactForm({
                     Email communications
                   </FormLabel>
                   <p className="text-xs text-muted-foreground">
-                    Receive project updates, appointment reminders, and important notifications via email
+                    Receive project updates, appointment reminders, and
+                    important notifications via email
                   </p>
                 </div>
               </FormItem>
@@ -199,8 +207,9 @@ export default function ContactForm({
                     📱 SMS notifications & automations
                   </FormLabel>
                   <p className="text-xs text-muted-foreground">
-                    Enable to receive SMS updates and automated messages. Required for SMS automation workflows.
-                    Message and data rates may apply. Reply STOP to opt out anytime.
+                    Enable to receive SMS updates and automated messages.
+                    Required for SMS automation workflows. Message and data
+                    rates may apply. Reply STOP to opt out anytime.
                   </p>
                 </div>
                 <FormControl>
@@ -216,15 +225,16 @@ export default function ContactForm({
 
           <div className="bg-muted/50 p-3 rounded-md">
             <p className="text-xs text-muted-foreground">
-              <strong>Privacy Notice:</strong> Your contact information will only be used for photography services and communications. 
-              We respect your privacy and will never share your information with third parties. 
-              You may opt out of any communications at any time.
+              <strong>Privacy Notice:</strong> Your contact information will
+              only be used for photography services and communications. We
+              respect your privacy and will never share your information with
+              third parties. You may opt out of any communications at any time.
             </p>
           </div>
         </div>
 
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           className="w-full"
           disabled={isLoading}
           data-testid="button-submit-contact-form"

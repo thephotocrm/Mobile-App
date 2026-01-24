@@ -14,18 +14,18 @@ export type ProjectType = {
 
 export function useProjectTypes(includeArchived: boolean = false) {
   const { user } = useAuth();
-  
+
   const query = useQuery<ProjectType[]>({
     queryKey: ["/api/project-types", { includeArchived }],
     queryFn: async () => {
-      const url = includeArchived 
-        ? "/api/project-types?includeArchived=true" 
+      const url = includeArchived
+        ? "/api/project-types?includeArchived=true"
         : "/api/project-types";
-      const response = await fetch(url, { credentials: 'include' });
-      if (!response.ok) throw new Error('Failed to fetch project types');
+      const response = await fetch(url, { credentials: "include" });
+      if (!response.ok) throw new Error("Failed to fetch project types");
       return response.json();
     },
-    enabled: !!user
+    enabled: !!user,
   });
 
   return {
@@ -33,12 +33,12 @@ export function useProjectTypes(includeArchived: boolean = false) {
     isLoading: query.isLoading,
     error: query.error,
     getProjectTypeName: (slug: string) => {
-      const type = query.data?.find(t => t.slug === slug);
+      const type = query.data?.find((t) => t.slug === slug);
       return type?.name || slug;
     },
     getProjectTypeColor: (slug: string) => {
-      const type = query.data?.find(t => t.slug === slug);
-      return type?.color || '#64748b';
-    }
+      const type = query.data?.find((t) => t.slug === slug);
+      return type?.color || "#64748b";
+    },
   };
 }

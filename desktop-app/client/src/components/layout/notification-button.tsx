@@ -33,7 +33,18 @@ import {
 import { cn } from "@/lib/utils";
 
 // Map backend notification types to display config
-type NotificationType = "LEAD" | "PAYMENT" | "MESSAGE" | "CONTRACT" | "SMART_FILE_VIEWED" | "SMART_FILE_ACCEPTED" | "BOOKING" | "GALLERY" | "AUTOMATION" | "REMINDER" | "SYSTEM";
+type NotificationType =
+  | "LEAD"
+  | "PAYMENT"
+  | "MESSAGE"
+  | "CONTRACT"
+  | "SMART_FILE_VIEWED"
+  | "SMART_FILE_ACCEPTED"
+  | "BOOKING"
+  | "GALLERY"
+  | "AUTOMATION"
+  | "REMINDER"
+  | "SYSTEM";
 
 interface Notification {
   id: string;
@@ -48,7 +59,10 @@ interface Notification {
   createdAt: string;
 }
 
-const notificationTypeConfig: Record<NotificationType, { icon: typeof Bell; color: string; bgColor: string; label: string }> = {
+const notificationTypeConfig: Record<
+  NotificationType,
+  { icon: typeof Bell; color: string; bgColor: string; label: string }
+> = {
   LEAD: {
     icon: UserPlus,
     color: "text-emerald-600",
@@ -136,7 +150,9 @@ interface NotificationButtonProps {
   transparent?: boolean;
 }
 
-export function NotificationButton({ transparent = false }: NotificationButtonProps) {
+export function NotificationButton({
+  transparent = false,
+}: NotificationButtonProps) {
   const [, navigate] = useLocation();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -155,10 +171,16 @@ export function NotificationButton({ transparent = false }: NotificationButtonPr
   });
 
   // Fetch notifications
-  const { data: notifications = [], isLoading, isError } = useQuery<Notification[]>({
+  const {
+    data: notifications = [],
+    isLoading,
+    isError,
+  } = useQuery<Notification[]>({
     queryKey: ["/api/notifications"],
     queryFn: async () => {
-      const response = await fetch("/api/notifications?limit=50", { credentials: "include" });
+      const response = await fetch("/api/notifications?limit=50", {
+        credentials: "include",
+      });
       if (!response.ok) throw new Error("Failed to fetch notifications");
       return response.json();
     },
@@ -171,7 +193,9 @@ export function NotificationButton({ transparent = false }: NotificationButtonPr
   const { data: unreadData } = useQuery<{ count: number }>({
     queryKey: ["/api/notifications/unread-count"],
     queryFn: async () => {
-      const response = await fetch("/api/notifications/unread-count", { credentials: "include" });
+      const response = await fetch("/api/notifications/unread-count", {
+        credentials: "include",
+      });
       if (!response.ok) throw new Error("Failed to fetch unread count");
       return response.json();
     },
@@ -192,7 +216,9 @@ export function NotificationButton({ transparent = false }: NotificationButtonPr
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/notifications/unread-count"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/notifications/unread-count"],
+      });
     },
   });
 
@@ -208,7 +234,9 @@ export function NotificationButton({ transparent = false }: NotificationButtonPr
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/notifications/unread-count"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/notifications/unread-count"],
+      });
     },
   });
 
@@ -242,7 +270,7 @@ export function NotificationButton({ transparent = false }: NotificationButtonPr
             "relative",
             transparent
               ? "bg-white/15 backdrop-blur-md border border-white/20 text-white hover:bg-white/25 hover:text-white"
-              : "hover:bg-muted"
+              : "hover:bg-muted",
           )}
         >
           <Bell className={cn("h-6 w-6", transparent && "drop-shadow-sm")} />
@@ -287,10 +315,14 @@ export function NotificationButton({ transparent = false }: NotificationButtonPr
               <PopoverContent align="end" className="w-56 p-3">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-medium">Filter Notifications</h4>
+                    <h4 className="text-sm font-medium">
+                      Filter Notifications
+                    </h4>
                   </div>
                   <div className="space-y-2">
-                    {(Object.keys(notificationTypeConfig) as NotificationType[]).map((type) => {
+                    {(
+                      Object.keys(notificationTypeConfig) as NotificationType[]
+                    ).map((type) => {
                       const config = notificationTypeConfig[type];
                       const Icon = config.icon;
                       return (
@@ -319,14 +351,18 @@ export function NotificationButton({ transparent = false }: NotificationButtonPr
           {isLoading ? (
             <div className="py-12 text-center">
               <Loader2 className="h-8 w-8 mx-auto mb-3 text-muted-foreground animate-spin" />
-              <p className="text-sm text-muted-foreground">Loading notifications...</p>
+              <p className="text-sm text-muted-foreground">
+                Loading notifications...
+              </p>
             </div>
           ) : filteredNotifications.length === 0 ? (
             <div className="py-12 text-center">
               <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-muted flex items-center justify-center">
                 <Bell className="h-6 w-6 text-muted-foreground" />
               </div>
-              <p className="text-sm font-medium text-muted-foreground">No notifications</p>
+              <p className="text-sm font-medium text-muted-foreground">
+                No notifications
+              </p>
               <p className="text-xs text-muted-foreground mt-1">
                 {notifications.length === 0
                   ? "You're all caught up!"
@@ -336,7 +372,9 @@ export function NotificationButton({ transparent = false }: NotificationButtonPr
           ) : (
             <div className="divide-y">
               {filteredNotifications.map((notification) => {
-                const config = notificationTypeConfig[notification.type] || notificationTypeConfig.SYSTEM;
+                const config =
+                  notificationTypeConfig[notification.type] ||
+                  notificationTypeConfig.SYSTEM;
                 const Icon = config.icon;
                 return (
                   <div
@@ -345,23 +383,27 @@ export function NotificationButton({ transparent = false }: NotificationButtonPr
                     className={cn(
                       "flex gap-3 p-4 hover:bg-muted/50 cursor-pointer transition-colors",
                       !notification.read && "bg-blue-50/50 dark:bg-blue-950/20",
-                      notification.priority === "HIGH" && !notification.read && "border-l-2 border-l-orange-500"
+                      notification.priority === "HIGH" &&
+                        !notification.read &&
+                        "border-l-2 border-l-orange-500",
                     )}
                   >
                     <div
                       className={cn(
                         "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
-                        config.bgColor
+                        config.bgColor,
                       )}
                     >
                       <Icon className={cn("h-5 w-5", config.color)} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
-                        <p className={cn(
-                          "text-sm truncate",
-                          !notification.read && "font-semibold"
-                        )}>
+                        <p
+                          className={cn(
+                            "text-sm truncate",
+                            !notification.read && "font-semibold",
+                          )}
+                        >
                           {notification.title}
                         </p>
                         {!notification.read && (

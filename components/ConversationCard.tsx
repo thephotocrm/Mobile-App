@@ -15,6 +15,7 @@ interface ConversationCardProps {
   unreadCount?: number;
   isYou?: boolean; // If the last message was sent by the user
   messageType?: "text" | "audio" | "photo"; // Type of last message
+  channel?: "SMS" | "EMAIL"; // Channel indicator
   onPress: () => void;
   onArchive?: () => void;
   onMarkUnread?: () => void;
@@ -28,6 +29,7 @@ export function ConversationCard({
   unreadCount,
   isYou = false,
   messageType = "text",
+  channel = "SMS",
   onPress,
   onArchive,
   onMarkUnread,
@@ -202,17 +204,41 @@ export function ConversationCard({
               {timestamp}
             </ThemedText>
           </View>
-          <ThemedText
-            style={[
-              styles.message,
-              { color: theme.textSecondary },
-              hasUnread && styles.messageUnread,
-              messageType !== "text" && styles.messageSpecial,
-            ]}
-            numberOfLines={1}
-          >
-            {getMessagePreview()}
-          </ThemedText>
+          <View style={styles.messageRow}>
+            {/* Channel indicator badge */}
+            <View
+              style={[
+                styles.channelBadge,
+                {
+                  backgroundColor:
+                    channel === "EMAIL"
+                      ? isDark
+                        ? "#3B82F615"
+                        : "#3B82F610"
+                      : isDark
+                        ? "#10B98115"
+                        : "#10B98110",
+                },
+              ]}
+            >
+              <Feather
+                name={channel === "EMAIL" ? "mail" : "message-circle"}
+                size={10}
+                color={channel === "EMAIL" ? "#3B82F6" : "#10B981"}
+              />
+            </View>
+            <ThemedText
+              style={[
+                styles.message,
+                { color: theme.textSecondary },
+                hasUnread && styles.messageUnread,
+                messageType !== "text" && styles.messageSpecial,
+              ]}
+              numberOfLines={1}
+            >
+              {getMessagePreview()}
+            </ThemedText>
+          </View>
         </View>
 
         {/* Chevron indicator */}
@@ -303,7 +329,20 @@ const styles = StyleSheet.create({
   timestampUnread: {
     fontWeight: "500",
   },
+  messageRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  channelBadge: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   message: {
+    flex: 1,
     fontSize: 15,
     lineHeight: 20,
   },

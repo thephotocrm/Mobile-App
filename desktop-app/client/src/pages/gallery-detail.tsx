@@ -11,7 +11,11 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   Dialog,
   DialogContent,
@@ -118,9 +122,21 @@ interface ImageWithFavorite extends GalleryImage {
 
 // Status config
 const STATUS_CONFIG = {
-  DRAFT: { label: "Draft", color: "bg-slate-500", description: "Not shared yet" },
-  READY: { label: "Ready", color: "bg-blue-500", description: "Ready to share" },
-  SHARED: { label: "Shared", color: "bg-green-500", description: "Client can view" },
+  DRAFT: {
+    label: "Draft",
+    color: "bg-slate-500",
+    description: "Not shared yet",
+  },
+  READY: {
+    label: "Ready",
+    color: "bg-blue-500",
+    description: "Ready to share",
+  },
+  SHARED: {
+    label: "Shared",
+    color: "bg-green-500",
+    description: "Client can view",
+  },
 } as const;
 
 // Sortable Image Card Component
@@ -259,7 +275,9 @@ function SortableImageCard({
               variant={isCover ? "secondary" : "default"}
               size="icon"
               className={`h-8 w-8 ${
-                isCover ? "bg-yellow-500 hover:bg-yellow-600 text-white" : "bg-white/90 hover:bg-white"
+                isCover
+                  ? "bg-yellow-500 hover:bg-yellow-600 text-white"
+                  : "bg-white/90 hover:bg-white"
               }`}
               onClick={(e) => {
                 e.stopPropagation();
@@ -331,8 +349,10 @@ function Lightbox({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft" && currentIndex > 0) onNavigate(currentIndex - 1);
-      if (e.key === "ArrowRight" && currentIndex < images.length - 1) onNavigate(currentIndex + 1);
+      if (e.key === "ArrowLeft" && currentIndex > 0)
+        onNavigate(currentIndex - 1);
+      if (e.key === "ArrowRight" && currentIndex < images.length - 1)
+        onNavigate(currentIndex + 1);
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
@@ -382,7 +402,12 @@ function Lightbox({
       {/* Main image */}
       <div className="max-w-[90vw] max-h-[85vh] relative">
         <img
-          src={currentImage.webUrl || currentImage.originalUrl || currentImage.thumbnailUrl || ""}
+          src={
+            currentImage.webUrl ||
+            currentImage.originalUrl ||
+            currentImage.thumbnailUrl ||
+            ""
+          }
           alt={currentImage.caption || `Image ${currentIndex + 1}`}
           className="max-w-full max-h-[85vh] object-contain"
         />
@@ -466,7 +491,9 @@ function CompletionChecklist({ gallery }: { gallery: GalleryWithRelations }) {
             ) : (
               <Circle className="w-4 h-4 shrink-0" />
             )}
-            <span className={item.done ? "line-through" : ""}>{item.label}</span>
+            <span className={item.done ? "line-through" : ""}>
+              {item.label}
+            </span>
           </div>
         ))}
       </div>
@@ -540,7 +567,7 @@ export default function GalleryDetail() {
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   // Fetch gallery
@@ -563,7 +590,9 @@ export default function GalleryDetail() {
       clearTimeout(invalidateTimeoutRef.current);
     }
     invalidateTimeoutRef.current = setTimeout(() => {
-      queryClient.invalidateQueries({ queryKey: ["/api/galleries", galleryId] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/galleries", galleryId],
+      });
     }, 1000);
   }, [galleryId]);
 
@@ -596,7 +625,10 @@ export default function GalleryDetail() {
       debouncedInvalidate();
     };
 
-    const handleUploadError = (file: { name?: string } | undefined, error: Error) => {
+    const handleUploadError = (
+      file: { name?: string } | undefined,
+      error: Error,
+    ) => {
       console.error("[Upload] Upload error:", error);
       toast({
         title: "Upload Failed",
@@ -607,7 +639,9 @@ export default function GalleryDetail() {
 
     const handleComplete = (result: { successful: { id?: string }[] }) => {
       if (result.successful.length > 0) {
-        queryClient.invalidateQueries({ queryKey: ["/api/galleries", galleryId] });
+        queryClient.invalidateQueries({
+          queryKey: ["/api/galleries", galleryId],
+        });
         toast({
           title: "Upload complete",
           description: `${result.successful.length} ${
@@ -632,7 +666,8 @@ export default function GalleryDetail() {
   useEffect(() => {
     return () => {
       if (uppy) uppy.destroy();
-      if (invalidateTimeoutRef.current) clearTimeout(invalidateTimeoutRef.current);
+      if (invalidateTimeoutRef.current)
+        clearTimeout(invalidateTimeoutRef.current);
     };
   }, [uppy]);
 
@@ -642,7 +677,9 @@ export default function GalleryDetail() {
       return apiRequest("PUT", `/api/galleries/${galleryId}`, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/galleries", galleryId] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/galleries", galleryId],
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/galleries"] });
       toast({ title: "Saved", description: "Gallery updated successfully" });
     },
@@ -661,7 +698,10 @@ export default function GalleryDetail() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/galleries"] });
-      toast({ title: "Gallery moved to trash", description: "You can restore it within 30 days" });
+      toast({
+        title: "Gallery moved to trash",
+        description: "You can restore it within 30 days",
+      });
       setLocation("/galleries");
     },
     onError: (error: Error) => {
@@ -678,9 +718,14 @@ export default function GalleryDetail() {
       return apiRequest("PATCH", `/api/galleries/${galleryId}/share`, {});
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/galleries", galleryId] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/galleries", galleryId],
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/galleries"] });
-      toast({ title: "Gallery shared", description: "Your client can now view this gallery" });
+      toast({
+        title: "Gallery shared",
+        description: "Your client can now view this gallery",
+      });
       setShareDialogOpen(true);
     },
     onError: (error: Error) => {
@@ -694,12 +739,21 @@ export default function GalleryDetail() {
 
   const deleteImageMutation = useMutation({
     mutationFn: async (imageId: string) => {
-      return apiRequest("DELETE", `/api/galleries/${galleryId}/images/${imageId}`, {});
+      return apiRequest(
+        "DELETE",
+        `/api/galleries/${galleryId}/images/${imageId}`,
+        {},
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/galleries", galleryId] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/galleries", galleryId],
+      });
       setImageToDelete(null);
-      toast({ title: "Image deleted", description: "The image has been removed" });
+      toast({
+        title: "Image deleted",
+        description: "The image has been removed",
+      });
     },
     onError: (error: Error) => {
       toast({
@@ -714,11 +768,17 @@ export default function GalleryDetail() {
     mutationFn: async (imageIds: string[]) => {
       // Delete images sequentially
       for (const imageId of imageIds) {
-        await apiRequest("DELETE", `/api/galleries/${galleryId}/images/${imageId}`, {});
+        await apiRequest(
+          "DELETE",
+          `/api/galleries/${galleryId}/images/${imageId}`,
+          {},
+        );
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/galleries", galleryId] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/galleries", galleryId],
+      });
       setSelectedImages(new Set());
       setBulkDeleteConfirmOpen(false);
       toast({
@@ -737,12 +797,19 @@ export default function GalleryDetail() {
 
   const setCoverImageMutation = useMutation({
     mutationFn: async (imageId: string) => {
-      return apiRequest("PATCH", `/api/galleries/${galleryId}/cover-image`, { imageId });
+      return apiRequest("PATCH", `/api/galleries/${galleryId}/cover-image`, {
+        imageId,
+      });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/galleries", galleryId] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/galleries", galleryId],
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/galleries"] });
-      toast({ title: "Cover updated", description: "Cover image has been set" });
+      toast({
+        title: "Cover updated",
+        description: "Cover image has been set",
+      });
     },
     onError: (error: Error) => {
       toast({
@@ -754,9 +821,19 @@ export default function GalleryDetail() {
   });
 
   const updateImageMutation = useMutation({
-    mutationFn: async ({ imageId, caption }: { imageId: string; caption: string }) => {
+    mutationFn: async ({
+      imageId,
+      caption,
+    }: {
+      imageId: string;
+      caption: string;
+    }) => {
       setSavingCaptionId(imageId);
-      return apiRequest("PUT", `/api/galleries/${galleryId}/images/${imageId}`, { caption });
+      return apiRequest(
+        "PUT",
+        `/api/galleries/${galleryId}/images/${imageId}`,
+        { caption },
+      );
     },
     onSuccess: (_, variables) => {
       setSavingCaptionId(null);
@@ -765,7 +842,9 @@ export default function GalleryDetail() {
     },
     onError: (error: Error) => {
       setSavingCaptionId(null);
-      queryClient.invalidateQueries({ queryKey: ["/api/galleries", galleryId] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/galleries", galleryId],
+      });
       toast({
         title: "Failed to save caption",
         description: error.message || "Your changes were not saved",
@@ -776,10 +855,14 @@ export default function GalleryDetail() {
 
   const reorderImagesMutation = useMutation({
     mutationFn: async (imageIds: string[]) => {
-      return apiRequest("PATCH", `/api/galleries/${galleryId}/reorder`, { imageIds });
+      return apiRequest("PATCH", `/api/galleries/${galleryId}/reorder`, {
+        imageIds,
+      });
     },
     onError: (error: Error) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/galleries", galleryId] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/galleries", galleryId],
+      });
       toast({
         title: "Failed to reorder",
         description: error.message || "Could not save new order",
@@ -815,7 +898,7 @@ export default function GalleryDetail() {
         lastSelectedIndexRef.current = currentIndex;
       }
     },
-    [gallery?.images, selectedImages]
+    [gallery?.images, selectedImages],
   );
 
   const handleSelectAll = useCallback(() => {
@@ -838,44 +921,51 @@ export default function GalleryDetail() {
       const newImages = arrayMove(gallery.images, oldIndex, newIndex);
 
       // Optimistic update
-      queryClient.setQueryData(["/api/galleries", galleryId], (old: GalleryWithRelations | undefined) =>
-        old ? { ...old, images: newImages } : old
+      queryClient.setQueryData(
+        ["/api/galleries", galleryId],
+        (old: GalleryWithRelations | undefined) =>
+          old ? { ...old, images: newImages } : old,
       );
 
       // Save to server
       reorderImagesMutation.mutate(newImages.map((img) => img.id));
     },
-    [gallery?.images, galleryId, reorderImagesMutation]
+    [gallery?.images, galleryId, reorderImagesMutation],
   );
 
   const handleCaptionChange = useCallback(
     (imageId: string, value: string) => {
-      queryClient.setQueryData(["/api/galleries", galleryId], (old: GalleryWithRelations | undefined) =>
-        old
-          ? {
-              ...old,
-              images: old.images?.map((img) =>
-                img.id === imageId ? { ...img, caption: value } : img
-              ),
-            }
-          : old
+      queryClient.setQueryData(
+        ["/api/galleries", galleryId],
+        (old: GalleryWithRelations | undefined) =>
+          old
+            ? {
+                ...old,
+                images: old.images?.map((img) =>
+                  img.id === imageId ? { ...img, caption: value } : img,
+                ),
+              }
+            : old,
       );
     },
-    [galleryId]
+    [galleryId],
   );
 
   const handleCaptionBlur = useCallback(
     (imageId: string, value: string) => {
       updateImageMutation.mutate({ imageId, caption: value });
     },
-    [updateImageMutation]
+    [updateImageMutation],
   );
 
   const copyShareLink = async () => {
     const shareUrl = `${window.location.origin}/client/galleries/${galleryId}`;
     try {
       await navigator.clipboard.writeText(shareUrl);
-      toast({ title: "Link copied", description: "Gallery link copied to clipboard" });
+      toast({
+        title: "Link copied",
+        description: "Gallery link copied to clipboard",
+      });
     } catch {
       toast({
         title: "Copy failed",
@@ -923,7 +1013,8 @@ export default function GalleryDetail() {
   }
 
   const images = (gallery.images || []) as ImageWithFavorite[];
-  const statusConfig = STATUS_CONFIG[gallery.status as keyof typeof STATUS_CONFIG];
+  const statusConfig =
+    STATUS_CONFIG[gallery.status as keyof typeof STATUS_CONFIG];
 
   return (
     <div className="h-full flex flex-col bg-slate-50 dark:bg-slate-950">
@@ -931,7 +1022,11 @@ export default function GalleryDetail() {
       <header className="shrink-0 bg-white dark:bg-slate-900 border-b px-4 sm:px-6 py-3">
         <div className="max-w-[1280px] mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => setLocation("/galleries")}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setLocation("/galleries")}
+            >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Galleries
             </Button>
@@ -939,7 +1034,9 @@ export default function GalleryDetail() {
             <div>
               <h1 className="text-lg font-semibold">{gallery.title}</h1>
               <div className="flex items-center gap-2 mt-0.5">
-                <Badge className={`${statusConfig?.color || "bg-slate-500"} text-white text-xs`}>
+                <Badge
+                  className={`${statusConfig?.color || "bg-slate-500"} text-white text-xs`}
+                >
                   {statusConfig?.label || gallery.status}
                 </Badge>
                 <span className="text-xs text-muted-foreground">
@@ -947,7 +1044,8 @@ export default function GalleryDetail() {
                 </span>
                 {gallery.project?.client && (
                   <span className="text-xs text-muted-foreground">
-                    • {gallery.project.client.firstName} {gallery.project.client.lastName}
+                    • {gallery.project.client.firstName}{" "}
+                    {gallery.project.client.lastName}
                   </span>
                 )}
               </div>
@@ -962,7 +1060,9 @@ export default function GalleryDetail() {
             <Button
               size="sm"
               onClick={() => shareGalleryMutation.mutate()}
-              disabled={shareGalleryMutation.isPending || gallery.status === "SHARED"}
+              disabled={
+                shareGalleryMutation.isPending || gallery.status === "SHARED"
+              }
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >
               <Share2 className="w-4 h-4 mr-2" />
@@ -980,9 +1080,14 @@ export default function GalleryDetail() {
             {/* Cover Image */}
             <div className="lg:col-span-2">
               <div className="relative rounded-xl overflow-hidden bg-slate-200 dark:bg-slate-800 aspect-[21/9]">
-                {gallery.coverImage?.webUrl || gallery.coverImage?.thumbnailUrl ? (
+                {gallery.coverImage?.webUrl ||
+                gallery.coverImage?.thumbnailUrl ? (
                   <img
-                    src={gallery.coverImage.webUrl || gallery.coverImage.thumbnailUrl || ""}
+                    src={
+                      gallery.coverImage.webUrl ||
+                      gallery.coverImage.thumbnailUrl ||
+                      ""
+                    }
                     alt="Gallery cover"
                     className="w-full h-full object-cover"
                   />
@@ -1039,11 +1144,15 @@ export default function GalleryDetail() {
                 <CardContent className="pt-5">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20">
-                      <p className="text-2xl font-bold text-purple-600">{images.length}</p>
+                      <p className="text-2xl font-bold text-purple-600">
+                        {images.length}
+                      </p>
                       <p className="text-xs text-muted-foreground">Images</p>
                     </div>
                     <div className="text-center p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20">
-                      <p className="text-2xl font-bold text-blue-600">{gallery.viewCount || 0}</p>
+                      <p className="text-2xl font-bold text-blue-600">
+                        {gallery.viewCount || 0}
+                      </p>
                       <p className="text-xs text-muted-foreground">Views</p>
                     </div>
                   </div>
@@ -1094,7 +1203,9 @@ export default function GalleryDetail() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="description">Description (Optional)</Label>
+                      <Label htmlFor="description">
+                        Description (Optional)
+                      </Label>
                       <Textarea
                         id="description"
                         value={editedDescription}
@@ -1108,8 +1219,12 @@ export default function GalleryDetail() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
                     <div className="flex items-center justify-between p-3 rounded-lg border">
                       <div>
-                        <Label className="text-sm font-medium">Public Gallery</Label>
-                        <p className="text-xs text-muted-foreground">Show in portfolio</p>
+                        <Label className="text-sm font-medium">
+                          Public Gallery
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                          Show in portfolio
+                        </p>
                       </div>
                       <Switch
                         checked={gallery.isPublic || false}
@@ -1120,25 +1235,35 @@ export default function GalleryDetail() {
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg border">
                       <div>
-                        <Label className="text-sm font-medium">Watermarks</Label>
-                        <p className="text-xs text-muted-foreground">Protect your images</p>
+                        <Label className="text-sm font-medium">
+                          Watermarks
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                          Protect your images
+                        </p>
                       </div>
                       <Switch
                         checked={gallery.watermarkEnabled || false}
                         onCheckedChange={(checked) =>
-                          updateGalleryMutation.mutate({ watermarkEnabled: checked })
+                          updateGalleryMutation.mutate({
+                            watermarkEnabled: checked,
+                          })
                         }
                       />
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg border">
                       <div>
                         <Label className="text-sm font-medium">Downloads</Label>
-                        <p className="text-xs text-muted-foreground">Allow client downloads</p>
+                        <p className="text-xs text-muted-foreground">
+                          Allow client downloads
+                        </p>
                       </div>
                       <Switch
                         checked={gallery.allowDownloads ?? true}
                         onCheckedChange={(checked) =>
-                          updateGalleryMutation.mutate({ allowDownloads: checked })
+                          updateGalleryMutation.mutate({
+                            allowDownloads: checked,
+                          })
                         }
                       />
                     </div>
@@ -1164,7 +1289,9 @@ export default function GalleryDetail() {
                       className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                     >
                       <Save className="w-4 h-4 mr-2" />
-                      {updateGalleryMutation.isPending ? "Saving..." : "Save Changes"}
+                      {updateGalleryMutation.isPending
+                        ? "Saving..."
+                        : "Save Changes"}
                     </Button>
                   </div>
                 </CardContent>
@@ -1222,7 +1349,11 @@ export default function GalleryDetail() {
 
                   {/* Bulk Actions Toolbar */}
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={handleSelectAll}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSelectAll}
+                    >
                       {selectedImages.size === images.length ? (
                         <>
                           <X className="w-4 h-4 mr-2" />
@@ -1253,7 +1384,8 @@ export default function GalleryDetail() {
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Drag to reorder • Click to preview • Shift+click to select multiple
+                  Drag to reorder • Click to preview • Shift+click to select
+                  multiple
                 </p>
               </CardHeader>
               <CardContent>
@@ -1262,7 +1394,10 @@ export default function GalleryDetail() {
                   collisionDetection={closestCenter}
                   onDragEnd={handleDragEnd}
                 >
-                  <SortableContext items={images.map((img) => img.id)} strategy={rectSortingStrategy}>
+                  <SortableContext
+                    items={images.map((img) => img.id)}
+                    strategy={rectSortingStrategy}
+                  >
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                       {images.map((image, index) => (
                         <SortableImageCard
@@ -1299,8 +1434,8 @@ export default function GalleryDetail() {
                   </div>
                   <h3 className="text-lg font-semibold mb-2">No images yet</h3>
                   <p className="text-muted-foreground max-w-sm mx-auto">
-                    Upload your first images to start building this gallery. Your client will love
-                    it!
+                    Upload your first images to start building this gallery.
+                    Your client will love it!
                   </p>
                 </div>
               </CardContent>
@@ -1328,12 +1463,16 @@ export default function GalleryDetail() {
               Delete Gallery?
             </DialogTitle>
             <DialogDescription>
-              This gallery will be moved to trash. You can restore it within 30 days. After that, it
-              will be permanently deleted along with all images.
+              This gallery will be moved to trash. You can restore it within 30
+              days. After that, it will be permanently deleted along with all
+              images.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteConfirmOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setDeleteConfirmOpen(false)}
+            >
               Cancel
             </Button>
             <Button
@@ -1344,14 +1483,19 @@ export default function GalleryDetail() {
               }}
               disabled={deleteGalleryMutation.isPending}
             >
-              {deleteGalleryMutation.isPending ? "Deleting..." : "Move to Trash"}
+              {deleteGalleryMutation.isPending
+                ? "Deleting..."
+                : "Move to Trash"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Delete Single Image Confirmation */}
-      <Dialog open={!!imageToDelete} onOpenChange={(open) => !open && setImageToDelete(null)}>
+      <Dialog
+        open={!!imageToDelete}
+        onOpenChange={(open) => !open && setImageToDelete(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -1359,7 +1503,8 @@ export default function GalleryDetail() {
               Delete Image?
             </DialogTitle>
             <DialogDescription>
-              This will permanently remove this image from the gallery. This action cannot be undone.
+              This will permanently remove this image from the gallery. This
+              action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -1380,7 +1525,10 @@ export default function GalleryDetail() {
       </Dialog>
 
       {/* Bulk Delete Confirmation */}
-      <Dialog open={bulkDeleteConfirmOpen} onOpenChange={setBulkDeleteConfirmOpen}>
+      <Dialog
+        open={bulkDeleteConfirmOpen}
+        onOpenChange={setBulkDeleteConfirmOpen}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -1388,17 +1536,22 @@ export default function GalleryDetail() {
               Delete {selectedImages.size} Images?
             </DialogTitle>
             <DialogDescription>
-              This will permanently remove the selected images from the gallery. This action cannot
-              be undone.
+              This will permanently remove the selected images from the gallery.
+              This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setBulkDeleteConfirmOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setBulkDeleteConfirmOpen(false)}
+            >
               Cancel
             </Button>
             <Button
               variant="destructive"
-              onClick={() => bulkDeleteMutation.mutate(Array.from(selectedImages))}
+              onClick={() =>
+                bulkDeleteMutation.mutate(Array.from(selectedImages))
+              }
               disabled={bulkDeleteMutation.isPending}
             >
               {bulkDeleteMutation.isPending
@@ -1418,7 +1571,8 @@ export default function GalleryDetail() {
               Gallery Shared!
             </DialogTitle>
             <DialogDescription>
-              Your gallery is now ready for your client. Copy the link below to share it.
+              Your gallery is now ready for your client. Copy the link below to
+              share it.
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-2 py-4">

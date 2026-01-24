@@ -3,14 +3,44 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useProjectTypes, type ProjectType } from "@/hooks/use-project-types";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, GripVertical, Pencil, Archive, ArchiveRestore, Trash2, Loader2 } from "lucide-react";
+import {
+  Plus,
+  GripVertical,
+  Pencil,
+  Archive,
+  ArchiveRestore,
+  Trash2,
+  Loader2,
+} from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -30,8 +60,16 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 const DEFAULT_COLORS = [
-  "#e11d48", "#f97316", "#eab308", "#22c55e", "#14b8a6",
-  "#0ea5e9", "#6366f1", "#a855f7", "#ec4899", "#64748b"
+  "#e11d48",
+  "#f97316",
+  "#eab308",
+  "#22c55e",
+  "#14b8a6",
+  "#0ea5e9",
+  "#6366f1",
+  "#a855f7",
+  "#ec4899",
+  "#64748b",
 ];
 
 interface SortableItemProps {
@@ -41,7 +79,12 @@ interface SortableItemProps {
   onDelete: (type: ProjectType) => void;
 }
 
-function SortableItem({ type, onEdit, onArchive, onDelete }: SortableItemProps) {
+function SortableItem({
+  type,
+  onEdit,
+  onArchive,
+  onDelete,
+}: SortableItemProps) {
   const {
     attributes,
     listeners,
@@ -137,14 +180,14 @@ export function ProjectTypesManager() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { projectTypes, isLoading } = useProjectTypes(true);
-  
+
   const [localTypes, setLocalTypes] = useState<ProjectType[]>([]);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<ProjectType | null>(null);
   const [showArchived, setShowArchived] = useState(false);
-  
+
   const [formName, setFormName] = useState("");
   const [formColor, setFormColor] = useState(DEFAULT_COLORS[0]);
 
@@ -156,7 +199,7 @@ export function ProjectTypesManager() {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const createMutation = useMutation({
@@ -178,7 +221,13 @@ export function ProjectTypesManager() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: { name?: string; color?: string } }) => {
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { name?: string; color?: string };
+    }) => {
       return apiRequest("PATCH", `/api/project-types/${id}`, data);
     },
     onSuccess: () => {
@@ -197,7 +246,9 @@ export function ProjectTypesManager() {
 
   const archiveMutation = useMutation({
     mutationFn: async ({ id, archive }: { id: string; archive: boolean }) => {
-      return apiRequest("PATCH", `/api/project-types/${id}/archive`, { archive });
+      return apiRequest("PATCH", `/api/project-types/${id}/archive`, {
+        archive,
+      });
     },
     onSuccess: (_, variables) => {
       toast({
@@ -312,14 +363,14 @@ export function ProjectTypesManager() {
 
       if (oldIndex !== -1 && newIndex !== -1) {
         const reorderedDisplay = arrayMove(displayedTypes, oldIndex, newIndex);
-        
+
         if (showArchived) {
           setLocalTypes(reorderedDisplay);
         } else {
           const archivedTypes = localTypes.filter((t) => t.isArchived);
           setLocalTypes([...reorderedDisplay, ...archivedTypes]);
         }
-        
+
         reorderMutation.mutate(reorderedDisplay.map((t) => t.id));
       }
     }
@@ -349,7 +400,8 @@ export function ProjectTypesManager() {
             <div>
               <CardTitle>Project Types</CardTitle>
               <CardDescription>
-                Manage the types of photography projects you offer. Drag to reorder.
+                Manage the types of photography projects you offer. Drag to
+                reorder.
               </CardDescription>
             </div>
             <Button
@@ -409,10 +461,13 @@ export function ProjectTypesManager() {
         </CardContent>
       </Card>
 
-      <Dialog open={createDialogOpen} onOpenChange={(open) => {
-        if (!open) handleCloseCreateDialog();
-        else setCreateDialogOpen(true);
-      }}>
+      <Dialog
+        open={createDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) handleCloseCreateDialog();
+          else setCreateDialogOpen(true);
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create Project Type</DialogTitle>
@@ -479,8 +534,17 @@ export function ProjectTypesManager() {
             </Button>
             <Button
               type="button"
-              onClick={() => createMutation.mutate({ name: formName.trim(), color: formColor })}
-              disabled={!formName.trim() || formName.trim().length > 50 || createMutation.isPending}
+              onClick={() =>
+                createMutation.mutate({
+                  name: formName.trim(),
+                  color: formColor,
+                })
+              }
+              disabled={
+                !formName.trim() ||
+                formName.trim().length > 50 ||
+                createMutation.isPending
+              }
               data-testid="button-confirm-create"
             >
               {createMutation.isPending ? (
@@ -492,10 +556,13 @@ export function ProjectTypesManager() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={editDialogOpen} onOpenChange={(open) => {
-        if (!open) handleCloseEditDialog();
-        else setEditDialogOpen(true);
-      }}>
+      <Dialog
+        open={editDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) handleCloseEditDialog();
+          else setEditDialogOpen(true);
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Project Type</DialogTitle>
@@ -568,7 +635,11 @@ export function ProjectTypesManager() {
                   data: { name: formName.trim(), color: formColor },
                 })
               }
-              disabled={!formName.trim() || formName.trim().length > 50 || updateMutation.isPending}
+              disabled={
+                !formName.trim() ||
+                formName.trim().length > 50 ||
+                updateMutation.isPending
+              }
               data-testid="button-confirm-edit"
             >
               {updateMutation.isPending ? (
@@ -595,7 +666,9 @@ export function ProjectTypesManager() {
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => selectedType && deleteMutation.mutate(selectedType.id)}
+              onClick={() =>
+                selectedType && deleteMutation.mutate(selectedType.id)
+              }
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               data-testid="button-confirm-delete"
             >

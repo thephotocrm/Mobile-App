@@ -4,11 +4,7 @@ import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Calendar, 
-  ArrowRight,
-  Loader2
-} from "lucide-react";
+import { Calendar, ArrowRight, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 
 interface Project {
@@ -17,7 +13,7 @@ interface Project {
   projectType: string;
   status: string;
   eventDate?: string;
-  role: 'PRIMARY' | 'PARTICIPANT';
+  role: "PRIMARY" | "PARTICIPANT";
   stage?: {
     name: string;
   };
@@ -38,7 +34,7 @@ export default function SelectProject() {
   // Fetch client's projects
   const { data, isLoading } = useQuery<ProjectsResponse>({
     queryKey: ["/api/client-portal/projects"],
-    enabled: !!user
+    enabled: !!user,
   });
 
   if (!loading && !user) {
@@ -49,7 +45,10 @@ export default function SelectProject() {
   if (loading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" data-testid="loader-projects" />
+        <Loader2
+          className="w-8 h-8 text-blue-600 animate-spin"
+          data-testid="loader-projects"
+        />
       </div>
     );
   }
@@ -60,7 +59,10 @@ export default function SelectProject() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="heading-select-project">
+          <h1
+            className="text-3xl font-bold text-gray-900 mb-2"
+            data-testid="heading-select-project"
+          >
             Select a Project
           </h1>
           <p className="text-gray-600">
@@ -72,7 +74,9 @@ export default function SelectProject() {
           <Card data-testid="card-no-projects">
             <CardContent className="pt-6">
               <div className="text-center py-12">
-                <p className="text-gray-600 mb-4">You don't have any active projects yet.</p>
+                <p className="text-gray-600 mb-4">
+                  You don't have any active projects yet.
+                </p>
                 <p className="text-sm text-gray-500">
                   Your photographer will create a project for you soon.
                 </p>
@@ -80,12 +84,17 @@ export default function SelectProject() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2" data-testid="grid-projects">
+          <div
+            className="grid gap-4 md:grid-cols-2"
+            data-testid="grid-projects"
+          >
             {projects.map((project) => (
               <Card
                 key={project.id}
                 className="hover:shadow-lg transition-shadow cursor-pointer group"
-                onClick={() => setLocation(`/client-portal/projects/${project.id}`)}
+                onClick={() =>
+                  setLocation(`/client-portal/projects/${project.id}`)
+                }
                 data-testid={`card-project-${project.id}`}
               >
                 <CardHeader>
@@ -103,8 +112,11 @@ export default function SelectProject() {
                             {project.stage.name}
                           </Badge>
                         )}
-                        {project.role === 'PARTICIPANT' && (
-                          <Badge variant="outline" className="text-xs bg-purple-50">
+                        {project.role === "PARTICIPANT" && (
+                          <Badge
+                            variant="outline"
+                            className="text-xs bg-purple-50"
+                          >
                             Participant
                           </Badge>
                         )}
@@ -118,12 +130,13 @@ export default function SelectProject() {
                     {project.eventDate && (
                       <div className="flex items-center text-sm text-gray-600">
                         <Calendar className="w-4 h-4 mr-2" />
-                        {format(new Date(project.eventDate), 'MMMM d, yyyy')}
+                        {format(new Date(project.eventDate), "MMMM d, yyyy")}
                       </div>
                     )}
-                    {project.role === 'PARTICIPANT' && (
+                    {project.role === "PARTICIPANT" && (
                       <div className="text-sm text-gray-600">
-                        Primary: {project.primaryClient.firstName} {project.primaryClient.lastName}
+                        Primary: {project.primaryClient.firstName}{" "}
+                        {project.primaryClient.lastName}
                       </div>
                     )}
                   </div>

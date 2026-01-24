@@ -59,12 +59,8 @@
           "name": "add_ons_photographer_id_photographers_id_fk",
           "tableFrom": "add_ons",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -170,12 +166,8 @@
           "name": "admin_activity_log_admin_user_id_users_id_fk",
           "tableFrom": "admin_activity_log",
           "tableTo": "users",
-          "columnsFrom": [
-            "admin_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["admin_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -183,12 +175,8 @@
           "name": "admin_activity_log_target_photographer_id_photographers_id_fk",
           "tableFrom": "admin_activity_log",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "target_photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["target_photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -271,12 +259,8 @@
           "name": "automation_business_triggers_automation_id_automations_id_fk",
           "tableFrom": "automation_business_triggers",
           "tableTo": "automations",
-          "columnsFrom": [
-            "automation_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["automation_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -286,10 +270,7 @@
         "automation_business_triggers_unique": {
           "name": "automation_business_triggers_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "automation_id",
-            "trigger_type"
-          ]
+          "columns": ["automation_id", "trigger_type"]
         }
       },
       "policies": {},
@@ -376,12 +357,8 @@
           "name": "automation_executions_project_id_projects_id_fk",
           "tableFrom": "automation_executions",
           "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -389,12 +366,8 @@
           "name": "automation_executions_automation_id_automations_id_fk",
           "tableFrom": "automation_executions",
           "tableTo": "automations",
-          "columnsFrom": [
-            "automation_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["automation_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -402,12 +375,8 @@
           "name": "automation_executions_automation_step_id_automation_steps_id_fk",
           "tableFrom": "automation_executions",
           "tableTo": "automation_steps",
-          "columnsFrom": [
-            "automation_step_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["automation_step_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -417,19 +386,12 @@
         "automation_executions_communication_unique": {
           "name": "automation_executions_communication_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "project_id",
-            "automation_step_id"
-          ]
+          "columns": ["project_id", "automation_step_id"]
         },
         "automation_executions_stage_change_unique": {
           "name": "automation_executions_stage_change_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "project_id",
-            "automation_id",
-            "trigger_type"
-          ]
+          "columns": ["project_id", "automation_id", "trigger_type"]
         },
         "automation_executions_countdown_unique": {
           "name": "automation_executions_countdown_unique",
@@ -507,12 +469,8 @@
           "name": "automation_steps_automation_id_automations_id_fk",
           "tableFrom": "automation_steps",
           "tableTo": "automations",
-          "columnsFrom": [
-            "automation_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["automation_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -520,12 +478,8 @@
           "name": "automation_steps_template_id_templates_id_fk",
           "tableFrom": "automation_steps",
           "tableTo": "templates",
-          "columnsFrom": [
-            "template_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["template_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -682,12 +636,8 @@
           "name": "automations_photographer_id_photographers_id_fk",
           "tableFrom": "automations",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -695,12 +645,8 @@
           "name": "automations_stage_id_stages_id_fk",
           "tableFrom": "automations",
           "tableTo": "stages",
-          "columnsFrom": [
-            "stage_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["stage_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -708,12 +654,8 @@
           "name": "automations_target_stage_id_stages_id_fk",
           "tableFrom": "automations",
           "tableTo": "stages",
-          "columnsFrom": [
-            "target_stage_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["target_stage_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -721,12 +663,8 @@
           "name": "automations_stage_condition_stages_id_fk",
           "tableFrom": "automations",
           "tableTo": "stages",
-          "columnsFrom": [
-            "stage_condition"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["stage_condition"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -734,12 +672,8 @@
           "name": "automations_template_id_templates_id_fk",
           "tableFrom": "automations",
           "tableTo": "templates",
-          "columnsFrom": [
-            "template_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["template_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -747,12 +681,8 @@
           "name": "automations_questionnaire_template_id_questionnaire_templates_id_fk",
           "tableFrom": "automations",
           "tableTo": "questionnaire_templates",
-          "columnsFrom": [
-            "questionnaire_template_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["questionnaire_template_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -844,12 +774,8 @@
           "name": "availability_slots_photographer_id_photographers_id_fk",
           "tableFrom": "availability_slots",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -979,12 +905,8 @@
           "name": "bookings_photographer_id_photographers_id_fk",
           "tableFrom": "bookings",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -992,12 +914,8 @@
           "name": "bookings_project_id_projects_id_fk",
           "tableFrom": "bookings",
           "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1052,12 +970,8 @@
           "name": "checklist_template_items_photographer_id_photographers_id_fk",
           "tableFrom": "checklist_template_items",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1117,12 +1031,8 @@
           "name": "client_portal_tokens_client_id_clients_id_fk",
           "tableFrom": "client_portal_tokens",
           "tableTo": "clients",
-          "columnsFrom": [
-            "client_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["client_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1132,9 +1042,7 @@
         "client_portal_tokens_token_unique": {
           "name": "client_portal_tokens_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -1255,12 +1163,8 @@
           "name": "clients_photographer_id_photographers_id_fk",
           "tableFrom": "clients",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1268,12 +1172,8 @@
           "name": "clients_stage_id_stages_id_fk",
           "tableFrom": "clients",
           "tableTo": "stages",
-          "columnsFrom": [
-            "stage_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["stage_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1333,12 +1233,8 @@
           "name": "daily_availability_breaks_template_id_daily_availability_templates_id_fk",
           "tableFrom": "daily_availability_breaks",
           "tableTo": "daily_availability_templates",
-          "columnsFrom": [
-            "template_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["template_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1410,12 +1306,8 @@
           "name": "daily_availability_overrides_photographer_id_photographers_id_fk",
           "tableFrom": "daily_availability_overrides",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1482,12 +1374,8 @@
           "name": "daily_availability_templates_photographer_id_photographers_id_fk",
           "tableFrom": "daily_availability_templates",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1627,12 +1515,8 @@
           "name": "drip_campaign_emails_campaign_id_drip_campaigns_id_fk",
           "tableFrom": "drip_campaign_emails",
           "tableTo": "drip_campaigns",
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["campaign_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1640,12 +1524,8 @@
           "name": "drip_campaign_emails_approved_by_users_id_fk",
           "tableFrom": "drip_campaign_emails",
           "tableTo": "users",
-          "columnsFrom": [
-            "approved_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["approved_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1653,12 +1533,8 @@
           "name": "drip_campaign_emails_last_edited_by_users_id_fk",
           "tableFrom": "drip_campaign_emails",
           "tableTo": "users",
-          "columnsFrom": [
-            "last_edited_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["last_edited_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1744,12 +1620,8 @@
           "name": "drip_campaign_subscriptions_campaign_id_drip_campaigns_id_fk",
           "tableFrom": "drip_campaign_subscriptions",
           "tableTo": "drip_campaigns",
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["campaign_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1757,12 +1629,8 @@
           "name": "drip_campaign_subscriptions_project_id_projects_id_fk",
           "tableFrom": "drip_campaign_subscriptions",
           "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1770,12 +1638,8 @@
           "name": "drip_campaign_subscriptions_client_id_clients_id_fk",
           "tableFrom": "drip_campaign_subscriptions",
           "tableTo": "clients",
-          "columnsFrom": [
-            "client_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["client_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1785,10 +1649,7 @@
         "drip_subscription_project_campaign_unique": {
           "name": "drip_subscription_project_campaign_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "project_id",
-            "campaign_id"
-          ]
+          "columns": ["project_id", "campaign_id"]
         }
       },
       "policies": {},
@@ -1890,12 +1751,8 @@
           "name": "drip_campaign_version_history_campaign_id_drip_campaigns_id_fk",
           "tableFrom": "drip_campaign_version_history",
           "tableTo": "drip_campaigns",
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["campaign_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1903,12 +1760,8 @@
           "name": "drip_campaign_version_history_changed_by_users_id_fk",
           "tableFrom": "drip_campaign_version_history",
           "tableTo": "users",
-          "columnsFrom": [
-            "changed_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["changed_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1916,12 +1769,8 @@
           "name": "drip_campaign_version_history_affected_email_id_drip_campaign_emails_id_fk",
           "tableFrom": "drip_campaign_version_history",
           "tableTo": "drip_campaign_emails",
-          "columnsFrom": [
-            "affected_email_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["affected_email_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2112,12 +1961,8 @@
           "name": "drip_campaigns_photographer_id_photographers_id_fk",
           "tableFrom": "drip_campaigns",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2125,12 +1970,8 @@
           "name": "drip_campaigns_target_stage_id_stages_id_fk",
           "tableFrom": "drip_campaigns",
           "tableTo": "stages",
-          "columnsFrom": [
-            "target_stage_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["target_stage_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2138,12 +1979,8 @@
           "name": "drip_campaigns_approved_by_users_id_fk",
           "tableFrom": "drip_campaigns",
           "tableTo": "users",
-          "columnsFrom": [
-            "approved_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["approved_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2151,12 +1988,8 @@
           "name": "drip_campaigns_parent_campaign_id_drip_campaigns_id_fk",
           "tableFrom": "drip_campaigns",
           "tableTo": "drip_campaigns",
-          "columnsFrom": [
-            "parent_campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_campaign_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2252,12 +2085,8 @@
           "name": "drip_email_deliveries_subscription_id_drip_campaign_subscriptions_id_fk",
           "tableFrom": "drip_email_deliveries",
           "tableTo": "drip_campaign_subscriptions",
-          "columnsFrom": [
-            "subscription_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["subscription_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2265,12 +2094,8 @@
           "name": "drip_email_deliveries_email_id_drip_campaign_emails_id_fk",
           "tableFrom": "drip_email_deliveries",
           "tableTo": "drip_campaign_emails",
-          "columnsFrom": [
-            "email_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["email_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2278,12 +2103,8 @@
           "name": "drip_email_deliveries_client_id_clients_id_fk",
           "tableFrom": "drip_email_deliveries",
           "tableTo": "clients",
-          "columnsFrom": [
-            "client_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["client_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2291,12 +2112,8 @@
           "name": "drip_email_deliveries_project_id_projects_id_fk",
           "tableFrom": "drip_email_deliveries",
           "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2306,10 +2123,7 @@
         "drip_delivery_subscription_email_unique": {
           "name": "drip_delivery_subscription_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "subscription_id",
-            "email_id"
-          ]
+          "columns": ["subscription_id", "email_id"]
         }
       },
       "policies": {},
@@ -2490,12 +2304,8 @@
           "name": "email_history_photographer_id_photographers_id_fk",
           "tableFrom": "email_history",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2503,12 +2313,8 @@
           "name": "email_history_client_id_clients_id_fk",
           "tableFrom": "email_history",
           "tableTo": "clients",
-          "columnsFrom": [
-            "client_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["client_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2516,12 +2322,8 @@
           "name": "email_history_project_id_projects_id_fk",
           "tableFrom": "email_history",
           "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2529,12 +2331,8 @@
           "name": "email_history_automation_step_id_automation_steps_id_fk",
           "tableFrom": "email_history",
           "tableTo": "automation_steps",
-          "columnsFrom": [
-            "automation_step_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["automation_step_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2617,12 +2415,8 @@
           "name": "email_logs_client_id_clients_id_fk",
           "tableFrom": "email_logs",
           "tableTo": "clients",
-          "columnsFrom": [
-            "client_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["client_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2630,12 +2424,8 @@
           "name": "email_logs_project_id_projects_id_fk",
           "tableFrom": "email_logs",
           "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2643,12 +2433,8 @@
           "name": "email_logs_automation_step_id_automation_steps_id_fk",
           "tableFrom": "email_logs",
           "tableTo": "automation_steps",
-          "columnsFrom": [
-            "automation_step_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["automation_step_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2773,12 +2559,8 @@
           "name": "lead_forms_photographer_id_photographers_id_fk",
           "tableFrom": "lead_forms",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2788,9 +2570,7 @@
         "lead_forms_public_token_unique": {
           "name": "lead_forms_public_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "public_token"
-          ]
+          "columns": ["public_token"]
         }
       },
       "policies": {},
@@ -2858,12 +2638,8 @@
           "name": "messages_client_id_clients_id_fk",
           "tableFrom": "messages",
           "tableTo": "clients",
-          "columnsFrom": [
-            "client_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["client_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2871,12 +2647,8 @@
           "name": "messages_photographer_id_photographers_id_fk",
           "tableFrom": "messages",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2944,12 +2716,8 @@
           "name": "package_items_package_id_packages_id_fk",
           "tableFrom": "package_items",
           "tableTo": "packages",
-          "columnsFrom": [
-            "package_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["package_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3015,12 +2783,8 @@
           "name": "packages_photographer_id_photographers_id_fk",
           "tableFrom": "packages",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3140,12 +2904,8 @@
           "name": "photographer_earnings_photographer_id_photographers_id_fk",
           "tableFrom": "photographer_earnings",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3153,12 +2913,8 @@
           "name": "photographer_earnings_project_id_projects_id_fk",
           "tableFrom": "photographer_earnings",
           "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3168,16 +2924,12 @@
         "photographer_earnings_payment_intent_id_unique": {
           "name": "photographer_earnings_payment_intent_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "payment_intent_id"
-          ]
+          "columns": ["payment_intent_id"]
         },
         "photographer_earnings_transfer_id_unique": {
           "name": "photographer_earnings_transfer_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "transfer_id"
-          ]
+          "columns": ["transfer_id"]
         }
       },
       "policies": {},
@@ -3234,12 +2986,8 @@
           "name": "photographer_links_photographer_id_photographers_id_fk",
           "tableFrom": "photographer_links",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3362,12 +3110,8 @@
           "name": "photographer_payouts_photographer_id_photographers_id_fk",
           "tableFrom": "photographer_payouts",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3377,9 +3121,7 @@
         "photographer_payouts_stripe_payout_id_unique": {
           "name": "photographer_payouts_stripe_payout_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "stripe_payout_id"
-          ]
+          "columns": ["stripe_payout_id"]
         }
       },
       "policies": {},
@@ -3587,9 +3329,7 @@
         "photographers_public_token_unique": {
           "name": "photographers_public_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "public_token"
-          ]
+          "columns": ["public_token"]
         }
       },
       "policies": {},
@@ -3669,12 +3409,8 @@
           "name": "project_activity_log_project_id_projects_id_fk",
           "tableFrom": "project_activity_log",
           "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3735,12 +3471,8 @@
           "name": "project_checklist_items_project_id_projects_id_fk",
           "tableFrom": "project_checklist_items",
           "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3838,12 +3570,8 @@
           "name": "project_participants_project_id_projects_id_fk",
           "tableFrom": "project_participants",
           "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -3851,12 +3579,8 @@
           "name": "project_participants_client_id_clients_id_fk",
           "tableFrom": "project_participants",
           "tableTo": "clients",
-          "columnsFrom": [
-            "client_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["client_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3866,10 +3590,7 @@
         "project_participants_project_client_unique": {
           "name": "project_participants_project_client_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "project_id",
-            "client_id"
-          ]
+          "columns": ["project_id", "client_id"]
         }
       },
       "policies": {},
@@ -3925,12 +3646,8 @@
           "name": "project_questionnaires_project_id_projects_id_fk",
           "tableFrom": "project_questionnaires",
           "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3938,12 +3655,8 @@
           "name": "project_questionnaires_questionnaire_template_id_questionnaire_templates_id_fk",
           "tableFrom": "project_questionnaires",
           "tableTo": "questionnaire_templates",
-          "columnsFrom": [
-            "questionnaire_template_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["questionnaire_template_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -4281,12 +3994,8 @@
           "name": "project_smart_files_project_id_projects_id_fk",
           "tableFrom": "project_smart_files",
           "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4294,12 +4003,8 @@
           "name": "project_smart_files_smart_file_id_smart_files_id_fk",
           "tableFrom": "project_smart_files",
           "tableTo": "smart_files",
-          "columnsFrom": [
-            "smart_file_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["smart_file_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4307,12 +4012,8 @@
           "name": "project_smart_files_photographer_id_photographers_id_fk",
           "tableFrom": "project_smart_files",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4320,12 +4021,8 @@
           "name": "project_smart_files_client_id_clients_id_fk",
           "tableFrom": "project_smart_files",
           "tableTo": "clients",
-          "columnsFrom": [
-            "client_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["client_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -4445,12 +4142,8 @@
           "name": "projects_client_id_clients_id_fk",
           "tableFrom": "projects",
           "tableTo": "clients",
-          "columnsFrom": [
-            "client_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["client_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4458,12 +4151,8 @@
           "name": "projects_photographer_id_photographers_id_fk",
           "tableFrom": "projects",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4471,12 +4160,8 @@
           "name": "projects_stage_id_stages_id_fk",
           "tableFrom": "projects",
           "tableTo": "stages",
-          "columnsFrom": [
-            "stage_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["stage_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -4535,12 +4220,8 @@
           "name": "questionnaire_questions_template_id_questionnaire_templates_id_fk",
           "tableFrom": "questionnaire_questions",
           "tableTo": "questionnaire_templates",
-          "columnsFrom": [
-            "template_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["template_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -4594,12 +4275,8 @@
           "name": "questionnaire_templates_photographer_id_photographers_id_fk",
           "tableFrom": "questionnaire_templates",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -4698,12 +4375,8 @@
           "name": "short_links_photographer_id_photographers_id_fk",
           "tableFrom": "short_links",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -4713,9 +4386,7 @@
         "short_links_short_code_unique": {
           "name": "short_links_short_code_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "short_code"
-          ]
+          "columns": ["short_code"]
         }
       },
       "policies": {},
@@ -4814,12 +4485,8 @@
           "name": "smart_file_pages_smart_file_id_smart_files_id_fk",
           "tableFrom": "smart_file_pages",
           "tableTo": "smart_files",
-          "columnsFrom": [
-            "smart_file_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["smart_file_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4829,10 +4496,7 @@
         "smart_file_pages_unique_order": {
           "name": "smart_file_pages_unique_order",
           "nullsNotDistinct": false,
-          "columns": [
-            "smart_file_id",
-            "page_order"
-          ]
+          "columns": ["smart_file_id", "page_order"]
         }
       },
       "policies": {},
@@ -4947,12 +4611,8 @@
           "name": "smart_files_photographer_id_photographers_id_fk",
           "tableFrom": "smart_files",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -5068,12 +4728,8 @@
           "name": "sms_logs_client_id_clients_id_fk",
           "tableFrom": "sms_logs",
           "tableTo": "clients",
-          "columnsFrom": [
-            "client_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["client_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -5081,12 +4737,8 @@
           "name": "sms_logs_project_id_projects_id_fk",
           "tableFrom": "sms_logs",
           "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -5094,12 +4746,8 @@
           "name": "sms_logs_automation_step_id_automation_steps_id_fk",
           "tableFrom": "sms_logs",
           "tableTo": "automation_steps",
-          "columnsFrom": [
-            "automation_step_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["automation_step_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -5107,12 +4755,8 @@
           "name": "sms_logs_related_sms_id_sms_logs_id_fk",
           "tableFrom": "sms_logs",
           "tableTo": "sms_logs",
-          "columnsFrom": [
-            "related_sms_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["related_sms_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -5180,12 +4824,8 @@
           "name": "stages_photographer_id_photographers_id_fk",
           "tableFrom": "stages",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -5253,12 +4893,8 @@
           "name": "static_campaign_settings_photographer_id_photographers_id_fk",
           "tableFrom": "static_campaign_settings",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -5268,10 +4904,7 @@
         "static_campaign_settings_photographer_project_type_unique": {
           "name": "static_campaign_settings_photographer_project_type_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "photographer_id",
-            "project_type"
-          ]
+          "columns": ["photographer_id", "project_type"]
         }
       },
       "policies": {},
@@ -5339,12 +4972,8 @@
           "name": "templates_photographer_id_photographers_id_fk",
           "tableFrom": "templates",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -5429,12 +5058,8 @@
           "name": "users_photographer_id_photographers_id_fk",
           "tableFrom": "users",
           "tableTo": "photographers",
-          "columnsFrom": [
-            "photographer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photographer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -5444,9 +5069,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},

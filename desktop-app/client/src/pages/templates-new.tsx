@@ -10,7 +10,15 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Mail, Smartphone, Edit, Trash2, ArrowLeft, Link2 } from "lucide-react";
+import {
+  Plus,
+  Mail,
+  Smartphone,
+  Edit,
+  Trash2,
+  ArrowLeft,
+  Link2,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -26,28 +34,48 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ButtonRichTextEditor } from "@/components/ButtonRichTextEditor";
-import { blocksToTemplateBody, parseTemplateBodyToBlocks, type ContentBlock } from "@/lib/blocks-to-text";
+import {
+  blocksToTemplateBody,
+  parseTemplateBodyToBlocks,
+  type ContentBlock,
+} from "@/lib/blocks-to-text";
 
 // Template variables for email personalization
 const TEMPLATE_VARIABLES = [
-  { key: 'first_name', label: 'First Name' },
-  { key: 'last_name', label: 'Last Name' },
-  { key: 'full_name', label: 'Full Name' },
-  { key: 'email', label: 'Email' },
-  { key: 'phone', label: 'Phone' },
-  { key: 'project_type', label: 'Project Type' },
-  { key: 'event_date', label: 'Event Date' },
-  { key: 'photographer_name', label: 'Your Name' },
-  { key: 'business_name', label: 'Business Name' },
+  { key: "first_name", label: "First Name" },
+  { key: "last_name", label: "Last Name" },
+  { key: "full_name", label: "Full Name" },
+  { key: "email", label: "Email" },
+  { key: "phone", label: "Phone" },
+  { key: "project_type", label: "Project Type" },
+  { key: "event_date", label: "Event Date" },
+  { key: "photographer_name", label: "Your Name" },
+  { key: "business_name", label: "Business Name" },
 ];
 
 // Button destination options
 const BUTTON_DESTINATIONS = [
-  { key: 'CALENDAR', label: 'Booking Calendar', description: 'Your booking/scheduling page' },
-  { key: 'SMART_FILE', label: 'View Proposal', description: 'Client\'s proposal or invoice' },
-  { key: 'GALLERY', label: 'View Gallery', description: 'Client\'s photo gallery' },
-  { key: 'TESTIMONIALS', label: 'Leave Review', description: 'Review/testimonial submission page' },
-  { key: 'CUSTOM', label: 'Custom URL', description: 'Enter your own link' },
+  {
+    key: "CALENDAR",
+    label: "Booking Calendar",
+    description: "Your booking/scheduling page",
+  },
+  {
+    key: "SMART_FILE",
+    label: "View Proposal",
+    description: "Client's proposal or invoice",
+  },
+  {
+    key: "GALLERY",
+    label: "View Gallery",
+    description: "Client's photo gallery",
+  },
+  {
+    key: "TESTIMONIALS",
+    label: "Leave Review",
+    description: "Review/testimonial submission page",
+  },
+  { key: "CUSTOM", label: "Custom URL", description: "Enter your own link" },
 ];
 
 interface Template {
@@ -73,7 +101,9 @@ export default function TemplatesNew() {
 
   const [showBuilder, setShowBuilder] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [editingTemplateId, setEditingTemplateId] = useState<string | null>(null);
+  const [editingTemplateId, setEditingTemplateId] = useState<string | null>(
+    null,
+  );
   const [name, setName] = useState("");
   const [channel, setChannel] = useState("EMAIL");
   const [subject, setSubject] = useState("");
@@ -91,15 +121,15 @@ export default function TemplatesNew() {
 
   const { data: templates, isLoading } = useQuery({
     queryKey: ["/api/templates"],
-    enabled: !!user
+    enabled: !!user,
   });
 
   // Handle ?new=true query param to auto-open builder
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('new') === 'true') {
+    if (urlParams.get("new") === "true") {
       setShowBuilder(true);
-      window.history.replaceState({}, '', window.location.pathname);
+      window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);
 
@@ -112,7 +142,11 @@ export default function TemplatesNew() {
   const createTemplateMutation = useMutation({
     mutationFn: async (templateData: any) => {
       if (isEditMode && editingTemplateId) {
-        await apiRequest("PUT", `/api/templates/${editingTemplateId}`, templateData);
+        await apiRequest(
+          "PUT",
+          `/api/templates/${editingTemplateId}`,
+          templateData,
+        );
       } else {
         await apiRequest("POST", "/api/templates", templateData);
       }
@@ -122,16 +156,18 @@ export default function TemplatesNew() {
       resetForm();
       toast({
         title: isEditMode ? "Template updated" : "Template created",
-        description: isEditMode ? "Template has been updated successfully." : "New template has been added successfully.",
+        description: isEditMode
+          ? "Template has been updated successfully."
+          : "New template has been added successfully.",
       });
     },
     onError: () => {
       toast({
         title: "Error",
-        description: `Failed to ${isEditMode ? 'update' : 'create'} template. Please try again.`,
-        variant: "destructive"
+        description: `Failed to ${isEditMode ? "update" : "create"} template. Please try again.`,
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const deleteTemplateMutation = useMutation({
@@ -149,9 +185,9 @@ export default function TemplatesNew() {
       toast({
         title: "Error",
         description: "Failed to delete template. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const resetForm = () => {
@@ -193,15 +229,17 @@ export default function TemplatesNew() {
     const variable = `{{${variableKey}}}`;
     const editorContainer = emailBodyRef.current;
     if (editorContainer) {
-      const editor = editorContainer.querySelector('[contenteditable="true"]') as HTMLDivElement & { insertText?: (text: string) => void };
+      const editor = editorContainer.querySelector(
+        '[contenteditable="true"]',
+      ) as HTMLDivElement & { insertText?: (text: string) => void };
       if (editor?.insertText) {
         editor.insertText(variable);
       } else {
         editor?.focus();
-        document.execCommand('insertText', false, variable);
+        document.execCommand("insertText", false, variable);
       }
     } else {
-      setTemplateBody(prev => prev + variable);
+      setTemplateBody((prev) => prev + variable);
     }
   };
 
@@ -209,9 +247,9 @@ export default function TemplatesNew() {
   const insertButton = () => {
     if (!buttonText.trim()) return;
 
-    const sanitizedText = buttonText.replace(/[\[\]:]/g, '');
+    const sanitizedText = buttonText.replace(/[\[\]:]/g, "");
     let marker: string;
-    if (buttonDestination === 'CUSTOM' && buttonCustomUrl) {
+    if (buttonDestination === "CUSTOM" && buttonCustomUrl) {
       marker = `[[BUTTON:CUSTOM:${sanitizedText}:${buttonCustomUrl}]]`;
     } else {
       marker = `[[BUTTON:${buttonDestination}:${sanitizedText}]]`;
@@ -219,17 +257,26 @@ export default function TemplatesNew() {
 
     const editorContainer = emailBodyRef.current;
     if (editorContainer) {
-      const editor = editorContainer.querySelector('[contenteditable="true"]') as HTMLDivElement & { insertButton?: (text: string, linkType: string, url?: string) => void; insertText?: (text: string) => void };
+      const editor = editorContainer.querySelector(
+        '[contenteditable="true"]',
+      ) as HTMLDivElement & {
+        insertButton?: (text: string, linkType: string, url?: string) => void;
+        insertText?: (text: string) => void;
+      };
       if (editor?.insertButton) {
-        editor.insertButton(sanitizedText, buttonDestination, buttonDestination === 'CUSTOM' ? buttonCustomUrl : undefined);
+        editor.insertButton(
+          sanitizedText,
+          buttonDestination,
+          buttonDestination === "CUSTOM" ? buttonCustomUrl : undefined,
+        );
       } else if (editor?.insertText) {
         editor.insertText(marker);
       } else {
         editor?.focus();
-        document.execCommand('insertText', false, marker);
+        document.execCommand("insertText", false, marker);
       }
     } else {
-      setTemplateBody(prev => prev + '\n\n' + marker);
+      setTemplateBody((prev) => prev + "\n\n" + marker);
     }
 
     setShowButtonDialog(false);
@@ -249,7 +296,7 @@ export default function TemplatesNew() {
       toast({
         title: "Missing fields",
         description: "Please fill in all required fields",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -258,7 +305,7 @@ export default function TemplatesNew() {
       toast({
         title: "No content",
         description: "Please add some content to your email",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -268,14 +315,21 @@ export default function TemplatesNew() {
       channel,
       subject: channel === "EMAIL" ? subject : undefined,
       templateBody: channel === "EMAIL" ? templateBody : undefined,
-      contentBlocks: channel === "EMAIL" ? parseTemplateBodyToBlocks(templateBody) : undefined,
+      contentBlocks:
+        channel === "EMAIL"
+          ? parseTemplateBodyToBlocks(templateBody)
+          : undefined,
       includeHeader: channel === "EMAIL" ? includeHeader : undefined,
       includeSignature: channel === "EMAIL" ? includeSignature : undefined,
     });
   };
 
-  const emailTemplates = (templates || []).filter((t: Template) => t.channel === "EMAIL");
-  const smsTemplates = (templates || []).filter((t: Template) => t.channel === "SMS");
+  const emailTemplates = (templates || []).filter(
+    (t: Template) => t.channel === "EMAIL",
+  );
+  const smsTemplates = (templates || []).filter(
+    (t: Template) => t.channel === "SMS",
+  );
 
   if (showBuilder) {
     return (
@@ -306,9 +360,13 @@ export default function TemplatesNew() {
               disabled={createTemplateMutation.isPending}
               data-testid="button-save-template"
             >
-              {createTemplateMutation.isPending 
-                ? (isEditMode ? "Updating..." : "Creating...") 
-                : (isEditMode ? "Update Template" : "Save Template")}
+              {createTemplateMutation.isPending
+                ? isEditMode
+                  ? "Updating..."
+                  : "Creating..."
+                : isEditMode
+                  ? "Update Template"
+                  : "Save Template"}
             </Button>
           </div>
         </header>
@@ -402,18 +460,26 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                     <label className="flex items-center gap-2 cursor-pointer">
                       <Checkbox
                         checked={includeHeader}
-                        onCheckedChange={(checked) => setIncludeHeader(!!checked)}
+                        onCheckedChange={(checked) =>
+                          setIncludeHeader(!!checked)
+                        }
                         data-testid="checkbox-include-header"
                       />
-                      <span className="text-sm text-muted-foreground">Include Header</span>
+                      <span className="text-sm text-muted-foreground">
+                        Include Header
+                      </span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <Checkbox
                         checked={includeSignature}
-                        onCheckedChange={(checked) => setIncludeSignature(!!checked)}
+                        onCheckedChange={(checked) =>
+                          setIncludeSignature(!!checked)
+                        }
                         data-testid="checkbox-include-signature"
                       />
-                      <span className="text-sm text-muted-foreground">Include Signature</span>
+                      <span className="text-sm text-muted-foreground">
+                        Include Signature
+                      </span>
                     </label>
                   </div>
                 </CardContent>
@@ -472,8 +538,14 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
 
               <div>
                 <Label>Link Destination</Label>
-                <Select value={buttonDestination} onValueChange={setButtonDestination}>
-                  <SelectTrigger className="mt-1" data-testid="select-button-destination">
+                <Select
+                  value={buttonDestination}
+                  onValueChange={setButtonDestination}
+                >
+                  <SelectTrigger
+                    className="mt-1"
+                    data-testid="select-button-destination"
+                  >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -485,11 +557,14 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {BUTTON_DESTINATIONS.find(d => d.key === buttonDestination)?.description}
+                  {
+                    BUTTON_DESTINATIONS.find((d) => d.key === buttonDestination)
+                      ?.description
+                  }
                 </p>
               </div>
 
-              {buttonDestination === 'CUSTOM' && (
+              {buttonDestination === "CUSTOM" && (
                 <div>
                   <Label htmlFor="buttonUrl">Custom URL</Label>
                   <Input
@@ -514,7 +589,10 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
                 <Button
                   type="button"
                   onClick={insertButton}
-                  disabled={!buttonText.trim() || (buttonDestination === 'CUSTOM' && !buttonCustomUrl.trim())}
+                  disabled={
+                    !buttonText.trim() ||
+                    (buttonDestination === "CUSTOM" && !buttonCustomUrl.trim())
+                  }
                   data-testid="button-insert-button"
                 >
                   Insert Button
@@ -533,10 +611,15 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl md:text-2xl font-semibold">Templates</h1>
-            <p className="text-sm md:text-base text-muted-foreground">Create and manage email and SMS templates for automation</p>
+            <p className="text-sm md:text-base text-muted-foreground">
+              Create and manage email and SMS templates for automation
+            </p>
           </div>
-          
-          <Button onClick={() => setShowBuilder(true)} data-testid="button-create-template">
+
+          <Button
+            onClick={() => setShowBuilder(true)}
+            data-testid="button-create-template"
+          >
             <Plus className="w-5 h-5 mr-2" />
             Create Template
           </Button>
@@ -548,27 +631,41 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
         <div className="hidden md:grid md:grid-cols-2 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Email Templates</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Email Templates
+              </CardTitle>
               <Mail className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold" data-testid="count-email-templates">
+              <div
+                className="text-2xl font-bold"
+                data-testid="count-email-templates"
+              >
                 {emailTemplates.length}
               </div>
-              <p className="text-xs text-muted-foreground">Ready for automation</p>
+              <p className="text-xs text-muted-foreground">
+                Ready for automation
+              </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">SMS Templates</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                SMS Templates
+              </CardTitle>
               <Smartphone className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold" data-testid="count-sms-templates">
+              <div
+                className="text-2xl font-bold"
+                data-testid="count-sms-templates"
+              >
                 {smsTemplates.length}
               </div>
-              <p className="text-xs text-muted-foreground">Ready for automation</p>
+              <p className="text-xs text-muted-foreground">
+                Ready for automation
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -589,31 +686,53 @@ Thank you for reaching out! I'm excited to learn more about your special day..."
             ) : emailTemplates.length === 0 ? (
               <div className="text-center py-8">
                 <Mail className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground mb-4">No email templates created yet.</p>
+                <p className="text-muted-foreground mb-4">
+                  No email templates created yet.
+                </p>
               </div>
             ) : (
               <div className="space-y-4">
                 {emailTemplates.map((template: Template) => (
-                  <Card key={template.id} className="border border-border/50 hover:border-border transition-colors" data-testid={`email-template-${template.id}`}>
+                  <Card
+                    key={template.id}
+                    className="border border-border/50 hover:border-border transition-colors"
+                    data-testid={`email-template-${template.id}`}
+                  >
                     <CardContent className="p-4">
                       <div className="flex flex-col space-y-3">
                         <div className="flex items-start justify-between">
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-medium text-base truncate">{template.name}</h3>
-                            <p className="text-sm text-muted-foreground mt-1">{template.subject}</p>
+                            <h3 className="font-medium text-base truncate">
+                              {template.name}
+                            </h3>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {template.subject}
+                            </p>
                           </div>
                           <div className="flex items-center space-x-2 ml-4">
-                            <Button variant="outline" size="sm" onClick={() => handleEdit(template)} data-testid={`button-edit-${template.id}`}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEdit(template)}
+                              data-testid={`button-edit-${template.id}`}
+                            >
                               <Edit className="w-3 h-3" />
                             </Button>
-                            <Button variant="outline" size="sm" onClick={() => handleDelete(template.id)} disabled={deleteTemplateMutation.isPending} data-testid={`button-delete-${template.id}`}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDelete(template.id)}
+                              disabled={deleteTemplateMutation.isPending}
+                              data-testid={`button-delete-${template.id}`}
+                            >
                               <Trash2 className="w-3 h-3" />
                             </Button>
                           </div>
                         </div>
                         <div className="flex items-center text-xs text-muted-foreground">
                           <Mail className="w-3 h-3 mr-1" />
-                          Created {new Date(template.createdAt).toLocaleDateString()}
+                          Created{" "}
+                          {new Date(template.createdAt).toLocaleDateString()}
                         </div>
                       </div>
                     </CardContent>

@@ -83,6 +83,15 @@ export const CalendarColors = {
   tealLight: "#4DD0C9",
 };
 
+// Stat card colors for dashboard
+export const StatColors = {
+  inquiries: "#FF6B6B", // Red-ish for urgency
+  projects: "#4ECDC4", // Teal
+  events: "#45B7D1", // Blue
+  payments: "#96CEB4", // Green for money
+  awaiting: "#F59E0B", // Amber for waiting
+};
+
 // Blys-inspired colors for Projects screen
 export const BlysColors = {
   // Primary purple brand color

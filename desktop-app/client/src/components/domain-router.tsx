@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import InvalidPortal from "@/pages/invalid-portal";
 import { ReactNode, useEffect } from "react";
-import { ClientPortalRouter } from './client-portal-router';
+import { ClientPortalRouter } from "./client-portal-router";
 
 interface DomainRouterProps {
   children: ReactNode;
@@ -17,15 +17,19 @@ export function DomainRouter({ children }: DomainRouterProps) {
 
   // Redirect root path to appropriate landing page
   useEffect(() => {
-    if (domain?.type === 'client_portal' && domain.isCustomSubdomain && location === '/') {
+    if (
+      domain?.type === "client_portal" &&
+      domain.isCustomSubdomain &&
+      location === "/"
+    ) {
       // Wait for auth to load before making any decisions
       if (authLoading) return;
-      
+
       // Redirect to client portal or login based on auth status
       if (user) {
-        setLocation('/client-portal');
+        setLocation("/client-portal");
       } else {
-        setLocation('/login');
+        setLocation("/login");
       }
     }
   }, [domain, location, setLocation, user, authLoading]);
@@ -48,18 +52,22 @@ export function DomainRouter({ children }: DomainRouterProps) {
   }
 
   // BASE CLIENT PORTAL DOMAIN (tpcportal.co) - Show error
-  if (domain.type === 'client_portal' && !domain.isCustomSubdomain) {
+  if (domain.type === "client_portal" && !domain.isCustomSubdomain) {
     return <InvalidPortal />;
   }
 
   // INVALID PHOTOGRAPHER SUBDOMAIN - Show error
-  if (domain.type === 'client_portal' && domain.isCustomSubdomain && domain.photographerNotFound) {
+  if (
+    domain.type === "client_portal" &&
+    domain.isCustomSubdomain &&
+    domain.photographerNotFound
+  ) {
     return <InvalidPortal />;
   }
 
   // CLIENT PORTAL SUBDOMAIN (slug.tpcportal.co) - Render dedicated client portal routes only
   // This prevents CLIENT-role users from accessing photographer routes and hitting auth loops
-  if (domain.type === 'client_portal' && domain.isCustomSubdomain) {
+  if (domain.type === "client_portal" && domain.isCustomSubdomain) {
     return <ClientPortalRouter />;
   }
 

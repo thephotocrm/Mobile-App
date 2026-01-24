@@ -13,7 +13,9 @@ module.exports = ({ config }) => {
       googleAndroidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
       eas: {
         // Use env var if set, otherwise keep the value from app.json
-        projectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID || config.extra?.eas?.projectId,
+        projectId:
+          process.env.EXPO_PUBLIC_EAS_PROJECT_ID ||
+          config.extra?.eas?.projectId,
       },
     },
   };

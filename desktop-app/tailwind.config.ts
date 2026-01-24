@@ -108,8 +108,8 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "expand": "collapsible-expand 0.2s ease-out",
-        "collapse": "collapsible-collapse 0.2s ease-out",
+        expand: "collapsible-expand 0.2s ease-out",
+        collapse: "collapsible-collapse 0.2s ease-out",
       },
     },
   },

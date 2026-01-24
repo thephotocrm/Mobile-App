@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,7 +29,11 @@ interface EmailBrandingModalProps {
 const headerStyles = [
   { value: "none", label: "None", description: "No header" },
   { value: "minimal", label: "Minimal", description: "Simple logo centered" },
-  { value: "professional", label: "Professional", description: "Logo + business name with divider" },
+  {
+    value: "professional",
+    label: "Professional",
+    description: "Logo + business name with divider",
+  },
   { value: "bold", label: "Bold", description: "Full-width colored banner" },
   { value: "classic", label: "Classic", description: "Logo left, name right" },
 ];
@@ -32,20 +41,45 @@ const headerStyles = [
 const signatureStyles = [
   { value: "none", label: "None", description: "No signature" },
   { value: "simple", label: "Simple", description: "Basic contact info" },
-  { value: "professional", label: "Professional ⭐", description: "With your photo + contact details" },
-  { value: "detailed", label: "Detailed", description: "Full contact card with all info" },
-  { value: "branded", label: "Branded", description: "Styled with brand colors" },
+  {
+    value: "professional",
+    label: "Professional ⭐",
+    description: "With your photo + contact details",
+  },
+  {
+    value: "detailed",
+    label: "Detailed",
+    description: "Full contact card with all info",
+  },
+  {
+    value: "branded",
+    label: "Branded",
+    description: "Styled with brand colors",
+  },
 ];
 
-export function EmailBrandingModal({ open, onOpenChange, photographer, onSave }: EmailBrandingModalProps) {
-  const [headerStyle, setHeaderStyle] = useState<string>(photographer?.emailHeaderStyle || "none");
-  const [signatureStyle, setSignatureStyle] = useState<string>(photographer?.emailSignatureStyle || "none");
-  const [headshotUrl, setHeadshotUrl] = useState(photographer?.headshotUrl || "");
+export function EmailBrandingModal({
+  open,
+  onOpenChange,
+  photographer,
+  onSave,
+}: EmailBrandingModalProps) {
+  const [headerStyle, setHeaderStyle] = useState<string>(
+    photographer?.emailHeaderStyle || "none",
+  );
+  const [signatureStyle, setSignatureStyle] = useState<string>(
+    photographer?.emailSignatureStyle || "none",
+  );
+  const [headshotUrl, setHeadshotUrl] = useState(
+    photographer?.headshotUrl || "",
+  );
   const [headshotFile, setHeadshotFile] = useState<File | null>(null);
   const [headshotPreview, setHeadshotPreview] = useState<string>("");
   const [isUploadingHeadshot, setIsUploadingHeadshot] = useState(false);
   const [website, setWebsite] = useState(photographer?.website || "");
-  const [businessAddress, setBusinessAddress] = useState(photographer?.businessAddress || "");
+  const [businessAddress, setBusinessAddress] = useState(
+    photographer?.businessAddress || "",
+  );
   const [facebook, setFacebook] = useState("");
   const [instagram, setInstagram] = useState("");
   const [twitter, setTwitter] = useState("");
@@ -82,27 +116,27 @@ export function EmailBrandingModal({ open, onOpenChange, photographer, onSave }:
 
   const handleUploadHeadshot = async () => {
     if (!headshotFile) return;
-    
+
     setIsUploadingHeadshot(true);
     try {
       const formData = new FormData();
-      formData.append('headshot', headshotFile);
-      
-      const response = await fetch('/api/upload/headshot', {
-        method: 'POST',
+      formData.append("headshot", headshotFile);
+
+      const response = await fetch("/api/upload/headshot", {
+        method: "POST",
         body: formData,
-        credentials: 'include'
+        credentials: "include",
       });
-      
+
       if (!response.ok) {
-        throw new Error('Headshot upload failed');
+        throw new Error("Headshot upload failed");
       }
-      
+
       const data = await response.json();
       setHeadshotUrl(data.headshotUrl);
       setHeadshotFile(null);
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error("Upload error:", error);
     } finally {
       setIsUploadingHeadshot(false);
     }
@@ -115,22 +149,22 @@ export function EmailBrandingModal({ open, onOpenChange, photographer, onSave }:
       setIsUploadingHeadshot(true);
       try {
         const formData = new FormData();
-        formData.append('headshot', headshotFile);
-        
-        const response = await fetch('/api/upload/headshot', {
-          method: 'POST',
+        formData.append("headshot", headshotFile);
+
+        const response = await fetch("/api/upload/headshot", {
+          method: "POST",
           body: formData,
-          credentials: 'include'
+          credentials: "include",
         });
-        
+
         if (!response.ok) {
-          throw new Error('Headshot upload failed');
+          throw new Error("Headshot upload failed");
         }
-        
+
         const data = await response.json();
         finalHeadshotUrl = data.headshotUrl;
       } catch (error) {
-        console.error('Upload error:', error);
+        console.error("Upload error:", error);
       } finally {
         setIsUploadingHeadshot(false);
       }
@@ -140,7 +174,7 @@ export function EmailBrandingModal({ open, onOpenChange, photographer, onSave }:
       ...(facebook && { facebook }),
       ...(instagram && { instagram }),
       ...(twitter && { twitter }),
-      ...(linkedin && { linkedin })
+      ...(linkedin && { linkedin }),
     };
 
     onSave({
@@ -149,48 +183,50 @@ export function EmailBrandingModal({ open, onOpenChange, photographer, onSave }:
       headshotUrl: finalHeadshotUrl || "",
       website: website || "",
       businessAddress: businessAddress || "",
-      socialLinksJson: Object.keys(socialLinksJson).length > 0 ? socialLinksJson : {}
+      socialLinksJson:
+        Object.keys(socialLinksJson).length > 0 ? socialLinksJson : {},
     });
     onOpenChange(false);
   };
 
-  const generatePreviewHTML = (type: 'header' | 'signature', style: string) => {
-    const primaryColor = photographer?.brandPrimary || '#3b82f6';
-    const secondaryColor = photographer?.brandSecondary || '#64748b';
-    const businessName = photographer?.businessName || 'Your Business';
-    const photographerName = photographer?.photographerName || 'Your Name';
-    const defaultHeadshot = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&crop=faces';
+  const generatePreviewHTML = (type: "header" | "signature", style: string) => {
+    const primaryColor = photographer?.brandPrimary || "#3b82f6";
+    const secondaryColor = photographer?.brandSecondary || "#64748b";
+    const businessName = photographer?.businessName || "Your Business";
+    const photographerName = photographer?.photographerName || "Your Name";
+    const defaultHeadshot =
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&crop=faces";
     const currentHeadshot = headshotUrl || defaultHeadshot;
 
-    if (type === 'header') {
+    if (type === "header") {
       switch (style) {
-        case 'none':
+        case "none":
           return '<div style="padding: 20px; text-align: center; color: #999; font-style: italic;">No header</div>';
-        case 'minimal':
+        case "minimal":
           return `<div style="text-align: center; padding: 10px 0;"><div style="width: 60px; height: 30px; background: ${primaryColor}; margin: 0 auto; border-radius: 4px;"></div></div>`;
-        case 'professional':
+        case "professional":
           return `<div style="text-align: center; padding: 10px 0; border-bottom: 2px solid ${primaryColor};"><div style="width: 60px; height: 30px; background: ${primaryColor}; margin: 0 auto 5px; border-radius: 4px;"></div><div style="font-size: 12px; font-weight: 600; color: ${primaryColor};">${businessName}</div></div>`;
-        case 'bold':
+        case "bold":
           return `<div style="background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%); padding: 15px; text-align: center;"><div style="font-size: 14px; font-weight: 700; color: white;">${businessName}</div></div>`;
-        case 'classic':
+        case "classic":
           return `<div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e0e0e0;"><div style="width: 50px; height: 25px; background: ${primaryColor}; border-radius: 4px;"></div><div style="font-size: 11px; font-weight: 600; color: ${primaryColor};">${businessName}</div></div>`;
         default:
-          return '';
+          return "";
       }
     } else {
       switch (style) {
-        case 'none':
+        case "none":
           return '<div style="padding: 20px; text-align: center; color: #999; font-style: italic;">No signature</div>';
-        case 'simple':
+        case "simple":
           return `<div style="padding: 10px; border-top: 1px solid #e0e0e0; font-size: 11px;"><div style="font-weight: 600; color: ${primaryColor};">${photographerName}</div><div>📞 (555) 123-4567</div><div>✉️ hello@example.com</div></div>`;
-        case 'professional':
+        case "professional":
           return `<div style="padding: 10px; border-top: 2px solid ${primaryColor}; font-size: 11px; display: flex; gap: 10px;"><img src="${currentHeadshot}" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid ${primaryColor};" /><div><div style="font-weight: 600; color: ${primaryColor};">${photographerName}</div><div>📞 (555) 123-4567</div><div>✉️ hello@example.com</div></div></div>`;
-        case 'detailed':
+        case "detailed":
           return `<div style="padding: 12px; background: linear-gradient(to bottom, #fff 0%, #f8f9fa 100%); border: 1px solid #e0e0e0; border-radius: 4px; font-size: 10px;"><div style="text-align: center; border-bottom: 1px solid ${primaryColor}; padding-bottom: 8px; margin-bottom: 8px;"><div style="font-weight: 600; color: ${primaryColor};">${businessName}</div></div><div>📞 (555) 123-4567</div><div>✉️ hello@example.com</div></div>`;
-        case 'branded':
+        case "branded":
           return `<div><div style="background: ${primaryColor}; padding: 8px; text-align: center;"><div style="width: 30px; height: 15px; background: white; margin: 0 auto; border-radius: 2px;"></div></div><div style="background: #f8f9fa; padding: 10px; border-left: 3px solid ${primaryColor}; font-size: 10px;"><div style="font-weight: 600; color: ${primaryColor};">${photographerName}</div><div>📞 (555) 123-4567</div></div></div>`;
         default:
-          return '';
+          return "";
       }
     }
   };
@@ -207,7 +243,9 @@ export function EmailBrandingModal({ open, onOpenChange, photographer, onSave }:
           <div className="space-y-4">
             <div>
               <h3 className="text-lg font-semibold">Header Style</h3>
-              <p className="text-sm text-muted-foreground">Choose how your emails will start</p>
+              <p className="text-sm text-muted-foreground">
+                Choose how your emails will start
+              </p>
             </div>
             <RadioGroup value={headerStyle} onValueChange={setHeaderStyle}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -217,17 +255,29 @@ export function EmailBrandingModal({ open, onOpenChange, photographer, onSave }:
                       htmlFor={`header-${style.value}`}
                       className="cursor-pointer"
                     >
-                      <Card className={`p-4 cursor-pointer transition-all ${headerStyle === style.value ? 'ring-2 ring-primary' : 'hover:border-primary'}`}>
+                      <Card
+                        className={`p-4 cursor-pointer transition-all ${headerStyle === style.value ? "ring-2 ring-primary" : "hover:border-primary"}`}
+                      >
                         <div className="flex items-start space-x-3">
-                          <RadioGroupItem value={style.value} id={`header-${style.value}`} />
+                          <RadioGroupItem
+                            value={style.value}
+                            id={`header-${style.value}`}
+                          />
                           <div className="flex-1 space-y-2">
                             <div>
                               <div className="font-medium">{style.label}</div>
-                              <div className="text-sm text-muted-foreground">{style.description}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {style.description}
+                              </div>
                             </div>
-                            <div 
+                            <div
                               className="border rounded p-2 bg-white dark:bg-gray-900"
-                              dangerouslySetInnerHTML={{ __html: generatePreviewHTML('header', style.value) }}
+                              dangerouslySetInnerHTML={{
+                                __html: generatePreviewHTML(
+                                  "header",
+                                  style.value,
+                                ),
+                              }}
                             />
                           </div>
                         </div>
@@ -243,9 +293,14 @@ export function EmailBrandingModal({ open, onOpenChange, photographer, onSave }:
           <div className="space-y-4">
             <div>
               <h3 className="text-lg font-semibold">Signature Style</h3>
-              <p className="text-sm text-muted-foreground">Choose how your emails will end</p>
+              <p className="text-sm text-muted-foreground">
+                Choose how your emails will end
+              </p>
             </div>
-            <RadioGroup value={signatureStyle} onValueChange={setSignatureStyle}>
+            <RadioGroup
+              value={signatureStyle}
+              onValueChange={setSignatureStyle}
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {signatureStyles.map((style) => (
                   <div key={style.value}>
@@ -253,17 +308,29 @@ export function EmailBrandingModal({ open, onOpenChange, photographer, onSave }:
                       htmlFor={`signature-${style.value}`}
                       className="cursor-pointer"
                     >
-                      <Card className={`p-4 cursor-pointer transition-all ${signatureStyle === style.value ? 'ring-2 ring-primary' : 'hover:border-primary'}`}>
+                      <Card
+                        className={`p-4 cursor-pointer transition-all ${signatureStyle === style.value ? "ring-2 ring-primary" : "hover:border-primary"}`}
+                      >
                         <div className="flex items-start space-x-3">
-                          <RadioGroupItem value={style.value} id={`signature-${style.value}`} />
+                          <RadioGroupItem
+                            value={style.value}
+                            id={`signature-${style.value}`}
+                          />
                           <div className="flex-1 space-y-2">
                             <div>
                               <div className="font-medium">{style.label}</div>
-                              <div className="text-sm text-muted-foreground">{style.description}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {style.description}
+                              </div>
                             </div>
-                            <div 
+                            <div
                               className="border rounded p-2 bg-white dark:bg-gray-900"
-                              dangerouslySetInnerHTML={{ __html: generatePreviewHTML('signature', style.value) }}
+                              dangerouslySetInnerHTML={{
+                                __html: generatePreviewHTML(
+                                  "signature",
+                                  style.value,
+                                ),
+                              }}
                             />
                           </div>
                         </div>
@@ -276,17 +343,23 @@ export function EmailBrandingModal({ open, onOpenChange, photographer, onSave }:
           </div>
 
           {/* Headshot Upload */}
-          {signatureStyle === 'professional' && (
+          {signatureStyle === "professional" && (
             <div className="space-y-4 pt-4 border-t">
               <div>
                 <h3 className="text-lg font-semibold">Your Photo</h3>
-                <p className="text-sm text-muted-foreground">Add a professional headshot for your signature</p>
+                <p className="text-sm text-muted-foreground">
+                  Add a professional headshot for your signature
+                </p>
               </div>
               <div className="flex items-center gap-4">
                 <div className="relative">
-                  <img 
-                    src={headshotPreview || headshotUrl || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&crop=faces'} 
-                    alt="Headshot preview" 
+                  <img
+                    src={
+                      headshotPreview ||
+                      headshotUrl ||
+                      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&crop=faces"
+                    }
+                    alt="Headshot preview"
                     className="w-24 h-24 rounded-full object-cover border-2 border-primary"
                   />
                 </div>
@@ -301,19 +374,23 @@ export function EmailBrandingModal({ open, onOpenChange, photographer, onSave }:
                       className="hidden"
                       data-testid="input-headshot-file"
                     />
-                    <Button 
-                      type="button" 
-                      variant="outline" 
+                    <Button
+                      type="button"
+                      variant="outline"
                       className="flex-1"
-                      onClick={() => document.getElementById('headshotFile')?.click()}
+                      onClick={() =>
+                        document.getElementById("headshotFile")?.click()
+                      }
                       disabled={isUploadingHeadshot}
                       data-testid="button-upload-headshot"
                     >
                       <Upload className="w-4 h-4 mr-2" />
-                      {headshotFile ? headshotFile.name : 'Choose Photo'}
+                      {headshotFile ? headshotFile.name : "Choose Photo"}
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground">Upload a professional headshot photo (JPG, PNG, max 5MB)</p>
+                  <p className="text-xs text-muted-foreground">
+                    Upload a professional headshot photo (JPG, PNG, max 5MB)
+                  </p>
                 </div>
               </div>
             </div>
@@ -323,7 +400,9 @@ export function EmailBrandingModal({ open, onOpenChange, photographer, onSave }:
           <div className="space-y-4 pt-4 border-t">
             <div>
               <h3 className="text-lg font-semibold">Contact Information</h3>
-              <p className="text-sm text-muted-foreground">This info will appear in your email signatures</p>
+              <p className="text-sm text-muted-foreground">
+                This info will appear in your email signatures
+              </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -402,7 +481,11 @@ export function EmailBrandingModal({ open, onOpenChange, photographer, onSave }:
 
           {/* Actions */}
           <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button variant="outline" onClick={() => onOpenChange(false)} data-testid="button-cancel-branding">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              data-testid="button-cancel-branding"
+            >
               Cancel
             </Button>
             <Button onClick={handleSave} data-testid="button-save-branding">

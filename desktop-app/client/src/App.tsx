@@ -93,25 +93,29 @@ function ProtectedRoutes() {
 
   // Fetch photographer data for onboarding (only for photographers)
   const { data: photographer } = useQuery({
-    queryKey: ['/api/photographers/me'],
-    enabled: !!user && user.role === 'PHOTOGRAPHER'
+    queryKey: ["/api/photographers/me"],
+    enabled: !!user && user.role === "PHOTOGRAPHER",
   });
 
   // Fetch projects for chatbot context
   const { data: projects } = useQuery({
-    queryKey: ['/api/projects'],
-    enabled: !!user && user.role === 'PHOTOGRAPHER'
+    queryKey: ["/api/projects"],
+    enabled: !!user && user.role === "PHOTOGRAPHER",
   });
 
   // Fetch automations for chatbot context
   const { data: automations } = useQuery({
-    queryKey: ['/api/automations'],
-    enabled: !!user && user.role === 'PHOTOGRAPHER'
+    queryKey: ["/api/automations"],
+    enabled: !!user && user.role === "PHOTOGRAPHER",
   });
 
   // Show onboarding modal on first login
   useEffect(() => {
-    if (photographer && !photographer.onboardingCompletedAt && !photographer.onboardingDismissed) {
+    if (
+      photographer &&
+      !photographer.onboardingCompletedAt &&
+      !photographer.onboardingDismissed
+    ) {
       setOnboardingModalOpen(true);
     }
   }, [photographer]);
@@ -139,15 +143,17 @@ function ProtectedRoutes() {
       </div>
     );
   }
-  
+
   // Check if we're on a fullscreen route (Smart File builder, Project Preview)
-  const isFullscreenRoute = location.match(/^\/smart-files\/[^/]+\/edit$/) || location === '/project-preview';
-  
+  const isFullscreenRoute =
+    location.match(/^\/smart-files\/[^/]+\/edit$/) ||
+    location === "/project-preview";
+
   // Fullscreen routes bypass the sidebar entirely
   if (isFullscreenRoute) {
     return (
       <>
-        {(user?.role === 'ADMIN' || user?.isImpersonating) && (
+        {(user?.role === "ADMIN" || user?.isImpersonating) && (
           <AdminHeader
             isImpersonating={user?.isImpersonating}
             photographerName={user?.businessName}
@@ -161,22 +167,22 @@ function ProtectedRoutes() {
       </>
     );
   }
-  
+
   return (
     <>
-      {(user?.role === 'ADMIN' || user?.isImpersonating) && (
+      {(user?.role === "ADMIN" || user?.isImpersonating) && (
         <AdminHeader
           isImpersonating={user?.isImpersonating}
           photographerName={user?.businessName}
           photographerEmail={user?.isImpersonating ? user?.email : undefined}
         />
       )}
-      <SidebarProvider fixedHeight={location === '/inbox'} defaultOpen={false}>
+      <SidebarProvider fixedHeight={location === "/inbox"} defaultOpen={false}>
         <AppSidebar />
         <SidebarInset>
           {/* Onboarding Banner - Shows on all pages for photographers */}
-          {photographer && user.role === 'PHOTOGRAPHER' && (
-            <OnboardingBanner 
+          {photographer && user.role === "PHOTOGRAPHER" && (
+            <OnboardingBanner
               photographer={photographer}
               onOpenModal={() => setOnboardingModalOpen(true)}
             />
@@ -184,7 +190,9 @@ function ProtectedRoutes() {
           <MobileHeader />
           <TopHeader
             onAIAssistantClick={() => setChatbotOpen(true)}
-            variant={/^\/projects\/[^/]+$/.test(location) ? 'transparent' : 'default'}
+            variant={
+              /^\/projects\/[^/]+$/.test(location) ? "transparent" : "default"
+            }
           />
           <Switch>
             <Route path="/dashboard" component={Dashboard} />
@@ -206,7 +214,10 @@ function ProtectedRoutes() {
             <Route path="/galleries" component={Galleries} />
             <Route path="/galleries/:galleryId" component={GalleryDetail} />
             <Route path="/lead-forms" component={LeadForms} />
-            <Route path="/lead-forms/:id/configure" component={LeadFormBuilder} />
+            <Route
+              path="/lead-forms/:id/configure"
+              component={LeadFormBuilder}
+            />
             <Route path="/widget-generator" component={WidgetGenerator} />
             <Route path="/questionnaires" component={Questionnaires} />
             <Route path="/scheduling" component={Scheduling} />
@@ -229,17 +240,20 @@ function ProtectedRoutes() {
         <ChatbotWidget
           context="dashboard"
           photographerName={user?.businessName}
-          hideOnMobile={location === '/inbox'}
-          stripeConnected={!!photographer?.stripeConnectAccountId && photographer?.stripeAccountStatus === 'active'}
+          hideOnMobile={location === "/inbox"}
+          stripeConnected={
+            !!photographer?.stripeConnectAccountId &&
+            photographer?.stripeAccountStatus === "active"
+          }
           projectCount={Array.isArray(projects) ? projects.length : 0}
           hasAutomations={Array.isArray(automations) && automations.length > 0}
           isOpen={chatbotOpen}
           onOpenChange={setChatbotOpen}
         />
       </SidebarProvider>
-      
+
       {/* Full-screen Onboarding Wizard - for new photographers */}
-      {photographer && user.role === 'PHOTOGRAPHER' && (
+      {photographer && user.role === "PHOTOGRAPHER" && (
         <OnboardingWizard
           open={onboardingModalOpen}
           onComplete={() => setOnboardingModalOpen(false)}
@@ -262,71 +276,166 @@ function Router() {
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/reset-password" component={ResetPassword} />
       <Route path="/link-google" component={LinkGoogle} />
-      
+
       {/* Public pages */}
       <Route path="/checkout">
-        <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center h-screen">
+              Loading...
+            </div>
+          }
+        >
           <Checkout />
         </Suspense>
       </Route>
       <Route path="/client-portal" component={ClientPortal} />
       <Route path="/client-portal/select-project" component={SelectProject} />
-      <Route path="/client-portal/projects/:id" component={ClientPortalProject} />
+      <Route
+        path="/client-portal/projects/:id"
+        component={ClientPortalProject}
+      />
       <Route path="/client-portal/validate/:token" component={Portal} />
       <Route path="/portal/:token" component={Portal} />
       <Route path="/smart-file/:token/success" component={SmartFileSuccess} />
       <Route path="/smart-file/:token" component={PublicSmartFile} />
       <Route path="/public/booking/:token" component={PublicBooking} />
-      <Route path="/booking/calendar/:publicToken" component={PublicBookingCalendar} />
+      <Route
+        path="/booking/calendar/:publicToken"
+        component={PublicBookingCalendar}
+      />
       <Route path="/book/:slug" component={SlugBookingCalendar} />
-      <Route path="/public/galleries/:photographerPublicToken" component={PublicGalleries} />
-      <Route path="/client/galleries/:galleryId" component={ClientGalleryView} />
+      <Route
+        path="/public/galleries/:photographerPublicToken"
+        component={PublicGalleries}
+      />
+      <Route
+        path="/client/galleries/:galleryId"
+        component={ClientGalleryView}
+      />
       <Route path="/booking/confirmation" component={BookingConfirmation} />
       <Route path="/admin/setup" component={AdminSetup} />
       <Route path="/lead-form" component={LeadFormDemo} />
-      <Route path="/reviews/submit/:photographerId" component={PublicReviewSubmit} />
+      <Route
+        path="/reviews/submit/:photographerId"
+        component={PublicReviewSubmit}
+      />
       <Route path="/privacy" component={Privacy} />
       <Route path="/tos" component={TermsOfService} />
-      
+
       {/* Protected app routes - match specific paths */}
-      <Route path="/dashboard"><ProtectedRoutes /></Route>
-      <Route path="/admin/dashboard"><ProtectedRoutes /></Route>
-      <Route path="/contacts"><ProtectedRoutes /></Route>
-      <Route path="/contacts/:id"><ProtectedRoutes /></Route>
-      <Route path="/projects"><ProtectedRoutes /></Route>
-      <Route path="/projects/:id"><ProtectedRoutes /></Route>
-      <Route path="/project-preview"><ProtectedRoutes /></Route>
-      <Route path="/inbox"><ProtectedRoutes /></Route>
-      <Route path="/templates"><ProtectedRoutes /></Route>
-      <Route path="/automations"><ProtectedRoutes /></Route>
-      <Route path="/automations-preview"><ProtectedRoutes /></Route>
-      <Route path="/drip-campaigns"><ProtectedRoutes /></Route>
-      <Route path="/drip-campaigns/:id/edit"><ProtectedRoutes /></Route>
-      <Route path="/packages"><ProtectedRoutes /></Route>
-      <Route path="/add-ons"><ProtectedRoutes /></Route>
-      <Route path="/smart-files"><ProtectedRoutes /></Route>
-      <Route path="/smart-files/:id/edit"><ProtectedRoutes /></Route>
-      <Route path="/galleries"><ProtectedRoutes /></Route>
-      <Route path="/galleries/:galleryId"><ProtectedRoutes /></Route>
-      <Route path="/lead-forms"><ProtectedRoutes /></Route>
-      <Route path="/lead-forms/:id/configure"><ProtectedRoutes /></Route>
-      <Route path="/widget-generator"><ProtectedRoutes /></Route>
-      <Route path="/questionnaires"><ProtectedRoutes /></Route>
-      <Route path="/scheduling"><ProtectedRoutes /></Route>
-      <Route path="/reports"><ProtectedRoutes /></Route>
-      <Route path="/earnings"><ProtectedRoutes /></Route>
-      <Route path="/lead-hub"><ProtectedRoutes /></Route>
-      <Route path="/budget-estimator"><ProtectedRoutes /></Route>
-      <Route path="/how-it-works"><ProtectedRoutes /></Route>
-      <Route path="/facebook-ads"><ProtectedRoutes /></Route>
-      <Route path="/google-ads"><ProtectedRoutes /></Route>
-      <Route path="/instagram-ads"><ProtectedRoutes /></Route>
-      <Route path="/pinterest-ads"><ProtectedRoutes /></Route>
-      <Route path="/tiktok-ads"><ProtectedRoutes /></Route>
-      <Route path="/settings"><ProtectedRoutes /></Route>
-      <Route path="/tutorials"><ProtectedRoutes /></Route>
-      <Route path="/testimonials"><ProtectedRoutes /></Route>
-      
+      <Route path="/dashboard">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/admin/dashboard">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/contacts">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/contacts/:id">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/projects">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/projects/:id">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/project-preview">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/inbox">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/templates">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/automations">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/automations-preview">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/drip-campaigns">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/drip-campaigns/:id/edit">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/packages">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/add-ons">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/smart-files">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/smart-files/:id/edit">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/galleries">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/galleries/:galleryId">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/lead-forms">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/lead-forms/:id/configure">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/widget-generator">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/questionnaires">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/scheduling">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/reports">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/earnings">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/lead-hub">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/budget-estimator">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/how-it-works">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/facebook-ads">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/google-ads">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/instagram-ads">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/pinterest-ads">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/tiktok-ads">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/settings">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/tutorials">
+        <ProtectedRoutes />
+      </Route>
+      <Route path="/testimonials">
+        <ProtectedRoutes />
+      </Route>
+
       {/* Landing page - must be last so other routes match first */}
       <Route path="/" component={Landing} />
     </Switch>

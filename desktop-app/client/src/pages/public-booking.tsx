@@ -9,25 +9,41 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  Calendar, 
-  Clock, 
-  User, 
-  Mail, 
-  Phone, 
-  CheckCircle, 
+import {
+  Calendar,
+  Clock,
+  User,
+  Mail,
+  Phone,
+  CheckCircle,
   Camera,
-  Video
+  Video,
 } from "lucide-react";
 import type { Booking } from "@shared/schema";
 
 // Form validation schema matching server-side validation
 const bookingConfirmationSchema = z.object({
-  clientName: z.string().min(2, "Name must be at least 2 characters").max(100, "Name too long"),
-  clientEmail: z.string().email("Invalid email address").max(255, "Email too long"),
-  clientPhone: z.string().min(10, "Phone number must be at least 10 digits").max(20, "Phone number too long")
+  clientName: z
+    .string()
+    .min(2, "Name must be at least 2 characters")
+    .max(100, "Name too long"),
+  clientEmail: z
+    .string()
+    .email("Invalid email address")
+    .max(255, "Email too long"),
+  clientPhone: z
+    .string()
+    .min(10, "Phone number must be at least 10 digits")
+    .max(20, "Phone number too long"),
 });
 
 type BookingConfirmationForm = z.infer<typeof bookingConfirmationSchema>;
@@ -35,25 +51,29 @@ type BookingConfirmationForm = z.infer<typeof bookingConfirmationSchema>;
 export default function PublicBooking() {
   const [, params] = useRoute("/public/booking/:token");
   const { toast } = useToast();
-  
+
   // Initialize form with react-hook-form and zodResolver
   const form = useForm<BookingConfirmationForm>({
     resolver: zodResolver(bookingConfirmationSchema),
     defaultValues: {
       clientName: "",
       clientEmail: "",
-      clientPhone: ""
-    }
+      clientPhone: "",
+    },
   });
 
   const { data: booking, isLoading } = useQuery<Booking>({
     queryKey: [`/api/public/booking/${params?.token}`],
-    enabled: !!params?.token
+    enabled: !!params?.token,
   });
 
   const confirmBookingMutation = useMutation({
     mutationFn: async (formData: BookingConfirmationForm) => {
-      const result = await apiRequest("POST", `/api/public/booking/${params?.token}/confirm`, formData);
+      const result = await apiRequest(
+        "POST",
+        `/api/public/booking/${params?.token}/confirm`,
+        formData,
+      );
       return result;
     },
     onSuccess: () => {
@@ -61,16 +81,20 @@ export default function PublicBooking() {
         title: "Booking confirmed!",
         description: "You'll receive a confirmation email shortly.",
       });
-      queryClient.invalidateQueries({ queryKey: [`/api/public/booking/${params?.token}`] });
+      queryClient.invalidateQueries({
+        queryKey: [`/api/public/booking/${params?.token}`],
+      });
     },
     onError: (error: any) => {
-      const errorMessage = error?.response?.data?.message || "Failed to confirm booking. Please try again.";
+      const errorMessage =
+        error?.response?.data?.message ||
+        "Failed to confirm booking. Please try again.";
       toast({
         title: "Error",
         description: errorMessage,
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const onSubmit = (values: BookingConfirmationForm) => {
@@ -78,19 +102,19 @@ export default function PublicBooking() {
   };
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Intl.DateTimeFormat("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     }).format(new Date(date));
   };
 
   const formatTime = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
+    return new Intl.DateTimeFormat("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
     }).format(new Date(date));
   };
 
@@ -128,7 +152,8 @@ export default function PublicBooking() {
               Booking Confirmed!
             </h2>
             <p className="text-muted-foreground mb-4">
-              Your appointment has been confirmed. You'll receive a confirmation email with all the details.
+              Your appointment has been confirmed. You'll receive a confirmation
+              email with all the details.
             </p>
             {booking.googleMeetLink && (
               <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
@@ -136,10 +161,10 @@ export default function PublicBooking() {
                 <p className="text-sm text-blue-800 dark:text-blue-400 mb-2">
                   This will be a video call
                 </p>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
-                  onClick={() => window.open(booking.googleMeetLink!, '_blank')}
+                  onClick={() => window.open(booking.googleMeetLink!, "_blank")}
                   data-testid="button-join-meeting"
                 >
                   Join Meeting (when it's time)
@@ -172,11 +197,17 @@ export default function PublicBooking() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h3 className="font-semibold text-lg" data-testid="text-booking-title">
+              <h3
+                className="font-semibold text-lg"
+                data-testid="text-booking-title"
+              >
                 {booking.title}
               </h3>
               {booking.description && (
-                <p className="text-muted-foreground mt-1" data-testid="text-booking-description">
+                <p
+                  className="text-muted-foreground mt-1"
+                  data-testid="text-booking-description"
+                >
                   {booking.description}
                 </p>
               )}
@@ -208,11 +239,18 @@ export default function PublicBooking() {
 
             {booking.bookingType && (
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="capitalize" data-testid="badge-booking-type">
-                  {booking.bookingType.toLowerCase().replace('_', ' ')}
+                <Badge
+                  variant="outline"
+                  className="capitalize"
+                  data-testid="badge-booking-type"
+                >
+                  {booking.bookingType.toLowerCase().replace("_", " ")}
                 </Badge>
                 {booking.googleMeetLink && (
-                  <Badge variant="secondary" className="flex items-center gap-1">
+                  <Badge
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                  >
                     <Video className="w-3 h-3" />
                     Video Call
                   </Badge>
@@ -224,20 +262,30 @@ export default function PublicBooking() {
 
         <Card data-testid="card-booking-form">
           <CardHeader>
-            <CardTitle data-testid="title-booking-form">Your Information</CardTitle>
-            <p className="text-sm text-muted-foreground" data-testid="text-form-description">
+            <CardTitle data-testid="title-booking-form">
+              Your Information
+            </CardTitle>
+            <p
+              className="text-sm text-muted-foreground"
+              data-testid="text-form-description"
+            >
               Please provide your contact details to confirm this appointment
             </p>
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="clientName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel data-testid="label-client-name">Full Name *</FormLabel>
+                      <FormLabel data-testid="label-client-name">
+                        Full Name *
+                      </FormLabel>
                       <FormControl>
                         <div className="relative">
                           <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -259,7 +307,9 @@ export default function PublicBooking() {
                   name="clientEmail"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel data-testid="label-client-email">Email Address *</FormLabel>
+                      <FormLabel data-testid="label-client-email">
+                        Email Address *
+                      </FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -282,7 +332,9 @@ export default function PublicBooking() {
                   name="clientPhone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel data-testid="label-client-phone">Phone Number *</FormLabel>
+                      <FormLabel data-testid="label-client-phone">
+                        Phone Number *
+                      </FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -323,12 +375,20 @@ export default function PublicBooking() {
           </CardContent>
         </Card>
 
-        <div className="mt-8 text-center text-sm text-muted-foreground" data-testid="text-booking-terms">
+        <div
+          className="mt-8 text-center text-sm text-muted-foreground"
+          data-testid="text-booking-terms"
+        >
           <p data-testid="text-terms-agreement">
-            By confirming this appointment, you agree to attend at the scheduled time.
+            By confirming this appointment, you agree to attend at the scheduled
+            time.
             {booking.isFirstBooking && (
-              <span className="block mt-1 text-primary font-medium" data-testid="text-first-booking-notice">
-                This is your first booking - you'll automatically be moved to our consultation process!
+              <span
+                className="block mt-1 text-primary font-medium"
+                data-testid="text-first-booking-notice"
+              >
+                This is your first booking - you'll automatically be moved to
+                our consultation process!
               </span>
             )}
           </p>

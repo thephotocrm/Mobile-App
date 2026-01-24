@@ -533,7 +533,8 @@ export function AddEventScreen() {
           style={({ pressed }) => [
             styles.saveButton,
             { backgroundColor: CalendarColors.primary },
-            pressed && !saving && { opacity: 0.9, transform: [{ scale: 0.98 }] },
+            pressed &&
+              !saving && { opacity: 0.9, transform: [{ scale: 0.98 }] },
             saving && { opacity: 0.7 },
           ]}
         >

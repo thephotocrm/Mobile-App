@@ -34,7 +34,7 @@ export async function createNotification(data: NotificationData) {
       relatedId: data.relatedId,
       relatedType: data.relatedType,
       actionUrl: data.actionUrl,
-      read: false
+      read: false,
     });
     console.log(`[NOTIFICATION] Created: ${data.type} - ${data.title}`);
     return notification;
@@ -64,7 +64,9 @@ export async function notifyNewLead(params: {
     projectId: params.projectId,
     relatedId: params.contactId,
     relatedType: "contact",
-    actionUrl: params.projectId ? `/projects/${params.projectId}` : `/contacts/${params.contactId}`
+    actionUrl: params.projectId
+      ? `/projects/${params.projectId}`
+      : `/contacts/${params.contactId}`,
   });
 
   // Send push notification
@@ -77,7 +79,9 @@ export async function notifyNewLead(params: {
       notificationId: notification.id,
       contactId: params.contactId,
       projectId: params.projectId,
-      actionUrl: params.projectId ? `/projects/${params.projectId}` : `/contacts/${params.contactId}`,
+      actionUrl: params.projectId
+        ? `/projects/${params.projectId}`
+        : `/contacts/${params.contactId}`,
     },
   });
 
@@ -97,7 +101,7 @@ export async function notifyPaymentReceived(params: {
 }) {
   const amount = (params.amountCents / 100).toLocaleString("en-US", {
     style: "currency",
-    currency: "USD"
+    currency: "USD",
   });
 
   const notification = await createNotification({
@@ -110,7 +114,7 @@ export async function notifyPaymentReceived(params: {
     contactId: params.contactId,
     relatedId: params.projectId,
     relatedType: "project",
-    actionUrl: `/projects/${params.projectId}`
+    actionUrl: `/projects/${params.projectId}`,
   });
 
   // Send push notification
@@ -150,7 +154,7 @@ export async function notifyContractSigned(params: {
     contactId: params.contactId,
     relatedId: params.projectId,
     relatedType: "project",
-    actionUrl: `/projects/${params.projectId}`
+    actionUrl: `/projects/${params.projectId}`,
   });
 
   // Send push notification
@@ -191,7 +195,7 @@ export async function notifySmartFileViewed(params: {
     contactId: params.contactId,
     relatedId: params.smartFileId,
     relatedType: "smartFile",
-    actionUrl: `/projects/${params.projectId}`
+    actionUrl: `/projects/${params.projectId}`,
   });
 
   // Send push notification
@@ -232,7 +236,7 @@ export async function notifySmartFileAccepted(params: {
     contactId: params.contactId,
     relatedId: params.smartFileId,
     relatedType: "smartFile",
-    actionUrl: `/projects/${params.projectId}`
+    actionUrl: `/projects/${params.projectId}`,
   });
 
   // Send push notification
@@ -273,7 +277,7 @@ export async function notifyNewMessage(params: {
     contactId: params.contactId,
     relatedId: params.contactId,
     relatedType: "contact",
-    actionUrl: params.projectId ? `/projects/${params.projectId}` : `/inbox`
+    actionUrl: params.projectId ? `/projects/${params.projectId}` : `/inbox`,
   });
 
   // Send push notification
@@ -309,12 +313,12 @@ export async function notifyNewBooking(params: {
   const dateStr = params.bookingDate.toLocaleDateString("en-US", {
     weekday: "short",
     month: "short",
-    day: "numeric"
+    day: "numeric",
   });
 
   const timeStr = params.bookingDate.toLocaleTimeString("en-US", {
     hour: "numeric",
-    minute: "2-digit"
+    minute: "2-digit",
   });
 
   const notification = await createNotification({
@@ -327,7 +331,7 @@ export async function notifyNewBooking(params: {
     contactId: params.contactId,
     relatedId: params.projectId,
     relatedType: "booking",
-    actionUrl: `/projects/${params.projectId}`
+    actionUrl: `/projects/${params.projectId}`,
   });
 
   // Send push notification
@@ -395,7 +399,7 @@ export async function notifyGalleryActivity(params: {
     contactId: params.contactId,
     relatedId: params.projectId,
     relatedType: "gallery",
-    actionUrl: `/projects/${params.projectId}`
+    actionUrl: `/projects/${params.projectId}`,
   });
 
   // Send push notification
@@ -432,12 +436,16 @@ export async function notifyAutomation(params: {
     photographerId: params.photographerId,
     type: "AUTOMATION",
     priority: isError ? "HIGH" : "LOW",
-    title: isError ? `Automation failed: ${params.automationName}` : `Automation sent: ${params.automationName}`,
+    title: isError
+      ? `Automation failed: ${params.automationName}`
+      : `Automation sent: ${params.automationName}`,
     description: isError ? params.errorMessage : undefined,
     projectId: params.projectId,
     contactId: params.contactId,
     relatedType: "automation",
-    actionUrl: params.projectId ? `/projects/${params.projectId}` : `/automations`
+    actionUrl: params.projectId
+      ? `/projects/${params.projectId}`
+      : `/automations`,
   });
 
   // Only send push for failures (don't spam with routine automation triggers)
@@ -451,7 +459,9 @@ export async function notifyAutomation(params: {
         notificationId: notification.id,
         projectId: params.projectId,
         contactId: params.contactId,
-        actionUrl: params.projectId ? `/projects/${params.projectId}` : `/automations`,
+        actionUrl: params.projectId
+          ? `/projects/${params.projectId}`
+          : `/automations`,
       },
     });
   }
@@ -477,7 +487,7 @@ export async function notifyReminder(params: {
     description: params.description,
     projectId: params.projectId,
     contactId: params.contactId,
-    actionUrl: params.projectId ? `/projects/${params.projectId}` : undefined
+    actionUrl: params.projectId ? `/projects/${params.projectId}` : undefined,
   });
 
   // Send push notification

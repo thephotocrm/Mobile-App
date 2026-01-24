@@ -34,22 +34,25 @@ export function ContractRenderer({
   template,
   variables,
   selectedPackages,
-  selectedAddOns
+  selectedAddOns,
 }: ContractRendererProps) {
   // Detect if template contains HTML for backward compatibility
   const templateIsHtml = isHtmlContent(template);
 
   const formatPrice = (cents: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
     }).format(cents / 100);
   };
 
   // Parse template and create renderable segments
   const parseTemplate = () => {
-    const segments: Array<{ type: 'text' | 'packages' | 'addons'; content?: string }> = [];
-    
+    const segments: Array<{
+      type: "text" | "packages" | "addons";
+      content?: string;
+    }> = [];
+
     // Split by {{selected_packages}} and {{selected_addons}}
     let remaining = template;
     let currentIndex = 0;
@@ -58,28 +61,30 @@ export function ContractRenderer({
       // Find the next variable placeholder
       const packagesMatch = remaining.match(/\{\{selected_packages\}\}/);
       const addonsMatch = remaining.match(/\{\{selected_addons\}\}/);
-      
-      let nextMatch: { type: 'packages' | 'addons'; index: number } | null = null;
-      
+
+      let nextMatch: { type: "packages" | "addons"; index: number } | null =
+        null;
+
       if (packagesMatch && addonsMatch) {
         // Both exist, find which comes first
         const packagesIndex = packagesMatch.index!;
         const addonsIndex = addonsMatch.index!;
-        nextMatch = packagesIndex < addonsIndex 
-          ? { type: 'packages', index: packagesIndex }
-          : { type: 'addons', index: addonsIndex };
+        nextMatch =
+          packagesIndex < addonsIndex
+            ? { type: "packages", index: packagesIndex }
+            : { type: "addons", index: addonsIndex };
       } else if (packagesMatch) {
-        nextMatch = { type: 'packages', index: packagesMatch.index! };
+        nextMatch = { type: "packages", index: packagesMatch.index! };
       } else if (addonsMatch) {
-        nextMatch = { type: 'addons', index: addonsMatch.index! };
+        nextMatch = { type: "addons", index: addonsMatch.index! };
       }
 
       if (nextMatch) {
         // Add text before the variable
         if (nextMatch.index > 0) {
           segments.push({
-            type: 'text',
-            content: remaining.substring(0, nextMatch.index)
+            type: "text",
+            content: remaining.substring(0, nextMatch.index),
           });
         }
 
@@ -87,14 +92,15 @@ export function ContractRenderer({
         segments.push({ type: nextMatch.type });
 
         // Move past the variable
-        const variableLength = nextMatch.type === 'packages' 
-          ? '{{selected_packages}}'.length 
-          : '{{selected_addons}}'.length;
+        const variableLength =
+          nextMatch.type === "packages"
+            ? "{{selected_packages}}".length
+            : "{{selected_addons}}".length;
         remaining = remaining.substring(nextMatch.index + variableLength);
       } else {
         // No more variables, add remaining text
         if (remaining.length > 0) {
-          segments.push({ type: 'text', content: remaining });
+          segments.push({ type: "text", content: remaining });
         }
         break;
       }
@@ -107,7 +113,7 @@ export function ContractRenderer({
   const replaceVariables = (text: string) => {
     let replaced = text;
     Object.entries(variables).forEach(([key, value]) => {
-      const pattern = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+      const pattern = new RegExp(`\\{\\{${key}\\}\\}`, "g");
       replaced = replaced.replace(pattern, value || `[${key}]`);
     });
     return replaced;
@@ -118,8 +124,8 @@ export function ContractRenderer({
   return (
     <div className="space-y-4">
       {segments.map((segment, index) => {
-        if (segment.type === 'text') {
-          const processedText = replaceVariables(segment.content || '');
+        if (segment.type === "text") {
+          const processedText = replaceVariables(segment.content || "");
 
           // Render HTML content with DOMPurify sanitization
           if (templateIsHtml) {
@@ -128,7 +134,7 @@ export function ContractRenderer({
                 key={index}
                 className="prose prose-sm max-w-none"
                 dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(processedText)
+                  __html: DOMPurify.sanitize(processedText),
                 }}
               />
             );
@@ -136,13 +142,16 @@ export function ContractRenderer({
 
           // Legacy plain text rendering with preserved whitespace
           return (
-            <div key={index} className="whitespace-pre-wrap text-sm leading-relaxed">
+            <div
+              key={index}
+              className="whitespace-pre-wrap text-sm leading-relaxed"
+            >
               {processedText}
             </div>
           );
         }
 
-        if (segment.type === 'packages') {
+        if (segment.type === "packages") {
           const packages = Array.from(selectedPackages.values());
           if (packages.length === 0) {
             return (
@@ -155,7 +164,7 @@ export function ContractRenderer({
           return (
             <div key={index} className="space-y-3 my-6">
               {packages.map((pkg) => (
-                <Card 
+                <Card
                   key={`${pkg.pageId}-${pkg.packageId}`}
                   className="overflow-hidden border-2 border-primary/50 bg-primary/5"
                   data-testid={`contract-package-${pkg.packageId}`}
@@ -165,17 +174,17 @@ export function ContractRenderer({
                       {/* Package Image */}
                       {pkg.imageUrl && (
                         <div className="w-full md:w-32 h-32 flex-shrink-0 overflow-hidden rounded-lg border">
-                          <img 
-                            src={pkg.imageUrl} 
+                          <img
+                            src={pkg.imageUrl}
                             alt={pkg.name}
                             className="w-full h-full object-cover"
                             onError={(e) => {
-                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.style.display = "none";
                             }}
                           />
                         </div>
                       )}
-                      
+
                       {/* Content */}
                       <div className="flex-1 flex flex-col min-w-0">
                         {/* Package Title & Price */}
@@ -187,7 +196,7 @@ export function ContractRenderer({
                             {formatPrice(pkg.priceCents)}
                           </div>
                         </div>
-                        
+
                         {/* Package Description */}
                         {pkg.description && (
                           <div className="mb-3">
@@ -196,16 +205,21 @@ export function ContractRenderer({
                             </p>
                           </div>
                         )}
-                        
+
                         {/* Package Features */}
                         {pkg.features && pkg.features.length > 0 && (
                           <ul className="space-y-1.5">
-                            {pkg.features.map((feature: string, idx: number) => (
-                              <li key={idx} className="text-sm flex items-start gap-2">
-                                <CheckCircle className="w-3.5 h-3.5 text-primary mt-0.5 flex-shrink-0" />
-                                <span className="flex-1">{feature}</span>
-                              </li>
-                            ))}
+                            {pkg.features.map(
+                              (feature: string, idx: number) => (
+                                <li
+                                  key={idx}
+                                  className="text-sm flex items-start gap-2"
+                                >
+                                  <CheckCircle className="w-3.5 h-3.5 text-primary mt-0.5 flex-shrink-0" />
+                                  <span className="flex-1">{feature}</span>
+                                </li>
+                              ),
+                            )}
                           </ul>
                         )}
                       </div>
@@ -217,7 +231,7 @@ export function ContractRenderer({
           );
         }
 
-        if (segment.type === 'addons') {
+        if (segment.type === "addons") {
           const addons = Array.from(selectedAddOns.values());
           if (addons.length === 0) {
             return (
@@ -230,7 +244,7 @@ export function ContractRenderer({
           return (
             <div key={index} className="space-y-3 my-6">
               {addons.map((addon) => (
-                <Card 
+                <Card
                   key={`${addon.pageId}-${addon.addOnId}`}
                   className="overflow-hidden border-2 border-primary/50 bg-primary/5"
                   data-testid={`contract-addon-${addon.addOnId}`}
@@ -240,17 +254,17 @@ export function ContractRenderer({
                       {/* Add-on Image */}
                       {addon.imageUrl && (
                         <div className="w-full md:w-32 h-32 flex-shrink-0 overflow-hidden rounded-lg border">
-                          <img 
-                            src={addon.imageUrl} 
+                          <img
+                            src={addon.imageUrl}
                             alt={addon.name}
                             className="w-full h-full object-cover"
                             onError={(e) => {
-                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.style.display = "none";
                             }}
                           />
                         </div>
                       )}
-                      
+
                       {/* Content */}
                       <div className="flex-1 flex flex-col min-w-0">
                         {/* Add-on Title, Quantity & Total */}
@@ -272,7 +286,7 @@ export function ContractRenderer({
                             </div>
                           </div>
                         </div>
-                        
+
                         {/* Add-on Description */}
                         {addon.description && (
                           <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap break-words">

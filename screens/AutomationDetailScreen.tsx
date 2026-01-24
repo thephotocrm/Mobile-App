@@ -13,11 +13,7 @@ import * as Haptics from "expo-haptics";
 import { Feather } from "@expo/vector-icons";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { ThemedText } from "@/components/ThemedText";
-import {
-  Spacing,
-  BorderRadius,
-  Shadows,
-} from "@/constants/theme";
+import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -27,7 +23,10 @@ import {
 } from "@/services/api";
 import { ToolsStackParamList } from "@/navigation/ToolsStackNavigator";
 
-type AutomationDetailRouteProp = RouteProp<ToolsStackParamList, "AutomationDetail">;
+type AutomationDetailRouteProp = RouteProp<
+  ToolsStackParamList,
+  "AutomationDetail"
+>;
 
 // Colors
 const DetailColors = {
@@ -71,7 +70,11 @@ export function AutomationDetailScreen() {
   };
 
   // Get trigger description
-  const getTriggerInfo = (): { icon: string; title: string; description: string } => {
+  const getTriggerInfo = (): {
+    icon: string;
+    title: string;
+    description: string;
+  } => {
     if (automation.automationType === "STAGE_CHANGE") {
       return {
         icon: "git-branch",
@@ -98,7 +101,12 @@ export function AutomationDetailScreen() {
   };
 
   // Get action info
-  const getActionInfo = (): { icon: string; title: string; color: string; bg: string } => {
+  const getActionInfo = (): {
+    icon: string;
+    title: string;
+    color: string;
+    bg: string;
+  } => {
     const channel = automation.channel || "EMAIL";
     if (automation.automationType === "STAGE_CHANGE") {
       return {
@@ -144,11 +152,18 @@ export function AutomationDetailScreen() {
   };
 
   // Get message preview content
-  const getMessagePreview = (): { subject?: string; body?: string; sms?: string } => {
+  const getMessagePreview = (): {
+    subject?: string;
+    body?: string;
+    sms?: string;
+  } => {
     // Check for SMS content in steps
-    if (automation.channel === "SMS" || automation.automationType === "COMMUNICATION") {
+    if (
+      automation.channel === "SMS" ||
+      automation.automationType === "COMMUNICATION"
+    ) {
       const smsStep = automation.steps?.find(
-        (s) => s.actionType === "SMS" && s.customSmsContent
+        (s) => s.actionType === "SMS" && s.customSmsContent,
       );
       if (smsStep?.customSmsContent) {
         return { sms: smsStep.customSmsContent };
@@ -187,7 +202,15 @@ export function AutomationDetailScreen() {
   const NAV_HEADER_HEIGHT = 56;
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.backgroundRoot, paddingTop: insets.top + NAV_HEADER_HEIGHT }]}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.backgroundRoot,
+          paddingTop: insets.top + NAV_HEADER_HEIGHT,
+        },
+      ]}
+    >
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
@@ -252,7 +275,9 @@ export function AutomationDetailScreen() {
 
         {/* Trigger Section */}
         <View style={styles.sectionLabel}>
-          <Text style={[styles.sectionLabelText, { color: theme.textTertiary }]}>
+          <Text
+            style={[styles.sectionLabelText, { color: theme.textTertiary }]}
+          >
             TRIGGER
           </Text>
         </View>
@@ -282,14 +307,21 @@ export function AutomationDetailScreen() {
               <Text style={[styles.infoTitle, { color: theme.text }]}>
                 {triggerInfo.title}
               </Text>
-              <Text style={[styles.infoDescription, { color: theme.textSecondary }]}>
+              <Text
+                style={[styles.infoDescription, { color: theme.textSecondary }]}
+              >
                 {triggerInfo.description}
               </Text>
             </View>
           </View>
 
           {/* Timing */}
-          <View style={[styles.timingRow, { borderTopColor: isDark ? theme.border : "#F3F4F6" }]}>
+          <View
+            style={[
+              styles.timingRow,
+              { borderTopColor: isDark ? theme.border : "#F3F4F6" },
+            ]}
+          >
             <Feather name="clock" size={14} color={theme.textTertiary} />
             <Text style={[styles.timingText, { color: theme.textSecondary }]}>
               {getTimingText()}
@@ -299,7 +331,9 @@ export function AutomationDetailScreen() {
 
         {/* Action Section */}
         <View style={styles.sectionLabel}>
-          <Text style={[styles.sectionLabelText, { color: theme.textTertiary }]}>
+          <Text
+            style={[styles.sectionLabelText, { color: theme.textTertiary }]}
+          >
             ACTION
           </Text>
         </View>
@@ -316,7 +350,11 @@ export function AutomationDetailScreen() {
             <View
               style={[
                 styles.iconBadge,
-                { backgroundColor: isDark ? actionInfo.color + "20" : actionInfo.bg },
+                {
+                  backgroundColor: isDark
+                    ? actionInfo.color + "20"
+                    : actionInfo.bg,
+                },
               ]}
             >
               <Feather
@@ -334,10 +372,14 @@ export function AutomationDetailScreen() {
         </View>
 
         {/* Message Preview Section */}
-        {(messagePreview.subject || messagePreview.body || messagePreview.sms) && (
+        {(messagePreview.subject ||
+          messagePreview.body ||
+          messagePreview.sms) && (
           <>
             <View style={styles.sectionLabel}>
-              <Text style={[styles.sectionLabelText, { color: theme.textTertiary }]}>
+              <Text
+                style={[styles.sectionLabelText, { color: theme.textTertiary }]}
+              >
                 MESSAGE PREVIEW
               </Text>
             </View>
@@ -354,7 +396,12 @@ export function AutomationDetailScreen() {
               {messagePreview.subject && (
                 <View style={styles.emailPreview}>
                   <View style={styles.subjectRow}>
-                    <Text style={[styles.subjectLabel, { color: theme.textTertiary }]}>
+                    <Text
+                      style={[
+                        styles.subjectLabel,
+                        { color: theme.textTertiary },
+                      ]}
+                    >
                       Subject
                     </Text>
                     <Text
@@ -379,7 +426,9 @@ export function AutomationDetailScreen() {
                     },
                   ]}
                 >
-                  <Text style={[styles.bodyLabel, { color: theme.textTertiary }]}>
+                  <Text
+                    style={[styles.bodyLabel, { color: theme.textTertiary }]}
+                  >
                     Body
                   </Text>
                   <Text
@@ -411,7 +460,9 @@ export function AutomationDetailScreen() {
                       {messagePreview.sms}
                     </Text>
                   </View>
-                  <Text style={[styles.smsCharCount, { color: theme.textTertiary }]}>
+                  <Text
+                    style={[styles.smsCharCount, { color: theme.textTertiary }]}
+                  >
                     {messagePreview.sms.length}/320 characters
                   </Text>
                 </View>
@@ -422,7 +473,9 @@ export function AutomationDetailScreen() {
 
         {/* Stats Section */}
         <View style={styles.sectionLabel}>
-          <Text style={[styles.sectionLabelText, { color: theme.textTertiary }]}>
+          <Text
+            style={[styles.sectionLabelText, { color: theme.textTertiary }]}
+          >
             STATS
           </Text>
         </View>
@@ -447,7 +500,10 @@ export function AutomationDetailScreen() {
             </View>
 
             <View
-              style={[styles.statDivider, { backgroundColor: isDark ? theme.border : "#E5E7EB" }]}
+              style={[
+                styles.statDivider,
+                { backgroundColor: isDark ? theme.border : "#E5E7EB" },
+              ]}
             />
 
             <View style={styles.statItem}>

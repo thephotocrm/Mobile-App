@@ -9,17 +9,26 @@ const GOOGLE_OAUTH_TOKEN_URL = "https://oauth2.googleapis.com/token";
 
 // ShootProof API Configuration
 const SHOOTPROOF_API_BASE = "https://api.shootproof.com/studio";
-const SHOOTPROOF_TOKEN_URL = "https://auth.shootproof.com/oauth2/authorization/token";
+const SHOOTPROOF_TOKEN_URL =
+  "https://auth.shootproof.com/oauth2/authorization/token";
 
 export interface GalleryService {
-  createGallery(projectId: string, photographerId: string): Promise<{ url: string; id: string }>;
+  createGallery(
+    projectId: string,
+    photographerId: string,
+  ): Promise<{ url: string; id: string }>;
   refreshGoogleDriveToken(photographerId: string): Promise<string>;
   refreshShootProofToken(photographerId: string): Promise<string>;
-  syncShootProofGalleries(photographerId: string): Promise<{ matched: number; total: number }>;
+  syncShootProofGalleries(
+    photographerId: string,
+  ): Promise<{ matched: number; total: number }>;
 }
 
 class GalleryServiceImpl implements GalleryService {
-  async createGallery(projectId: string, photographerId: string): Promise<{ url: string; id: string }> {
+  async createGallery(
+    projectId: string,
+    photographerId: string,
+  ): Promise<{ url: string; id: string }> {
     const photographer = await db.query.photographers.findFirst({
       where: eq(photographers.id, photographerId),
     });
@@ -48,7 +57,10 @@ class GalleryServiceImpl implements GalleryService {
     }
   }
 
-  private async createGoogleDriveFolder(photographer: any, project: any): Promise<{ url: string; id: string }> {
+  private async createGoogleDriveFolder(
+    photographer: any,
+    project: any,
+  ): Promise<{ url: string; id: string }> {
     // Ensure token is fresh
     const accessToken = await this.refreshGoogleDriveToken(photographer.id);
 
@@ -76,21 +88,26 @@ class GalleryServiceImpl implements GalleryService {
     const folder = await response.json();
 
     // Set folder permissions to "anyone with link can view" (read-only)
-    const permissionsResponse = await fetch(`${GOOGLE_DRIVE_API_BASE}/files/${folder.id}/permissions`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
+    const permissionsResponse = await fetch(
+      `${GOOGLE_DRIVE_API_BASE}/files/${folder.id}/permissions`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          role: "reader",
+          type: "anyone",
+        }),
       },
-      body: JSON.stringify({
-        role: "reader",
-        type: "anyone",
-      }),
-    });
+    );
 
     if (!permissionsResponse.ok) {
       const permError = await permissionsResponse.text();
-      throw new Error(`Failed to set Google Drive folder permissions: ${permError}`);
+      throw new Error(
+        `Failed to set Google Drive folder permissions: ${permError}`,
+      );
     }
 
     const url = `https://drive.google.com/drive/folders/${folder.id}`;
@@ -108,12 +125,16 @@ class GalleryServiceImpl implements GalleryService {
     return { url, id: folder.id };
   }
 
-  private async createShootProofAlbum(photographer: any, project: any): Promise<{ url: string; id: string }> {
+  private async createShootProofAlbum(
+    photographer: any,
+    project: any,
+  ): Promise<{ url: string; id: string }> {
     // Ensure token is fresh
     const accessToken = await this.refreshShootProofToken(photographer.id);
 
     // Create event name
-    const eventName = `${project.title} - ${project.client?.firstName || ""} ${project.client?.lastName || ""}`.trim();
+    const eventName =
+      `${project.title} - ${project.client?.firstName || ""} ${project.client?.lastName || ""}`.trim();
 
     // Get studio information to find the default brand ID
     const studioResponse = await fetch(`${SHOOTPROOF_API_BASE}/me`, {
@@ -130,35 +151,44 @@ class GalleryServiceImpl implements GalleryService {
     }
 
     const studioData = await studioResponse.json();
-    
+
     // Get the brand ID - usually studios have a default brand
     // The brand endpoint link is in the studio data
     const brandLink = studioData._links?.brand?.href;
     if (!brandLink) {
-      throw new Error("No brand found for ShootProof studio. Please create a brand in ShootProof first.");
+      throw new Error(
+        "No brand found for ShootProof studio. Please create a brand in ShootProof first.",
+      );
     }
 
     // Extract brand ID from the link (format: /studio/brand/{id})
     const brandIdMatch = brandLink.match(/\/brand\/([^/]+)/);
     if (!brandIdMatch) {
-      throw new Error("Could not determine brand ID from ShootProof studio data.");
+      throw new Error(
+        "Could not determine brand ID from ShootProof studio data.",
+      );
     }
     const brandId = brandIdMatch[1];
 
     // Create event via ShootProof Studio API
-    const createResponse = await fetch(`${SHOOTPROOF_API_BASE}/brand/${brandId}/event`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/vnd.shootproof+json",
-        Accept: "application/vnd.shootproof+json",
+    const createResponse = await fetch(
+      `${SHOOTPROOF_API_BASE}/brand/${brandId}/event`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/vnd.shootproof+json",
+          Accept: "application/vnd.shootproof+json",
+        },
+        body: JSON.stringify({
+          name: eventName,
+          // Add event date if available (ISO 8601 format)
+          ...(project.eventDate && {
+            eventDate: new Date(project.eventDate).toISOString(),
+          }),
+        }),
       },
-      body: JSON.stringify({
-        name: eventName,
-        // Add event date if available (ISO 8601 format)
-        ...(project.eventDate && { eventDate: new Date(project.eventDate).toISOString() }),
-      }),
-    });
+    );
 
     if (!createResponse.ok) {
       const error = await createResponse.text();
@@ -169,7 +199,10 @@ class GalleryServiceImpl implements GalleryService {
 
     // Construct gallery URL from event data
     // ShootProof events have a 'url' field with the public gallery URL
-    const url = event.url || event._links?.self?.href || `https://www.shootproof.com/gallery/${event.id}`;
+    const url =
+      event.url ||
+      event._links?.self?.href ||
+      `https://www.shootproof.com/gallery/${event.id}`;
 
     // Update project with gallery info
     await db
@@ -247,7 +280,8 @@ class GalleryServiceImpl implements GalleryService {
     if (
       photographer.shootproofAccessToken &&
       photographer.shootproofTokenExpiry &&
-      new Date(photographer.shootproofTokenExpiry).getTime() > Date.now() + 5 * 60 * 1000
+      new Date(photographer.shootproofTokenExpiry).getTime() >
+        Date.now() + 5 * 60 * 1000
     ) {
       return photographer.shootproofAccessToken;
     }
@@ -280,7 +314,9 @@ class GalleryServiceImpl implements GalleryService {
         shootproofAccessToken: data.access_token,
         shootproofTokenExpiry: new Date(Date.now() + data.expires_in * 1000),
         // Update refresh token if a new one is provided
-        ...(data.refresh_token && { shootproofRefreshToken: data.refresh_token }),
+        ...(data.refresh_token && {
+          shootproofRefreshToken: data.refresh_token,
+        }),
       })
       .where(eq(photographers.id, photographerId));
 

@@ -34,8 +34,12 @@ export default function App() {
     // Set up global error handler for unhandled errors
     const originalHandler = ErrorUtils.getGlobalHandler();
     ErrorUtils.setGlobalHandler((error, isFatal) => {
-      logStartup(`GLOBAL ERROR (fatal=${isFatal}): ${error?.message || String(error)}`);
-      setStartupError(`Global Error: ${error?.message || String(error)}\n\nStack: ${error?.stack || 'No stack'}`);
+      logStartup(
+        `GLOBAL ERROR (fatal=${isFatal}): ${error?.message || String(error)}`,
+      );
+      setStartupError(
+        `Global Error: ${error?.message || String(error)}\n\nStack: ${error?.stack || "No stack"}`,
+      );
       if (originalHandler) {
         originalHandler(error, isFatal);
       }
@@ -64,7 +68,7 @@ export default function App() {
         setIsDbReady(true);
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error);
-        const errorStack = error instanceof Error ? error.stack : 'No stack';
+        const errorStack = error instanceof Error ? error.stack : "No stack";
         logStartup(`Database initialization failed: ${errorMsg}`);
         console.error("Database initialization failed:", error);
         setStartupError(`DB Init Error: ${errorMsg}\n\nStack: ${errorStack}`);
@@ -84,10 +88,14 @@ export default function App() {
           <Text style={styles.errorTitle}>Startup Error</Text>
           <Text style={styles.errorPhase}>Phase: {initPhase}</Text>
           <ScrollView style={styles.errorScroll}>
-            <Text style={styles.errorText} selectable>{startupError}</Text>
+            <Text style={styles.errorText} selectable>
+              {startupError}
+            </Text>
             <Text style={styles.logTitle}>Startup Log:</Text>
             {startupLogs.map((log, i) => (
-              <Text key={i} style={styles.logText} selectable>{log}</Text>
+              <Text key={i} style={styles.logText} selectable>
+                {log}
+              </Text>
             ))}
           </ScrollView>
         </View>

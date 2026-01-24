@@ -3,18 +3,18 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useDomain } from "@/hooks/use-domain";
 import { useQuery } from "@tanstack/react-query";
-import { 
+import {
   Camera,
-  LayoutDashboard, 
+  LayoutDashboard,
   Activity,
   CheckSquare,
-  FileText, 
+  FileText,
   CreditCard,
   StickyNote,
   Settings,
   LogOut,
   ChevronDown,
-  Loader2
+  Loader2,
 } from "lucide-react";
 import {
   Sidebar,
@@ -47,7 +47,7 @@ interface ClientProject {
   projectType: string;
   eventDate?: string;
   status: string;
-  role: 'PRIMARY' | 'PARTICIPANT';
+  role: "PRIMARY" | "PARTICIPANT";
   photographer: {
     businessName: string;
     logoUrl?: string;
@@ -73,9 +73,11 @@ function ClientPortalSidebar({ currentProjectId }: ClientPortalSidebarProps) {
   const [, forceUpdate] = useState({});
 
   // Fetch all projects for dropdown
-  const { data: projects = [], isLoading: projectsLoading } = useQuery<ClientProject[]>({
+  const { data: projects = [], isLoading: projectsLoading } = useQuery<
+    ClientProject[]
+  >({
     queryKey: ["/api/client-portal/projects"],
-    enabled: !!user
+    enabled: !!user,
   });
 
   // Force re-render when URL changes (including query params)
@@ -88,22 +90,22 @@ function ClientPortalSidebar({ currentProjectId }: ClientPortalSidebarProps) {
       forceUpdate({});
     };
 
-    window.history.pushState = function(...args) {
+    window.history.pushState = function (...args) {
       originalPushState.apply(window.history, args);
       forceUpdate({});
     };
 
-    window.history.replaceState = function(...args) {
+    window.history.replaceState = function (...args) {
       originalReplaceState.apply(window.history, args);
       forceUpdate({});
     };
 
-    window.addEventListener('popstate', handlePopState);
+    window.addEventListener("popstate", handlePopState);
 
     return () => {
       window.history.pushState = originalPushState;
       window.history.replaceState = originalReplaceState;
-      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener("popstate", handlePopState);
     };
   }, []);
 
@@ -120,74 +122,89 @@ function ClientPortalSidebar({ currentProjectId }: ClientPortalSidebarProps) {
   };
 
   // Find current project
-  const currentProject = currentProjectId 
-    ? projects.find(p => p.id === currentProjectId)
+  const currentProject = currentProjectId
+    ? projects.find((p) => p.id === currentProjectId)
     : projects[0];
 
   // Get photographer info from project or domain (fallback for when no project exists)
   const photographer = currentProject?.photographer || domain?.photographer;
-  
+
   // Debug: Log photographer data to help diagnose logo issues
-  console.log('🖼️ Client Portal - Photographer Logo Debug:', {
+  console.log("🖼️ Client Portal - Photographer Logo Debug:", {
     hasPhotographer: !!photographer,
     businessName: photographer?.businessName,
     logoUrl: photographer?.logoUrl,
-    logoUrlLength: photographer?.logoUrl?.length
+    logoUrlLength: photographer?.logoUrl?.length,
   });
 
   // Check if galleries exist for conditional styling
-  const hasGalleries = currentProject?.galleries && currentProject.galleries.length > 0;
+  const hasGalleries =
+    currentProject?.galleries && currentProject.galleries.length > 0;
 
   // Navigation items
   const navItems = [
-    { 
-      id: 'overview', 
-      label: 'Overview', 
+    {
+      id: "overview",
+      label: "Overview",
       icon: LayoutDashboard,
-      href: currentProjectId ? `/client-portal/projects/${currentProjectId}` : '/client-portal',
-      disabled: false
+      href: currentProjectId
+        ? `/client-portal/projects/${currentProjectId}`
+        : "/client-portal",
+      disabled: false,
     },
-    { 
-      id: 'activity', 
-      label: 'Activity', 
+    {
+      id: "activity",
+      label: "Activity",
       icon: Activity,
-      href: currentProjectId ? `/client-portal/projects/${currentProjectId}?tab=activity` : '/client-portal',
-      disabled: false
+      href: currentProjectId
+        ? `/client-portal/projects/${currentProjectId}?tab=activity`
+        : "/client-portal",
+      disabled: false,
     },
-    { 
-      id: 'tasks', 
-      label: 'Tasks', 
+    {
+      id: "tasks",
+      label: "Tasks",
       icon: CheckSquare,
-      href: currentProjectId ? `/client-portal/projects/${currentProjectId}?tab=tasks` : '/client-portal',
-      disabled: false
+      href: currentProjectId
+        ? `/client-portal/projects/${currentProjectId}?tab=tasks`
+        : "/client-portal",
+      disabled: false,
     },
-    { 
-      id: 'files', 
-      label: 'Files', 
+    {
+      id: "files",
+      label: "Files",
       icon: FileText,
-      href: currentProjectId ? `/client-portal/projects/${currentProjectId}?tab=files` : '/client-portal',
-      disabled: false
+      href: currentProjectId
+        ? `/client-portal/projects/${currentProjectId}?tab=files`
+        : "/client-portal",
+      disabled: false,
     },
-    { 
-      id: 'galleries', 
-      label: 'Galleries', 
+    {
+      id: "galleries",
+      label: "Galleries",
       icon: Camera,
-      href: currentProjectId ? `/client-portal/projects/${currentProjectId}?tab=galleries` : '/client-portal',
-      disabled: !hasGalleries
+      href: currentProjectId
+        ? `/client-portal/projects/${currentProjectId}?tab=galleries`
+        : "/client-portal",
+      disabled: !hasGalleries,
     },
-    { 
-      id: 'payments', 
-      label: 'Payments', 
+    {
+      id: "payments",
+      label: "Payments",
       icon: CreditCard,
-      href: currentProjectId ? `/client-portal/projects/${currentProjectId}?tab=payments` : '/client-portal',
-      disabled: false
+      href: currentProjectId
+        ? `/client-portal/projects/${currentProjectId}?tab=payments`
+        : "/client-portal",
+      disabled: false,
     },
-    { 
-      id: 'notes', 
-      label: 'Notes', 
+    {
+      id: "notes",
+      label: "Notes",
       icon: StickyNote,
-      href: currentProjectId ? `/client-portal/projects/${currentProjectId}?tab=notes` : '/client-portal',
-      disabled: false
+      href: currentProjectId
+        ? `/client-portal/projects/${currentProjectId}?tab=notes`
+        : "/client-portal",
+      disabled: false,
     },
   ];
 
@@ -195,28 +212,28 @@ function ClientPortalSidebar({ currentProjectId }: ClientPortalSidebarProps) {
     // Use window.location to get full URL with query params (wouter's location only has pathname)
     const currentUrl = `${window.location.pathname}${window.location.search}`;
     const itemUrl = href;
-    
+
     // Extract pathname and query params for both current URL and item URL
-    const [currentPath, currentQuery] = currentUrl.split('?');
-    const [itemPath, itemQuery] = itemUrl.split('?');
-    
+    const [currentPath, currentQuery] = currentUrl.split("?");
+    const [itemPath, itemQuery] = itemUrl.split("?");
+
     // Paths must match first
     if (currentPath !== itemPath) {
       return false;
     }
-    
+
     // Parse query params
-    const currentParams = new URLSearchParams(currentQuery || '');
-    const itemParams = new URLSearchParams(itemQuery || '');
-    
-    const currentTab = currentParams.get('tab');
-    const itemTab = itemParams.get('tab');
-    
+    const currentParams = new URLSearchParams(currentQuery || "");
+    const itemParams = new URLSearchParams(itemQuery || "");
+
+    const currentTab = currentParams.get("tab");
+    const itemTab = itemParams.get("tab");
+
     // Special case: Overview is active when tab is null/undefined OR explicitly "overview"
     if (itemTab === null) {
-      return currentTab === null || currentTab === 'overview';
+      return currentTab === null || currentTab === "overview";
     }
-    
+
     // For all other tabs, match exactly
     return currentTab === itemTab;
   };
@@ -227,8 +244,8 @@ function ClientPortalSidebar({ currentProjectId }: ClientPortalSidebarProps) {
         {/* Photographer branding */}
         <div className="flex items-center gap-3 mb-4">
           {photographer?.logoUrl ? (
-            <img 
-              src={photographer.logoUrl} 
+            <img
+              src={photographer.logoUrl}
               alt={photographer.businessName}
               className="w-8 h-8 rounded object-cover"
             />
@@ -239,7 +256,7 @@ function ClientPortalSidebar({ currentProjectId }: ClientPortalSidebarProps) {
           )}
           <div className="flex-1 min-w-0">
             <h2 className="font-semibold text-sm truncate">
-              {photographer?.businessName || 'Your Photographer'}
+              {photographer?.businessName || "Your Photographer"}
             </h2>
             <p className="text-xs text-muted-foreground">Client Portal</p>
           </div>
@@ -249,22 +266,24 @@ function ClientPortalSidebar({ currentProjectId }: ClientPortalSidebarProps) {
         {projects.length > 0 && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full justify-between"
                 data-testid="dropdown-project-selector"
               >
                 <span className="truncate">
-                  {currentProject?.title || 'Select Project'}
+                  {currentProject?.title || "Select Project"}
                 </span>
                 <ChevronDown className="w-4 h-4 ml-2 flex-shrink-0" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[240px]" align="start">
               {projects.map((project) => (
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   key={project.id}
-                  onClick={() => setLocation(`/client-portal/projects/${project.id}`)}
+                  onClick={() =>
+                    setLocation(`/client-portal/projects/${project.id}`)
+                  }
                   data-testid={`project-option-${project.id}`}
                 >
                   <div className="flex-1 min-w-0">
@@ -287,10 +306,10 @@ function ClientPortalSidebar({ currentProjectId }: ClientPortalSidebarProps) {
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.href);
-                
+
                 return (
                   <SidebarMenuItem key={item.id}>
-                    <SidebarMenuButton 
+                    <SidebarMenuButton
                       asChild={!item.disabled}
                       isActive={active}
                       disabled={item.disabled}
@@ -300,7 +319,7 @@ function ClientPortalSidebar({ currentProjectId }: ClientPortalSidebarProps) {
                           : active
                             ? "bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary data-[state=active]:opacity-100"
                             : "text-gray-700 hover:bg-gray-100 data-[state=open]:text-gray-700 data-[state=open]:bg-gray-100",
-                        "opacity-100 transition-all duration-200"
+                        "opacity-100 transition-all duration-200",
                       )}
                       data-testid={`nav-${item.id}`}
                     >
@@ -353,7 +372,7 @@ function ClientPortalSidebar({ currentProjectId }: ClientPortalSidebarProps) {
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton 
+            <SidebarMenuButton
               onClick={handleLogout}
               className="text-gray-700 hover:bg-gray-100 opacity-100"
               data-testid="button-logout"
@@ -369,7 +388,8 @@ function ClientPortalSidebar({ currentProjectId }: ClientPortalSidebarProps) {
           <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-200">
             <Avatar className="h-8 w-8">
               <AvatarFallback className="bg-primary text-white text-xs">
-                {user.firstName?.[0]}{user.lastName?.[0]}
+                {user.firstName?.[0]}
+                {user.lastName?.[0]}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
@@ -392,7 +412,10 @@ interface ClientPortalLayoutProps {
   currentProjectId?: string;
 }
 
-export function ClientPortalLayout({ children, currentProjectId }: ClientPortalLayoutProps) {
+export function ClientPortalLayout({
+  children,
+  currentProjectId,
+}: ClientPortalLayoutProps) {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -403,11 +426,9 @@ export function ClientPortalLayout({ children, currentProjectId }: ClientPortalL
             <h1 className="text-lg font-semibold">Client Portal</h1>
             <SidebarTrigger data-testid="button-menu-toggle" />
           </header>
-          
+
           {/* Main content */}
-          <main className="flex-1">
-            {children}
-          </main>
+          <main className="flex-1">{children}</main>
         </SidebarInset>
       </div>
     </SidebarProvider>

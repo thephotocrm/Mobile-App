@@ -2,34 +2,43 @@ import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Calendar, Clock, User, Mail, Phone, MessageSquare, Camera } from "lucide-react";
+import {
+  CheckCircle2,
+  Calendar,
+  Clock,
+  User,
+  Mail,
+  Phone,
+  MessageSquare,
+  Camera,
+} from "lucide-react";
 import { updateMetaTags } from "@/lib/meta-tags";
 
 export default function BookingConfirmation() {
   const [, navigate] = useLocation();
-  
+
   // Get booking details from URL params
   const searchParams = new URLSearchParams(window.location.search);
-  const businessName = searchParams.get('businessName') || 'the photographer';
-  const clientName = searchParams.get('name') || '';
-  const clientEmail = searchParams.get('email') || '';
-  const clientPhone = searchParams.get('phone') || '';
-  const date = searchParams.get('date') || '';
-  const startTime = searchParams.get('startTime') || '';
-  const endTime = searchParams.get('endTime') || '';
-  const notes = searchParams.get('notes') || '';
-  const timezone = searchParams.get('timezone') || 'America/New_York';
+  const businessName = searchParams.get("businessName") || "the photographer";
+  const clientName = searchParams.get("name") || "";
+  const clientEmail = searchParams.get("email") || "";
+  const clientPhone = searchParams.get("phone") || "";
+  const date = searchParams.get("date") || "";
+  const startTime = searchParams.get("startTime") || "";
+  const endTime = searchParams.get("endTime") || "";
+  const notes = searchParams.get("notes") || "";
+  const timezone = searchParams.get("timezone") || "America/New_York";
 
   // Get timezone abbreviation from timezone name
   const getTimezoneAbbreviation = (tz: string): string => {
     try {
       // Create a date and format with the timezone to extract abbreviation
-      const formatter = new Intl.DateTimeFormat('en-US', {
+      const formatter = new Intl.DateTimeFormat("en-US", {
         timeZone: tz,
-        timeZoneName: 'short'
+        timeZoneName: "short",
       });
       const parts = formatter.formatToParts(new Date());
-      const tzPart = parts.find(p => p.type === 'timeZoneName');
+      const tzPart = parts.find((p) => p.type === "timeZoneName");
       return tzPart?.value || tz;
     } catch {
       return tz;
@@ -47,26 +56,46 @@ export default function BookingConfirmation() {
 
   // Format date for display
   const formatDate = (dateStr: string) => {
-    if (!dateStr) return '';
-    const date = new Date(dateStr + 'T00:00:00');
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                   'July', 'August', 'September', 'October', 'November', 'December'];
-    
+    if (!dateStr) return "";
+    const date = new Date(dateStr + "T00:00:00");
+    const days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
     const dayName = days[date.getDay()];
     const monthName = months[date.getMonth()];
     const dayNumber = date.getDate();
     const year = date.getFullYear();
-    
+
     return `${dayName}, ${monthName} ${dayNumber}, ${year}`;
   };
 
   // Format time for display
   const formatTime = (timeString: string) => {
-    if (!timeString) return '';
-    const [hours, minutes] = timeString.split(':');
+    if (!timeString) return "";
+    const [hours, minutes] = timeString.split(":");
     const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const ampm = hour >= 12 ? "PM" : "AM";
     const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
     return `${displayHour}:${minutes} ${ampm}`;
   };
@@ -85,7 +114,11 @@ export default function BookingConfirmation() {
                 You're All Set!
               </h1>
               <p className="text-lg text-gray-600">
-                Your consultation with <span className="font-semibold text-gray-900">{businessName}</span> has been confirmed.
+                Your consultation with{" "}
+                <span className="font-semibold text-gray-900">
+                  {businessName}
+                </span>{" "}
+                has been confirmed.
               </p>
             </div>
 
@@ -95,15 +128,19 @@ export default function BookingConfirmation() {
                 <Camera className="w-5 h-5 text-blue-600" />
                 Appointment Details
               </h2>
-              
+
               <div className="space-y-4">
                 {/* Date */}
                 {date && (
                   <div className="flex items-start gap-3">
                     <Calendar className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="text-sm text-gray-500 font-medium">Date</div>
-                      <div className="text-gray-900 font-medium">{formatDate(date)}</div>
+                      <div className="text-sm text-gray-500 font-medium">
+                        Date
+                      </div>
+                      <div className="text-gray-900 font-medium">
+                        {formatDate(date)}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -113,9 +150,14 @@ export default function BookingConfirmation() {
                   <div className="flex items-start gap-3">
                     <Clock className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="text-sm text-gray-500 font-medium">Time</div>
+                      <div className="text-sm text-gray-500 font-medium">
+                        Time
+                      </div>
                       <div className="text-gray-900 font-medium">
-                        {formatTime(startTime)} - {formatTime(endTime)} <span className="text-gray-500 font-normal">({timezoneAbbr})</span>
+                        {formatTime(startTime)} - {formatTime(endTime)}{" "}
+                        <span className="text-gray-500 font-normal">
+                          ({timezoneAbbr})
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -126,8 +168,12 @@ export default function BookingConfirmation() {
                   <div className="flex items-start gap-3">
                     <User className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="text-sm text-gray-500 font-medium">Name</div>
-                      <div className="text-gray-900 font-medium">{clientName}</div>
+                      <div className="text-sm text-gray-500 font-medium">
+                        Name
+                      </div>
+                      <div className="text-gray-900 font-medium">
+                        {clientName}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -137,8 +183,12 @@ export default function BookingConfirmation() {
                   <div className="flex items-start gap-3">
                     <Mail className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="text-sm text-gray-500 font-medium">Email</div>
-                      <div className="text-gray-900 font-medium break-all">{clientEmail}</div>
+                      <div className="text-sm text-gray-500 font-medium">
+                        Email
+                      </div>
+                      <div className="text-gray-900 font-medium break-all">
+                        {clientEmail}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -148,8 +198,12 @@ export default function BookingConfirmation() {
                   <div className="flex items-start gap-3">
                     <Phone className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="text-sm text-gray-500 font-medium">Phone</div>
-                      <div className="text-gray-900 font-medium">{clientPhone}</div>
+                      <div className="text-sm text-gray-500 font-medium">
+                        Phone
+                      </div>
+                      <div className="text-gray-900 font-medium">
+                        {clientPhone}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -159,7 +213,9 @@ export default function BookingConfirmation() {
                   <div className="flex items-start gap-3">
                     <MessageSquare className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="text-sm text-gray-500 font-medium">Notes</div>
+                      <div className="text-sm text-gray-500 font-medium">
+                        Notes
+                      </div>
                       <div className="text-gray-900">{notes}</div>
                     </div>
                   </div>
@@ -172,8 +228,9 @@ export default function BookingConfirmation() {
               <p className="text-sm text-blue-900">
                 <span className="font-semibold">✓ Confirmation email sent</span>
                 <br />
-                We've sent all the details to <span className="font-medium">{clientEmail}</span>. 
-                Please check your inbox for the confirmation email.
+                We've sent all the details to{" "}
+                <span className="font-medium">{clientEmail}</span>. Please check
+                your inbox for the confirmation email.
               </p>
             </div>
 
@@ -181,8 +238,9 @@ export default function BookingConfirmation() {
             <div className="text-center text-sm text-gray-600 space-y-2">
               <p className="font-medium text-gray-900">What happens next?</p>
               <p>
-                You'll receive a confirmation email with a calendar invite and all the details for your session. 
-                If you have any questions before then, feel free to reply to the email.
+                You'll receive a confirmation email with a calendar invite and
+                all the details for your session. If you have any questions
+                before then, feel free to reply to the email.
               </p>
             </div>
           </CardContent>

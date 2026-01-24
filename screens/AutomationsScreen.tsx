@@ -26,12 +26,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { ThemedText } from "@/components/ThemedText";
 import { Feather } from "@expo/vector-icons";
-import {
-  Spacing,
-  BorderRadius,
-  Typography,
-  Shadows,
-} from "@/constants/theme";
+import { Spacing, BorderRadius, Typography, Shadows } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -48,18 +43,18 @@ const AutomationColors = {
   primaryLight: "#A78BFA",
   primaryDark: "#6D3550",
   // Background
-  screenBg: "#F3F4F6",        // Light grey background
-  screenBgDark: "#111827",    // Dark mode background
+  screenBg: "#F3F4F6", // Light grey background
+  screenBgDark: "#111827", // Dark mode background
   // Card backgrounds
   whiteCard: "#FFFFFF",
   blackCard: "#1a1a1a",
   // Column header
-  columnHeaderBg: "#F0E6EB",       // Light dusty rose tint
-  columnHeaderBgDark: "#2D1F26",   // Dark mode column header
+  columnHeaderBg: "#F0E6EB", // Light dusty rose tint
+  columnHeaderBgDark: "#2D1F26", // Dark mode column header
   // Status dots
-  active: "#22C55E",    // Green - active and firing
-  paused: "#9CA3AF",    // Grey - paused
-  delayed: "#F59E0B",   // Yellow/Amber - delayed or not firing
+  active: "#22C55E", // Green - active and firing
+  paused: "#9CA3AF", // Grey - paused
+  delayed: "#F59E0B", // Yellow/Amber - delayed or not firing
   // Badge colors
   timingBadgeBg: "#1F2937",
   timingBadgeText: "#FFFFFF",
@@ -84,13 +79,22 @@ const CHANNEL_LABELS: Record<string, string> = {
   STAGE_CHANGE: "Pipeline",
 };
 
-type NavigationProp = NativeStackNavigationProp<ToolsStackParamList, "Automations">;
+type NavigationProp = NativeStackNavigationProp<
+  ToolsStackParamList,
+  "Automations"
+>;
 
 // Status dot types
 type StatusDotType = "active" | "paused" | "delayed";
 
 // Pulsing status dot component
-function StatusDot({ status, isBlackCard }: { status: StatusDotType; isBlackCard?: boolean }) {
+function StatusDot({
+  status,
+  isBlackCard,
+}: {
+  status: StatusDotType;
+  isBlackCard?: boolean;
+}) {
   const pulseOpacity = useSharedValue(1);
 
   // Only pulse for active status
@@ -99,10 +103,10 @@ function StatusDot({ status, isBlackCard }: { status: StatusDotType; isBlackCard
       pulseOpacity.value = withRepeat(
         withSequence(
           withTiming(0.4, { duration: 1000 }),
-          withTiming(1, { duration: 1000 })
+          withTiming(1, { duration: 1000 }),
         ),
         -1, // Infinite repeat
-        false
+        false,
       );
     } else {
       pulseOpacity.value = 1;
@@ -122,11 +126,7 @@ function StatusDot({ status, isBlackCard }: { status: StatusDotType; isBlackCard
   return (
     <View style={styles.statusDotContainer}>
       <Animated.View
-        style={[
-          styles.statusDot,
-          { backgroundColor: dotColor },
-          animatedStyle,
-        ]}
+        style={[styles.statusDot, { backgroundColor: dotColor }, animatedStyle]}
       />
       {/* Glow effect for active */}
       {status === "active" && (
@@ -234,7 +234,10 @@ export function AutomationsScreen() {
   // All stages including "No Stage" if needed
   const allStages = useMemo(() => {
     const stageList = [...stages];
-    if (automationsByStage["no-stage"] && automationsByStage["no-stage"].length > 0) {
+    if (
+      automationsByStage["no-stage"] &&
+      automationsByStage["no-stage"].length > 0
+    ) {
       stageList.push({
         id: "no-stage",
         name: "No Stage",
@@ -301,9 +304,7 @@ export function AutomationsScreen() {
   };
 
   // Get channel icon
-  const getChannelIcon = (
-    channel?: string,
-  ): keyof typeof Feather.glyphMap => {
+  const getChannelIcon = (channel?: string): keyof typeof Feather.glyphMap => {
     switch (channel) {
       case "EMAIL":
         return "mail";
@@ -347,7 +348,8 @@ export function AutomationsScreen() {
     // Check if it has run count of 0 and was created more than 7 days ago
     if (automation.runCount === 0) {
       const createdDate = new Date(automation.createdAt);
-      const daysSinceCreation = (Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
+      const daysSinceCreation =
+        (Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
       if (daysSinceCreation > 7) {
         return "delayed";
       }
@@ -361,9 +363,13 @@ export function AutomationsScreen() {
     const isBlackCard = isPipelineMove(automation);
     const cardBg = isBlackCard
       ? AutomationColors.blackCard
-      : (isDark ? theme.backgroundCard : AutomationColors.whiteCard);
+      : isDark
+        ? theme.backgroundCard
+        : AutomationColors.whiteCard;
     const textColor = isBlackCard ? "#FFFFFF" : theme.text;
-    const secondaryTextColor = isBlackCard ? "rgba(255,255,255,0.7)" : theme.textSecondary;
+    const secondaryTextColor = isBlackCard
+      ? "rgba(255,255,255,0.7)"
+      : theme.textSecondary;
     const delayText = getDelayText(automation);
     const channelLabel = getChannelLabel(automation);
     const channelIcon = getAutomationIcon(automation);
@@ -380,7 +386,9 @@ export function AutomationsScreen() {
               backgroundColor: cardBg,
               borderColor: isBlackCard
                 ? "transparent"
-                : (isDark ? theme.border : "#F0F0F0"),
+                : isDark
+                  ? theme.border
+                  : "#F0F0F0",
               borderWidth: isBlackCard ? 0 : 1,
             },
             Shadows.sm,
@@ -405,8 +413,12 @@ export function AutomationsScreen() {
                 styles.toggleButton,
                 {
                   backgroundColor: automation.enabled
-                    ? (isBlackCard ? "rgba(255,255,255,0.15)" : AutomationColors.primary + "15")
-                    : (isBlackCard ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)"),
+                    ? isBlackCard
+                      ? "rgba(255,255,255,0.15)"
+                      : AutomationColors.primary + "15"
+                    : isBlackCard
+                      ? "rgba(255,255,255,0.1)"
+                      : "rgba(0,0,0,0.05)",
                 },
                 pressed && { opacity: 0.7 },
               ]}
@@ -415,9 +427,15 @@ export function AutomationsScreen() {
               <Feather
                 name={automation.enabled ? "zap" : "pause"}
                 size={16}
-                color={automation.enabled
-                  ? (isBlackCard ? "#FBBF24" : AutomationColors.primary)
-                  : (isBlackCard ? "rgba(255,255,255,0.5)" : theme.textTertiary)}
+                color={
+                  automation.enabled
+                    ? isBlackCard
+                      ? "#FBBF24"
+                      : AutomationColors.primary
+                    : isBlackCard
+                      ? "rgba(255,255,255,0.5)"
+                      : theme.textTertiary
+                }
               />
             </Pressable>
           </View>
@@ -438,7 +456,11 @@ export function AutomationsScreen() {
               <Text
                 style={[
                   styles.timingBadgeText,
-                  { color: isBlackCard ? "#FFFFFF" : AutomationColors.timingBadgeText },
+                  {
+                    color: isBlackCard
+                      ? "#FFFFFF"
+                      : AutomationColors.timingBadgeText,
+                  },
                 ]}
               >
                 {delayText}
@@ -459,12 +481,20 @@ export function AutomationsScreen() {
               <Feather
                 name={channelIcon}
                 size={12}
-                color={isBlackCard ? "rgba(255,255,255,0.8)" : AutomationColors.channelBadgeText}
+                color={
+                  isBlackCard
+                    ? "rgba(255,255,255,0.8)"
+                    : AutomationColors.channelBadgeText
+                }
               />
               <Text
                 style={[
                   styles.channelBadgeText,
-                  { color: isBlackCard ? "rgba(255,255,255,0.8)" : AutomationColors.channelBadgeText },
+                  {
+                    color: isBlackCard
+                      ? "rgba(255,255,255,0.8)"
+                      : AutomationColors.channelBadgeText,
+                  },
                 ]}
               >
                 {channelLabel}
@@ -476,14 +506,21 @@ export function AutomationsScreen() {
           <View
             style={[
               styles.cardDivider,
-              { backgroundColor: isBlackCard ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)" }
+              {
+                backgroundColor: isBlackCard
+                  ? "rgba(255,255,255,0.1)"
+                  : "rgba(0,0,0,0.06)",
+              },
             ]}
           />
 
           {/* Footer Row: Status Dot + Label + Run Count */}
           <View style={styles.cardFooter}>
             <View style={styles.statusBadge}>
-              <StatusDot status={getAutomationStatus(automation)} isBlackCard={isBlackCard} />
+              <StatusDot
+                status={getAutomationStatus(automation)}
+                isBlackCard={isBlackCard}
+              />
               <Text style={[styles.statusText, { color: secondaryTextColor }]}>
                 {automation.enabled ? "Active" : "Paused"}
               </Text>
@@ -493,7 +530,9 @@ export function AutomationsScreen() {
                 <Feather
                   name="play"
                   size={12}
-                  color={isBlackCard ? "rgba(255,255,255,0.6)" : theme.textTertiary}
+                  color={
+                    isBlackCard ? "rgba(255,255,255,0.6)" : theme.textTertiary
+                  }
                 />
                 <Text
                   style={[styles.runCountText, { color: secondaryTextColor }]}
@@ -528,7 +567,11 @@ export function AutomationsScreen() {
                 styles.stageDot,
                 index === currentStageIndex
                   ? { backgroundColor: AutomationColors.primary }
-                  : { backgroundColor: isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.15)" },
+                  : {
+                      backgroundColor: isDark
+                        ? "rgba(255,255,255,0.2)"
+                        : "rgba(0,0,0,0.15)",
+                    },
               ]}
             />
           </Pressable>
@@ -550,11 +593,16 @@ export function AutomationsScreen() {
           style={({ pressed }) => [
             styles.arrowButton,
             {
-              backgroundColor: currentStageIndex === 0
-                ? "transparent"
-                : (isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)"),
+              backgroundColor:
+                currentStageIndex === 0
+                  ? "transparent"
+                  : isDark
+                    ? "rgba(255,255,255,0.08)"
+                    : "rgba(0,0,0,0.04)",
               borderWidth: currentStageIndex === 0 ? 0 : 1,
-              borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
+              borderColor: isDark
+                ? "rgba(255,255,255,0.1)"
+                : "rgba(0,0,0,0.08)",
             },
             pressed && { opacity: 0.5 },
             currentStageIndex === 0 && { opacity: 0.3 },
@@ -578,11 +626,16 @@ export function AutomationsScreen() {
           style={({ pressed }) => [
             styles.arrowButton,
             {
-              backgroundColor: currentStageIndex === allStages.length - 1
-                ? "transparent"
-                : (isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)"),
+              backgroundColor:
+                currentStageIndex === allStages.length - 1
+                  ? "transparent"
+                  : isDark
+                    ? "rgba(255,255,255,0.08)"
+                    : "rgba(0,0,0,0.04)",
               borderWidth: currentStageIndex === allStages.length - 1 ? 0 : 1,
-              borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
+              borderColor: isDark
+                ? "rgba(255,255,255,0.1)"
+                : "rgba(0,0,0,0.08)",
             },
             pressed && { opacity: 0.5 },
             currentStageIndex === allStages.length - 1 && { opacity: 0.3 },
@@ -621,9 +674,7 @@ export function AutomationsScreen() {
           </ThemedText>
         </View>
         <View style={styles.stageCountBadge}>
-          <Text
-            style={[styles.stageCountText, { color: theme.textSecondary }]}
-          >
+          <Text style={[styles.stageCountText, { color: theme.textSecondary }]}>
             {currentAutomations.length} Total
           </Text>
         </View>
@@ -635,7 +686,17 @@ export function AutomationsScreen() {
   const NAV_HEADER_HEIGHT = 56;
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? AutomationColors.screenBgDark : AutomationColors.screenBg, paddingTop: insets.top + NAV_HEADER_HEIGHT }]}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: isDark
+            ? AutomationColors.screenBgDark
+            : AutomationColors.screenBg,
+          paddingTop: insets.top + NAV_HEADER_HEIGHT,
+        },
+      ]}
+    >
       {/* Project Type Tabs */}
       <Animated.View
         entering={FadeInUp.duration(400).easing(Easing.out(Easing.cubic))}
@@ -725,9 +786,7 @@ export function AutomationsScreen() {
             style={[
               styles.emptyStateIcon,
               {
-                backgroundColor: isDark
-                  ? theme.backgroundSecondary
-                  : "#F5F3FF",
+                backgroundColor: isDark ? theme.backgroundSecondary : "#F5F3FF",
               },
             ]}
           >
@@ -785,7 +844,9 @@ export function AutomationsScreen() {
               >
                 {/* Stage Label inside container */}
                 <View style={styles.stageLabelRow}>
-                  <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>
+                  <Text
+                    style={[styles.sectionLabel, { color: theme.textTertiary }]}
+                  >
                     Stage
                   </Text>
                 </View>
@@ -798,8 +859,14 @@ export function AutomationsScreen() {
               <View style={styles.automationsList}>
                 {currentAutomations.length === 0 ? (
                   <View style={styles.emptyColumn}>
-                    <Feather name="inbox" size={32} color={theme.textTertiary} />
-                    <Text style={[styles.emptyText, { color: theme.textTertiary }]}>
+                    <Feather
+                      name="inbox"
+                      size={32}
+                      color={theme.textTertiary}
+                    />
+                    <Text
+                      style={[styles.emptyText, { color: theme.textTertiary }]}
+                    >
                       No automations in this stage
                     </Text>
                   </View>

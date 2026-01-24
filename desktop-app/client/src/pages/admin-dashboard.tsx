@@ -1,11 +1,17 @@
-import { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { queryClient, apiRequest } from '@/lib/queryClient';
-import { useLocation } from 'wouter';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient, apiRequest } from "@/lib/queryClient";
+import { useLocation } from "wouter";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import {
   Table,
   TableBody,
@@ -13,15 +19,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Search, LogIn, Shield, Crown } from 'lucide-react';
+} from "@/components/ui/table";
+import { Search, LogIn, Shield, Crown } from "lucide-react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
 interface PhotographerWithStats {
   id: string;
@@ -36,48 +42,63 @@ interface PhotographerWithStats {
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { data: photographers, isLoading } = useQuery<PhotographerWithStats[]>({
-    queryKey: ['/api/admin/photographers'],
+    queryKey: ["/api/admin/photographers"],
   });
 
   const impersonateMutation = useMutation({
     mutationFn: async (photographerId: string) => {
-      return await apiRequest('POST', `/api/admin/impersonate/${photographerId}`);
+      return await apiRequest(
+        "POST",
+        `/api/admin/impersonate/${photographerId}`,
+      );
     },
     onSuccess: async () => {
       // Force a full page reload to pick up new cookies properly
       // SPA navigation (setLocation) doesn't refresh auth state correctly
-      window.location.href = '/dashboard';
+      window.location.href = "/dashboard";
     },
     onError: (error: any) => {
       toast({
-        title: 'Impersonation Failed',
-        description: error.message || 'Failed to impersonate photographer',
-        variant: 'destructive',
+        title: "Impersonation Failed",
+        description: error.message || "Failed to impersonate photographer",
+        variant: "destructive",
       });
     },
   });
 
   const updateSubscriptionMutation = useMutation({
-    mutationFn: async ({ photographerId, subscriptionStatus }: { photographerId: string; subscriptionStatus: string }) => {
-      return await apiRequest('PATCH', `/api/admin/photographers/${photographerId}/subscription`, {
-        subscriptionStatus
-      });
+    mutationFn: async ({
+      photographerId,
+      subscriptionStatus,
+    }: {
+      photographerId: string;
+      subscriptionStatus: string;
+    }) => {
+      return await apiRequest(
+        "PATCH",
+        `/api/admin/photographers/${photographerId}/subscription`,
+        {
+          subscriptionStatus,
+        },
+      );
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['/api/admin/photographers'] });
+      await queryClient.invalidateQueries({
+        queryKey: ["/api/admin/photographers"],
+      });
       toast({
-        title: 'Subscription Updated',
-        description: 'Photographer subscription status has been updated.',
+        title: "Subscription Updated",
+        description: "Photographer subscription status has been updated.",
       });
     },
     onError: (error: any) => {
       toast({
-        title: 'Update Failed',
-        description: error.message || 'Failed to update subscription',
-        variant: 'destructive',
+        title: "Update Failed",
+        description: error.message || "Failed to update subscription",
+        variant: "destructive",
       });
     },
   });
@@ -148,37 +169,80 @@ export default function AdminDashboard() {
                 {filteredPhotographers && filteredPhotographers.length > 0 ? (
                   filteredPhotographers.map((photographer) => {
                     const getStatusBadge = (status: string | null) => {
-                      if (!status) return <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">None</span>;
-                      if (status === 'unlimited') return <span className="inline-flex items-center rounded-full bg-purple-100 px-2 py-1 text-xs font-medium text-purple-700"><Crown className="h-3 w-3 mr-1" />Unlimited</span>;
-                      if (status === 'active') return <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">Active</span>;
-                      if (status === 'trialing') return <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">Trial</span>;
-                      if (status === 'past_due') return <span className="inline-flex items-center rounded-full bg-orange-100 px-2 py-1 text-xs font-medium text-orange-700">Past Due</span>;
-                      if (status === 'canceled') return <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">Canceled</span>;
-                      return <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">{status}</span>;
+                      if (!status)
+                        return (
+                          <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">
+                            None
+                          </span>
+                        );
+                      if (status === "unlimited")
+                        return (
+                          <span className="inline-flex items-center rounded-full bg-purple-100 px-2 py-1 text-xs font-medium text-purple-700">
+                            <Crown className="h-3 w-3 mr-1" />
+                            Unlimited
+                          </span>
+                        );
+                      if (status === "active")
+                        return (
+                          <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
+                            Active
+                          </span>
+                        );
+                      if (status === "trialing")
+                        return (
+                          <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
+                            Trial
+                          </span>
+                        );
+                      if (status === "past_due")
+                        return (
+                          <span className="inline-flex items-center rounded-full bg-orange-100 px-2 py-1 text-xs font-medium text-orange-700">
+                            Past Due
+                          </span>
+                        );
+                      if (status === "canceled")
+                        return (
+                          <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">
+                            Canceled
+                          </span>
+                        );
+                      return (
+                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">
+                          {status}
+                        </span>
+                      );
                     };
 
                     return (
-                      <TableRow key={photographer.id} data-testid={`row-photographer-${photographer.id}`}>
+                      <TableRow
+                        key={photographer.id}
+                        data-testid={`row-photographer-${photographer.id}`}
+                      >
                         <TableCell className="font-medium">
                           {photographer.businessName}
                         </TableCell>
                         <TableCell className="text-muted-foreground">
-                          {photographer.email || 'N/A'}
+                          {photographer.email || "N/A"}
                         </TableCell>
                         <TableCell>
                           <Select
-                            value={photographer.subscriptionStatus || 'none'}
+                            value={photographer.subscriptionStatus || "none"}
                             onValueChange={(value) => {
                               updateSubscriptionMutation.mutate({
                                 photographerId: photographer.id,
-                                subscriptionStatus: value
+                                subscriptionStatus: value,
                               });
                             }}
                             disabled={updateSubscriptionMutation.isPending}
                           >
-                            <SelectTrigger className="w-[140px]" data-testid={`select-subscription-${photographer.id}`}>
+                            <SelectTrigger
+                              className="w-[140px]"
+                              data-testid={`select-subscription-${photographer.id}`}
+                            >
                               <SelectValue>
-                                {getStatusBadge(photographer.subscriptionStatus)}
+                                {getStatusBadge(
+                                  photographer.subscriptionStatus,
+                                )}
                               </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
@@ -202,14 +266,18 @@ export default function AdminDashboard() {
                         </TableCell>
                         <TableCell className="text-muted-foreground">
                           {photographer.createdAt
-                            ? new Date(photographer.createdAt).toLocaleDateString()
-                            : 'N/A'}
+                            ? new Date(
+                                photographer.createdAt,
+                              ).toLocaleDateString()
+                            : "N/A"}
                         </TableCell>
                         <TableCell className="text-right">
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => impersonateMutation.mutate(photographer.id)}
+                            onClick={() =>
+                              impersonateMutation.mutate(photographer.id)
+                            }
                             disabled={impersonateMutation.isPending}
                             data-testid={`button-impersonate-${photographer.id}`}
                           >
@@ -222,10 +290,13 @@ export default function AdminDashboard() {
                   })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    <TableCell
+                      colSpan={6}
+                      className="text-center py-8 text-muted-foreground"
+                    >
                       {searchQuery
-                        ? 'No photographers found matching your search.'
-                        : 'No photographers in the system yet.'}
+                        ? "No photographers found matching your search."
+                        : "No photographers in the system yet."}
                     </TableCell>
                   </TableRow>
                 )}
@@ -235,7 +306,8 @@ export default function AdminDashboard() {
 
           {filteredPhotographers && (
             <div className="text-sm text-muted-foreground">
-              Showing {filteredPhotographers.length} of {photographers?.length || 0} photographers
+              Showing {filteredPhotographers.length} of{" "}
+              {photographers?.length || 0} photographers
             </div>
           )}
         </CardContent>

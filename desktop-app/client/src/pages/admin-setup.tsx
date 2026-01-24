@@ -1,48 +1,54 @@
-import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
-import { useLocation } from 'wouter';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Shield, Lock, Mail, Key } from 'lucide-react';
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useLocation } from "wouter";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Shield, Lock, Mail, Key } from "lucide-react";
 
 export default function AdminSetup() {
   const [, setLocation] = useLocation();
-  const [setupToken, setSetupToken] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [setupToken, setSetupToken] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const setupMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('POST', '/api/auth/admin-setup', {
+      return await apiRequest("POST", "/api/auth/admin-setup", {
         setupToken,
         email,
-        password
+        password,
       });
     },
     onSuccess: () => {
-      setLocation('/admin/dashboard');
+      setLocation("/admin/dashboard");
     },
     onError: (error: any) => {
-      setError(error.message || 'Failed to create admin user');
+      setError(error.message || "Failed to create admin user");
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    
+    setError("");
+
     if (!setupToken || !email || !password) {
-      setError('All fields are required');
+      setError("All fields are required");
       return;
     }
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+      setError("Password must be at least 8 characters");
       return;
     }
 
@@ -58,8 +64,8 @@ export default function AdminSetup() {
             <CardTitle className="text-2xl font-bold">Admin Setup</CardTitle>
           </div>
           <CardDescription>
-            Create the initial administrator account for this platform.
-            This page is only accessible once with a valid setup token.
+            Create the initial administrator account for this platform. This
+            page is only accessible once with a valid setup token.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -130,7 +136,9 @@ export default function AdminSetup() {
               disabled={setupMutation.isPending}
               data-testid="button-create-admin"
             >
-              {setupMutation.isPending ? 'Creating Admin...' : 'Create Admin Account'}
+              {setupMutation.isPending
+                ? "Creating Admin..."
+                : "Create Admin Account"}
             </Button>
 
             <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 rounded-md">
@@ -138,7 +146,9 @@ export default function AdminSetup() {
                 🔒 Security Notice
               </p>
               <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
-                After creating your admin account, remove the ADMIN_SETUP_TOKEN from your environment variables to permanently disable this setup page.
+                After creating your admin account, remove the ADMIN_SETUP_TOKEN
+                from your environment variables to permanently disable this
+                setup page.
               </p>
             </div>
           </form>

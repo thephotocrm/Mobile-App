@@ -1,13 +1,13 @@
-import { google } from 'googleapis';
-import { OAuth2Client } from 'google-auth-library';
-import { MailService } from '@sendgrid/mail';
-import { storage } from '../storage';
-import { db } from '../db';
-import { users, photographers } from '@shared/schema';
-import { eq } from 'drizzle-orm';
-import { renderTemplate } from '@shared/template-utils';
-import { wrapEmailContent, BrandingData } from './email-branding';
-import crypto from 'crypto';
+import { google } from "googleapis";
+import { OAuth2Client } from "google-auth-library";
+import { MailService } from "@sendgrid/mail";
+import { storage } from "../storage";
+import { db } from "../db";
+import { users, photographers } from "@shared/schema";
+import { eq } from "drizzle-orm";
+import { renderTemplate } from "@shared/template-utils";
+import { wrapEmailContent, BrandingData } from "./email-branding";
+import crypto from "crypto";
 
 // SendGrid fallback for backward compatibility
 const mailService = process.env.SENDGRID_API_KEY ? new MailService() : null;
@@ -28,7 +28,7 @@ interface EmailParams {
   clientId?: string; // Optional - for logging to client history
   projectId?: string; // Optional - for logging to project history
   automationStepId?: string; // Optional - for tracking automation sends
-  source?: 'AUTOMATION' | 'DRIP_CAMPAIGN' | 'MANUAL' | 'CLIENT_REPLY';
+  source?: "AUTOMATION" | "DRIP_CAMPAIGN" | "MANUAL" | "CLIENT_REPLY";
 }
 
 interface EmailResult {
@@ -45,11 +45,12 @@ interface EmailResult {
  * @returns Base64-encoded HMAC signature
  */
 function generateEmailSignature(projectId: string, contactId: string): string {
-  const secret = process.env.EMAIL_SIGNATURE_SECRET || 'default-secret-change-in-production';
+  const secret =
+    process.env.EMAIL_SIGNATURE_SECRET || "default-secret-change-in-production";
   const data = `${projectId}:${contactId}`;
-  const hmac = crypto.createHmac('sha256', secret);
+  const hmac = crypto.createHmac("sha256", secret);
   hmac.update(data);
-  return hmac.digest('base64');
+  return hmac.digest("base64");
 }
 
 /**
@@ -59,46 +60,57 @@ function generateEmailSignature(projectId: string, contactId: string): string {
  * @param contactId The contact ID
  * @returns True if signature is valid
  */
-export function verifyEmailSignature(signature: string, projectId: string, contactId: string): boolean {
+export function verifyEmailSignature(
+  signature: string,
+  projectId: string,
+  contactId: string,
+): boolean {
   const expectedSignature = generateEmailSignature(projectId, contactId);
-  
+
   // Use timing-safe comparison to prevent timing attacks
   if (signature.length !== expectedSignature.length) {
     return false;
   }
-  
-  const signatureBuffer = Buffer.from(signature, 'utf8');
-  const expectedBuffer = Buffer.from(expectedSignature, 'utf8');
-  
+
+  const signatureBuffer = Buffer.from(signature, "utf8");
+  const expectedBuffer = Buffer.from(expectedSignature, "utf8");
+
   return crypto.timingSafeEqual(signatureBuffer, expectedBuffer);
 }
 
 /**
  * Get OAuth2 client for a photographer with Gmail access
  */
-async function getGmailClient(photographerId: string): Promise<OAuth2Client | null> {
+async function getGmailClient(
+  photographerId: string,
+): Promise<OAuth2Client | null> {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  
+
   if (!clientId || !clientSecret) {
-    console.error('Google OAuth not configured - missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET');
+    console.error(
+      "Google OAuth not configured - missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET",
+    );
     return null;
   }
 
   const oauth2Client = new google.auth.OAuth2(clientId, clientSecret);
-  
+
   // Load photographer's credentials
-  const credentials = await storage.getGoogleCalendarCredentials(photographerId);
-  
+  const credentials =
+    await storage.getGoogleCalendarCredentials(photographerId);
+
   if (!credentials || !credentials.accessToken) {
-    console.error(`No Google credentials found for photographer ${photographerId}`);
+    console.error(
+      `No Google credentials found for photographer ${photographerId}`,
+    );
     return null;
   }
 
   oauth2Client.setCredentials({
     access_token: credentials.accessToken,
     refresh_token: credentials.refreshToken,
-    expiry_date: credentials.expiryDate?.getTime()
+    expiry_date: credentials.expiryDate?.getTime(),
   });
 
   return oauth2Client;
@@ -111,13 +123,13 @@ async function getGmailClient(photographerId: string): Promise<OAuth2Client | nu
 function encodeSubject(subject: string): string {
   // Check if subject contains non-ASCII characters
   const hasNonAscii = /[^\x00-\x7F]/.test(subject);
-  
+
   if (!hasNonAscii) {
     return subject;
   }
-  
+
   // Encode using RFC 2047 base64 format: =?charset?encoding?encoded_text?=
-  const encoded = Buffer.from(subject, 'utf-8').toString('base64');
+  const encoded = Buffer.from(subject, "utf-8").toString("base64");
   return `=?UTF-8?B?${encoded}?=`;
 }
 
@@ -125,16 +137,26 @@ function encodeSubject(subject: string): string {
  * Encode content using base64 for email body (handles non-ASCII characters)
  */
 function encodeBodyContent(content: string): string {
-  return Buffer.from(content, 'utf-8').toString('base64');
+  return Buffer.from(content, "utf-8").toString("base64");
 }
 
 /**
  * Create RFC 2822 formatted email message
  */
 function createRawEmail(params: EmailParams, fromEmail: string): string {
-  const toAddresses = Array.isArray(params.to) ? params.to.join(', ') : params.to;
-  const ccAddresses = params.cc ? (Array.isArray(params.cc) ? params.cc.join(', ') : params.cc) : '';
-  const bccAddresses = params.bcc ? (Array.isArray(params.bcc) ? params.bcc.join(', ') : params.bcc) : '';
+  const toAddresses = Array.isArray(params.to)
+    ? params.to.join(", ")
+    : params.to;
+  const ccAddresses = params.cc
+    ? Array.isArray(params.cc)
+      ? params.cc.join(", ")
+      : params.cc
+    : "";
+  const bccAddresses = params.bcc
+    ? Array.isArray(params.bcc)
+      ? params.bcc.join(", ")
+      : params.bcc
+    : "";
 
   // Generate tracking headers for email reply threading
   const trackingHeaders: string[] = [];
@@ -159,38 +181,42 @@ function createRawEmail(params: EmailParams, fromEmail: string): string {
     ...(bccAddresses ? [`Bcc: ${bccAddresses}`] : []),
     ...(params.replyTo ? [`Reply-To: ${params.replyTo}`] : []),
     `Subject: ${encodedSubject}`,
-    'MIME-Version: 1.0',
+    "MIME-Version: 1.0",
     ...trackingHeaders,
-    ...(params.html && params.text ? [
-      'Content-Type: multipart/alternative; boundary="boundary"',
-      '',
-      '--boundary',
-      'Content-Type: text/plain; charset=UTF-8',
-      'Content-Transfer-Encoding: base64',
-      '',
-      encodeBodyContent(params.text),
-      '',
-      '--boundary',
-      'Content-Type: text/html; charset=UTF-8',
-      'Content-Transfer-Encoding: base64',
-      '',
-      encodeBodyContent(params.html),
-      '',
-      '--boundary--'
-    ] : params.html ? [
-      'Content-Type: text/html; charset=UTF-8',
-      'Content-Transfer-Encoding: base64',
-      '',
-      encodeBodyContent(params.html)
-    ] : [
-      'Content-Type: text/plain; charset=UTF-8',
-      'Content-Transfer-Encoding: base64',
-      '',
-      encodeBodyContent(params.text || '')
-    ])
+    ...(params.html && params.text
+      ? [
+          'Content-Type: multipart/alternative; boundary="boundary"',
+          "",
+          "--boundary",
+          "Content-Type: text/plain; charset=UTF-8",
+          "Content-Transfer-Encoding: base64",
+          "",
+          encodeBodyContent(params.text),
+          "",
+          "--boundary",
+          "Content-Type: text/html; charset=UTF-8",
+          "Content-Transfer-Encoding: base64",
+          "",
+          encodeBodyContent(params.html),
+          "",
+          "--boundary--",
+        ]
+      : params.html
+        ? [
+            "Content-Type: text/html; charset=UTF-8",
+            "Content-Transfer-Encoding: base64",
+            "",
+            encodeBodyContent(params.html),
+          ]
+        : [
+            "Content-Type: text/plain; charset=UTF-8",
+            "Content-Transfer-Encoding: base64",
+            "",
+            encodeBodyContent(params.text || ""),
+          ]),
   ];
 
-  return messageParts.join('\r\n');
+  return messageParts.join("\r\n");
 }
 
 /**
@@ -201,7 +227,7 @@ export async function sendEmail(params: EmailParams): Promise<EmailResult> {
   if (params.photographerId) {
     return sendViaGmail(params);
   }
-  
+
   // Fallback to SendGrid for backward compatibility
   return sendViaSendGrid(params);
 }
@@ -214,7 +240,7 @@ async function sendViaGmail(params: EmailParams): Promise<EmailResult> {
     if (!params.photographerId) {
       return {
         success: false,
-        error: 'photographerId is required for Gmail'
+        error: "photographerId is required for Gmail",
       };
     }
 
@@ -222,29 +248,33 @@ async function sendViaGmail(params: EmailParams): Promise<EmailResult> {
     const oauth2Client = await getGmailClient(params.photographerId);
     if (!oauth2Client) {
       // If Gmail is not available, fallback to SendGrid
-      console.warn(`Gmail not connected for photographer ${params.photographerId}, falling back to SendGrid`);
+      console.warn(
+        `Gmail not connected for photographer ${params.photographerId}, falling back to SendGrid`,
+      );
       return sendViaSendGrid(params);
     }
 
-    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+    const gmail = google.gmail({ version: "v1", auth: oauth2Client });
 
     // Get photographer's email address from users table
-    const [user] = await db.select()
+    const [user] = await db
+      .select()
       .from(users)
       .where(eq(users.photographerId, params.photographerId))
       .limit(1);
-    
+
     if (!user || !user.email) {
       return {
         success: false,
-        error: 'Photographer email not found'
+        error: "Photographer email not found",
       };
     }
 
     const fromEmail = params.from || user.email;
 
     // Get photographer's branding settings
-    const [photographer] = await db.select()
+    const [photographer] = await db
+      .select()
       .from(photographers)
       .where(eq(photographers.id, params.photographerId))
       .limit(1);
@@ -252,7 +282,12 @@ async function sendViaGmail(params: EmailParams): Promise<EmailResult> {
     // Apply email branding if HTML content exists and branding is configured
     // SKIP for drip campaigns and automations - they have their own independent branding
     let finalHtml = params.html;
-    if (photographer && finalHtml && params.source !== 'DRIP_CAMPAIGN' && params.source !== 'AUTOMATION') {
+    if (
+      photographer &&
+      finalHtml &&
+      params.source !== "DRIP_CAMPAIGN" &&
+      params.source !== "AUTOMATION"
+    ) {
       const brandingData: BrandingData = {
         businessName: photographer.businessName || undefined,
         photographerName: photographer.photographerName || undefined,
@@ -264,7 +299,7 @@ async function sendViaGmail(params: EmailParams): Promise<EmailResult> {
         email: user.email,
         website: photographer.website || undefined,
         businessAddress: photographer.businessAddress || undefined,
-        socialLinks: (photographer.socialLinksJson as any) || undefined
+        socialLinks: (photographer.socialLinksJson as any) || undefined,
       };
 
       // Wrap email content with header and signature (for manual emails only)
@@ -272,26 +307,26 @@ async function sendViaGmail(params: EmailParams): Promise<EmailResult> {
         finalHtml,
         photographer.emailHeaderStyle,
         photographer.emailSignatureStyle,
-        brandingData
+        brandingData,
       );
     }
 
     // Create RFC 2822 formatted email
     const rawEmail = createRawEmail({ ...params, html: finalHtml }, fromEmail);
-    
+
     // Encode email in base64url format
     const encodedEmail = Buffer.from(rawEmail)
-      .toString('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
+      .toString("base64")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
 
     // Send via Gmail API
     const response = await gmail.users.messages.send({
-      userId: 'me',
+      userId: "me",
       requestBody: {
-        raw: encodedEmail
-      }
+        raw: encodedEmail,
+      },
     });
 
     const messageId = response.data.id;
@@ -303,18 +338,26 @@ async function sendViaGmail(params: EmailParams): Promise<EmailResult> {
       clientId: params.clientId || null,
       projectId: params.projectId || null,
       automationStepId: params.automationStepId || null,
-      direction: 'OUTBOUND',
+      direction: "OUTBOUND",
       fromEmail: fromEmail,
       toEmails: Array.isArray(params.to) ? params.to : [params.to],
-      ccEmails: params.cc ? (Array.isArray(params.cc) ? params.cc : [params.cc]) : null,
-      bccEmails: params.bcc ? (Array.isArray(params.bcc) ? params.bcc : [params.bcc]) : null,
+      ccEmails: params.cc
+        ? Array.isArray(params.cc)
+          ? params.cc
+          : [params.cc]
+        : null,
+      bccEmails: params.bcc
+        ? Array.isArray(params.bcc)
+          ? params.bcc
+          : [params.bcc]
+        : null,
       subject: params.subject,
       htmlBody: finalHtml || null,
       textBody: params.text || null,
       gmailMessageId: messageId || null,
       gmailThreadId: threadId || null,
-      source: params.source || 'MANUAL',
-      status: 'SENT'
+      source: params.source || "MANUAL",
+      status: "SENT",
     });
 
     console.log(`✅ Email sent via Gmail: ${params.subject} to ${params.to}`);
@@ -322,13 +365,12 @@ async function sendViaGmail(params: EmailParams): Promise<EmailResult> {
     return {
       success: true,
       messageId,
-      threadId
+      threadId,
     };
-
   } catch (error: any) {
-    console.error('Gmail send error:', error);
-    console.warn('Falling back to SendGrid due to Gmail error');
-    
+    console.error("Gmail send error:", error);
+    console.warn("Falling back to SendGrid due to Gmail error");
+
     // Fallback to SendGrid on any Gmail error
     return sendViaSendGrid(params);
   }
@@ -339,19 +381,19 @@ async function sendViaGmail(params: EmailParams): Promise<EmailResult> {
  */
 async function sendViaSendGrid(params: EmailParams): Promise<EmailResult> {
   if (!mailService) {
-    console.error('SendGrid not configured and Gmail not available');
+    console.error("SendGrid not configured and Gmail not available");
     return {
       success: false,
-      error: 'Email service not configured'
+      error: "Email service not configured",
     };
   }
 
   try {
     // Parse the from parameter to separate email and name
-    const fromParam = params.from || 'noreply@example.com';
+    const fromParam = params.from || "noreply@example.com";
     let fromEmail = fromParam;
-    let fromName = '';
-    
+    let fromName = "";
+
     // Handle both "Name <email>" format and plain email
     const fromMatch = fromParam.match(/^(.+?)\s*<(.+?)>$/);
     if (fromMatch) {
@@ -362,9 +404,15 @@ async function sendViaSendGrid(params: EmailParams): Promise<EmailResult> {
     // Apply email branding if photographerId is provided and HTML content exists
     // SKIP for drip campaigns and automations - they have their own independent branding
     let finalHtml = params.html;
-    if (params.photographerId && finalHtml && params.source !== 'DRIP_CAMPAIGN' && params.source !== 'AUTOMATION') {
+    if (
+      params.photographerId &&
+      finalHtml &&
+      params.source !== "DRIP_CAMPAIGN" &&
+      params.source !== "AUTOMATION"
+    ) {
       // Get photographer's branding settings
-      const [photographer] = await db.select()
+      const [photographer] = await db
+        .select()
         .from(photographers)
         .where(eq(photographers.id, params.photographerId))
         .limit(1);
@@ -381,7 +429,7 @@ async function sendViaSendGrid(params: EmailParams): Promise<EmailResult> {
           email: fromEmail,
           website: photographer.website || undefined,
           businessAddress: photographer.businessAddress || undefined,
-          socialLinks: (photographer.socialLinksJson as any) || undefined
+          socialLinks: (photographer.socialLinksJson as any) || undefined,
         };
 
         // Wrap email content with header and signature (for manual emails only)
@@ -389,7 +437,7 @@ async function sendViaSendGrid(params: EmailParams): Promise<EmailResult> {
           finalHtml,
           photographer.emailHeaderStyle,
           photographer.emailSignatureStyle,
-          brandingData
+          brandingData,
         );
       }
     }
@@ -398,7 +446,7 @@ async function sendViaSendGrid(params: EmailParams): Promise<EmailResult> {
       to: Array.isArray(params.to) ? params.to : [params.to],
       from: {
         email: fromEmail,
-        name: 'The Photo Crm'
+        name: "The Photo Crm",
       },
       subject: params.subject,
     };
@@ -419,7 +467,7 @@ async function sendViaSendGrid(params: EmailParams): Promise<EmailResult> {
       if (replyToMatch) {
         emailData.reply_to = {
           email: replyToMatch[2].trim(),
-          name: replyToMatch[1].trim()
+          name: replyToMatch[1].trim(),
         };
       } else {
         emailData.reply_to = params.replyTo;
@@ -435,19 +483,24 @@ async function sendViaSendGrid(params: EmailParams): Promise<EmailResult> {
     }
 
     await mailService.send(emailData);
-    console.log(`✅ Email sent via SendGrid: ${params.subject} to ${params.to}`);
-    
+    console.log(
+      `✅ Email sent via SendGrid: ${params.subject} to ${params.to}`,
+    );
+
     return {
-      success: true
+      success: true,
     };
   } catch (error: any) {
-    console.error('SendGrid email error:', error);
+    console.error("SendGrid email error:", error);
     if (error.response && error.response.body && error.response.body.errors) {
-      console.error('SendGrid error details:', JSON.stringify(error.response.body.errors, null, 2));
+      console.error(
+        "SendGrid error details:",
+        JSON.stringify(error.response.body.errors, null, 2),
+      );
     }
     return {
       success: false,
-      error: error.message || 'Failed to send email via SendGrid'
+      error: error.message || "Failed to send email via SendGrid",
     };
   }
 }
@@ -455,24 +508,27 @@ async function sendViaSendGrid(params: EmailParams): Promise<EmailResult> {
 /**
  * Fetch and process an incoming Gmail message
  */
-export async function fetchIncomingGmailMessage(photographerId: string, messageId: string): Promise<EmailResult> {
+export async function fetchIncomingGmailMessage(
+  photographerId: string,
+  messageId: string,
+): Promise<EmailResult> {
   try {
     // Get Gmail client for this photographer
     const oauth2Client = await getGmailClient(photographerId);
     if (!oauth2Client) {
       return {
         success: false,
-        error: 'Gmail not connected for photographer'
+        error: "Gmail not connected for photographer",
       };
     }
 
-    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+    const gmail = google.gmail({ version: "v1", auth: oauth2Client });
 
     // Fetch the message with full format to get headers and body
     const messageResponse = await gmail.users.messages.get({
-      userId: 'me',
+      userId: "me",
       id: messageId,
-      format: 'full'
+      format: "full",
     });
 
     const message = messageResponse.data;
@@ -480,10 +536,14 @@ export async function fetchIncomingGmailMessage(photographerId: string, messageI
     const headers = payload?.headers || [];
 
     // Extract email metadata from headers
-    const fromHeader = headers.find(h => h.name?.toLowerCase() === 'from')?.value || '';
-    const toHeader = headers.find(h => h.name?.toLowerCase() === 'to')?.value || '';
-    const subjectHeader = headers.find(h => h.name?.toLowerCase() === 'subject')?.value || '';
-    const ccHeader = headers.find(h => h.name?.toLowerCase() === 'cc')?.value || '';
+    const fromHeader =
+      headers.find((h) => h.name?.toLowerCase() === "from")?.value || "";
+    const toHeader =
+      headers.find((h) => h.name?.toLowerCase() === "to")?.value || "";
+    const subjectHeader =
+      headers.find((h) => h.name?.toLowerCase() === "subject")?.value || "";
+    const ccHeader =
+      headers.find((h) => h.name?.toLowerCase() === "cc")?.value || "";
 
     // Extract email address from "Name <email>" format
     const extractEmail = (header: string): string => {
@@ -491,19 +551,23 @@ export async function fetchIncomingGmailMessage(photographerId: string, messageI
       return match ? match[1] : header.trim();
     };
 
-    const fromEmail = fromHeader ? extractEmail(fromHeader) : '';
-    const toEmails = toHeader ? toHeader.split(',').map(e => extractEmail(e)) : [];
-    const ccEmails = ccHeader ? ccHeader.split(',').map(e => extractEmail(e)) : [];
+    const fromEmail = fromHeader ? extractEmail(fromHeader) : "";
+    const toEmails = toHeader
+      ? toHeader.split(",").map((e) => extractEmail(e))
+      : [];
+    const ccEmails = ccHeader
+      ? ccHeader.split(",").map((e) => extractEmail(e))
+      : [];
 
     // Extract message body
-    let textBody = '';
-    let htmlBody = '';
+    let textBody = "";
+    let htmlBody = "";
 
     const getBody = (part: any): void => {
-      if (part.mimeType === 'text/plain' && part.body?.data) {
-        textBody = Buffer.from(part.body.data, 'base64').toString('utf-8');
-      } else if (part.mimeType === 'text/html' && part.body?.data) {
-        htmlBody = Buffer.from(part.body.data, 'base64').toString('utf-8');
+      if (part.mimeType === "text/plain" && part.body?.data) {
+        textBody = Buffer.from(part.body.data, "base64").toString("utf-8");
+      } else if (part.mimeType === "text/html" && part.body?.data) {
+        htmlBody = Buffer.from(part.body.data, "base64").toString("utf-8");
       } else if (part.parts) {
         part.parts.forEach(getBody);
       }
@@ -515,7 +579,7 @@ export async function fetchIncomingGmailMessage(photographerId: string, messageI
 
     // Find the client by email
     const client = await storage.getClientByEmail(fromEmail, photographerId);
-    
+
     if (!client) {
       console.warn(`Received email from unknown sender: ${fromEmail}`);
       // Still log the email but without client association
@@ -525,7 +589,8 @@ export async function fetchIncomingGmailMessage(photographerId: string, messageI
     let projectId = null;
     if (client) {
       const projects = await storage.getProjectsByClient(client.id);
-      const activeProject = projects.find(p => p.status === 'ACTIVE') || projects[0];
+      const activeProject =
+        projects.find((p) => p.status === "ACTIVE") || projects[0];
       projectId = activeProject?.id || null;
     }
 
@@ -535,7 +600,7 @@ export async function fetchIncomingGmailMessage(photographerId: string, messageI
       clientId: client?.id || null,
       projectId: projectId,
       automationStepId: null,
-      direction: 'INBOUND',
+      direction: "INBOUND",
       fromEmail,
       toEmails,
       ccEmails: ccEmails.length > 0 ? ccEmails : null,
@@ -545,40 +610,49 @@ export async function fetchIncomingGmailMessage(photographerId: string, messageI
       textBody: textBody || null,
       gmailMessageId: message.id || null,
       gmailThreadId: message.threadId || null,
-      source: 'CLIENT_REPLY',
-      status: 'RECEIVED'
+      source: "CLIENT_REPLY",
+      status: "RECEIVED",
     });
 
-    console.log(`✅ Incoming email processed: ${subjectHeader} from ${fromEmail}`);
+    console.log(
+      `✅ Incoming email processed: ${subjectHeader} from ${fromEmail}`,
+    );
 
     // Send notification to photographer if message is from a known client
     if (client) {
       try {
-        const { notifyNewMessage } = await import('./notifications');
+        const { notifyNewMessage } = await import("./notifications");
         await notifyNewMessage({
           photographerId,
           contactId: client.id,
-          contactName: client.firstName ? `${client.firstName} ${client.lastName || ''}`.trim() : fromEmail,
+          contactName: client.firstName
+            ? `${client.firstName} ${client.lastName || ""}`.trim()
+            : fromEmail,
           projectId: projectId || undefined,
-          messagePreview: subjectHeader.length > 50 ? subjectHeader.substring(0, 50) + '...' : subjectHeader,
-          channel: 'email'
+          messagePreview:
+            subjectHeader.length > 50
+              ? subjectHeader.substring(0, 50) + "..."
+              : subjectHeader,
+          channel: "email",
         });
       } catch (notifyError) {
-        console.error('Failed to create inbound email notification:', notifyError);
+        console.error(
+          "Failed to create inbound email notification:",
+          notifyError,
+        );
       }
     }
 
     return {
       success: true,
       messageId: message.id || undefined,
-      threadId: message.threadId || undefined
+      threadId: message.threadId || undefined,
     };
-
   } catch (error: any) {
-    console.error('Error fetching incoming Gmail message:', error);
+    console.error("Error fetching incoming Gmail message:", error);
     return {
       success: false,
-      error: error.message || 'Failed to fetch Gmail message'
+      error: error.message || "Failed to fetch Gmail message",
     };
   }
 }
@@ -592,7 +666,9 @@ export function renderMagicLinkEmail(params: {
   loginUrl: string;
 }): { subject: string; text: string; html: string } {
   const { photographer, contact, loginUrl } = params;
-  const displayName = contact.firstName ? `${contact.firstName}${contact.lastName ? ' ' + contact.lastName : ''}` : contact.email;
+  const displayName = contact.firstName
+    ? `${contact.firstName}${contact.lastName ? " " + contact.lastName : ""}`
+    : contact.email;
 
   const subject = `Sign in to ${photographer.businessName}`;
 
@@ -610,15 +686,19 @@ ${photographer.businessName}`;
 
   const html = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
-      ${photographer.logoUrl ? `
+      ${
+        photographer.logoUrl
+          ? `
         <div style="text-align: center; margin-bottom: 30px;">
           <img src="${photographer.logoUrl}" alt="${photographer.businessName}" style="max-width: 150px; height: auto;" />
         </div>
-      ` : `
+      `
+          : `
         <div style="text-align: center; margin-bottom: 30px;">
           <h2 style="margin: 0; color: #333; font-size: 24px;">${photographer.businessName}</h2>
         </div>
-      `}
+      `
+      }
       
       <div style="background: #f9fafb; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
         <h1 style="margin: 0 0 16px 0; color: #111827; font-size: 24px; font-weight: 600;">Sign in to your portal</h1>
@@ -650,4 +730,4 @@ ${photographer.businessName}`;
 }
 
 // Re-export the shared template utility for backward compatibility
-export { renderTemplate } from '@shared/template-utils';
+export { renderTemplate } from "@shared/template-utils";

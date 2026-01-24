@@ -6,7 +6,7 @@ class ApiError extends Error {
   isPrivate?: boolean;
   photographerSlug?: string | null;
   galleryName?: string;
-  
+
   constructor(status: number, message: string, data?: Record<string, any>) {
     super(message);
     this.status = status;
@@ -55,8 +55,9 @@ export const getQueryFn: <T>(options: {
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
     // Filter out undefined/null values from queryKey to prevent "/api/resource/undefined" URLs
-    const filteredKey = queryKey.filter((segment): segment is string => 
-      segment !== undefined && segment !== null && segment !== 'undefined'
+    const filteredKey = queryKey.filter(
+      (segment): segment is string =>
+        segment !== undefined && segment !== null && segment !== "undefined",
     );
     const res = await fetch(filteredKey.join("/") as string, {
       credentials: "include",

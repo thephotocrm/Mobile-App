@@ -9,20 +9,22 @@ export default function Portal() {
   const { token } = useParams();
   const [, navigate] = useLocation();
   const { refetchUser } = useAuth();
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    "loading",
+  );
   const [errorMessage, setErrorMessage] = useState("");
   const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const validateToken = async () => {
-      console.log('🚀 [PORTAL] Starting validation flow', {
-        token: token?.substring(0, 20) + '...',
+      console.log("🚀 [PORTAL] Starting validation flow", {
+        token: token?.substring(0, 20) + "...",
         pathname: window.location.pathname,
-        href: window.location.href
+        href: window.location.href,
       });
 
       if (!token) {
-        console.error('❌ [PORTAL] No token provided');
+        console.error("❌ [PORTAL] No token provided");
         setStatus("error");
         setErrorMessage("No token provided");
         return;
@@ -30,54 +32,56 @@ export default function Portal() {
 
       try {
         // Determine which API endpoint to call based on the actual pathname
-        const isClientPortalValidate = window.location.pathname.startsWith('/client-portal/validate/');
-        const apiEndpoint = isClientPortalValidate 
+        const isClientPortalValidate = window.location.pathname.startsWith(
+          "/client-portal/validate/",
+        );
+        const apiEndpoint = isClientPortalValidate
           ? `/api/client-portal/validate/${token}`
           : `/api/portal/${token}`;
 
-        console.log('🔍 [PORTAL] Calling API:', {
+        console.log("🔍 [PORTAL] Calling API:", {
           pathname: window.location.pathname,
           isClientPortalValidate,
-          apiEndpoint
+          apiEndpoint,
         });
 
         const response = await fetch(apiEndpoint, {
           method: "GET",
-          credentials: "include"
+          credentials: "include",
         });
 
-        console.log('📡 [PORTAL] API response:', {
+        console.log("📡 [PORTAL] API response:", {
           status: response.status,
           ok: response.ok,
-          headers: Object.fromEntries(response.headers.entries())
+          headers: Object.fromEntries(response.headers.entries()),
         });
 
         if (!response.ok) {
           const data = await response.json();
-          console.error('❌ [PORTAL] Validation failed:', data);
+          console.error("❌ [PORTAL] Validation failed:", data);
           setStatus("error");
           setErrorMessage(data.message || "Invalid or expired link");
           return;
         }
 
         const data = await response.json();
-        console.log('✅ [PORTAL] Validation successful:', data);
+        console.log("✅ [PORTAL] Validation successful:", data);
         setStatus("success");
 
         // CRITICAL: Refetch auth to update user state before redirecting
-        console.log('🔄 [PORTAL] Refetching user auth state...');
+        console.log("🔄 [PORTAL] Refetching user auth state...");
         const userResult = await refetchUser();
-        console.log('✅ [PORTAL] Auth state refreshed:', userResult);
+        console.log("✅ [PORTAL] Auth state refreshed:", userResult);
 
         // Determine redirect URL and set state (navigation happens in useEffect)
-        let targetUrl = '/client-portal';
+        let targetUrl = "/client-portal";
         if (data.redirect) {
           targetUrl = data.redirect;
         } else if (data.projectId) {
           targetUrl = `/client-portal/projects/${data.projectId}`;
         }
-        
-        console.log('🎯 [PORTAL] Setting redirect URL:', targetUrl);
+
+        console.log("🎯 [PORTAL] Setting redirect URL:", targetUrl);
         setRedirectUrl(targetUrl);
       } catch (error) {
         console.error("❌ [PORTAL] Token validation error:", error);
@@ -92,19 +96,19 @@ export default function Portal() {
   // State-driven navigation in useEffect to prevent React error #185
   useEffect(() => {
     if (redirectUrl) {
-      console.log('🚀 [PORTAL-NAV] Navigation effect triggered');
-      console.log('🎯 [PORTAL-NAV] Target URL:', redirectUrl);
-      console.log('⏰ [PORTAL-NAV] Will navigate in 1500ms...');
-      
+      console.log("🚀 [PORTAL-NAV] Navigation effect triggered");
+      console.log("🎯 [PORTAL-NAV] Target URL:", redirectUrl);
+      console.log("⏰ [PORTAL-NAV] Will navigate in 1500ms...");
+
       // Delay to show success message briefly
       const timer = setTimeout(() => {
-        console.log('➡️ [PORTAL-NAV] NAVIGATING NOW to:', redirectUrl);
+        console.log("➡️ [PORTAL-NAV] NAVIGATING NOW to:", redirectUrl);
         navigate(redirectUrl);
-        console.log('✅ [PORTAL-NAV] Navigate called');
+        console.log("✅ [PORTAL-NAV] Navigate called");
       }, 1500);
-      
+
       return () => {
-        console.log('🧹 [PORTAL-NAV] Cleanup - clearing timer');
+        console.log("🧹 [PORTAL-NAV] Cleanup - clearing timer");
         clearTimeout(timer);
       };
     }
@@ -118,7 +122,9 @@ export default function Portal() {
             <div className="flex flex-col items-center space-y-4 py-8">
               <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
               <div className="text-center">
-                <h2 className="text-xl font-semibold mb-2">Verifying access...</h2>
+                <h2 className="text-xl font-semibold mb-2">
+                  Verifying access...
+                </h2>
                 <p className="text-sm text-muted-foreground">
                   Please wait while we verify your link
                 </p>
@@ -151,9 +157,7 @@ export default function Portal() {
                 <h2 className="text-xl font-semibold mb-2 text-red-800">
                   Access denied
                 </h2>
-                <p className="text-sm text-muted-foreground">
-                  {errorMessage}
-                </p>
+                <p className="text-sm text-muted-foreground">{errorMessage}</p>
                 <p className="text-xs text-muted-foreground mt-4">
                   Please request a new link from your photographer
                 </p>

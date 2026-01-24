@@ -8,7 +8,14 @@
 
 export type ContentBlock = {
   id: string;
-  type: 'HEADING' | 'TEXT' | 'BUTTON' | 'IMAGE' | 'SPACER' | 'HEADER' | 'SIGNATURE';
+  type:
+    | "HEADING"
+    | "TEXT"
+    | "BUTTON"
+    | "IMAGE"
+    | "SPACER"
+    | "HEADER"
+    | "SIGNATURE";
   content: any;
 };
 
@@ -19,68 +26,76 @@ const BUTTON_MARKER_REGEX = /\[\[BUTTON:([A-Z_]+):([^\]]+?)(?::([^\]]+))?\]\]/g;
  * Convert ContentBlock[] to plain text with button markers.
  * Used when loading templates created with the old blocks builder.
  */
-export function blocksToTemplateBody(blocks: ContentBlock[] | Array<{ type: string; content: any }>): string {
-  if (!blocks || blocks.length === 0) return '';
+export function blocksToTemplateBody(
+  blocks: ContentBlock[] | Array<{ type: string; content: any }>,
+): string {
+  if (!blocks || blocks.length === 0) return "";
 
-  return blocks.map(block => {
-    switch (block.type) {
-      case 'HEADING':
-        // Convert heading to bold text - handle both object format and plain string
-        const headingText = typeof block.content === 'string'
-          ? block.content
-          : (block.content?.text || block.content?.content || '');
-        return headingText ? `**${headingText}**` : '';
+  return blocks
+    .map((block) => {
+      switch (block.type) {
+        case "HEADING":
+          // Convert heading to bold text - handle both object format and plain string
+          const headingText =
+            typeof block.content === "string"
+              ? block.content
+              : block.content?.text || block.content?.content || "";
+          return headingText ? `**${headingText}**` : "";
 
-      case 'TEXT':
-        // Plain text content - handle both object format {text: "..."} and plain string format
-        if (typeof block.content === 'string') {
-          return block.content;
-        }
-        return block.content?.text || block.content?.content || '';
+        case "TEXT":
+          // Plain text content - handle both object format {text: "..."} and plain string format
+          if (typeof block.content === "string") {
+            return block.content;
+          }
+          return block.content?.text || block.content?.content || "";
 
-      case 'BUTTON':
-        // Convert to button marker format
-        const { text, linkType, linkValue, url } = block.content || {};
-        const buttonText = (text || 'Click Here').replace(/[\[\]:]/g, '');
-        const actualLinkType = linkType || 'CALENDAR';
-        const actualUrl = linkValue || url || '';
+        case "BUTTON":
+          // Convert to button marker format
+          const { text, linkType, linkValue, url } = block.content || {};
+          const buttonText = (text || "Click Here").replace(/[\[\]:]/g, "");
+          const actualLinkType = linkType || "CALENDAR";
+          const actualUrl = linkValue || url || "";
 
-        if (actualLinkType === 'CUSTOM' && actualUrl) {
-          return `[[BUTTON:CUSTOM:${buttonText}:${actualUrl}]]`;
-        }
-        return `[[BUTTON:${actualLinkType}:${buttonText}]]`;
+          if (actualLinkType === "CUSTOM" && actualUrl) {
+            return `[[BUTTON:CUSTOM:${buttonText}:${actualUrl}]]`;
+          }
+          return `[[BUTTON:${actualLinkType}:${buttonText}]]`;
 
-      case 'SPACER':
-        // Convert spacer to blank lines
-        return '\n';
+        case "SPACER":
+          // Convert spacer to blank lines
+          return "\n";
 
-      case 'IMAGE':
-        // Images are skipped in simplified editor
-        // Could optionally add placeholder: return '[Image]';
-        return '';
+        case "IMAGE":
+          // Images are skipped in simplified editor
+          // Could optionally add placeholder: return '[Image]';
+          return "";
 
-      case 'HEADER':
-      case 'SIGNATURE':
-        // These are handled via includeHeader/includeFooter toggles
-        return '';
+        case "HEADER":
+        case "SIGNATURE":
+          // These are handled via includeHeader/includeFooter toggles
+          return "";
 
-      default:
-        return '';
-    }
-  }).filter(Boolean).join('\n\n');
+        default:
+          return "";
+      }
+    })
+    .filter(Boolean)
+    .join("\n\n");
 }
 
 /**
  * Parse plain text with button markers into ContentBlock[] format.
  * Used when saving templates to maintain compatibility with rendering.
  */
-export function parseTemplateBodyToBlocks(templateBody: string): ContentBlock[] {
+export function parseTemplateBodyToBlocks(
+  templateBody: string,
+): ContentBlock[] {
   if (!templateBody || !templateBody.trim()) return [];
 
   const blocks: ContentBlock[] = [];
   let lastIndex = 0;
   let match;
-  const regex = new RegExp(BUTTON_MARKER_REGEX.source, 'g');
+  const regex = new RegExp(BUTTON_MARKER_REGEX.source, "g");
   let blockIndex = 0;
 
   while ((match = regex.exec(templateBody)) !== null) {
@@ -90,8 +105,8 @@ export function parseTemplateBodyToBlocks(templateBody: string): ContentBlock[] 
       if (textContent) {
         blocks.push({
           id: `block-${blockIndex++}`,
-          type: 'TEXT',
-          content: { text: textContent }
+          type: "TEXT",
+          content: { text: textContent },
         });
       }
     }
@@ -99,16 +114,16 @@ export function parseTemplateBodyToBlocks(templateBody: string): ContentBlock[] 
     // Add the button block
     const linkType = match[1];
     const buttonText = match[2];
-    const customUrl = match[3] || '';
+    const customUrl = match[3] || "";
 
     blocks.push({
       id: `block-${blockIndex++}`,
-      type: 'BUTTON',
+      type: "BUTTON",
       content: {
         text: buttonText,
         linkType: linkType,
-        linkValue: linkType === 'CUSTOM' ? customUrl : ''
-      }
+        linkValue: linkType === "CUSTOM" ? customUrl : "",
+      },
     });
 
     lastIndex = match.index + match[0].length;
@@ -120,8 +135,8 @@ export function parseTemplateBodyToBlocks(templateBody: string): ContentBlock[] 
     if (textContent) {
       blocks.push({
         id: `block-${blockIndex++}`,
-        type: 'TEXT',
-        content: { text: textContent }
+        type: "TEXT",
+        content: { text: textContent },
       });
     }
   }
@@ -129,9 +144,9 @@ export function parseTemplateBodyToBlocks(templateBody: string): ContentBlock[] 
   // If no buttons found, return single text block
   if (blocks.length === 0 && templateBody.trim()) {
     blocks.push({
-      id: 'block-0',
-      type: 'TEXT',
-      content: { text: templateBody }
+      id: "block-0",
+      type: "TEXT",
+      content: { text: templateBody },
     });
   }
 
@@ -142,19 +157,25 @@ export function parseTemplateBodyToBlocks(templateBody: string): ContentBlock[] 
  * Check if content is in blocks format or plain text format.
  */
 export function isBlocksFormat(content: any): content is ContentBlock[] {
-  return Array.isArray(content) && content.length > 0 &&
-    typeof content[0] === 'object' && 'type' in content[0];
+  return (
+    Array.isArray(content) &&
+    content.length > 0 &&
+    typeof content[0] === "object" &&
+    "type" in content[0]
+  );
 }
 
 /**
  * Normalize content to plain text format.
  * Handles both blocks format and plain text.
  */
-export function normalizeToTemplateBody(content: ContentBlock[] | string | null | undefined): string {
-  if (!content) return '';
-  if (typeof content === 'string') return content;
+export function normalizeToTemplateBody(
+  content: ContentBlock[] | string | null | undefined,
+): string {
+  if (!content) return "";
+  if (typeof content === "string") return content;
   if (isBlocksFormat(content)) return blocksToTemplateBody(content);
-  return '';
+  return "";
 }
 
 /**
@@ -162,11 +183,11 @@ export function normalizeToTemplateBody(content: ContentBlock[] | string | null 
  */
 function escapeHtml(text: string): string {
   return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 /**
@@ -175,12 +196,12 @@ function escapeHtml(text: string): string {
  * Used when saving emails to generate the htmlBody field.
  */
 export function templateBodyToHtml(templateBody: string): string {
-  if (!templateBody || !templateBody.trim()) return '';
+  if (!templateBody || !templateBody.trim()) return "";
 
-  let html = '';
+  let html = "";
   let lastIndex = 0;
   let match;
-  const regex = new RegExp(BUTTON_MARKER_REGEX.source, 'g');
+  const regex = new RegExp(BUTTON_MARKER_REGEX.source, "g");
 
   while ((match = regex.exec(templateBody)) !== null) {
     // Add text before button (with paragraph wrapping)
@@ -189,9 +210,9 @@ export function templateBodyToHtml(templateBody: string): string {
       if (text) {
         // Split by double newlines for paragraphs
         const paragraphs = text.split(/\n\n+/).filter(Boolean);
-        paragraphs.forEach(p => {
+        paragraphs.forEach((p) => {
           // Replace single newlines with <br> within paragraphs
-          const escaped = escapeHtml(p).replace(/\n/g, '<br>');
+          const escaped = escapeHtml(p).replace(/\n/g, "<br>");
           html += `<p>${escaped}</p>`;
         });
       }
@@ -200,16 +221,16 @@ export function templateBodyToHtml(templateBody: string): string {
     // Add button HTML
     const linkType = match[1];
     const buttonText = escapeHtml(match[2]);
-    const customUrl = match[3] || '';
+    const customUrl = match[3] || "";
 
-    let url = '#';
-    if (linkType === 'SMART_FILE') {
-      url = '{{smart_file_link}}';
-    } else if (linkType === 'GALLERY') {
-      url = '{{gallery_link}}';
-    } else if (linkType === 'CALENDAR') {
-      url = '{{calendar_link}}';
-    } else if (linkType === 'CUSTOM' && customUrl) {
+    let url = "#";
+    if (linkType === "SMART_FILE") {
+      url = "{{smart_file_link}}";
+    } else if (linkType === "GALLERY") {
+      url = "{{gallery_link}}";
+    } else if (linkType === "CALENDAR") {
+      url = "{{calendar_link}}";
+    } else if (linkType === "CUSTOM" && customUrl) {
       url = escapeHtml(customUrl);
     }
 
@@ -223,8 +244,8 @@ export function templateBodyToHtml(templateBody: string): string {
     const text = templateBody.substring(lastIndex).trim();
     if (text) {
       const paragraphs = text.split(/\n\n+/).filter(Boolean);
-      paragraphs.forEach(p => {
-        const escaped = escapeHtml(p).replace(/\n/g, '<br>');
+      paragraphs.forEach((p) => {
+        const escaped = escapeHtml(p).replace(/\n/g, "<br>");
         html += `<p>${escaped}</p>`;
       });
     }

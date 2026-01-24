@@ -9,7 +9,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, FileText, Edit, Archive, ArchiveRestore, Trash2, MoreVertical } from "lucide-react";
+import {
+  Plus,
+  FileText,
+  Edit,
+  Archive,
+  ArchiveRestore,
+  Trash2,
+  MoreVertical,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -44,7 +52,7 @@ import type { SmartFileWithPages } from "@shared/schema";
 export default function SmartFiles() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -53,9 +61,9 @@ export default function SmartFiles() {
   // Handle ?new=true query param to auto-open dialog
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('new') === 'true') {
+    if (urlParams.get("new") === "true") {
       setIsDialogOpen(true);
-      window.history.replaceState({}, '', window.location.pathname);
+      window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);
 
@@ -65,7 +73,11 @@ export default function SmartFiles() {
 
   const createSmartFileMutation = useMutation({
     mutationFn: async (smartFileData: any) => {
-      const response = await apiRequest("POST", "/api/smart-files", smartFileData);
+      const response = await apiRequest(
+        "POST",
+        "/api/smart-files",
+        smartFileData,
+      );
       return response.json();
     },
     onSuccess: async (newSmartFile) => {
@@ -84,9 +96,9 @@ export default function SmartFiles() {
       toast({
         title: "Error",
         description: "Failed to create Smart File. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const updateSmartFileMutation = useMutation({
@@ -104,9 +116,9 @@ export default function SmartFiles() {
       toast({
         title: "Error",
         description: "Failed to update Smart File. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const deleteSmartFileMutation = useMutation({
@@ -124,9 +136,9 @@ export default function SmartFiles() {
       toast({
         title: "Error",
         description: "Failed to delete Smart File. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const resetForm = () => {
@@ -137,7 +149,7 @@ export default function SmartFiles() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     createSmartFileMutation.mutate({
       name,
       description: description || undefined,
@@ -155,11 +167,14 @@ export default function SmartFiles() {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this Smart File? This action cannot be undone.")) {
+    if (
+      confirm(
+        "Are you sure you want to delete this Smart File? This action cannot be undone.",
+      )
+    ) {
       deleteSmartFileMutation.mutate(id);
     }
   };
-
 
   return (
     <div>
@@ -172,10 +187,12 @@ export default function SmartFiles() {
             />
             <div>
               <h1 className="text-xl md:text-2xl font-semibold">Smart Files</h1>
-              <p className="text-sm md:text-base text-muted-foreground">Create custom checkout experiences with packages and add-ons</p>
+              <p className="text-sm md:text-base text-muted-foreground">
+                Create custom checkout experiences with packages and add-ons
+              </p>
             </div>
           </div>
-          
+
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button data-testid="button-create-smart-file">
@@ -187,10 +204,11 @@ export default function SmartFiles() {
               <DialogHeader>
                 <DialogTitle>Create New Smart File</DialogTitle>
                 <DialogDescription>
-                  Create a custom checkout experience with packages, add-ons, and payment options.
+                  Create a custom checkout experience with packages, add-ons,
+                  and payment options.
                 </DialogDescription>
               </DialogHeader>
-              
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Name *</Label>
@@ -203,7 +221,7 @@ export default function SmartFiles() {
                     data-testid="input-smart-file-name"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
                   <Textarea
@@ -215,7 +233,7 @@ export default function SmartFiles() {
                     data-testid="textarea-description"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="projectType">Project Type</Label>
                   <Select value={projectType} onValueChange={setProjectType}>
@@ -223,7 +241,9 @@ export default function SmartFiles() {
                       <SelectValue placeholder="Universal (all project types)" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="UNIVERSAL">Universal (all project types)</SelectItem>
+                      <SelectItem value="UNIVERSAL">
+                        Universal (all project types)
+                      </SelectItem>
                       <SelectItem value="WEDDING">Wedding</SelectItem>
                       <SelectItem value="PORTRAIT">Portrait</SelectItem>
                       <SelectItem value="COMMERCIAL">Commercial</SelectItem>
@@ -233,9 +253,12 @@ export default function SmartFiles() {
                       <SelectItem value="EVENT">Event</SelectItem>
                     </SelectContent>
                   </Select>
-                  <p className="text-xs text-muted-foreground">Leave empty for a universal template that works for all project types</p>
+                  <p className="text-xs text-muted-foreground">
+                    Leave empty for a universal template that works for all
+                    project types
+                  </p>
                 </div>
-                
+
                 <div className="flex justify-end space-x-2">
                   <Button
                     type="button"
@@ -250,7 +273,9 @@ export default function SmartFiles() {
                     disabled={createSmartFileMutation.isPending}
                     data-testid="button-create-smart-file-submit"
                   >
-                    {createSmartFileMutation.isPending ? "Creating..." : "Create Smart File"}
+                    {createSmartFileMutation.isPending
+                      ? "Creating..."
+                      : "Create Smart File"}
                   </Button>
                 </div>
               </form>
@@ -266,14 +291,22 @@ export default function SmartFiles() {
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <div className="flex items-center justify-center py-8" data-testid="loading-spinner">
+              <div
+                className="flex items-center justify-center py-8"
+                data-testid="loading-spinner"
+              >
                 <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
               </div>
             ) : !smartFiles?.length ? (
               <div className="text-center py-8">
                 <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground mb-4">No Smart Files created yet.</p>
-                <Button onClick={() => setIsDialogOpen(true)} data-testid="button-create-first-smart-file">
+                <p className="text-muted-foreground mb-4">
+                  No Smart Files created yet.
+                </p>
+                <Button
+                  onClick={() => setIsDialogOpen(true)}
+                  data-testid="button-create-first-smart-file"
+                >
                   <Plus className="w-4 h-4 mr-2" />
                   Create Your First Smart File
                 </Button>
@@ -283,14 +316,17 @@ export default function SmartFiles() {
                 {/* Mobile Card Layout */}
                 <div className="md:hidden space-y-3">
                   {smartFiles.map((smartFile) => (
-                    <div 
-                      key={smartFile.id} 
+                    <div
+                      key={smartFile.id}
                       className="border rounded-lg p-4 space-y-3"
                       data-testid={`smart-file-card-mobile-${smartFile.id}`}
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h3 className="font-medium" data-testid={`text-name-mobile-${smartFile.id}`}>
+                          <h3
+                            className="font-medium"
+                            data-testid={`text-name-mobile-${smartFile.id}`}
+                          >
                             {smartFile.name}
                           </h3>
                           {smartFile.description && (
@@ -301,19 +337,23 @@ export default function SmartFiles() {
                         </div>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" data-testid={`button-actions-mobile-${smartFile.id}`}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              data-testid={`button-actions-mobile-${smartFile.id}`}
+                            >
                               <MoreVertical className="w-4 h-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => handleEdit(smartFile.id)}
                               data-testid={`button-edit-mobile-${smartFile.id}`}
                             >
                               <Edit className="w-4 h-4 mr-2" />
                               Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => handleToggleArchive(smartFile)}
                               data-testid={`button-archive-mobile-${smartFile.id}`}
                             >
@@ -329,7 +369,7 @@ export default function SmartFiles() {
                                 </>
                               )}
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => handleDelete(smartFile.id)}
                               className="text-destructive"
                               data-testid={`button-delete-mobile-${smartFile.id}`}
@@ -340,7 +380,7 @@ export default function SmartFiles() {
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
-                      
+
                       <div className="grid grid-cols-2 gap-3 text-sm">
                         <div>
                           <span className="text-muted-foreground">Type:</span>
@@ -350,19 +390,31 @@ export default function SmartFiles() {
                         </div>
                         <div>
                           <span className="text-muted-foreground">Pages:</span>
-                          <span className="ml-1 font-medium" data-testid={`text-page-count-mobile-${smartFile.id}`}>
+                          <span
+                            className="ml-1 font-medium"
+                            data-testid={`text-page-count-mobile-${smartFile.id}`}
+                          >
                             {smartFile.pages?.length || 0}
                           </span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">Created:</span>
+                          <span className="text-muted-foreground">
+                            Created:
+                          </span>
                           <span className="ml-1 font-medium">
-                            {smartFile.createdAt ? new Date(smartFile.createdAt).toLocaleDateString() : "N/A"}
+                            {smartFile.createdAt
+                              ? new Date(
+                                  smartFile.createdAt,
+                                ).toLocaleDateString()
+                              : "N/A"}
                           </span>
                         </div>
                         <div>
                           <span className="text-muted-foreground">Status:</span>
-                          <span className={`ml-1 font-medium ${smartFile.status === "ACTIVE" ? "text-green-600" : "text-gray-500"}`} data-testid={`text-status-mobile-${smartFile.id}`}>
+                          <span
+                            className={`ml-1 font-medium ${smartFile.status === "ACTIVE" ? "text-green-600" : "text-gray-500"}`}
+                            data-testid={`text-status-mobile-${smartFile.id}`}
+                          >
                             {smartFile.status}
                           </span>
                         </div>
@@ -387,45 +439,75 @@ export default function SmartFiles() {
                     </TableHeader>
                     <TableBody>
                       {smartFiles.map((smartFile) => (
-                        <TableRow key={smartFile.id} data-testid={`smart-file-row-${smartFile.id}`}>
+                        <TableRow
+                          key={smartFile.id}
+                          data-testid={`smart-file-row-${smartFile.id}`}
+                        >
                           <TableCell className="font-medium">
-                            <span data-testid={`text-name-${smartFile.id}`}>{smartFile.name}</span>
+                            <span data-testid={`text-name-${smartFile.id}`}>
+                              {smartFile.name}
+                            </span>
                           </TableCell>
                           <TableCell className="max-w-xs truncate">
-                            {smartFile.description || <span className="text-muted-foreground">No description</span>}
+                            {smartFile.description || (
+                              <span className="text-muted-foreground">
+                                No description
+                              </span>
+                            )}
                           </TableCell>
                           <TableCell>
-                            {smartFile.projectType || <span className="text-muted-foreground">Universal</span>}
+                            {smartFile.projectType || (
+                              <span className="text-muted-foreground">
+                                Universal
+                              </span>
+                            )}
                           </TableCell>
                           <TableCell>
-                            <span data-testid={`text-page-count-${smartFile.id}`}>
+                            <span
+                              data-testid={`text-page-count-${smartFile.id}`}
+                            >
                               {smartFile.pages?.length || 0}
                             </span>
                           </TableCell>
                           <TableCell>
-                            {smartFile.createdAt ? new Date(smartFile.createdAt).toLocaleDateString() : "N/A"}
+                            {smartFile.createdAt
+                              ? new Date(
+                                  smartFile.createdAt,
+                                ).toLocaleDateString()
+                              : "N/A"}
                           </TableCell>
                           <TableCell>
-                            <span className={smartFile.status === "ACTIVE" ? "text-green-600" : "text-gray-500"} data-testid={`text-status-${smartFile.id}`}>
+                            <span
+                              className={
+                                smartFile.status === "ACTIVE"
+                                  ? "text-green-600"
+                                  : "text-gray-500"
+                              }
+                              data-testid={`text-status-${smartFile.id}`}
+                            >
                               {smartFile.status}
                             </span>
                           </TableCell>
                           <TableCell>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" data-testid={`button-actions-${smartFile.id}`}>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  data-testid={`button-actions-${smartFile.id}`}
+                                >
                                   <MoreVertical className="w-4 h-4" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem 
+                                <DropdownMenuItem
                                   onClick={() => handleEdit(smartFile.id)}
                                   data-testid={`button-edit-${smartFile.id}`}
                                 >
                                   <Edit className="w-4 h-4 mr-2" />
                                   Edit
                                 </DropdownMenuItem>
-                                <DropdownMenuItem 
+                                <DropdownMenuItem
                                   onClick={() => handleToggleArchive(smartFile)}
                                   data-testid={`button-archive-${smartFile.id}`}
                                 >
@@ -441,7 +523,7 @@ export default function SmartFiles() {
                                     </>
                                   )}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem 
+                                <DropdownMenuItem
                                   onClick={() => handleDelete(smartFile.id)}
                                   className="text-destructive"
                                   data-testid={`button-delete-${smartFile.id}`}

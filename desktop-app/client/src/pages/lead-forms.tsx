@@ -41,7 +41,15 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Plus, Edit, Trash2, Code, Copy, ExternalLink, Settings } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Code,
+  Copy,
+  ExternalLink,
+  Settings,
+} from "lucide-react";
 import { format } from "date-fns";
 
 type LeadForm = {
@@ -69,7 +77,7 @@ const projectTypes = [
   { value: "NEWBORN", label: "Newborn" },
   { value: "EVENT", label: "Event" },
   { value: "COMMERCIAL", label: "Commercial" },
-  { value: "OTHER", label: "Other" }
+  { value: "OTHER", label: "Other" },
 ];
 
 const defaultConfig = {
@@ -81,7 +89,7 @@ const defaultConfig = {
   successMessage: "Thank you! We'll be in touch soon.",
   showPhone: true,
   showMessage: true,
-  showEventDate: true
+  showEventDate: true,
 };
 
 export default function LeadForms() {
@@ -89,21 +97,21 @@ export default function LeadForms() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
-  
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEmbedDialogOpen, setIsEmbedDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editingForm, setEditingForm] = useState<LeadForm | null>(null);
   const [selectedForm, setSelectedForm] = useState<LeadForm | null>(null);
   const [formToDelete, setFormToDelete] = useState<LeadForm | null>(null);
-  
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [projectType, setProjectType] = useState("WEDDING");
 
   const { data: forms, isLoading } = useQuery<LeadForm[]>({
     queryKey: ["/api/lead-forms"],
-    enabled: !!user
+    enabled: !!user,
   });
 
   const createFormMutation = useMutation({
@@ -123,9 +131,9 @@ export default function LeadForms() {
       toast({
         title: "Error",
         description: "Failed to create form. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const updateFormMutation = useMutation({
@@ -145,9 +153,9 @@ export default function LeadForms() {
       toast({
         title: "Error",
         description: "Failed to update form. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const deleteFormMutation = useMutation({
@@ -167,9 +175,9 @@ export default function LeadForms() {
       toast({
         title: "Error",
         description: "Failed to delete form. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const resetForm = () => {
@@ -206,7 +214,7 @@ export default function LeadForms() {
       toast({
         title: "Validation error",
         description: "Form name is required.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -216,7 +224,7 @@ export default function LeadForms() {
       description: description.trim() || null,
       projectType,
       config: defaultConfig,
-      status: "ACTIVE"
+      status: "ACTIVE",
     };
 
     if (editingForm) {
@@ -267,7 +275,11 @@ export default function LeadForms() {
             Create and manage embeddable forms for your website
           </p>
         </div>
-        <Button onClick={handleCreate} data-testid="button-create-form" className="w-full sm:w-auto">
+        <Button
+          onClick={handleCreate}
+          data-testid="button-create-form"
+          className="w-full sm:w-auto"
+        >
           <Plus className="w-4 h-4 mr-2" />
           Create Form
         </Button>
@@ -285,29 +297,39 @@ export default function LeadForms() {
               >
                 <div className="space-y-3">
                   <div>
-                    <h3 className="font-semibold text-base break-words" data-testid={`text-name-${form.id}`}>
+                    <h3
+                      className="font-semibold text-base break-words"
+                      data-testid={`text-name-${form.id}`}
+                    >
                       {form.name}
                     </h3>
                     <p className="text-sm text-muted-foreground mt-1">
-                      {format(new Date(form.createdAt), 'MMM d, yyyy')}
+                      {format(new Date(form.createdAt), "MMM d, yyyy")}
                     </p>
                   </div>
-                  
+
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-xs bg-secondary px-2 py-1 rounded" data-testid={`text-type-${form.id}`}>
-                      {projectTypes.find(pt => pt.value === form.projectType)?.label || form.projectType}
+                    <span
+                      className="text-xs bg-secondary px-2 py-1 rounded"
+                      data-testid={`text-type-${form.id}`}
+                    >
+                      {projectTypes.find((pt) => pt.value === form.projectType)
+                        ?.label || form.projectType}
                     </span>
                     <span
                       className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        form.status === 'ACTIVE'
-                          ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                          : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                        form.status === "ACTIVE"
+                          ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                          : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
                       }`}
                       data-testid={`status-${form.id}`}
                     >
                       {form.status}
                     </span>
-                    <span className="text-xs text-muted-foreground" data-testid={`text-submissions-${form.id}`}>
+                    <span
+                      className="text-xs text-muted-foreground"
+                      data-testid={`text-submissions-${form.id}`}
+                    >
                       {form.submissionCount || 0} submissions
                     </span>
                   </div>
@@ -374,33 +396,54 @@ export default function LeadForms() {
               <TableBody>
                 {forms.map((form) => (
                   <>
-                    <TableRow key={form.id} data-testid={`row-form-${form.id}`} className="bg-white dark:bg-gray-950">
-                      <TableCell className="font-medium pb-2 text-base" data-testid={`text-name-${form.id}`}>
+                    <TableRow
+                      key={form.id}
+                      data-testid={`row-form-${form.id}`}
+                      className="bg-white dark:bg-gray-950"
+                    >
+                      <TableCell
+                        className="font-medium pb-2 text-base"
+                        data-testid={`text-name-${form.id}`}
+                      >
                         {form.name}
                       </TableCell>
-                      <TableCell className="pb-2 text-base" data-testid={`text-type-${form.id}`}>
-                        {projectTypes.find(pt => pt.value === form.projectType)?.label || form.projectType}
+                      <TableCell
+                        className="pb-2 text-base"
+                        data-testid={`text-type-${form.id}`}
+                      >
+                        {projectTypes.find(
+                          (pt) => pt.value === form.projectType,
+                        )?.label || form.projectType}
                       </TableCell>
                       <TableCell className="pb-2">
                         <span
                           className={`inline-flex items-center px-2 py-1 rounded-full text-sm font-medium ${
-                            form.status === 'ACTIVE'
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-gray-100 text-gray-700'
+                            form.status === "ACTIVE"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-100 text-gray-700"
                           }`}
                           data-testid={`status-${form.id}`}
                         >
                           {form.status}
                         </span>
                       </TableCell>
-                      <TableCell className="pb-2 text-base" data-testid={`text-submissions-${form.id}`}>
+                      <TableCell
+                        className="pb-2 text-base"
+                        data-testid={`text-submissions-${form.id}`}
+                      >
                         {form.submissionCount || 0}
                       </TableCell>
-                      <TableCell className="pb-2 text-base" data-testid={`text-created-${form.id}`}>
-                        {format(new Date(form.createdAt), 'MMM d, yyyy')}
+                      <TableCell
+                        className="pb-2 text-base"
+                        data-testid={`text-created-${form.id}`}
+                      >
+                        {format(new Date(form.createdAt), "MMM d, yyyy")}
                       </TableCell>
                     </TableRow>
-                    <TableRow key={`${form.id}-actions`} className="bg-gray-100 dark:bg-gray-800">
+                    <TableRow
+                      key={`${form.id}-actions`}
+                      className="bg-gray-100 dark:bg-gray-800"
+                    >
                       <TableCell colSpan={5} className="pt-4 pb-4">
                         <div className="flex gap-2">
                           <Button
@@ -503,7 +546,10 @@ export default function LeadForms() {
             <div>
               <Label htmlFor="projectType">Project Type *</Label>
               <Select value={projectType} onValueChange={setProjectType}>
-                <SelectTrigger id="projectType" data-testid="select-project-type">
+                <SelectTrigger
+                  id="projectType"
+                  data-testid="select-project-type"
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -515,7 +561,8 @@ export default function LeadForms() {
                 </SelectContent>
               </Select>
               <p className="text-sm text-muted-foreground mt-1">
-                This project type will be assigned to new clients who submit this form
+                This project type will be assigned to new clients who submit
+                this form
               </p>
             </div>
           </div>
@@ -529,7 +576,9 @@ export default function LeadForms() {
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={createFormMutation.isPending || updateFormMutation.isPending}
+              disabled={
+                createFormMutation.isPending || updateFormMutation.isPending
+              }
               data-testid="button-save-form"
             >
               {editingForm ? "Update Form" : "Create Form"}
@@ -540,7 +589,10 @@ export default function LeadForms() {
 
       {/* Embed Code Dialog */}
       <Dialog open={isEmbedDialogOpen} onOpenChange={setIsEmbedDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" data-testid="dialog-embed-code">
+        <DialogContent
+          className="max-w-2xl max-h-[90vh] overflow-y-auto"
+          data-testid="dialog-embed-code"
+        >
           <DialogHeader>
             <DialogTitle>Embed Code</DialogTitle>
             <DialogDescription>
@@ -554,7 +606,10 @@ export default function LeadForms() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => selectedForm && copyToClipboard(getFormUrl(selectedForm), "Form URL")}
+                  onClick={() =>
+                    selectedForm &&
+                    copyToClipboard(getFormUrl(selectedForm), "Form URL")
+                  }
                   data-testid="button-copy-url"
                 >
                   <Copy className="w-4 h-4 mr-2" />
@@ -570,7 +625,10 @@ export default function LeadForms() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => selectedForm && window.open(getFormUrl(selectedForm), '_blank')}
+                  onClick={() =>
+                    selectedForm &&
+                    window.open(getFormUrl(selectedForm), "_blank")
+                  }
                   data-testid="button-open-url"
                 >
                   <ExternalLink className="w-4 h-4" />
@@ -583,7 +641,10 @@ export default function LeadForms() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => selectedForm && copyToClipboard(getEmbedCode(selectedForm), "Embed code")}
+                  onClick={() =>
+                    selectedForm &&
+                    copyToClipboard(getEmbedCode(selectedForm), "Embed code")
+                  }
                   data-testid="button-copy-embed"
                 >
                   <Copy className="w-4 h-4 mr-2" />
@@ -591,7 +652,9 @@ export default function LeadForms() {
                 </Button>
               </div>
               <pre className="bg-muted p-4 rounded-md text-xs whitespace-pre-wrap break-all">
-                <code data-testid="text-embed-code">{selectedForm ? getEmbedCode(selectedForm) : ""}</code>
+                <code data-testid="text-embed-code">
+                  {selectedForm ? getEmbedCode(selectedForm) : ""}
+                </code>
               </pre>
             </div>
           </div>
@@ -599,18 +662,26 @@ export default function LeadForms() {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent data-testid="dialog-delete-confirm">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Form</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{formToDelete?.name}"? This action cannot be undone.
+              Are you sure you want to delete "{formToDelete?.name}"? This
+              action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+            <AlertDialogCancel data-testid="button-cancel-delete">
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => formToDelete && deleteFormMutation.mutate(formToDelete.id)}
+              onClick={() =>
+                formToDelete && deleteFormMutation.mutate(formToDelete.id)
+              }
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               data-testid="button-confirm-delete"
             >

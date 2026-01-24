@@ -2,7 +2,13 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Mail } from "lucide-react";
 
@@ -19,7 +25,7 @@ export default function ForgotPassword() {
       toast({
         title: "Email required",
         description: "Please enter your email address",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -31,12 +37,14 @@ export default function ForgotPassword() {
         method: "POST",
         body: JSON.stringify({ email }),
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       });
 
       if (!result.ok) {
-        const errorData = await result.json().catch(() => ({ message: "Unknown error" }));
+        const errorData = await result
+          .json()
+          .catch(() => ({ message: "Unknown error" }));
         console.error("Password reset error:", errorData);
         throw new Error(errorData.message || "Failed to send reset email");
       }
@@ -44,14 +52,18 @@ export default function ForgotPassword() {
       setIsSuccess(true);
       toast({
         title: "Check your email",
-        description: "If an account exists with this email, you'll receive a password reset link shortly."
+        description:
+          "If an account exists with this email, you'll receive a password reset link shortly.",
       });
     } catch (error) {
       console.error("Password reset request failed:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to send reset email. Please try again.",
-        variant: "destructive"
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to send reset email. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -61,7 +73,11 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <Link href="/login" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors" data-testid="link-back-to-login">
+        <Link
+          href="/login"
+          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
+          data-testid="link-back-to-login"
+        >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to login
         </Link>
@@ -70,10 +86,9 @@ export default function ForgotPassword() {
           <CardHeader>
             <CardTitle>Forgot Password</CardTitle>
             <CardDescription>
-              {isSuccess 
+              {isSuccess
                 ? "We've sent you a password reset link"
-                : "Enter your email address and we'll send you a link to reset your password"
-              }
+                : "Enter your email address and we'll send you a link to reset your password"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -83,14 +98,18 @@ export default function ForgotPassword() {
                   <Mail className="w-6 h-6 text-green-600 dark:text-green-400" />
                 </div>
                 <p className="text-center text-sm text-muted-foreground">
-                  If an account exists for <strong>{email}</strong>, you will receive a password reset link shortly.
+                  If an account exists for <strong>{email}</strong>, you will
+                  receive a password reset link shortly.
                 </p>
                 <p className="text-center text-sm text-muted-foreground">
                   The link will expire in 1 hour.
                 </p>
                 <div className="flex justify-center pt-4">
                   <Link href="/login">
-                    <Button variant="outline" data-testid="button-return-to-login">
+                    <Button
+                      variant="outline"
+                      data-testid="button-return-to-login"
+                    >
                       Return to login
                     </Button>
                   </Link>
@@ -114,9 +133,9 @@ export default function ForgotPassword() {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full" 
+                <Button
+                  type="submit"
+                  className="w-full"
                   disabled={isLoading}
                   data-testid="button-send-reset-link"
                 >
@@ -125,7 +144,11 @@ export default function ForgotPassword() {
 
                 <p className="text-center text-sm text-muted-foreground">
                   Remember your password?{" "}
-                  <Link href="/login" className="text-primary hover:underline" data-testid="link-login">
+                  <Link
+                    href="/login"
+                    className="text-primary hover:underline"
+                    data-testid="link-login"
+                  >
                     Sign in
                   </Link>
                 </p>

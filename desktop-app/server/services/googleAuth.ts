@@ -10,10 +10,10 @@ const getGoogleOidcConfig = memoize(
     return await client.discovery(
       new URL(GOOGLE_DISCOVERY_URL),
       process.env.GOOGLE_CLIENT_ID!,
-      process.env.GOOGLE_CLIENT_SECRET
+      process.env.GOOGLE_CLIENT_SECRET,
     );
   },
-  { maxAge: 3600 * 1000 }
+  { maxAge: 3600 * 1000 },
 );
 
 export interface GoogleUserClaims {
@@ -29,15 +29,18 @@ export interface GoogleUserClaims {
  * Generate cryptographically secure state token for CSRF protection
  */
 export function generateStateToken(): string {
-  return crypto.randomBytes(32).toString('hex');
+  return crypto.randomBytes(32).toString("hex");
 }
 
 /**
  * Generate the Google OAuth authorization URL with CSRF protection
  */
-export async function getGoogleAuthUrl(redirectUri: string, state: string): Promise<string> {
+export async function getGoogleAuthUrl(
+  redirectUri: string,
+  state: string,
+): Promise<string> {
   const config = await getGoogleOidcConfig();
-  
+
   const authUrl = client.buildAuthorizationUrl(config, {
     client_id: process.env.GOOGLE_CLIENT_ID!,
     redirect_uri: redirectUri,
@@ -54,14 +57,14 @@ export async function getGoogleAuthUrl(redirectUri: string, state: string): Prom
  */
 export async function exchangeCodeForClaims(
   code: string,
-  redirectUri: string
+  redirectUri: string,
 ): Promise<GoogleUserClaims> {
   const config = await getGoogleOidcConfig();
-  
+
   // openid-client requires URL parameters as full URL objects
   const callbackUrl = new URL(redirectUri);
-  callbackUrl.searchParams.set('code', code);
-  
+  callbackUrl.searchParams.set("code", code);
+
   const tokens = await client.authorizationCodeGrant(config, callbackUrl, {
     pkce: false,
     expectedNonce: undefined,
@@ -69,7 +72,7 @@ export async function exchangeCodeForClaims(
   });
 
   const claims = tokens.claims();
-  
+
   return {
     sub: claims.sub as string,
     email: claims.email as string,

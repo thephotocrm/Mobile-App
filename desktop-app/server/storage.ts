@@ -1,141 +1,324 @@
 import {
-  photographers, users, linkingRequests, contacts, projects, projectParticipants, projectNotes, photographerTags, stages, templates, automations, automationSteps, automationBusinessTriggers,
-  emailLogs, emailHistory, smsLogs, automationExecutions, photographerLinks, checklistTemplateItems, projectChecklistItems,
-  packages, packageItems, addOns, questionnaireTemplates, questionnaireQuestions, projectQuestionnaires,
-  availabilitySlots, bookings,
-  photographerEarnings, photographerPayouts,
-  projectActivityLog, clientPortalTokens, portalTokens, conversationReads,
-  dailyAvailabilityTemplates, dailyAvailabilityBreaks, dailyAvailabilityOverrides,
-  dripCampaigns, dripCampaignEmails, dripCampaignSubscriptions, dripEmailDeliveries, staticCampaignSettings,
-  shortLinks, adminActivityLog,
+  photographers,
+  users,
+  linkingRequests,
+  contacts,
+  projects,
+  projectParticipants,
+  projectNotes,
+  photographerTags,
+  stages,
+  templates,
+  automations,
+  automationSteps,
+  automationBusinessTriggers,
+  emailLogs,
+  emailHistory,
+  smsLogs,
+  automationExecutions,
+  photographerLinks,
+  checklistTemplateItems,
+  projectChecklistItems,
+  packages,
+  packageItems,
+  addOns,
+  questionnaireTemplates,
+  questionnaireQuestions,
+  projectQuestionnaires,
+  availabilitySlots,
+  bookings,
+  photographerEarnings,
+  photographerPayouts,
+  projectActivityLog,
+  clientPortalTokens,
+  portalTokens,
+  conversationReads,
+  dailyAvailabilityTemplates,
+  dailyAvailabilityBreaks,
+  dailyAvailabilityOverrides,
+  dripCampaigns,
+  dripCampaignEmails,
+  dripCampaignSubscriptions,
+  dripEmailDeliveries,
+  staticCampaignSettings,
+  shortLinks,
+  adminActivityLog,
   leadForms,
-  smartFiles, smartFilePages, projectSmartFiles, paymentTransactions, savedPaymentMethods,
-  adCampaigns, adPaymentMethods, adPerformance, adBillingTransactions,
-  galleries, galleryImages, galleryFavorites, galleryDownloads, galleryViews,
+  smartFiles,
+  smartFilePages,
+  projectSmartFiles,
+  paymentTransactions,
+  savedPaymentMethods,
+  adCampaigns,
+  adPaymentMethods,
+  adPerformance,
+  adBillingTransactions,
+  galleries,
+  galleryImages,
+  galleryFavorites,
+  galleryDownloads,
+  galleryViews,
   testimonials,
   notifications,
   projectTypes,
-  type User, type InsertUser, type Photographer, type InsertPhotographer,
-  type ProjectType, type InsertProjectType,
-  type LinkingRequest, type InsertLinkingRequest,
-  type AdminActivityLog, type InsertAdminActivityLog,
-  type Contact, type InsertContact, type Project, type InsertProject, type ProjectNote, type InsertProjectNote, type PhotographerTag, type ProjectParticipant, type InsertProjectParticipant, type ProjectWithClientAndStage, type ContactWithProjects, type Stage, type InsertStage,
-  type Template, type InsertTemplate, type Automation, type InsertAutomation,
-  type AutomationStep, type InsertAutomationStep, type AutomationBusinessTrigger, type InsertAutomationBusinessTrigger, type Package, type InsertPackage, type AddOn, type InsertAddOn,
-  type PhotographerEarnings, type InsertPhotographerEarnings,
-  type PhotographerPayouts, type InsertPhotographerPayouts,
-  type QuestionnaireTemplate, type InsertQuestionnaireTemplate,
-  type QuestionnaireQuestion, type InsertQuestionnaireQuestion,
+  type User,
+  type InsertUser,
+  type Photographer,
+  type InsertPhotographer,
+  type ProjectType,
+  type InsertProjectType,
+  type LinkingRequest,
+  type InsertLinkingRequest,
+  type AdminActivityLog,
+  type InsertAdminActivityLog,
+  type Contact,
+  type InsertContact,
+  type Project,
+  type InsertProject,
+  type ProjectNote,
+  type InsertProjectNote,
+  type PhotographerTag,
+  type ProjectParticipant,
+  type InsertProjectParticipant,
+  type ProjectWithClientAndStage,
+  type ContactWithProjects,
+  type Stage,
+  type InsertStage,
+  type Template,
+  type InsertTemplate,
+  type Automation,
+  type InsertAutomation,
+  type AutomationStep,
+  type InsertAutomationStep,
+  type AutomationBusinessTrigger,
+  type InsertAutomationBusinessTrigger,
+  type Package,
+  type InsertPackage,
+  type AddOn,
+  type InsertAddOn,
+  type PhotographerEarnings,
+  type InsertPhotographerEarnings,
+  type PhotographerPayouts,
+  type InsertPhotographerPayouts,
+  type QuestionnaireTemplate,
+  type InsertQuestionnaireTemplate,
+  type QuestionnaireQuestion,
+  type InsertQuestionnaireQuestion,
   type ProjectQuestionnaire,
-  type SmsLog, type InsertSmsLog, type EmailHistory, type InsertEmailHistory, type ProjectActivityLog, type TimelineEvent, type ClientPortalToken, type InsertClientPortalToken, type PortalToken, type InsertPortalToken,
-  type ConversationRead, type InsertConversationRead,
-  type DailyAvailabilityTemplate, type InsertDailyAvailabilityTemplate,
-  type DailyAvailabilityBreak, type InsertDailyAvailabilityBreak,
-  type DailyAvailabilityOverride, type InsertDailyAvailabilityOverride,
-  type AvailabilitySlot, type InsertAvailabilitySlot,
-  type Booking, type InsertBooking,
-  type DripCampaign, type InsertDripCampaign, type DripCampaignWithEmails,
-  type DripCampaignEmail, type InsertDripCampaignEmail,
-  type DripCampaignSubscription, type InsertDripCampaignSubscription, type DripCampaignSubscriptionWithDetails,
-  type DripEmailDelivery, type InsertDripEmailDelivery,
-  type StaticCampaignSettings, type InsertStaticCampaignSettings,
-  type ShortLink, type InsertShortLink,
-  type LeadForm, type InsertLeadForm,
-  type SmartFile, type InsertSmartFile,
-  type SmartFilePage, type InsertSmartFilePage,
-  type ProjectSmartFile, type InsertProjectSmartFile,
+  type SmsLog,
+  type InsertSmsLog,
+  type EmailHistory,
+  type InsertEmailHistory,
+  type ProjectActivityLog,
+  type TimelineEvent,
+  type ClientPortalToken,
+  type InsertClientPortalToken,
+  type PortalToken,
+  type InsertPortalToken,
+  type ConversationRead,
+  type InsertConversationRead,
+  type DailyAvailabilityTemplate,
+  type InsertDailyAvailabilityTemplate,
+  type DailyAvailabilityBreak,
+  type InsertDailyAvailabilityBreak,
+  type DailyAvailabilityOverride,
+  type InsertDailyAvailabilityOverride,
+  type AvailabilitySlot,
+  type InsertAvailabilitySlot,
+  type Booking,
+  type InsertBooking,
+  type DripCampaign,
+  type InsertDripCampaign,
+  type DripCampaignWithEmails,
+  type DripCampaignEmail,
+  type InsertDripCampaignEmail,
+  type DripCampaignSubscription,
+  type InsertDripCampaignSubscription,
+  type DripCampaignSubscriptionWithDetails,
+  type DripEmailDelivery,
+  type InsertDripEmailDelivery,
+  type StaticCampaignSettings,
+  type InsertStaticCampaignSettings,
+  type ShortLink,
+  type InsertShortLink,
+  type LeadForm,
+  type InsertLeadForm,
+  type SmartFile,
+  type InsertSmartFile,
+  type SmartFilePage,
+  type InsertSmartFilePage,
+  type ProjectSmartFile,
+  type InsertProjectSmartFile,
   type SmartFileWithPages,
-  type PaymentTransaction, type InsertPaymentTransaction,
-  type SavedPaymentMethod, type InsertSavedPaymentMethod,
-  type AdCampaign, type InsertAdCampaign,
-  type AdPaymentMethod, type InsertAdPaymentMethod,
-  type Gallery, type InsertGallery, type GalleryWithImages,
-  type GalleryImage, type InsertGalleryImage, type GalleryImageWithFavorites,
-  type GalleryFavorite, type InsertGalleryFavorite,
-  type GalleryDownload, type InsertGalleryDownload,
-  type Testimonial, type InsertTestimonial,
-  type Notification, type InsertNotification
+  type PaymentTransaction,
+  type InsertPaymentTransaction,
+  type SavedPaymentMethod,
+  type InsertSavedPaymentMethod,
+  type AdCampaign,
+  type InsertAdCampaign,
+  type AdPaymentMethod,
+  type InsertAdPaymentMethod,
+  type Gallery,
+  type InsertGallery,
+  type GalleryWithImages,
+  type GalleryImage,
+  type InsertGalleryImage,
+  type GalleryImageWithFavorites,
+  type GalleryFavorite,
+  type InsertGalleryFavorite,
+  type GalleryDownload,
+  type InsertGalleryDownload,
+  type Testimonial,
+  type InsertTestimonial,
+  type Notification,
+  type InsertNotification,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc, asc, inArray, gte, lte, gt, sql, isNotNull, isNull, or, ilike } from "drizzle-orm";
+import {
+  eq,
+  and,
+  desc,
+  asc,
+  inArray,
+  gte,
+  lte,
+  gt,
+  sql,
+  isNotNull,
+  isNull,
+  or,
+  ilike,
+} from "drizzle-orm";
 
 export interface IStorage {
   // Users
   getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByEmailAndRole(email: string, role: string): Promise<User | undefined>;
-  getUserByEmailRolePhotographer(email: string, role: string, photographerId: string): Promise<User | undefined>;
+  getUserByEmailRolePhotographer(
+    email: string,
+    role: string,
+    photographerId: string,
+  ): Promise<User | undefined>;
   getUserByGoogleId(googleId: string): Promise<User | undefined>;
   getUserByAppleId(appleId: string): Promise<User | undefined>;
   linkGoogleAccount(userId: string, googleId: string): Promise<User>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: string, user: Partial<User>): Promise<User>;
-  backfillClientIds(dryRun: boolean): Promise<{ updated: number; skipped: number; details: any[] }>;
-  
+  backfillClientIds(
+    dryRun: boolean,
+  ): Promise<{ updated: number; skipped: number; details: any[] }>;
+
   // Account Linking Requests
   createLinkingRequest(request: InsertLinkingRequest): Promise<LinkingRequest>;
   getLinkingRequest(token: string): Promise<LinkingRequest | undefined>;
   markLinkingRequestUsed(token: string): Promise<void>;
-  
+
   // Photographers
   getAllPhotographers(): Promise<Photographer[]>;
   getPhotographer(id: string): Promise<Photographer | undefined>;
-  getPhotographerByPublicToken(publicToken: string): Promise<Photographer | undefined>;
+  getPhotographerByPublicToken(
+    publicToken: string,
+  ): Promise<Photographer | undefined>;
   getPhotographerByPortalSlug(slug: string): Promise<Photographer | undefined>;
   getPhotographerCount(): Promise<number>;
   createPhotographer(photographer: InsertPhotographer): Promise<Photographer>;
-  updatePhotographer(id: string, photographer: Partial<Photographer>): Promise<Photographer>;
-  
+  updatePhotographer(
+    id: string,
+    photographer: Partial<Photographer>,
+  ): Promise<Photographer>;
+
   // Contacts
-  getContactsByPhotographer(photographerId: string, projectType?: string): Promise<ContactWithProjects[]>;
+  getContactsByPhotographer(
+    photographerId: string,
+    projectType?: string,
+  ): Promise<ContactWithProjects[]>;
   getContact(id: string): Promise<ContactWithProjects | undefined>;
   getContactByPhone(phone: string): Promise<Contact | undefined>;
   getAllContactsByPhone(phone: string): Promise<Contact[]>;
-  getContactByEmail(email: string, photographerId?: string): Promise<Contact | undefined>;
+  getContactByEmail(
+    email: string,
+    photographerId?: string,
+  ): Promise<Contact | undefined>;
   getContactByUserId(userId: string): Promise<Contact | undefined>;
   createContact(contact: InsertContact): Promise<Contact>;
   updateContact(id: string, contact: Partial<Contact>): Promise<Contact>;
   deleteContact(id: string): Promise<void>;
-  
+
   // Projects
-  getProjectsByPhotographer(photographerId: string, projectType?: string): Promise<ProjectWithClientAndStage[]>;
+  getProjectsByPhotographer(
+    photographerId: string,
+    projectType?: string,
+  ): Promise<ProjectWithClientAndStage[]>;
   getProject(id: string): Promise<ProjectWithClientAndStage | undefined>;
   createProject(project: InsertProject): Promise<Project>;
   updateProject(id: string, project: Partial<Project>): Promise<Project>;
   getProjectHistory(projectId: string): Promise<TimelineEvent[]>;
-  
+
   // Project Participants
-  getProjectParticipants(projectId: string): Promise<(ProjectParticipant & { client: Contact })[]>;
-  getParticipantProjects(clientId: string): Promise<(ProjectParticipant & { project: ProjectWithClientAndStage })[]>;
-  addProjectParticipant(participant: InsertProjectParticipant): Promise<ProjectParticipant>;
+  getProjectParticipants(
+    projectId: string,
+  ): Promise<(ProjectParticipant & { client: Contact })[]>;
+  getParticipantProjects(
+    clientId: string,
+  ): Promise<(ProjectParticipant & { project: ProjectWithClientAndStage })[]>;
+  addProjectParticipant(
+    participant: InsertProjectParticipant,
+  ): Promise<ProjectParticipant>;
   removeProjectParticipant(projectId: string, clientId: string): Promise<void>;
-  updateProjectParticipantRole(participantId: string, role: string | null): Promise<ProjectParticipant | undefined>;
-  
+  updateProjectParticipantRole(
+    participantId: string,
+    role: string | null,
+  ): Promise<ProjectParticipant | undefined>;
+
   // Project Notes
   getProjectNotes(projectId: string): Promise<ProjectNote[]>;
   createProjectNote(note: InsertProjectNote): Promise<ProjectNote>;
   deleteProjectNote(noteId: string): Promise<void>;
-  
+
   // Client Portal Tokens
-  getClientPortalTokensByClient(clientId: string, after?: Date): Promise<ClientPortalToken[]>;
-  createClientPortalToken(token: InsertClientPortalToken): Promise<ClientPortalToken>;
-  validateClientPortalToken(token: string): Promise<ClientPortalToken | undefined>;
-  
+  getClientPortalTokensByClient(
+    clientId: string,
+    after?: Date,
+  ): Promise<ClientPortalToken[]>;
+  createClientPortalToken(
+    token: InsertClientPortalToken,
+  ): Promise<ClientPortalToken>;
+  validateClientPortalToken(
+    token: string,
+  ): Promise<ClientPortalToken | undefined>;
+
   // Client Portal Project Data
-  getClientPortalProject(projectId: string, contactId: string, photographerId: string): Promise<any | null>;
-  
+  getClientPortalProject(
+    projectId: string,
+    contactId: string,
+    photographerId: string,
+  ): Promise<any | null>;
+
   // Portal Tokens (Project-specific magic links)
   createPortalToken(token: InsertPortalToken): Promise<PortalToken>;
-  createMagicLinkToken(clientId: string, photographerId: string): Promise<PortalToken>;
+  createMagicLinkToken(
+    clientId: string,
+    photographerId: string,
+  ): Promise<PortalToken>;
   validatePortalToken(tokenString: string): Promise<PortalToken | undefined>;
   updatePortalTokenLastUsed(id: string): Promise<void>;
-  
+
   // Project Types
-  getProjectTypesByPhotographer(photographerId: string, includeArchived?: boolean): Promise<ProjectType[]>;
+  getProjectTypesByPhotographer(
+    photographerId: string,
+    includeArchived?: boolean,
+  ): Promise<ProjectType[]>;
   getProjectType(id: string): Promise<ProjectType | undefined>;
-  getProjectTypeBySlug(photographerId: string, slug: string): Promise<ProjectType | undefined>;
+  getProjectTypeBySlug(
+    photographerId: string,
+    slug: string,
+  ): Promise<ProjectType | undefined>;
   createProjectType(projectType: InsertProjectType): Promise<ProjectType>;
-  updateProjectType(id: string, projectType: Partial<ProjectType>): Promise<ProjectType>;
+  updateProjectType(
+    id: string,
+    projectType: Partial<ProjectType>,
+  ): Promise<ProjectType>;
   deleteProjectType(id: string): Promise<void>;
   archiveProjectType(id: string): Promise<ProjectType>;
   getProjectTypeUsageStats(projectTypeId: string): Promise<{
@@ -144,7 +327,7 @@ export interface IStorage {
     automationCount: number;
   }>;
   seedDefaultProjectTypes(photographerId: string): Promise<ProjectType[]>;
-  
+
   // Stages
   getStage(id: string): Promise<Stage | undefined>;
   getStagesByPhotographer(photographerId: string): Promise<Stage[]>;
@@ -156,46 +339,67 @@ export interface IStorage {
     automationCount: number;
     campaignCount: number;
   }>;
-  reassignProjectsFromStage(fromStageId: string, toStageId: string): Promise<number>;
-  
+  reassignProjectsFromStage(
+    fromStageId: string,
+    toStageId: string,
+  ): Promise<number>;
+
   // Templates
   getTemplatesByPhotographer(photographerId: string): Promise<Template[]>;
   createTemplate(template: InsertTemplate): Promise<Template>;
   updateTemplate(id: string, template: Partial<Template>): Promise<Template>;
   deleteTemplate(id: string): Promise<void>;
-  
+
   // Automations
-  getAutomationsByPhotographer(photographerId: string, projectType?: string): Promise<Automation[]>;
+  getAutomationsByPhotographer(
+    photographerId: string,
+    projectType?: string,
+  ): Promise<Automation[]>;
   createAutomation(automation: InsertAutomation): Promise<Automation>;
-  updateAutomation(id: string, automation: Partial<Automation>): Promise<Automation>;
+  updateAutomation(
+    id: string,
+    automation: Partial<Automation>,
+  ): Promise<Automation>;
   deleteAutomation(id: string): Promise<void>;
-  
+
   // Automation Steps
   getAutomationSteps(automationId: string): Promise<AutomationStep[]>;
   getAutomationStepById(id: string): Promise<AutomationStep | undefined>;
   createAutomationStep(step: InsertAutomationStep): Promise<AutomationStep>;
-  updateAutomationStep(id: string, step: Partial<AutomationStep>): Promise<AutomationStep>;
+  updateAutomationStep(
+    id: string,
+    step: Partial<AutomationStep>,
+  ): Promise<AutomationStep>;
   deleteAutomationStep(id: string): Promise<void>;
-  
+
   // Business Triggers
-  getBusinessTriggersByAutomation(automationId: string): Promise<AutomationBusinessTrigger[]>;
-  getBusinessTriggersByPhotographer(photographerId: string): Promise<AutomationBusinessTrigger[]>;
-  createBusinessTrigger(trigger: InsertAutomationBusinessTrigger): Promise<AutomationBusinessTrigger>;
-  updateBusinessTrigger(id: string, trigger: Partial<AutomationBusinessTrigger>): Promise<AutomationBusinessTrigger>;
+  getBusinessTriggersByAutomation(
+    automationId: string,
+  ): Promise<AutomationBusinessTrigger[]>;
+  getBusinessTriggersByPhotographer(
+    photographerId: string,
+  ): Promise<AutomationBusinessTrigger[]>;
+  createBusinessTrigger(
+    trigger: InsertAutomationBusinessTrigger,
+  ): Promise<AutomationBusinessTrigger>;
+  updateBusinessTrigger(
+    id: string,
+    trigger: Partial<AutomationBusinessTrigger>,
+  ): Promise<AutomationBusinessTrigger>;
   deleteBusinessTrigger(id: string): Promise<void>;
   deleteBusinessTriggersByAutomation(automationId: string): Promise<void>;
-  
+
   // Packages
   getPackagesByPhotographer(photographerId: string): Promise<Package[]>;
   createPackage(pkg: InsertPackage): Promise<Package>;
   updatePackage(id: string, pkg: Partial<Package>): Promise<Package>;
-  
+
   // Add-ons
   getAddOnsByPhotographer(photographerId: string): Promise<AddOn[]>;
   createAddOn(addOn: InsertAddOn): Promise<AddOn>;
   updateAddOn(id: string, addOn: Partial<AddOn>): Promise<AddOn>;
   deleteAddOn(id: string): Promise<void>;
-  
+
   // Lead Forms
   getLeadFormsByPhotographer(photographerId: string): Promise<LeadForm[]>;
   getLeadFormById(id: string): Promise<LeadForm | undefined>;
@@ -203,46 +407,103 @@ export interface IStorage {
   createLeadForm(form: InsertLeadForm): Promise<LeadForm>;
   updateLeadForm(id: string, form: Partial<LeadForm>): Promise<LeadForm>;
   deleteLeadForm(id: string): Promise<void>;
-  
+
   // Questionnaire Templates
-  getQuestionnaireTemplatesByPhotographer(photographerId: string): Promise<QuestionnaireTemplate[]>;
-  getQuestionnaireTemplate(id: string): Promise<QuestionnaireTemplate | undefined>;
-  createQuestionnaireTemplate(template: InsertQuestionnaireTemplate): Promise<QuestionnaireTemplate>;
-  updateQuestionnaireTemplate(id: string, template: Partial<QuestionnaireTemplate>): Promise<QuestionnaireTemplate>;
+  getQuestionnaireTemplatesByPhotographer(
+    photographerId: string,
+  ): Promise<QuestionnaireTemplate[]>;
+  getQuestionnaireTemplate(
+    id: string,
+  ): Promise<QuestionnaireTemplate | undefined>;
+  createQuestionnaireTemplate(
+    template: InsertQuestionnaireTemplate,
+  ): Promise<QuestionnaireTemplate>;
+  updateQuestionnaireTemplate(
+    id: string,
+    template: Partial<QuestionnaireTemplate>,
+  ): Promise<QuestionnaireTemplate>;
   deleteQuestionnaireTemplate(id: string): Promise<void>;
-  
+
   // Questionnaire Questions
-  getQuestionnaireQuestionsByTemplate(templateId: string): Promise<QuestionnaireQuestion[]>;
-  getQuestionnaireQuestionById(id: string): Promise<QuestionnaireQuestion | undefined>;
-  createQuestionnaireQuestion(question: InsertQuestionnaireQuestion): Promise<QuestionnaireQuestion>;
-  updateQuestionnaireQuestion(id: string, question: Partial<QuestionnaireQuestion>): Promise<QuestionnaireQuestion>;
+  getQuestionnaireQuestionsByTemplate(
+    templateId: string,
+  ): Promise<QuestionnaireQuestion[]>;
+  getQuestionnaireQuestionById(
+    id: string,
+  ): Promise<QuestionnaireQuestion | undefined>;
+  createQuestionnaireQuestion(
+    question: InsertQuestionnaireQuestion,
+  ): Promise<QuestionnaireQuestion>;
+  updateQuestionnaireQuestion(
+    id: string,
+    question: Partial<QuestionnaireQuestion>,
+  ): Promise<QuestionnaireQuestion>;
   deleteQuestionnaireQuestion(id: string): Promise<void>;
-  
+
   // Project Questionnaires (Assignments)
-  getProjectQuestionnairesByProject(projectId: string): Promise<ProjectQuestionnaire[]>;
-  getProjectQuestionnairesByPhotographer(photographerId: string): Promise<ProjectQuestionnaire[]>;
-  getProjectQuestionnaire(id: string): Promise<ProjectQuestionnaire | undefined>;
-  assignQuestionnaireToProject(projectId: string, templateId: string): Promise<ProjectQuestionnaire>;
-  updateProjectQuestionnaire(id: string, data: Partial<ProjectQuestionnaire>): Promise<ProjectQuestionnaire>;
+  getProjectQuestionnairesByProject(
+    projectId: string,
+  ): Promise<ProjectQuestionnaire[]>;
+  getProjectQuestionnairesByPhotographer(
+    photographerId: string,
+  ): Promise<ProjectQuestionnaire[]>;
+  getProjectQuestionnaire(
+    id: string,
+  ): Promise<ProjectQuestionnaire | undefined>;
+  assignQuestionnaireToProject(
+    projectId: string,
+    templateId: string,
+  ): Promise<ProjectQuestionnaire>;
+  updateProjectQuestionnaire(
+    id: string,
+    data: Partial<ProjectQuestionnaire>,
+  ): Promise<ProjectQuestionnaire>;
   deleteProjectQuestionnaire(id: string): Promise<void>;
-  
+
   // Bookings
   getBookingsByPhotographer(photographerId: string): Promise<Booking[]>;
-  getBookingsByPhotographerInRange(photographerId: string, startDate: string, endDate: string): Promise<Booking[]>;
+  getBookingsByPhotographerInRange(
+    photographerId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<Booking[]>;
   getBookingsByProject(projectId: string): Promise<Booking[]>;
-  getPaymentsDueInRange(photographerId: string, startDate: string, endDate: string): Promise<Array<{ id: string; dueDate: string; amountCents: number; description: string; status: string; clientName: string; projectId: string; smartFileInstanceId: string }>>;
+  getPaymentsDueInRange(
+    photographerId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<
+    Array<{
+      id: string;
+      dueDate: string;
+      amountCents: number;
+      description: string;
+      status: string;
+      clientName: string;
+      projectId: string;
+      smartFileInstanceId: string;
+    }>
+  >;
   getBooking(id: string): Promise<Booking | undefined>;
   getBookingByToken(token: string): Promise<Booking | undefined>;
-  getBookingByProjectSmartFileId(projectSmartFileId: string): Promise<Booking | undefined>;
+  getBookingByProjectSmartFileId(
+    projectSmartFileId: string,
+  ): Promise<Booking | undefined>;
   createBooking(booking: InsertBooking): Promise<Booking>;
   updateBooking(id: string, booking: Partial<Booking>): Promise<Booking>;
   deleteBooking(id: string): Promise<void>;
-  
+
   // Short Links
   getShortLink(shortCode: string): Promise<ShortLink | undefined>;
   getShortLinksByPhotographer(photographerId: string): Promise<ShortLink[]>;
-  getShortLinkByPhotographerAndTarget(photographerId: string, targetUrl: string): Promise<ShortLink | undefined>;
-  getShortLinkByPhotographerAndPathname(photographerId: string, pathname: string): Promise<ShortLink | undefined>;
+  getShortLinkByPhotographerAndTarget(
+    photographerId: string,
+    targetUrl: string,
+  ): Promise<ShortLink | undefined>;
+  getShortLinkByPhotographerAndPathname(
+    photographerId: string,
+    pathname: string,
+  ): Promise<ShortLink | undefined>;
   createShortLink(shortLink: InsertShortLink): Promise<ShortLink>;
   findOrCreateShortLink(shortLink: InsertShortLink): Promise<ShortLink>;
   incrementShortLinkClicks(shortCode: string): Promise<void>;
@@ -250,43 +511,84 @@ export interface IStorage {
   updateShortLink(id: string, data: Partial<ShortLink>): Promise<ShortLink>;
 
   // Daily Availability Templates
-  getDailyAvailabilityTemplatesByPhotographer(photographerId: string): Promise<DailyAvailabilityTemplate[]>;
-  getDailyAvailabilityTemplate(id: string): Promise<DailyAvailabilityTemplate | undefined>;
-  createDailyAvailabilityTemplate(template: InsertDailyAvailabilityTemplate): Promise<DailyAvailabilityTemplate>;
-  updateDailyAvailabilityTemplate(id: string, template: Partial<DailyAvailabilityTemplate>): Promise<DailyAvailabilityTemplate>;
+  getDailyAvailabilityTemplatesByPhotographer(
+    photographerId: string,
+  ): Promise<DailyAvailabilityTemplate[]>;
+  getDailyAvailabilityTemplate(
+    id: string,
+  ): Promise<DailyAvailabilityTemplate | undefined>;
+  createDailyAvailabilityTemplate(
+    template: InsertDailyAvailabilityTemplate,
+  ): Promise<DailyAvailabilityTemplate>;
+  updateDailyAvailabilityTemplate(
+    id: string,
+    template: Partial<DailyAvailabilityTemplate>,
+  ): Promise<DailyAvailabilityTemplate>;
   deleteDailyAvailabilityTemplate(id: string): Promise<void>;
-  
+
   // Daily Availability Breaks
-  getDailyAvailabilityBreaksByTemplate(templateId: string): Promise<DailyAvailabilityBreak[]>;
-  getDailyAvailabilityBreaksByPhotographer(photographerId: string): Promise<DailyAvailabilityBreak[]>;
-  getDailyAvailabilityBreak(id: string): Promise<DailyAvailabilityBreak | undefined>;
-  createDailyAvailabilityBreak(breakTime: InsertDailyAvailabilityBreak): Promise<DailyAvailabilityBreak>;
-  updateDailyAvailabilityBreak(id: string, breakTime: Partial<DailyAvailabilityBreak>): Promise<DailyAvailabilityBreak>;
+  getDailyAvailabilityBreaksByTemplate(
+    templateId: string,
+  ): Promise<DailyAvailabilityBreak[]>;
+  getDailyAvailabilityBreaksByPhotographer(
+    photographerId: string,
+  ): Promise<DailyAvailabilityBreak[]>;
+  getDailyAvailabilityBreak(
+    id: string,
+  ): Promise<DailyAvailabilityBreak | undefined>;
+  createDailyAvailabilityBreak(
+    breakTime: InsertDailyAvailabilityBreak,
+  ): Promise<DailyAvailabilityBreak>;
+  updateDailyAvailabilityBreak(
+    id: string,
+    breakTime: Partial<DailyAvailabilityBreak>,
+  ): Promise<DailyAvailabilityBreak>;
   deleteDailyAvailabilityBreak(id: string): Promise<void>;
-  
+
   // Daily Availability Overrides
-  getDailyAvailabilityOverridesByPhotographer(photographerId: string, startDate?: string, endDate?: string): Promise<DailyAvailabilityOverride[]>;
-  getDailyAvailabilityOverrideByDate(photographerId: string, date: string): Promise<DailyAvailabilityOverride | undefined>;
-  getDailyAvailabilityOverride(id: string): Promise<DailyAvailabilityOverride | undefined>;
-  createDailyAvailabilityOverride(override: InsertDailyAvailabilityOverride): Promise<DailyAvailabilityOverride>;
-  updateDailyAvailabilityOverride(id: string, override: Partial<DailyAvailabilityOverride>): Promise<DailyAvailabilityOverride>;
+  getDailyAvailabilityOverridesByPhotographer(
+    photographerId: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<DailyAvailabilityOverride[]>;
+  getDailyAvailabilityOverrideByDate(
+    photographerId: string,
+    date: string,
+  ): Promise<DailyAvailabilityOverride | undefined>;
+  getDailyAvailabilityOverride(
+    id: string,
+  ): Promise<DailyAvailabilityOverride | undefined>;
+  createDailyAvailabilityOverride(
+    override: InsertDailyAvailabilityOverride,
+  ): Promise<DailyAvailabilityOverride>;
+  updateDailyAvailabilityOverride(
+    id: string,
+    override: Partial<DailyAvailabilityOverride>,
+  ): Promise<DailyAvailabilityOverride>;
   deleteDailyAvailabilityOverride(id: string): Promise<void>;
 
   // Availability Slots (read-only - legacy data access)
-  getAvailabilitySlotsByPhotographer(photographerId: string): Promise<AvailabilitySlot[]>;
+  getAvailabilitySlotsByPhotographer(
+    photographerId: string,
+  ): Promise<AvailabilitySlot[]>;
   getAvailabilitySlot(id: string): Promise<AvailabilitySlot | undefined>;
-  createAvailabilitySlotsBatch(slots: InsertAvailabilitySlot[]): Promise<AvailabilitySlot[]>;
+  createAvailabilitySlotsBatch(
+    slots: InsertAvailabilitySlot[],
+  ): Promise<AvailabilitySlot[]>;
   // Old CRUD methods removed - use template-based system instead
 
   // Google Calendar Integration
-  storeGoogleCalendarCredentials(photographerId: string, credentials: {
-    accessToken: string;
-    refreshToken?: string;
-    expiryDate?: Date;
-    scope?: string;
-    calendarId?: string;
-    email?: string;
-  }): Promise<void>;
+  storeGoogleCalendarCredentials(
+    photographerId: string,
+    credentials: {
+      accessToken: string;
+      refreshToken?: string;
+      expiryDate?: Date;
+      scope?: string;
+      calendarId?: string;
+      email?: string;
+    },
+  ): Promise<void>;
   getGoogleCalendarCredentials(photographerId: string): Promise<{
     accessToken?: string;
     refreshToken?: string;
@@ -298,138 +600,265 @@ export interface IStorage {
   } | null>;
   clearGoogleCalendarCredentials(photographerId: string): Promise<void>;
   hasValidGoogleCalendarCredentials(photographerId: string): Promise<boolean>;
-  storeGoogleCalendarId(photographerId: string, calendarId: string): Promise<void>;
+  storeGoogleCalendarId(
+    photographerId: string,
+    calendarId: string,
+  ): Promise<void>;
 
   // Stripe Connect Integration
-  updatePhotographerStripeAccount(photographerId: string, stripeData: {
-    stripeConnectAccountId?: string;
-    stripeAccountStatus?: string;
-    payoutEnabled?: boolean;
-    onboardingCompleted?: boolean;
-    stripeOnboardingCompletedAt?: Date;
-    platformFeePercent?: number;
-  }): Promise<void>;
-  
+  updatePhotographerStripeAccount(
+    photographerId: string,
+    stripeData: {
+      stripeConnectAccountId?: string;
+      stripeAccountStatus?: string;
+      payoutEnabled?: boolean;
+      onboardingCompleted?: boolean;
+      stripeOnboardingCompletedAt?: Date;
+      platformFeePercent?: number;
+    },
+  ): Promise<void>;
+
   // Photographer Earnings
-  getEarningsByPhotographer(photographerId: string): Promise<PhotographerEarnings[]>;
+  getEarningsByPhotographer(
+    photographerId: string,
+  ): Promise<PhotographerEarnings[]>;
   getEarningsByProject(projectId: string): Promise<PhotographerEarnings[]>;
-  getEarningsByPaymentIntentId(paymentIntentId: string): Promise<PhotographerEarnings | undefined>;
-  getEarningsByTransferId(transferId: string): Promise<PhotographerEarnings | undefined>;
-  createEarnings(earnings: InsertPhotographerEarnings): Promise<PhotographerEarnings>;
-  updateEarnings(id: string, earnings: Partial<PhotographerEarnings>): Promise<PhotographerEarnings>;
-  
+  getEarningsByPaymentIntentId(
+    paymentIntentId: string,
+  ): Promise<PhotographerEarnings | undefined>;
+  getEarningsByTransferId(
+    transferId: string,
+  ): Promise<PhotographerEarnings | undefined>;
+  createEarnings(
+    earnings: InsertPhotographerEarnings,
+  ): Promise<PhotographerEarnings>;
+  updateEarnings(
+    id: string,
+    earnings: Partial<PhotographerEarnings>,
+  ): Promise<PhotographerEarnings>;
+
   // Photographer Payouts
-  getPayoutsByPhotographer(photographerId: string): Promise<PhotographerPayouts[]>;
-  
+  getPayoutsByPhotographer(
+    photographerId: string,
+  ): Promise<PhotographerPayouts[]>;
+
   // Drip Campaigns
-  getDripCampaignsByPhotographer(photographerId: string, projectType?: string): Promise<DripCampaignWithEmails[]>;
+  getDripCampaignsByPhotographer(
+    photographerId: string,
+    projectType?: string,
+  ): Promise<DripCampaignWithEmails[]>;
   getDripCampaign(id: string): Promise<DripCampaignWithEmails | undefined>;
   createDripCampaign(campaign: InsertDripCampaign): Promise<DripCampaign>;
-  updateDripCampaign(id: string, campaign: Partial<DripCampaign>): Promise<DripCampaign>;
+  updateDripCampaign(
+    id: string,
+    campaign: Partial<DripCampaign>,
+  ): Promise<DripCampaign>;
   deleteDripCampaign(id: string): Promise<void>;
-  
+
   // Drip Campaign Emails
   getDripCampaignEmails(campaignId: string): Promise<DripCampaignEmail[]>;
-  createDripCampaignEmail(email: InsertDripCampaignEmail): Promise<DripCampaignEmail>;
-  updateDripCampaignEmail(id: string, email: Partial<DripCampaignEmail>): Promise<DripCampaignEmail>;
+  createDripCampaignEmail(
+    email: InsertDripCampaignEmail,
+  ): Promise<DripCampaignEmail>;
+  updateDripCampaignEmail(
+    id: string,
+    email: Partial<DripCampaignEmail>,
+  ): Promise<DripCampaignEmail>;
   deleteDripCampaignEmail(id: string): Promise<void>;
-  
+
   // Individual Email Approval Methods
   approveEmail(emailId: string, approvedBy: string): Promise<DripCampaignEmail>;
-  rejectEmail(emailId: string, rejectedBy: string, reason: string): Promise<DripCampaignEmail>;
-  updateEmailContent(emailId: string, content: {
-    subject?: string;
-    htmlBody?: string;
-    textBody?: string;
-    emailBlocks?: string;
-    templateBody?: string;
-    sendAtHour?: number | null;
-    daysAfterStart?: number;
-    delayMinutes?: number | null;
-    useEmailBuilder?: boolean;
-    includeHeader?: boolean;
-    headerStyle?: string;
-    includeSignature?: boolean;
-    signatureStyle?: string;
-  }, editedBy: string): Promise<DripCampaignEmail>;
-  bulkUpdateEmailSequence(emailUpdates: Array<{ id: string; sequenceIndex: number; weeksAfterStart: number }>): Promise<void>;
+  rejectEmail(
+    emailId: string,
+    rejectedBy: string,
+    reason: string,
+  ): Promise<DripCampaignEmail>;
+  updateEmailContent(
+    emailId: string,
+    content: {
+      subject?: string;
+      htmlBody?: string;
+      textBody?: string;
+      emailBlocks?: string;
+      templateBody?: string;
+      sendAtHour?: number | null;
+      daysAfterStart?: number;
+      delayMinutes?: number | null;
+      useEmailBuilder?: boolean;
+      includeHeader?: boolean;
+      headerStyle?: string;
+      includeSignature?: boolean;
+      signatureStyle?: string;
+    },
+    editedBy: string,
+  ): Promise<DripCampaignEmail>;
+  bulkUpdateEmailSequence(
+    emailUpdates: Array<{
+      id: string;
+      sequenceIndex: number;
+      weeksAfterStart: number;
+    }>,
+  ): Promise<void>;
 
   // Campaign Versioning Methods
-  createCampaignVersion(campaignId: string, versionData: Partial<DripCampaign>, changedBy: string, changeDescription: string): Promise<DripCampaign>;
+  createCampaignVersion(
+    campaignId: string,
+    versionData: Partial<DripCampaign>,
+    changedBy: string,
+    changeDescription: string,
+  ): Promise<DripCampaign>;
   getCampaignVersionHistory(campaignId: string): Promise<any[]>;
-  logCampaignChange(campaignId: string, changeType: string, changeDescription: string, changedBy: string, affectedEmailId?: string, previousData?: any, newData?: any): Promise<void>;
+  logCampaignChange(
+    campaignId: string,
+    changeType: string,
+    changeDescription: string,
+    changedBy: string,
+    affectedEmailId?: string,
+    previousData?: any,
+    newData?: any,
+  ): Promise<void>;
   getDripCampaignWithEmailStats(campaignId: string): Promise<any>;
-  
-  // Static Campaign Settings  
-  getStaticCampaignSettings(photographerId: string, projectType: string): Promise<StaticCampaignSettings | undefined>;
-  saveStaticCampaignSettings(settings: InsertStaticCampaignSettings): Promise<StaticCampaignSettings>;
-  
+
+  // Static Campaign Settings
+  getStaticCampaignSettings(
+    photographerId: string,
+    projectType: string,
+  ): Promise<StaticCampaignSettings | undefined>;
+  saveStaticCampaignSettings(
+    settings: InsertStaticCampaignSettings,
+  ): Promise<StaticCampaignSettings>;
+
   // Drip Campaign Subscriptions
-  getDripCampaignSubscriptionsByPhotographer(photographerId: string): Promise<DripCampaignSubscriptionWithDetails[]>;
-  getDripCampaignSubscriptionsByCampaign(campaignId: string): Promise<DripCampaignSubscriptionWithDetails[]>;
-  getDripCampaignSubscription(id: string): Promise<DripCampaignSubscriptionWithDetails | undefined>;
-  getDueDripCampaignSubscriptions(): Promise<DripCampaignSubscriptionWithDetails[]>;
-  createDripCampaignSubscription(subscription: InsertDripCampaignSubscription): Promise<DripCampaignSubscription>;
-  updateDripCampaignSubscription(id: string, subscription: Partial<DripCampaignSubscription>): Promise<DripCampaignSubscription>;
-  
+  getDripCampaignSubscriptionsByPhotographer(
+    photographerId: string,
+  ): Promise<DripCampaignSubscriptionWithDetails[]>;
+  getDripCampaignSubscriptionsByCampaign(
+    campaignId: string,
+  ): Promise<DripCampaignSubscriptionWithDetails[]>;
+  getDripCampaignSubscription(
+    id: string,
+  ): Promise<DripCampaignSubscriptionWithDetails | undefined>;
+  getDueDripCampaignSubscriptions(): Promise<
+    DripCampaignSubscriptionWithDetails[]
+  >;
+  createDripCampaignSubscription(
+    subscription: InsertDripCampaignSubscription,
+  ): Promise<DripCampaignSubscription>;
+  updateDripCampaignSubscription(
+    id: string,
+    subscription: Partial<DripCampaignSubscription>,
+  ): Promise<DripCampaignSubscription>;
+
   // Drip Email Deliveries
-  getDripEmailDeliveriesBySubscription(subscriptionId: string): Promise<DripEmailDelivery[]>;
-  createDripEmailDelivery(delivery: InsertDripEmailDelivery): Promise<DripEmailDelivery>;
-  updateDripEmailDelivery(id: string, delivery: Partial<DripEmailDelivery>): Promise<DripEmailDelivery>;
-  getPayoutByStripePayoutId(stripePayoutId: string): Promise<PhotographerPayouts | undefined>;
+  getDripEmailDeliveriesBySubscription(
+    subscriptionId: string,
+  ): Promise<DripEmailDelivery[]>;
+  createDripEmailDelivery(
+    delivery: InsertDripEmailDelivery,
+  ): Promise<DripEmailDelivery>;
+  updateDripEmailDelivery(
+    id: string,
+    delivery: Partial<DripEmailDelivery>,
+  ): Promise<DripEmailDelivery>;
+  getPayoutByStripePayoutId(
+    stripePayoutId: string,
+  ): Promise<PhotographerPayouts | undefined>;
   createPayout(payout: InsertPhotographerPayouts): Promise<PhotographerPayouts>;
-  updatePayout(id: string, payout: Partial<PhotographerPayouts>): Promise<PhotographerPayouts>;
-  getPhotographerBalance(photographerId: string, currency?: string): Promise<{ availableCents: number; pendingCents: number }>;
-  
+  updatePayout(
+    id: string,
+    payout: Partial<PhotographerPayouts>,
+  ): Promise<PhotographerPayouts>;
+  getPhotographerBalance(
+    photographerId: string,
+    currency?: string,
+  ): Promise<{ availableCents: number; pendingCents: number }>;
+
   // SMS Logging
   createSmsLog(smsLog: InsertSmsLog): Promise<SmsLog>;
   updateSmsLogStatus(providerId: string, status: string): Promise<void>;
-  getSmsLogByProviderId(providerId: string, clientId: string): Promise<SmsLog | undefined>;
+  getSmsLogByProviderId(
+    providerId: string,
+    clientId: string,
+  ): Promise<SmsLog | undefined>;
   updateSmsLogImageUrl(id: string, imageUrl: string): Promise<void>;
-  
+
   // Email History
   createEmailHistory(emailHistory: InsertEmailHistory): Promise<EmailHistory>;
-  getEmailHistoryByPhotographer(photographerId: string, filters?: {
-    direction?: 'INBOUND' | 'OUTBOUND';
-    source?: 'AUTOMATION' | 'DRIP_CAMPAIGN' | 'MANUAL' | 'CLIENT_REPLY';
-    clientId?: string;
-    projectId?: string;
-    limit?: number;
-  }): Promise<EmailHistory[]>;
+  getEmailHistoryByPhotographer(
+    photographerId: string,
+    filters?: {
+      direction?: "INBOUND" | "OUTBOUND";
+      source?: "AUTOMATION" | "DRIP_CAMPAIGN" | "MANUAL" | "CLIENT_REPLY";
+      clientId?: string;
+      projectId?: string;
+      limit?: number;
+    },
+  ): Promise<EmailHistory[]>;
   getEmailHistoryByClient(clientId: string): Promise<EmailHistory[]>;
   getEmailHistoryByProject(projectId: string): Promise<EmailHistory[]>;
-  getEmailHistoryByThread(gmailThreadId: string, photographerId?: string): Promise<EmailHistory[]>;
-  
+  getEmailHistoryByThread(
+    gmailThreadId: string,
+    photographerId?: string,
+  ): Promise<EmailHistory[]>;
+
   // Smart Files
   getSmartFilesByPhotographer(photographerId: string): Promise<SmartFile[]>;
   getSmartFile(id: string): Promise<SmartFileWithPages | undefined>;
   createSmartFile(smartFile: InsertSmartFile): Promise<SmartFile>;
-  updateSmartFile(id: string, smartFile: Partial<SmartFile>): Promise<SmartFile>;
+  updateSmartFile(
+    id: string,
+    smartFile: Partial<SmartFile>,
+  ): Promise<SmartFile>;
   deleteSmartFile(id: string): Promise<void>;
-  
+
   // Project Smart Files
-  createProjectSmartFile(projectSmartFile: InsertProjectSmartFile): Promise<ProjectSmartFile>;
-  
+  createProjectSmartFile(
+    projectSmartFile: InsertProjectSmartFile,
+  ): Promise<ProjectSmartFile>;
+
   // Smart File Pages
   createSmartFilePage(page: InsertSmartFilePage): Promise<SmartFilePage>;
-  updateSmartFilePage(id: string, page: Partial<SmartFilePage>): Promise<SmartFilePage>;
+  updateSmartFilePage(
+    id: string,
+    page: Partial<SmartFilePage>,
+  ): Promise<SmartFilePage>;
   deleteSmartFilePage(id: string): Promise<void>;
-  reorderSmartFilePages(smartFileId: string, pageOrders: { id: string, pageOrder: number }[]): Promise<void>;
-  
+  reorderSmartFilePages(
+    smartFileId: string,
+    pageOrders: { id: string; pageOrder: number }[],
+  ): Promise<void>;
+
   // Project Smart Files
   getProjectSmartFilesByProject(projectId: string): Promise<ProjectSmartFile[]>;
-  attachSmartFileToProject(projectSmartFile: InsertProjectSmartFile): Promise<ProjectSmartFile>;
-  updateProjectSmartFile(id: string, update: Partial<ProjectSmartFile>): Promise<ProjectSmartFile>;
+  attachSmartFileToProject(
+    projectSmartFile: InsertProjectSmartFile,
+  ): Promise<ProjectSmartFile>;
+  updateProjectSmartFile(
+    id: string,
+    update: Partial<ProjectSmartFile>,
+  ): Promise<ProjectSmartFile>;
   deleteProjectSmartFile(id: string): Promise<void>;
-  getProjectSmartFileByToken(token: string): Promise<ProjectSmartFile | undefined>;
-  getExpiringSmartFiles(daysUntilExpiration: number): Promise<ProjectSmartFile[]>;
-  
+  getProjectSmartFileByToken(
+    token: string,
+  ): Promise<ProjectSmartFile | undefined>;
+  getExpiringSmartFiles(
+    daysUntilExpiration: number,
+  ): Promise<ProjectSmartFile[]>;
+
   // Payment Transactions
-  getPaymentTransactionsByProjectSmartFile(projectSmartFileId: string): Promise<PaymentTransaction[]>;
-  getPaymentTransactionsByProject(projectId: string): Promise<PaymentTransaction[]>;
+  getPaymentTransactionsByProjectSmartFile(
+    projectSmartFileId: string,
+  ): Promise<PaymentTransaction[]>;
+  getPaymentTransactionsByProject(
+    projectId: string,
+  ): Promise<PaymentTransaction[]>;
   getPaymentTransaction(id: string): Promise<PaymentTransaction | undefined>;
-  getPaymentTransactionByStripePaymentIntentId(stripePaymentIntentId: string): Promise<PaymentTransaction | undefined>;
-  createPaymentTransaction(transaction: InsertPaymentTransaction): Promise<PaymentTransaction>;
+  getPaymentTransactionByStripePaymentIntentId(
+    stripePaymentIntentId: string,
+  ): Promise<PaymentTransaction | undefined>;
+  createPaymentTransaction(
+    transaction: InsertPaymentTransaction,
+  ): Promise<PaymentTransaction>;
 
   // Dashboard Stats (optimized aggregation)
   getDashboardStats(photographerId: string): Promise<{
@@ -442,39 +871,77 @@ export interface IStorage {
   }>;
 
   // Saved Payment Methods (for autopay)
-  getSavedPaymentMethodsByContact(contactId: string): Promise<SavedPaymentMethod[]>;
+  getSavedPaymentMethodsByContact(
+    contactId: string,
+  ): Promise<SavedPaymentMethod[]>;
   getSavedPaymentMethod(id: string): Promise<SavedPaymentMethod | undefined>;
-  getSavedPaymentMethodByStripeId(stripePaymentMethodId: string): Promise<SavedPaymentMethod | undefined>;
-  createSavedPaymentMethod(paymentMethod: InsertSavedPaymentMethod): Promise<SavedPaymentMethod>;
-  updateSavedPaymentMethod(id: string, paymentMethod: Partial<SavedPaymentMethod>): Promise<SavedPaymentMethod>;
+  getSavedPaymentMethodByStripeId(
+    stripePaymentMethodId: string,
+  ): Promise<SavedPaymentMethod | undefined>;
+  createSavedPaymentMethod(
+    paymentMethod: InsertSavedPaymentMethod,
+  ): Promise<SavedPaymentMethod>;
+  updateSavedPaymentMethod(
+    id: string,
+    paymentMethod: Partial<SavedPaymentMethod>,
+  ): Promise<SavedPaymentMethod>;
   deleteSavedPaymentMethod(id: string): Promise<void>;
-  setDefaultPaymentMethod(contactId: string, paymentMethodId: string): Promise<void>;
-  
+  setDefaultPaymentMethod(
+    contactId: string,
+    paymentMethodId: string,
+  ): Promise<void>;
+
   // Inbox / Conversation Reads
   getInboxConversations(photographerId: string): Promise<any[]>;
-  getInboxThread(contactId: string, photographerId: string, limit?: number, offset?: number): Promise<{ messages: any[], hasMore: boolean }>;
-  markConversationAsRead(photographerId: string, contactId: string): Promise<void>;
+  getInboxThread(
+    contactId: string,
+    photographerId: string,
+    limit?: number,
+    offset?: number,
+  ): Promise<{ messages: any[]; hasMore: boolean }>;
+  markConversationAsRead(
+    photographerId: string,
+    contactId: string,
+  ): Promise<void>;
   getUnreadCount(photographerId: string): Promise<number>;
-  upsertConversationRead(data: InsertConversationRead): Promise<ConversationRead>;
-  getConversationRead(photographerId: string, contactId: string): Promise<ConversationRead | undefined>;
-  
+  upsertConversationRead(
+    data: InsertConversationRead,
+  ): Promise<ConversationRead>;
+  getConversationRead(
+    photographerId: string,
+    contactId: string,
+  ): Promise<ConversationRead | undefined>;
+
   // Admin Methods
-  getAllPhotographersWithStats(): Promise<Array<Photographer & { clientCount: number }>>;
-  updatePhotographerSubscription(photographerId: string, subscriptionStatus: string): Promise<Photographer>;
+  getAllPhotographersWithStats(): Promise<
+    Array<Photographer & { clientCount: number }>
+  >;
+  updatePhotographerSubscription(
+    photographerId: string,
+    subscriptionStatus: string,
+  ): Promise<Photographer>;
   logAdminActivity(activity: InsertAdminActivityLog): Promise<AdminActivityLog>;
-  getAdminActivityLog(adminUserId?: string, limit?: number): Promise<AdminActivityLog[]>;
-  
+  getAdminActivityLog(
+    adminUserId?: string,
+    limit?: number,
+  ): Promise<AdminActivityLog[]>;
+
   // Ad Campaigns
   getAdCampaigns(photographerId: string): Promise<AdCampaign[]>;
   getAdCampaign(id: string): Promise<AdCampaign | undefined>;
   createAdCampaign(campaign: InsertAdCampaign): Promise<AdCampaign>;
-  updateAdCampaign(id: string, campaign: Partial<AdCampaign>): Promise<AdCampaign>;
-  
+  updateAdCampaign(
+    id: string,
+    campaign: Partial<AdCampaign>,
+  ): Promise<AdCampaign>;
+
   // Ad Payment Methods
   getAdPaymentMethods(photographerId: string): Promise<AdPaymentMethod[]>;
-  createAdPaymentMethod(method: InsertAdPaymentMethod): Promise<AdPaymentMethod>;
+  createAdPaymentMethod(
+    method: InsertAdPaymentMethod,
+  ): Promise<AdPaymentMethod>;
   deleteAdPaymentMethod(id: string): Promise<void>;
-  
+
   // Native Galleries
   getGalleriesByPhotographer(photographerId: string): Promise<Gallery[]>;
   getGalleriesByProject(projectId: string): Promise<Gallery[]>;
@@ -484,58 +951,137 @@ export interface IStorage {
   updateGallery(id: string, gallery: Partial<Gallery>): Promise<Gallery>;
   deleteGallery(id: string): Promise<void>;
   incrementGalleryViewCount(id: string): Promise<void>;
-  
+
   // Gallery Images
-  getGalleryImages(galleryId: string, contactId?: string): Promise<GalleryImageWithFavorites[]>;
+  getGalleryImages(
+    galleryId: string,
+    contactId?: string,
+  ): Promise<GalleryImageWithFavorites[]>;
   getGalleryImage(id: string): Promise<GalleryImage | undefined>;
   createGalleryImage(image: InsertGalleryImage): Promise<GalleryImage>;
-  updateGalleryImage(id: string, image: Partial<GalleryImage>): Promise<GalleryImage>;
+  updateGalleryImage(
+    id: string,
+    image: Partial<GalleryImage>,
+  ): Promise<GalleryImage>;
   deleteGalleryImage(id: string): Promise<void>;
-  reorderGalleryImages(imageOrders: { id: string, sortIndex: number }[]): Promise<void>;
-  
+  reorderGalleryImages(
+    imageOrders: { id: string; sortIndex: number }[],
+  ): Promise<void>;
+
   // Gallery Favorites
-  getFavorites(galleryId: string, contactId?: string | null, sessionId?: string | null): Promise<string[]>; // Returns array of image IDs
-  toggleFavorite(favorite: InsertGalleryFavorite): Promise<{ action: 'added' | 'removed' }>;
-  
+  getFavorites(
+    galleryId: string,
+    contactId?: string | null,
+    sessionId?: string | null,
+  ): Promise<string[]>; // Returns array of image IDs
+  toggleFavorite(
+    favorite: InsertGalleryFavorite,
+  ): Promise<{ action: "added" | "removed" }>;
+
   // Gallery Downloads
-  createGalleryDownload(download: InsertGalleryDownload): Promise<GalleryDownload>;
-  updateGalleryDownload(id: string, download: Partial<GalleryDownload>): Promise<GalleryDownload>;
+  createGalleryDownload(
+    download: InsertGalleryDownload,
+  ): Promise<GalleryDownload>;
+  updateGalleryDownload(
+    id: string,
+    download: Partial<GalleryDownload>,
+  ): Promise<GalleryDownload>;
   getGalleryDownload(id: string): Promise<GalleryDownload | undefined>;
-  
+
   // Gallery Views (analytics)
-  trackGalleryView(galleryId: string, contactId: string | null, ipAddress?: string, userAgent?: string): Promise<void>;
-  
+  trackGalleryView(
+    galleryId: string,
+    contactId: string | null,
+    ipAddress?: string,
+    userAgent?: string,
+  ): Promise<void>;
+
   // Testimonials
-  getTestimonialsByPhotographer(photographerId: string, status?: string): Promise<Testimonial[]>;
+  getTestimonialsByPhotographer(
+    photographerId: string,
+    status?: string,
+  ): Promise<Testimonial[]>;
   getTestimonial(id: string): Promise<Testimonial | undefined>;
   createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;
-  updateTestimonial(id: string, testimonial: Partial<Testimonial>): Promise<Testimonial>;
+  updateTestimonial(
+    id: string,
+    testimonial: Partial<Testimonial>,
+  ): Promise<Testimonial>;
   deleteTestimonial(id: string): Promise<void>;
   approveTestimonial(id: string, approvedBy: string): Promise<Testimonial>;
   rejectTestimonial(id: string): Promise<Testimonial>;
   toggleFeaturedTestimonial(id: string): Promise<Testimonial>;
-  getApprovedTestimonials(photographerId: string, featuredOnly?: boolean): Promise<Testimonial[]>;
+  getApprovedTestimonials(
+    photographerId: string,
+    featuredOnly?: boolean,
+  ): Promise<Testimonial[]>;
 
   // Global Search
-  globalSearch(photographerId: string, query: string, limit?: number): Promise<{
-    contacts: Array<{ id: string; firstName: string; lastName: string; email: string | null; phone: string | null }>;
-    projects: Array<{ id: string; title: string; projectType: string | null; eventDate: string | null; clientFirstName: string | null; clientLastName: string | null }>;
+  globalSearch(
+    photographerId: string,
+    query: string,
+    limit?: number,
+  ): Promise<{
+    contacts: Array<{
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string | null;
+      phone: string | null;
+    }>;
+    projects: Array<{
+      id: string;
+      title: string;
+      projectType: string | null;
+      eventDate: string | null;
+      clientFirstName: string | null;
+      clientLastName: string | null;
+    }>;
     smartFiles: Array<{ id: string; name: string; status: string }>;
   }>;
 
   // Recent items for search
-  getRecentContacts(photographerId: string, limit?: number): Promise<Array<{ id: string; firstName: string; lastName: string; email: string | null; phone: string | null }>>;
-  getRecentProjects(photographerId: string, limit?: number): Promise<Array<{ id: string; title: string; projectType: string | null; eventDate: string | null; clientFirstName: string | null; clientLastName: string | null }>>;
+  getRecentContacts(
+    photographerId: string,
+    limit?: number,
+  ): Promise<
+    Array<{
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string | null;
+      phone: string | null;
+    }>
+  >;
+  getRecentProjects(
+    photographerId: string,
+    limit?: number,
+  ): Promise<
+    Array<{
+      id: string;
+      title: string;
+      projectType: string | null;
+      eventDate: string | null;
+      clientFirstName: string | null;
+      clientLastName: string | null;
+    }>
+  >;
 
   // Notifications
-  getNotifications(photographerId: string, options?: { read?: boolean; limit?: number; offset?: number }): Promise<Notification[]>;
+  getNotifications(
+    photographerId: string,
+    options?: { read?: boolean; limit?: number; offset?: number },
+  ): Promise<Notification[]>;
   getNotificationById(id: string): Promise<Notification | undefined>;
   getUnreadNotificationCount(photographerId: string): Promise<number>;
   createNotification(notification: InsertNotification): Promise<Notification>;
   markNotificationAsRead(id: string): Promise<Notification | undefined>;
   markAllNotificationsAsRead(photographerId: string): Promise<number>;
   deleteNotification(id: string): Promise<void>;
-  deleteOldNotifications(photographerId: string, olderThanDays: number): Promise<number>;
+  deleteOldNotifications(
+    photographerId: string,
+    olderThanDays: number,
+  ): Promise<number>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -549,68 +1095,90 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
-  async getUserByEmailAndRole(email: string, role: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(
-      and(
-        eq(users.email, email),
-        eq(users.role, role)
-      )
-    );
+  async getUserByEmailAndRole(
+    email: string,
+    role: string,
+  ): Promise<User | undefined> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(and(eq(users.email, email), eq(users.role, role)));
     return user || undefined;
   }
 
-  async getUserByEmailRolePhotographer(email: string, role: string, photographerId: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(
-      and(
-        eq(users.email, email),
-        eq(users.role, role),
-        eq(users.photographerId, photographerId)
-      )
-    );
+  async getUserByEmailRolePhotographer(
+    email: string,
+    role: string,
+    photographerId: string,
+  ): Promise<User | undefined> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(
+        and(
+          eq(users.email, email),
+          eq(users.role, role),
+          eq(users.photographerId, photographerId),
+        ),
+      );
     return user || undefined;
   }
 
   async getUserByGoogleId(googleId: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.googleId, googleId));
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.googleId, googleId));
     return user || undefined;
   }
 
   async getUserByAppleId(appleId: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.appleId, appleId));
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.appleId, appleId));
     return user || undefined;
   }
 
   async linkGoogleAccount(userId: string, googleId: string): Promise<User> {
-    const [user] = await db.update(users)
-      .set({ 
-        googleId, 
-        authProvider: 'google' 
+    const [user] = await db
+      .update(users)
+      .set({
+        googleId,
+        authProvider: "google",
       })
       .where(eq(users.id, userId))
       .returning();
     return user;
   }
 
-  async createLinkingRequest(request: InsertLinkingRequest): Promise<LinkingRequest> {
-    const [linkingRequest] = await db.insert(linkingRequests).values(request).returning();
+  async createLinkingRequest(
+    request: InsertLinkingRequest,
+  ): Promise<LinkingRequest> {
+    const [linkingRequest] = await db
+      .insert(linkingRequests)
+      .values(request)
+      .returning();
     return linkingRequest;
   }
 
   async getLinkingRequest(token: string): Promise<LinkingRequest | undefined> {
-    const [request] = await db.select()
+    const [request] = await db
+      .select()
       .from(linkingRequests)
       .where(
         and(
           eq(linkingRequests.token, token),
           eq(linkingRequests.used, false),
-          gte(linkingRequests.expiresAt, new Date())
-        )
+          gte(linkingRequests.expiresAt, new Date()),
+        ),
       );
     return request || undefined;
   }
 
   async markLinkingRequestUsed(token: string): Promise<void> {
-    await db.update(linkingRequests)
+    await db
+      .update(linkingRequests)
       .set({ used: true })
       .where(eq(linkingRequests.token, token));
   }
@@ -621,94 +1189,115 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUser(id: string, updateData: Partial<User>): Promise<User> {
-    const [user] = await db.update(users).set(updateData).where(eq(users.id, id)).returning();
+    const [user] = await db
+      .update(users)
+      .set(updateData)
+      .where(eq(users.id, id))
+      .returning();
     return user;
   }
 
-  async backfillClientIds(dryRun: boolean = true): Promise<{ updated: number; skipped: number; details: any[] }> {
+  async backfillClientIds(
+    dryRun: boolean = true,
+  ): Promise<{ updated: number; skipped: number; details: any[] }> {
     console.log(`\n🔄 Starting CLIENT user backfill (dryRun: ${dryRun})...`);
-    
+
     // Find all CLIENT users with NULL clientId
-    const clientUsers = await db.select()
+    const clientUsers = await db
+      .select()
       .from(users)
-      .where(and(
-        eq(users.role, 'CLIENT'),
-        isNull(users.clientId)
-      ));
-    
-    console.log(`📊 Found ${clientUsers.length} CLIENT users with NULL clientId`);
-    
+      .where(and(eq(users.role, "CLIENT"), isNull(users.clientId)));
+
+    console.log(
+      `📊 Found ${clientUsers.length} CLIENT users with NULL clientId`,
+    );
+
     let updated = 0;
     let skipped = 0;
     const details: any[] = [];
-    
+
     for (const user of clientUsers) {
       try {
         // Find matching contact by email + photographerId
-        const [contact] = await db.select()
+        const [contact] = await db
+          .select()
           .from(contacts)
-          .where(and(
-            eq(contacts.email, user.email),
-            eq(contacts.photographerId, user.photographerId!)
-          ))
+          .where(
+            and(
+              eq(contacts.email, user.email),
+              eq(contacts.photographerId, user.photographerId!),
+            ),
+          )
           .limit(2); // Check for duplicates
-        
+
         if (!contact) {
-          console.log(`⚠️  No contact found for user ${user.email} (photographerId: ${user.photographerId})`);
+          console.log(
+            `⚠️  No contact found for user ${user.email} (photographerId: ${user.photographerId})`,
+          );
           skipped++;
           details.push({
             email: user.email,
             photographerId: user.photographerId,
-            status: 'SKIPPED',
-            reason: 'No matching contact found'
+            status: "SKIPPED",
+            reason: "No matching contact found",
           });
           continue;
         }
-        
+
         // Check for ambiguous matches (safety check)
-        const duplicateCheck = await db.select()
+        const duplicateCheck = await db
+          .select()
           .from(contacts)
-          .where(and(
-            eq(contacts.email, user.email),
-            eq(contacts.photographerId, user.photographerId!)
-          ));
-        
+          .where(
+            and(
+              eq(contacts.email, user.email),
+              eq(contacts.photographerId, user.photographerId!),
+            ),
+          );
+
         if (duplicateCheck.length > 1) {
-          console.log(`⚠️  Multiple contacts found for ${user.email} - skipping for safety`);
+          console.log(
+            `⚠️  Multiple contacts found for ${user.email} - skipping for safety`,
+          );
           skipped++;
           details.push({
             email: user.email,
             photographerId: user.photographerId,
-            status: 'SKIPPED',
-            reason: `Multiple contacts found (${duplicateCheck.length})`
+            status: "SKIPPED",
+            reason: `Multiple contacts found (${duplicateCheck.length})`,
           });
           continue;
         }
-        
+
         if (dryRun) {
-          console.log(`✅ [DRY RUN] Would update user ${user.email} with clientId: ${contact.id}`);
+          console.log(
+            `✅ [DRY RUN] Would update user ${user.email} with clientId: ${contact.id}`,
+          );
           updated++;
           details.push({
             email: user.email,
             photographerId: user.photographerId,
             clientId: contact.id,
             contactName: `${contact.firstName} ${contact.lastName}`,
-            status: 'DRY_RUN_SUCCESS'
+            status: "DRY_RUN_SUCCESS",
           });
         } else {
           // Actually update the user
-          await db.update(users)
+          await db
+            .update(users)
             .set({ clientId: contact.id })
             .where(eq(users.id, user.id));
-          
-          console.log(`✅ Updated user ${user.email} with clientId: ${contact.id}`);
+
+          console.log(
+            `✅ Updated user ${user.email} with clientId: ${contact.id}`,
+          );
           updated++;
           details.push({
             email: user.email,
             photographerId: user.photographerId,
             clientId: contact.id,
             contactName: `${contact.firstName} ${contact.lastName}`,
-            status: 'UPDATED'
+            status: "UPDATED",
           });
         }
       } catch (error) {
@@ -717,17 +1306,17 @@ export class DatabaseStorage implements IStorage {
         details.push({
           email: user.email,
           photographerId: user.photographerId,
-          status: 'ERROR',
-          reason: error instanceof Error ? error.message : 'Unknown error'
+          status: "ERROR",
+          reason: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }
-    
+
     console.log(`\n📈 Backfill Summary:`);
     console.log(`   ✅ Updated: ${updated}`);
     console.log(`   ⚠️  Skipped: ${skipped}`);
     console.log(`   📊 Total: ${clientUsers.length}`);
-    
+
     return { updated, skipped, details };
   }
 
@@ -736,16 +1325,26 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getPhotographer(id: string): Promise<Photographer | undefined> {
-    const [photographer] = await db.select().from(photographers).where(eq(photographers.id, id));
+    const [photographer] = await db
+      .select()
+      .from(photographers)
+      .where(eq(photographers.id, id));
     return photographer || undefined;
   }
 
-  async getPhotographerByPublicToken(publicToken: string): Promise<Photographer | undefined> {
-    const [photographer] = await db.select().from(photographers).where(eq(photographers.publicToken, publicToken));
+  async getPhotographerByPublicToken(
+    publicToken: string,
+  ): Promise<Photographer | undefined> {
+    const [photographer] = await db
+      .select()
+      .from(photographers)
+      .where(eq(photographers.publicToken, publicToken));
     return photographer || undefined;
   }
 
-  async getPhotographerByPortalSlug(slug: string): Promise<Photographer | undefined> {
+  async getPhotographerByPortalSlug(
+    slug: string,
+  ): Promise<Photographer | undefined> {
     // Normalize slug to lowercase for case-insensitive lookup
     const normalizedSlug = slug.toLowerCase().trim();
     const [photographer] = await db
@@ -756,17 +1355,28 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getPhotographerCount(): Promise<number> {
-    const result = await db.select({ count: sql<number>`count(*)::int` }).from(photographers);
+    const result = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(photographers);
     return result[0]?.count || 0;
   }
 
-  async createPhotographer(insertPhotographer: InsertPhotographer): Promise<Photographer> {
-    const [photographer] = await db.insert(photographers).values(insertPhotographer).returning();
+  async createPhotographer(
+    insertPhotographer: InsertPhotographer,
+  ): Promise<Photographer> {
+    const [photographer] = await db
+      .insert(photographers)
+      .values(insertPhotographer)
+      .returning();
     return photographer;
   }
 
-  async updatePhotographer(id: string, photographer: Partial<Photographer>): Promise<Photographer> {
-    const [updated] = await db.update(photographers)
+  async updatePhotographer(
+    id: string,
+    photographer: Partial<Photographer>,
+  ): Promise<Photographer> {
+    const [updated] = await db
+      .update(photographers)
       .set(photographer)
       .where(eq(photographers.id, id))
       .returning();
@@ -776,7 +1386,11 @@ export class DatabaseStorage implements IStorage {
   // Push Token Management for Mobile Notifications
   async registerPushToken(
     photographerId: string,
-    tokenData: { token: string; platform: "ios" | "android"; deviceId?: string }
+    tokenData: {
+      token: string;
+      platform: "ios" | "android";
+      deviceId?: string;
+    },
   ): Promise<void> {
     const photographer = await this.getPhotographer(photographerId);
     if (!photographer) throw new Error("Photographer not found");
@@ -809,7 +1423,10 @@ export class DatabaseStorage implements IStorage {
       .where(eq(photographers.id, photographerId));
   }
 
-  async unregisterPushToken(photographerId: string, token: string): Promise<void> {
+  async unregisterPushToken(
+    photographerId: string,
+    token: string,
+  ): Promise<void> {
     const photographer = await this.getPhotographer(photographerId);
     if (!photographer) throw new Error("Photographer not found");
 
@@ -836,7 +1453,9 @@ export class DatabaseStorage implements IStorage {
     return tokens.map((t) => t.token);
   }
 
-  async getPhotographerByEmail(email: string): Promise<Photographer | undefined> {
+  async getPhotographerByEmail(
+    email: string,
+  ): Promise<Photographer | undefined> {
     // Get photographer by their Google email (googleEmail field)
     const [photographer] = await db
       .select()
@@ -853,122 +1472,137 @@ export class DatabaseStorage implements IStorage {
       .where(sql`${photographers.gmailWatchSetupAt} IS NOT NULL`);
   }
 
-  async getContactsByPhotographer(photographerId: string, projectType?: string): Promise<ContactWithProjects[]> {
+  async getContactsByPhotographer(
+    photographerId: string,
+    projectType?: string,
+  ): Promise<ContactWithProjects[]> {
     // First get all contacts for this photographer
-    const contactRows = await db.select()
+    const contactRows = await db
+      .select()
       .from(contacts)
       .where(eq(contacts.photographerId, photographerId))
       .orderBy(desc(contacts.createdAt));
 
     // Then get all projects with stages for these contacts
-    const contactIds = contactRows.map(c => c.id);
-    
+    const contactIds = contactRows.map((c) => c.id);
+
     if (contactIds.length === 0) {
       return [];
     }
 
     // FLATTENED to avoid Drizzle's nested object issue with leftJoin returning null
-    const projectRows = await db.select({
-      id: projects.id,
-      clientId: projects.clientId,
-      title: projects.title,
-      projectType: projects.projectType,
-      leadSource: projects.leadSource,
-      eventDate: projects.eventDate,
-      status: projects.status,
-      createdAt: projects.createdAt,
-      stageId: projects.stageId,
-      stageEnteredAt: projects.stageEnteredAt,
-      // Stage fields - FLATTENED
-      stageDataId: stages.id,
-      stageDataName: stages.name,
-      stageDataColor: stages.color,
-      stageDataIsDefault: stages.isDefault
-    })
+    const projectRows = await db
+      .select({
+        id: projects.id,
+        clientId: projects.clientId,
+        title: projects.title,
+        projectType: projects.projectType,
+        leadSource: projects.leadSource,
+        eventDate: projects.eventDate,
+        status: projects.status,
+        createdAt: projects.createdAt,
+        stageId: projects.stageId,
+        stageEnteredAt: projects.stageEnteredAt,
+        // Stage fields - FLATTENED
+        stageDataId: stages.id,
+        stageDataName: stages.name,
+        stageDataColor: stages.color,
+        stageDataIsDefault: stages.isDefault,
+      })
       .from(projects)
       .leftJoin(stages, eq(projects.stageId, stages.id))
-      .where(projectType ? 
-        and(inArray(projects.clientId, contactIds), eq(projects.projectType, projectType)) :
-        inArray(projects.clientId, contactIds)
+      .where(
+        projectType
+          ? and(
+              inArray(projects.clientId, contactIds),
+              eq(projects.projectType, projectType),
+            )
+          : inArray(projects.clientId, contactIds),
       )
       .orderBy(desc(projects.createdAt));
 
     // Group projects by contact and create final result
-    const projectsByContact = projectRows.reduce((acc, project) => {
-      if (!acc[project.clientId]) {
-        acc[project.clientId] = [];
-      }
-      
-      acc[project.clientId].push({
-        id: project.id,
-        clientId: project.clientId,
-        title: project.title,
-        projectType: project.projectType,
-        leadSource: project.leadSource,
-        eventDate: project.eventDate,
-        status: project.status,
-        createdAt: project.createdAt,
-        stageId: project.stageId,
-        stageEnteredAt: project.stageEnteredAt,
-        photographerId: photographerId, // We know this from the query
-        smsOptIn: false, // Default values - these are on projects now
-        emailOptIn: true,
-        notes: null
-      });
-      
-      return acc;
-    }, {} as Record<string, any[]>);
+    const projectsByContact = projectRows.reduce(
+      (acc, project) => {
+        if (!acc[project.clientId]) {
+          acc[project.clientId] = [];
+        }
+
+        acc[project.clientId].push({
+          id: project.id,
+          clientId: project.clientId,
+          title: project.title,
+          projectType: project.projectType,
+          leadSource: project.leadSource,
+          eventDate: project.eventDate,
+          status: project.status,
+          createdAt: project.createdAt,
+          stageId: project.stageId,
+          stageEnteredAt: project.stageEnteredAt,
+          photographerId: photographerId, // We know this from the query
+          smsOptIn: false, // Default values - these are on projects now
+          emailOptIn: true,
+          notes: null,
+        });
+
+        return acc;
+      },
+      {} as Record<string, any[]>,
+    );
 
     // Sort each contact's projects by creation date (newest first) to guarantee latest project is first
-    Object.keys(projectsByContact).forEach(contactId => {
-      projectsByContact[contactId].sort((a, b) => 
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    Object.keys(projectsByContact).forEach((contactId) => {
+      projectsByContact[contactId].sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
     });
 
-    return contactRows.map(contact => ({
+    return contactRows.map((contact) => ({
       ...contact,
-      projects: projectsByContact[contact.id] || []
+      projects: projectsByContact[contact.id] || [],
     }));
   }
 
   async getContact(id: string): Promise<ContactWithProjects | undefined> {
     // First get the contact
-    const [contact] = await db.select()
+    const [contact] = await db
+      .select()
       .from(contacts)
       .where(eq(contacts.id, id));
-      
+
     if (!contact) return undefined;
 
     // Then get all projects for this contact
-    const projectRows = await db.select({
-      id: projects.id,
-      title: projects.title,
-      projectType: projects.projectType,
-      leadSource: projects.leadSource,
-      eventDate: projects.eventDate,
-      status: projects.status,
-      createdAt: projects.createdAt,
-      stageId: projects.stageId,
-      stageEnteredAt: projects.stageEnteredAt,
-      photographerId: projects.photographerId,
-      smsOptIn: projects.smsOptIn,
-      emailOptIn: projects.emailOptIn,
-      notes: projects.notes
-    })
+    const projectRows = await db
+      .select({
+        id: projects.id,
+        title: projects.title,
+        projectType: projects.projectType,
+        leadSource: projects.leadSource,
+        eventDate: projects.eventDate,
+        status: projects.status,
+        createdAt: projects.createdAt,
+        stageId: projects.stageId,
+        stageEnteredAt: projects.stageEnteredAt,
+        photographerId: projects.photographerId,
+        smsOptIn: projects.smsOptIn,
+        emailOptIn: projects.emailOptIn,
+        notes: projects.notes,
+      })
       .from(projects)
       .where(eq(projects.clientId, id))
       .orderBy(desc(projects.createdAt));
-    
+
     return {
       ...contact,
-      projects: projectRows
+      projects: projectRows,
     };
   }
 
   async getContactByPhone(phone: string): Promise<Contact | undefined> {
     // Normalize input phone to last 10 digits for consistent matching
-    const normalized = phone.replace(/\D/g, '').slice(-10);
+    const normalized = phone.replace(/\D/g, "").slice(-10);
 
     if (normalized.length < 10) {
       return undefined; // Invalid phone number
@@ -976,17 +1610,18 @@ export class DatabaseStorage implements IStorage {
 
     // Match against normalized stored phones using SQL
     // This handles various formats: +15551234567, (555) 123-4567, 555-123-4567, etc.
-    const [contact] = await db.select()
+    const [contact] = await db
+      .select()
       .from(contacts)
       .where(
-        sql`RIGHT(regexp_replace(${contacts.phone}, '[^0-9]', '', 'g'), 10) = ${normalized}`
+        sql`RIGHT(regexp_replace(${contacts.phone}, '[^0-9]', '', 'g'), 10) = ${normalized}`,
       );
     return contact || undefined;
   }
 
   async getAllContactsByPhone(phone: string): Promise<Contact[]> {
     // Normalize input phone to last 10 digits for consistent matching
-    const normalized = phone.replace(/\D/g, '').slice(-10);
+    const normalized = phone.replace(/\D/g, "").slice(-10);
 
     if (normalized.length < 10) {
       return []; // Invalid phone number
@@ -994,40 +1629,44 @@ export class DatabaseStorage implements IStorage {
 
     // Match against normalized stored phones using SQL
     // This handles various formats: +15551234567, (555) 123-4567, 555-123-4567, etc.
-    const contactList = await db.select()
+    const contactList = await db
+      .select()
       .from(contacts)
       .where(
-        sql`RIGHT(regexp_replace(${contacts.phone}, '[^0-9]', '', 'g'), 10) = ${normalized}`
+        sql`RIGHT(regexp_replace(${contacts.phone}, '[^0-9]', '', 'g'), 10) = ${normalized}`,
       );
     return contactList;
   }
 
-  async getContactByEmail(email: string, photographerId?: string): Promise<Contact | undefined> {
-    const conditions = photographerId 
-      ? and(eq(contacts.email, email), eq(contacts.photographerId, photographerId))
+  async getContactByEmail(
+    email: string,
+    photographerId?: string,
+  ): Promise<Contact | undefined> {
+    const conditions = photographerId
+      ? and(
+          eq(contacts.email, email),
+          eq(contacts.photographerId, photographerId),
+        )
       : eq(contacts.email, email);
-    
-    const [contact] = await db.select()
-      .from(contacts)
-      .where(conditions);
+
+    const [contact] = await db.select().from(contacts).where(conditions);
     return contact || undefined;
   }
 
   async getContactByUserId(userId: string): Promise<Contact | undefined> {
     // Look up the user to get their clientId
-    const [user] = await db.select()
-      .from(users)
-      .where(eq(users.id, userId));
-    
+    const [user] = await db.select().from(users).where(eq(users.id, userId));
+
     if (!user || !user.clientId) {
       return undefined;
     }
-    
+
     // Get the contact using the user's clientId
-    const [contact] = await db.select()
+    const [contact] = await db
+      .select()
       .from(contacts)
       .where(eq(contacts.id, user.clientId));
-    
+
     return contact || undefined;
   }
 
@@ -1036,22 +1675,26 @@ export class DatabaseStorage implements IStorage {
     // Automatically set hasEventDate based on whether eventDate is provided
     const contactData = {
       ...insertContact,
-      hasEventDate: !!insertContact.eventDate
+      hasEventDate: !!insertContact.eventDate,
     };
     const [contact] = await db.insert(contacts).values(contactData).returning();
     return contact;
   }
 
-  async updateContact(id: string, contactUpdate: Partial<Contact>): Promise<Contact> {
+  async updateContact(
+    id: string,
+    contactUpdate: Partial<Contact>,
+  ): Promise<Contact> {
     // Update basic contact info only - project data is handled separately
     // If eventDate is being updated, set hasEventDate based on whether date exists
     const updateData = {
       ...contactUpdate,
       ...(contactUpdate.eventDate !== undefined && {
-        hasEventDate: !!contactUpdate.eventDate
-      })
+        hasEventDate: !!contactUpdate.eventDate,
+      }),
     };
-    const [updated] = await db.update(contacts)
+    const [updated] = await db
+      .update(contacts)
       .set(updateData)
       .where(eq(contacts.id, id))
       .returning();
@@ -1062,121 +1705,166 @@ export class DatabaseStorage implements IStorage {
     // Atomic cascading delete - remove all related data in a transaction
     await db.transaction(async (tx) => {
       // First verify the contact exists in this transaction
-      const [existingContact] = await tx.select({ id: contacts.id })
+      const [existingContact] = await tx
+        .select({ id: contacts.id })
         .from(contacts)
         .where(eq(contacts.id, id));
-      
+
       if (!existingContact) {
         // Contact doesn't exist - this is fine, just return without error
-        console.log(`[DELETE CONTACT] Contact ${id} not found, skipping delete`);
+        console.log(
+          `[DELETE CONTACT] Contact ${id} not found, skipping delete`,
+        );
         return;
       }
-      
-      console.log(`[DELETE CONTACT] Starting cascading delete for contact ${id}`);
-      
+
+      console.log(
+        `[DELETE CONTACT] Starting cascading delete for contact ${id}`,
+      );
+
       // Get all projects for this contact
-      const contactProjects = await tx.select({ id: projects.id })
+      const contactProjects = await tx
+        .select({ id: projects.id })
         .from(projects)
         .where(eq(projects.clientId, id));
-      
-      const projectIds = contactProjects.map(p => p.id);
-      
+
+      const projectIds = contactProjects.map((p) => p.id);
+
       if (projectIds.length > 0) {
         // Delete bookings related to these projects (batched)
-        await tx.delete(bookings)
+        await tx
+          .delete(bookings)
           .where(inArray(bookings.projectId, projectIds));
-        
+
         // Delete project-related data (batched)
-        await tx.delete(projectChecklistItems)
+        await tx
+          .delete(projectChecklistItems)
           .where(inArray(projectChecklistItems.projectId, projectIds));
-        
-        await tx.delete(projectQuestionnaires)
+
+        await tx
+          .delete(projectQuestionnaires)
           .where(inArray(projectQuestionnaires.projectId, projectIds));
-        
-        await tx.delete(emailLogs)
+
+        await tx
+          .delete(emailLogs)
           .where(inArray(emailLogs.projectId, projectIds));
-        
-        await tx.delete(smsLogs)
-          .where(inArray(smsLogs.projectId, projectIds));
-        
+
+        await tx.delete(smsLogs).where(inArray(smsLogs.projectId, projectIds));
+
         // Delete project activity logs
-        await tx.delete(projectActivityLog)
+        await tx
+          .delete(projectActivityLog)
           .where(inArray(projectActivityLog.projectId, projectIds));
-        
+
         // Delete automation executions for these projects
-        await tx.delete(automationExecutions)
+        await tx
+          .delete(automationExecutions)
           .where(inArray(automationExecutions.projectId, projectIds));
-        
+
         // Delete photographer earnings related to these projects
-        await tx.delete(photographerEarnings)
+        await tx
+          .delete(photographerEarnings)
           .where(inArray(photographerEarnings.projectId, projectIds));
-        
+
         // Delete drip campaign deliveries and subscriptions related to these projects
-        await tx.delete(dripEmailDeliveries)
+        await tx
+          .delete(dripEmailDeliveries)
           .where(inArray(dripEmailDeliveries.projectId, projectIds));
-          
-        await tx.delete(dripCampaignSubscriptions)
+
+        await tx
+          .delete(dripCampaignSubscriptions)
           .where(inArray(dripCampaignSubscriptions.projectId, projectIds));
-        
+
         // Delete project Smart Files (critical for force deletion to work)
-        await tx.delete(projectSmartFiles)
+        await tx
+          .delete(projectSmartFiles)
           .where(inArray(projectSmartFiles.projectId, projectIds));
-        
+
         // Delete projects (batched)
-        await tx.delete(projects)
-          .where(inArray(projects.id, projectIds));
+        await tx.delete(projects).where(inArray(projects.id, projectIds));
       }
-      
-      
+
       // Delete SMS logs directly related to contact (not just by project)
-      await tx.delete(smsLogs)
-        .where(eq(smsLogs.clientId, id));
-      
+      await tx.delete(smsLogs).where(eq(smsLogs.clientId, id));
+
       // Delete client portal tokens
-      await tx.delete(clientPortalTokens)
+      await tx
+        .delete(clientPortalTokens)
         .where(eq(clientPortalTokens.clientId, id));
-      
+
       // Delete conversation read tracking
-      await tx.delete(conversationReads)
+      await tx
+        .delete(conversationReads)
         .where(eq(conversationReads.contactId, id));
-      
+
       // Finally delete the contact
-      const deleteResult = await tx.delete(contacts)
-        .where(eq(contacts.id, id));
-      
-      console.log(`[DELETE CONTACT] Successfully deleted contact ${id} and all related data`);
+      const deleteResult = await tx.delete(contacts).where(eq(contacts.id, id));
+
+      console.log(
+        `[DELETE CONTACT] Successfully deleted contact ${id} and all related data`,
+      );
     });
   }
 
   // Project Types CRUD
-  async getProjectTypesByPhotographer(photographerId: string, includeArchived: boolean = false): Promise<ProjectType[]> {
-    return await db.select().from(projectTypes)
+  async getProjectTypesByPhotographer(
+    photographerId: string,
+    includeArchived: boolean = false,
+  ): Promise<ProjectType[]> {
+    return await db
+      .select()
+      .from(projectTypes)
       .where(
-        includeArchived 
+        includeArchived
           ? eq(projectTypes.photographerId, photographerId)
-          : and(eq(projectTypes.photographerId, photographerId), eq(projectTypes.isArchived, false))
+          : and(
+              eq(projectTypes.photographerId, photographerId),
+              eq(projectTypes.isArchived, false),
+            ),
       )
       .orderBy(asc(projectTypes.orderIndex));
   }
 
   async getProjectType(id: string): Promise<ProjectType | undefined> {
-    const [projectType] = await db.select().from(projectTypes).where(eq(projectTypes.id, id));
+    const [projectType] = await db
+      .select()
+      .from(projectTypes)
+      .where(eq(projectTypes.id, id));
     return projectType;
   }
 
-  async getProjectTypeBySlug(photographerId: string, slug: string): Promise<ProjectType | undefined> {
-    const [projectType] = await db.select().from(projectTypes)
-      .where(and(eq(projectTypes.photographerId, photographerId), eq(projectTypes.slug, slug)));
+  async getProjectTypeBySlug(
+    photographerId: string,
+    slug: string,
+  ): Promise<ProjectType | undefined> {
+    const [projectType] = await db
+      .select()
+      .from(projectTypes)
+      .where(
+        and(
+          eq(projectTypes.photographerId, photographerId),
+          eq(projectTypes.slug, slug),
+        ),
+      );
     return projectType;
   }
 
-  async createProjectType(insertProjectType: InsertProjectType): Promise<ProjectType> {
-    const [projectType] = await db.insert(projectTypes).values(insertProjectType).returning();
+  async createProjectType(
+    insertProjectType: InsertProjectType,
+  ): Promise<ProjectType> {
+    const [projectType] = await db
+      .insert(projectTypes)
+      .values(insertProjectType)
+      .returning();
     return projectType;
   }
 
-  async updateProjectType(id: string, projectType: Partial<ProjectType>): Promise<ProjectType> {
-    const [updated] = await db.update(projectTypes)
+  async updateProjectType(
+    id: string,
+    projectType: Partial<ProjectType>,
+  ): Promise<ProjectType> {
+    const [updated] = await db
+      .update(projectTypes)
       .set(projectType)
       .where(eq(projectTypes.id, id))
       .returning();
@@ -1188,7 +1876,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async archiveProjectType(id: string): Promise<ProjectType> {
-    const [updated] = await db.update(projectTypes)
+    const [updated] = await db
+      .update(projectTypes)
       .set({ isArchived: true })
       .where(eq(projectTypes.id, id))
       .returning();
@@ -1205,13 +1894,13 @@ export class DatabaseStorage implements IStorage {
       .select({ count: sql<number>`count(*)::int` })
       .from(projects)
       .where(eq(projects.projectTypeId, projectTypeId));
-    
+
     // Count stages using this project type
     const [stageResult] = await db
       .select({ count: sql<number>`count(*)::int` })
       .from(stages)
       .where(eq(stages.projectTypeId, projectTypeId));
-    
+
     // Count automations using this project type
     const [automationResult] = await db
       .select({ count: sql<number>`count(*)::int` })
@@ -1221,18 +1910,31 @@ export class DatabaseStorage implements IStorage {
     return {
       projectCount: projectResult?.count || 0,
       stageCount: stageResult?.count || 0,
-      automationCount: automationResult?.count || 0
+      automationCount: automationResult?.count || 0,
     };
   }
 
-  async seedDefaultProjectTypes(photographerId: string): Promise<ProjectType[]> {
+  async seedDefaultProjectTypes(
+    photographerId: string,
+  ): Promise<ProjectType[]> {
     // Default project types to seed for new photographers (simplified 5 types)
     const defaultTypes = [
-      { name: 'Wedding', slug: 'WEDDING', color: '#ec4899', orderIndex: 0, isDefault: true },
-      { name: 'Portrait', slug: 'PORTRAIT', color: '#8b5cf6', orderIndex: 1 },
-      { name: 'Event', slug: 'EVENT', color: '#eab308', orderIndex: 2 },
-      { name: 'Commercial', slug: 'COMMERCIAL', color: '#0ea5e9', orderIndex: 3 },
-      { name: 'Other', slug: 'OTHER', color: '#a3a3a3', orderIndex: 4 }
+      {
+        name: "Wedding",
+        slug: "WEDDING",
+        color: "#ec4899",
+        orderIndex: 0,
+        isDefault: true,
+      },
+      { name: "Portrait", slug: "PORTRAIT", color: "#8b5cf6", orderIndex: 1 },
+      { name: "Event", slug: "EVENT", color: "#eab308", orderIndex: 2 },
+      {
+        name: "Commercial",
+        slug: "COMMERCIAL",
+        color: "#0ea5e9",
+        orderIndex: 3,
+      },
+      { name: "Other", slug: "OTHER", color: "#a3a3a3", orderIndex: 4 },
     ];
 
     // Simplified 5-stage default pipeline (unified - not per project type)
@@ -1241,7 +1943,7 @@ export class DatabaseStorage implements IStorage {
       { name: "Consultation / Discovery", orderIndex: 1, isDefault: false },
       { name: "Proposal Sent", orderIndex: 2, isDefault: false },
       { name: "Booked / Paid", orderIndex: 3, isDefault: false },
-      { name: "Completed", orderIndex: 4, isDefault: false }
+      { name: "Completed", orderIndex: 4, isDefault: false },
     ];
 
     const createdTypes: ProjectType[] = [];
@@ -1249,12 +1951,15 @@ export class DatabaseStorage implements IStorage {
     // Create project types
     for (const typeData of defaultTypes) {
       // Check if this slug already exists for this photographer
-      const existing = await this.getProjectTypeBySlug(photographerId, typeData.slug);
+      const existing = await this.getProjectTypeBySlug(
+        photographerId,
+        typeData.slug,
+      );
       if (!existing) {
         const created = await this.createProjectType({
           photographerId,
           ...typeData,
-          isArchived: false
+          isArchived: false,
         });
         createdTypes.push(created);
       }
@@ -1268,7 +1973,7 @@ export class DatabaseStorage implements IStorage {
         await this.createStage({
           ...stage,
           photographerId,
-          projectType: null  // Unified pipeline - no project type
+          projectType: null, // Unified pipeline - no project type
         });
       }
     }
@@ -1283,7 +1988,9 @@ export class DatabaseStorage implements IStorage {
 
   async getStagesByPhotographer(photographerId: string): Promise<Stage[]> {
     // Stages are now unified per photographer (no project type filtering)
-    return await db.select().from(stages)
+    return await db
+      .select()
+      .from(stages)
       .where(eq(stages.photographerId, photographerId))
       .orderBy(asc(stages.orderIndex));
   }
@@ -1294,7 +2001,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateStage(id: string, stage: Partial<Stage>): Promise<Stage> {
-    const [updated] = await db.update(stages)
+    const [updated] = await db
+      .update(stages)
       .set(stage)
       .where(eq(stages.id, id))
       .returning();
@@ -1315,7 +2023,7 @@ export class DatabaseStorage implements IStorage {
       .select({ count: sql<number>`count(*)::int` })
       .from(projects)
       .where(eq(projects.stageId, stageId));
-    
+
     // Count automations targeting this stage (either as source or target)
     const [automationResult] = await db
       .select({ count: sql<number>`count(*)::int` })
@@ -1324,10 +2032,10 @@ export class DatabaseStorage implements IStorage {
         or(
           eq(automations.stageId, stageId),
           eq(automations.targetStageId, stageId),
-          eq(automations.stageCondition, stageId)
-        )
+          eq(automations.stageCondition, stageId),
+        ),
       );
-    
+
     // Count drip campaigns targeting this stage (only check targetStageId for simplicity)
     const [campaignResult] = await db
       .select({ count: sql<number>`count(*)::int` })
@@ -1337,31 +2045,46 @@ export class DatabaseStorage implements IStorage {
     return {
       projectCount: projectResult?.count || 0,
       automationCount: automationResult?.count || 0,
-      campaignCount: campaignResult?.count || 0
+      campaignCount: campaignResult?.count || 0,
     };
   }
 
-  async reassignProjectsFromStage(fromStageId: string, toStageId: string): Promise<number> {
-    const result = await db.update(projects)
+  async reassignProjectsFromStage(
+    fromStageId: string,
+    toStageId: string,
+  ): Promise<number> {
+    const result = await db
+      .update(projects)
       .set({ stageId: toStageId, stageEnteredAt: new Date() })
       .where(eq(projects.stageId, fromStageId))
       .returning();
     return result.length;
   }
 
-  async getTemplatesByPhotographer(photographerId: string): Promise<Template[]> {
-    return await db.select().from(templates)
+  async getTemplatesByPhotographer(
+    photographerId: string,
+  ): Promise<Template[]> {
+    return await db
+      .select()
+      .from(templates)
       .where(eq(templates.photographerId, photographerId))
       .orderBy(desc(templates.createdAt));
   }
 
   async createTemplate(insertTemplate: InsertTemplate): Promise<Template> {
-    const [template] = await db.insert(templates).values(insertTemplate).returning();
+    const [template] = await db
+      .insert(templates)
+      .values(insertTemplate)
+      .returning();
     return template;
   }
 
-  async updateTemplate(id: string, template: Partial<Template>): Promise<Template> {
-    const [updated] = await db.update(templates)
+  async updateTemplate(
+    id: string,
+    template: Partial<Template>,
+  ): Promise<Template> {
+    const [updated] = await db
+      .update(templates)
       .set(template)
       .where(eq(templates.id, id))
       .returning();
@@ -1372,31 +2095,46 @@ export class DatabaseStorage implements IStorage {
     await db.delete(templates).where(eq(templates.id, id));
   }
 
-  async getAutomationsByPhotographer(photographerId: string, projectType?: string): Promise<Automation[]> {
+  async getAutomationsByPhotographer(
+    photographerId: string,
+    projectType?: string,
+  ): Promise<Automation[]> {
     const result = await db.query.automations.findMany({
-      where: projectType ? 
-        and(eq(automations.photographerId, photographerId), eq(automations.projectType, projectType)) :
-        eq(automations.photographerId, photographerId),
+      where: projectType
+        ? and(
+            eq(automations.photographerId, photographerId),
+            eq(automations.projectType, projectType),
+          )
+        : eq(automations.photographerId, photographerId),
       with: {
         steps: {
-          orderBy: (steps, { asc }) => [asc(steps.stepIndex)]
+          orderBy: (steps, { asc }) => [asc(steps.stepIndex)],
         },
         stage: true,
         targetStage: true,
         conditionStage: true,
-        businessTriggers: true
-      }
+        businessTriggers: true,
+      },
     });
     return result as any;
   }
 
-  async createAutomation(insertAutomation: InsertAutomation): Promise<Automation> {
-    const [automation] = await db.insert(automations).values(insertAutomation).returning();
+  async createAutomation(
+    insertAutomation: InsertAutomation,
+  ): Promise<Automation> {
+    const [automation] = await db
+      .insert(automations)
+      .values(insertAutomation)
+      .returning();
     return automation;
   }
 
-  async updateAutomation(id: string, automation: Partial<Automation>): Promise<Automation> {
-    const [updated] = await db.update(automations)
+  async updateAutomation(
+    id: string,
+    automation: Partial<Automation>,
+  ): Promise<Automation> {
+    const [updated] = await db
+      .update(automations)
       .set(automation)
       .where(eq(automations.id, id))
       .returning();
@@ -1407,54 +2145,83 @@ export class DatabaseStorage implements IStorage {
     // Use a transaction to ensure atomicity and prevent race conditions with cron job
     await db.transaction(async (tx) => {
       // CRITICAL: Disable the automation FIRST within the transaction
-      await tx.update(automations)
+      await tx
+        .update(automations)
         .set({ enabled: false })
         .where(eq(automations.id, id));
-      
+
       // Get all automation steps for this automation
-      const steps = await tx.select().from(automationSteps)
+      const steps = await tx
+        .select()
+        .from(automationSteps)
         .where(eq(automationSteps.automationId, id));
-      const stepIds = steps.map(s => s.id);
-      
+      const stepIds = steps.map((s) => s.id);
+
       // Delete all child records in proper order
       for (const stepId of stepIds) {
-        await tx.execute(sql`DELETE FROM email_logs WHERE automation_step_id = ${stepId}`);
-        await tx.execute(sql`DELETE FROM sms_logs WHERE automation_step_id = ${stepId}`);
-        await tx.execute(sql`DELETE FROM email_history WHERE automation_step_id = ${stepId}`);
+        await tx.execute(
+          sql`DELETE FROM email_logs WHERE automation_step_id = ${stepId}`,
+        );
+        await tx.execute(
+          sql`DELETE FROM sms_logs WHERE automation_step_id = ${stepId}`,
+        );
+        await tx.execute(
+          sql`DELETE FROM email_history WHERE automation_step_id = ${stepId}`,
+        );
       }
-      
+
       // Delete execution records
-      await tx.execute(sql`DELETE FROM automation_executions WHERE automation_id = ${id}`);
-      
+      await tx.execute(
+        sql`DELETE FROM automation_executions WHERE automation_id = ${id}`,
+      );
+
       // Delete steps
-      await tx.execute(sql`DELETE FROM automation_steps WHERE automation_id = ${id}`);
-      
+      await tx.execute(
+        sql`DELETE FROM automation_steps WHERE automation_id = ${id}`,
+      );
+
       // Delete business triggers
-      await tx.execute(sql`DELETE FROM automation_business_triggers WHERE automation_id = ${id}`);
-      
+      await tx.execute(
+        sql`DELETE FROM automation_business_triggers WHERE automation_id = ${id}`,
+      );
+
       // Finally, delete the automation itself
       await tx.execute(sql`DELETE FROM automations WHERE id = ${id}`);
     });
   }
 
   async getAutomationSteps(automationId: string): Promise<AutomationStep[]> {
-    return await db.select().from(automationSteps)
+    return await db
+      .select()
+      .from(automationSteps)
       .where(eq(automationSteps.automationId, automationId))
       .orderBy(automationSteps.stepIndex);
   }
 
   async getAutomationStepById(id: string): Promise<AutomationStep | undefined> {
-    const [step] = await db.select().from(automationSteps).where(eq(automationSteps.id, id));
+    const [step] = await db
+      .select()
+      .from(automationSteps)
+      .where(eq(automationSteps.id, id));
     return step || undefined;
   }
 
-  async createAutomationStep(insertStep: InsertAutomationStep): Promise<AutomationStep> {
-    const [step] = await db.insert(automationSteps).values(insertStep).returning();
+  async createAutomationStep(
+    insertStep: InsertAutomationStep,
+  ): Promise<AutomationStep> {
+    const [step] = await db
+      .insert(automationSteps)
+      .values(insertStep)
+      .returning();
     return step;
   }
 
-  async updateAutomationStep(id: string, step: Partial<AutomationStep>): Promise<AutomationStep> {
-    const [updated] = await db.update(automationSteps)
+  async updateAutomationStep(
+    id: string,
+    step: Partial<AutomationStep>,
+  ): Promise<AutomationStep> {
+    const [updated] = await db
+      .update(automationSteps)
       .set(step)
       .where(eq(automationSteps.id, id))
       .returning();
@@ -1466,35 +2233,54 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Business Trigger implementations
-  async getBusinessTriggersByAutomation(automationId: string): Promise<AutomationBusinessTrigger[]> {
-    return await db.select().from(automationBusinessTriggers)
+  async getBusinessTriggersByAutomation(
+    automationId: string,
+  ): Promise<AutomationBusinessTrigger[]> {
+    return await db
+      .select()
+      .from(automationBusinessTriggers)
       .where(eq(automationBusinessTriggers.automationId, automationId))
       .orderBy(automationBusinessTriggers.createdAt);
   }
 
-  async getBusinessTriggersByPhotographer(photographerId: string): Promise<AutomationBusinessTrigger[]> {
-    return await db.select({
-      id: automationBusinessTriggers.id,
-      automationId: automationBusinessTriggers.automationId,
-      triggerType: automationBusinessTriggers.triggerType,
-      enabled: automationBusinessTriggers.enabled,
-      minAmountCents: automationBusinessTriggers.minAmountCents,
-      projectType: automationBusinessTriggers.projectType,
-      createdAt: automationBusinessTriggers.createdAt
-    })
-    .from(automationBusinessTriggers)
-    .innerJoin(automations, eq(automations.id, automationBusinessTriggers.automationId))
-    .where(eq(automations.photographerId, photographerId))
-    .orderBy(automationBusinessTriggers.createdAt);
+  async getBusinessTriggersByPhotographer(
+    photographerId: string,
+  ): Promise<AutomationBusinessTrigger[]> {
+    return await db
+      .select({
+        id: automationBusinessTriggers.id,
+        automationId: automationBusinessTriggers.automationId,
+        triggerType: automationBusinessTriggers.triggerType,
+        enabled: automationBusinessTriggers.enabled,
+        minAmountCents: automationBusinessTriggers.minAmountCents,
+        projectType: automationBusinessTriggers.projectType,
+        createdAt: automationBusinessTriggers.createdAt,
+      })
+      .from(automationBusinessTriggers)
+      .innerJoin(
+        automations,
+        eq(automations.id, automationBusinessTriggers.automationId),
+      )
+      .where(eq(automations.photographerId, photographerId))
+      .orderBy(automationBusinessTriggers.createdAt);
   }
 
-  async createBusinessTrigger(trigger: InsertAutomationBusinessTrigger): Promise<AutomationBusinessTrigger> {
-    const [created] = await db.insert(automationBusinessTriggers).values(trigger).returning();
+  async createBusinessTrigger(
+    trigger: InsertAutomationBusinessTrigger,
+  ): Promise<AutomationBusinessTrigger> {
+    const [created] = await db
+      .insert(automationBusinessTriggers)
+      .values(trigger)
+      .returning();
     return created;
   }
 
-  async updateBusinessTrigger(id: string, trigger: Partial<AutomationBusinessTrigger>): Promise<AutomationBusinessTrigger> {
-    const [updated] = await db.update(automationBusinessTriggers)
+  async updateBusinessTrigger(
+    id: string,
+    trigger: Partial<AutomationBusinessTrigger>,
+  ): Promise<AutomationBusinessTrigger> {
+    const [updated] = await db
+      .update(automationBusinessTriggers)
       .set(trigger)
       .where(eq(automationBusinessTriggers.id, id))
       .returning();
@@ -1502,15 +2288,23 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteBusinessTrigger(id: string): Promise<void> {
-    await db.delete(automationBusinessTriggers).where(eq(automationBusinessTriggers.id, id));
+    await db
+      .delete(automationBusinessTriggers)
+      .where(eq(automationBusinessTriggers.id, id));
   }
 
-  async deleteBusinessTriggersByAutomation(automationId: string): Promise<void> {
-    await db.delete(automationBusinessTriggers).where(eq(automationBusinessTriggers.automationId, automationId));
+  async deleteBusinessTriggersByAutomation(
+    automationId: string,
+  ): Promise<void> {
+    await db
+      .delete(automationBusinessTriggers)
+      .where(eq(automationBusinessTriggers.automationId, automationId));
   }
 
   async getPackagesByPhotographer(photographerId: string): Promise<Package[]> {
-    return await db.select().from(packages)
+    return await db
+      .select()
+      .from(packages)
       .where(eq(packages.photographerId, photographerId))
       .orderBy(desc(packages.createdAt));
   }
@@ -1521,7 +2315,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updatePackage(id: string, pkg: Partial<Package>): Promise<Package> {
-    const [updated] = await db.update(packages)
+    const [updated] = await db
+      .update(packages)
       .set(pkg)
       .where(eq(packages.id, id))
       .returning();
@@ -1529,7 +2324,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAddOnsByPhotographer(photographerId: string): Promise<AddOn[]> {
-    return await db.select().from(addOns)
+    return await db
+      .select()
+      .from(addOns)
       .where(eq(addOns.photographerId, photographerId))
       .orderBy(desc(addOns.createdAt));
   }
@@ -1540,7 +2337,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateAddOn(id: string, addOn: Partial<AddOn>): Promise<AddOn> {
-    const [updated] = await db.update(addOns)
+    const [updated] = await db
+      .update(addOns)
       .set(addOn)
       .where(eq(addOns.id, id))
       .returning();
@@ -1551,19 +2349,29 @@ export class DatabaseStorage implements IStorage {
     await db.delete(addOns).where(eq(addOns.id, id));
   }
 
-  async getLeadFormsByPhotographer(photographerId: string): Promise<LeadForm[]> {
-    return await db.select().from(leadForms)
+  async getLeadFormsByPhotographer(
+    photographerId: string,
+  ): Promise<LeadForm[]> {
+    return await db
+      .select()
+      .from(leadForms)
       .where(eq(leadForms.photographerId, photographerId))
       .orderBy(desc(leadForms.createdAt));
   }
 
   async getLeadFormById(id: string): Promise<LeadForm | undefined> {
-    const [form] = await db.select().from(leadForms).where(eq(leadForms.id, id));
+    const [form] = await db
+      .select()
+      .from(leadForms)
+      .where(eq(leadForms.id, id));
     return form || undefined;
   }
 
   async getLeadFormByToken(token: string): Promise<LeadForm | undefined> {
-    const [form] = await db.select().from(leadForms).where(eq(leadForms.publicToken, token));
+    const [form] = await db
+      .select()
+      .from(leadForms)
+      .where(eq(leadForms.publicToken, token));
     return form || undefined;
   }
 
@@ -1573,7 +2381,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateLeadForm(id: string, form: Partial<LeadForm>): Promise<LeadForm> {
-    const [updated] = await db.update(leadForms)
+    const [updated] = await db
+      .update(leadForms)
       .set({ ...form, updatedAt: new Date() })
       .where(eq(leadForms.id, id))
       .returning();
@@ -1584,24 +2393,42 @@ export class DatabaseStorage implements IStorage {
     await db.delete(leadForms).where(eq(leadForms.id, id));
   }
 
-  async getQuestionnaireTemplatesByPhotographer(photographerId: string): Promise<QuestionnaireTemplate[]> {
-    return await db.select().from(questionnaireTemplates)
+  async getQuestionnaireTemplatesByPhotographer(
+    photographerId: string,
+  ): Promise<QuestionnaireTemplate[]> {
+    return await db
+      .select()
+      .from(questionnaireTemplates)
       .where(eq(questionnaireTemplates.photographerId, photographerId))
       .orderBy(desc(questionnaireTemplates.createdAt));
   }
 
-  async createQuestionnaireTemplate(insertTemplate: InsertQuestionnaireTemplate): Promise<QuestionnaireTemplate> {
-    const [template] = await db.insert(questionnaireTemplates).values(insertTemplate).returning();
+  async createQuestionnaireTemplate(
+    insertTemplate: InsertQuestionnaireTemplate,
+  ): Promise<QuestionnaireTemplate> {
+    const [template] = await db
+      .insert(questionnaireTemplates)
+      .values(insertTemplate)
+      .returning();
     return template;
   }
 
-  async getQuestionnaireTemplate(id: string): Promise<QuestionnaireTemplate | undefined> {
-    const [template] = await db.select().from(questionnaireTemplates).where(eq(questionnaireTemplates.id, id));
+  async getQuestionnaireTemplate(
+    id: string,
+  ): Promise<QuestionnaireTemplate | undefined> {
+    const [template] = await db
+      .select()
+      .from(questionnaireTemplates)
+      .where(eq(questionnaireTemplates.id, id));
     return template || undefined;
   }
 
-  async updateQuestionnaireTemplate(id: string, template: Partial<QuestionnaireTemplate>): Promise<QuestionnaireTemplate> {
-    const [updated] = await db.update(questionnaireTemplates)
+  async updateQuestionnaireTemplate(
+    id: string,
+    template: Partial<QuestionnaireTemplate>,
+  ): Promise<QuestionnaireTemplate> {
+    const [updated] = await db
+      .update(questionnaireTemplates)
       .set(template)
       .where(eq(questionnaireTemplates.id, id))
       .returning();
@@ -1610,34 +2437,57 @@ export class DatabaseStorage implements IStorage {
 
   async deleteQuestionnaireTemplate(id: string): Promise<void> {
     // Delete questions first (foreign key constraint)
-    await db.delete(questionnaireQuestions).where(eq(questionnaireQuestions.templateId, id));
-    
+    await db
+      .delete(questionnaireQuestions)
+      .where(eq(questionnaireQuestions.templateId, id));
+
     // Delete client questionnaires
-    await db.delete(clientQuestionnaires).where(eq(clientQuestionnaires.templateId, id));
-    
+    await db
+      .delete(clientQuestionnaires)
+      .where(eq(clientQuestionnaires.templateId, id));
+
     // Delete the template itself
-    await db.delete(questionnaireTemplates).where(eq(questionnaireTemplates.id, id));
+    await db
+      .delete(questionnaireTemplates)
+      .where(eq(questionnaireTemplates.id, id));
   }
 
-  async getQuestionnaireQuestionsByTemplate(templateId: string): Promise<QuestionnaireQuestion[]> {
-    return await db.select().from(questionnaireQuestions)
+  async getQuestionnaireQuestionsByTemplate(
+    templateId: string,
+  ): Promise<QuestionnaireQuestion[]> {
+    return await db
+      .select()
+      .from(questionnaireQuestions)
       .where(eq(questionnaireQuestions.templateId, templateId))
       .orderBy(asc(questionnaireQuestions.orderIndex));
   }
 
-  async getQuestionnaireQuestionById(id: string): Promise<QuestionnaireQuestion | undefined> {
-    const [question] = await db.select().from(questionnaireQuestions)
+  async getQuestionnaireQuestionById(
+    id: string,
+  ): Promise<QuestionnaireQuestion | undefined> {
+    const [question] = await db
+      .select()
+      .from(questionnaireQuestions)
       .where(eq(questionnaireQuestions.id, id));
     return question || undefined;
   }
 
-  async createQuestionnaireQuestion(insertQuestion: InsertQuestionnaireQuestion): Promise<QuestionnaireQuestion> {
-    const [question] = await db.insert(questionnaireQuestions).values(insertQuestion).returning();
+  async createQuestionnaireQuestion(
+    insertQuestion: InsertQuestionnaireQuestion,
+  ): Promise<QuestionnaireQuestion> {
+    const [question] = await db
+      .insert(questionnaireQuestions)
+      .values(insertQuestion)
+      .returning();
     return question;
   }
 
-  async updateQuestionnaireQuestion(id: string, question: Partial<QuestionnaireQuestion>): Promise<QuestionnaireQuestion> {
-    const [updated] = await db.update(questionnaireQuestions)
+  async updateQuestionnaireQuestion(
+    id: string,
+    question: Partial<QuestionnaireQuestion>,
+  ): Promise<QuestionnaireQuestion> {
+    const [updated] = await db
+      .update(questionnaireQuestions)
       .set(question)
       .where(eq(questionnaireQuestions.id, id))
       .returning();
@@ -1645,64 +2495,96 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteQuestionnaireQuestion(id: string): Promise<void> {
-    await db.delete(questionnaireQuestions).where(eq(questionnaireQuestions.id, id));
+    await db
+      .delete(questionnaireQuestions)
+      .where(eq(questionnaireQuestions.id, id));
   }
 
   // Project Questionnaires (Assignments)
-  async getProjectQuestionnairesByProject(projectId: string): Promise<ProjectQuestionnaire[]> {
-    return await db.select().from(projectQuestionnaires)
+  async getProjectQuestionnairesByProject(
+    projectId: string,
+  ): Promise<ProjectQuestionnaire[]> {
+    return await db
+      .select()
+      .from(projectQuestionnaires)
       .where(eq(projectQuestionnaires.projectId, projectId));
   }
 
-  async getProjectQuestionnairesWithTemplates(projectId: string): Promise<any[]> {
-    return await db.select({
-      id: projectQuestionnaires.id,
-      templateId: projectQuestionnaires.templateId,
-      answers: projectQuestionnaires.answers,
-      submittedAt: projectQuestionnaires.submittedAt,
-      createdAt: projectQuestionnaires.createdAt,
-      templateTitle: questionnaireTemplates.title
-    })
-    .from(projectQuestionnaires)
-    .innerJoin(questionnaireTemplates, eq(projectQuestionnaires.templateId, questionnaireTemplates.id))
-    .where(eq(projectQuestionnaires.projectId, projectId));
+  async getProjectQuestionnairesWithTemplates(
+    projectId: string,
+  ): Promise<any[]> {
+    return await db
+      .select({
+        id: projectQuestionnaires.id,
+        templateId: projectQuestionnaires.templateId,
+        answers: projectQuestionnaires.answers,
+        submittedAt: projectQuestionnaires.submittedAt,
+        createdAt: projectQuestionnaires.createdAt,
+        templateTitle: questionnaireTemplates.title,
+      })
+      .from(projectQuestionnaires)
+      .innerJoin(
+        questionnaireTemplates,
+        eq(projectQuestionnaires.templateId, questionnaireTemplates.id),
+      )
+      .where(eq(projectQuestionnaires.projectId, projectId));
   }
 
-  async getProjectQuestionnairesByPhotographer(photographerId: string): Promise<ProjectQuestionnaire[]> {
-    return await db.select({
-      id: projectQuestionnaires.id,
-      projectId: projectQuestionnaires.projectId,
-      templateId: projectQuestionnaires.templateId,
-      answers: projectQuestionnaires.answers,
-      submittedAt: projectQuestionnaires.submittedAt,
-      createdAt: projectQuestionnaires.createdAt,
-      clientName: sql<string>`${contacts.firstName} || ' ' || ${contacts.lastName}`,
-      templateTitle: questionnaireTemplates.title,
-      projectType: projects.projectType
-    })
-    .from(projectQuestionnaires)
-    .innerJoin(projects, eq(projectQuestionnaires.projectId, projects.id))
-    .innerJoin(contacts, eq(projects.clientId, contacts.id))
-    .innerJoin(questionnaireTemplates, eq(projectQuestionnaires.templateId, questionnaireTemplates.id))
-    .where(eq(projects.photographerId, photographerId));
+  async getProjectQuestionnairesByPhotographer(
+    photographerId: string,
+  ): Promise<ProjectQuestionnaire[]> {
+    return await db
+      .select({
+        id: projectQuestionnaires.id,
+        projectId: projectQuestionnaires.projectId,
+        templateId: projectQuestionnaires.templateId,
+        answers: projectQuestionnaires.answers,
+        submittedAt: projectQuestionnaires.submittedAt,
+        createdAt: projectQuestionnaires.createdAt,
+        clientName: sql<string>`${contacts.firstName} || ' ' || ${contacts.lastName}`,
+        templateTitle: questionnaireTemplates.title,
+        projectType: projects.projectType,
+      })
+      .from(projectQuestionnaires)
+      .innerJoin(projects, eq(projectQuestionnaires.projectId, projects.id))
+      .innerJoin(contacts, eq(projects.clientId, contacts.id))
+      .innerJoin(
+        questionnaireTemplates,
+        eq(projectQuestionnaires.templateId, questionnaireTemplates.id),
+      )
+      .where(eq(projects.photographerId, photographerId));
   }
 
-  async getProjectQuestionnaire(id: string): Promise<ProjectQuestionnaire | undefined> {
-    const [questionnaire] = await db.select().from(projectQuestionnaires)
+  async getProjectQuestionnaire(
+    id: string,
+  ): Promise<ProjectQuestionnaire | undefined> {
+    const [questionnaire] = await db
+      .select()
+      .from(projectQuestionnaires)
       .where(eq(projectQuestionnaires.id, id));
     return questionnaire || undefined;
   }
 
-  async assignQuestionnaireToProject(projectId: string, templateId: string): Promise<ProjectQuestionnaire> {
-    const [assigned] = await db.insert(projectQuestionnaires).values({
-      projectId,
-      templateId
-    }).returning();
+  async assignQuestionnaireToProject(
+    projectId: string,
+    templateId: string,
+  ): Promise<ProjectQuestionnaire> {
+    const [assigned] = await db
+      .insert(projectQuestionnaires)
+      .values({
+        projectId,
+        templateId,
+      })
+      .returning();
     return assigned;
   }
 
-  async updateProjectQuestionnaire(id: string, data: Partial<ProjectQuestionnaire>): Promise<ProjectQuestionnaire> {
-    const [updated] = await db.update(projectQuestionnaires)
+  async updateProjectQuestionnaire(
+    id: string,
+    data: Partial<ProjectQuestionnaire>,
+  ): Promise<ProjectQuestionnaire> {
+    const [updated] = await db
+      .update(projectQuestionnaires)
       .set(data)
       .where(eq(projectQuestionnaires.id, id))
       .returning();
@@ -1710,7 +2592,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteProjectQuestionnaire(id: string): Promise<void> {
-    await db.delete(projectQuestionnaires).where(eq(projectQuestionnaires.id, id));
+    await db
+      .delete(projectQuestionnaires)
+      .where(eq(projectQuestionnaires.id, id));
   }
 
   // Project Activity Log
@@ -1733,48 +2617,53 @@ export class DatabaseStorage implements IStorage {
 
   // Client-specific questionnaire queries
   async getQuestionnairesByClient(clientId: string): Promise<any[]> {
-    return await db.select({
-      id: projectQuestionnaires.id,
-      templateId: projectQuestionnaires.templateId,
-      answers: projectQuestionnaires.answers,
-      submittedAt: projectQuestionnaires.submittedAt,
-      createdAt: projectQuestionnaires.createdAt,
-      templateTitle: questionnaireTemplates.title,
-      templateDescription: questionnaireTemplates.description
-    })
-    .from(projectQuestionnaires)
-    .innerJoin(projects, eq(projectQuestionnaires.projectId, projects.id))
-    .innerJoin(questionnaireTemplates, eq(projectQuestionnaires.templateId, questionnaireTemplates.id))
-    .where(eq(projects.clientId, clientId));
+    return await db
+      .select({
+        id: projectQuestionnaires.id,
+        templateId: projectQuestionnaires.templateId,
+        answers: projectQuestionnaires.answers,
+        submittedAt: projectQuestionnaires.submittedAt,
+        createdAt: projectQuestionnaires.createdAt,
+        templateTitle: questionnaireTemplates.title,
+        templateDescription: questionnaireTemplates.description,
+      })
+      .from(projectQuestionnaires)
+      .innerJoin(projects, eq(projectQuestionnaires.projectId, projects.id))
+      .innerJoin(
+        questionnaireTemplates,
+        eq(projectQuestionnaires.templateId, questionnaireTemplates.id),
+      )
+      .where(eq(projects.clientId, clientId));
   }
 
   // FLATTENED to avoid Drizzle's nested object issue with leftJoin returning null
   async getProjectsByClient(clientId: string): Promise<any[]> {
-    const rows = await db.select({
-      id: projects.id,
-      title: projects.title,
-      projectType: projects.projectType,
-      eventDate: projects.eventDate,
-      notes: projects.notes,
-      status: projects.status,
-      photographerId: projects.photographerId,
-      createdAt: projects.createdAt,
-      // Client fields - FLATTENED
-      clientId: contacts.id,
-      clientFirstName: contacts.firstName,
-      clientLastName: contacts.lastName,
-      clientEmail: contacts.email,
-      clientPhone: contacts.phone,
-      // Stage fields - FLATTENED
-      stageId: stages.id,
-      stageName: stages.name
-    })
-    .from(projects)
-    .innerJoin(contacts, eq(projects.clientId, contacts.id))
-    .leftJoin(stages, eq(projects.stageId, stages.id))
-    .where(eq(projects.clientId, clientId));
-    
-    return rows.map(row => ({
+    const rows = await db
+      .select({
+        id: projects.id,
+        title: projects.title,
+        projectType: projects.projectType,
+        eventDate: projects.eventDate,
+        notes: projects.notes,
+        status: projects.status,
+        photographerId: projects.photographerId,
+        createdAt: projects.createdAt,
+        // Client fields - FLATTENED
+        clientId: contacts.id,
+        clientFirstName: contacts.firstName,
+        clientLastName: contacts.lastName,
+        clientEmail: contacts.email,
+        clientPhone: contacts.phone,
+        // Stage fields - FLATTENED
+        stageId: stages.id,
+        stageName: stages.name,
+      })
+      .from(projects)
+      .innerJoin(contacts, eq(projects.clientId, contacts.id))
+      .leftJoin(stages, eq(projects.stageId, stages.id))
+      .where(eq(projects.clientId, clientId));
+
+    return rows.map((row) => ({
       id: row.id,
       title: row.title,
       projectType: row.projectType,
@@ -1788,12 +2677,14 @@ export class DatabaseStorage implements IStorage {
         firstName: row.clientFirstName,
         lastName: row.clientLastName,
         email: row.clientEmail,
-        phone: row.clientPhone
+        phone: row.clientPhone,
       },
-      stage: row.stageId ? {
-        id: row.stageId,
-        name: row.stageName
-      } : null
+      stage: row.stageId
+        ? {
+            id: row.stageId,
+            name: row.stageName,
+          }
+        : null,
     }));
   }
 
@@ -1801,93 +2692,105 @@ export class DatabaseStorage implements IStorage {
     // Parallelize all queries for better performance
     const [activityLogs, emailLogEntries, smsLogEntries] = await Promise.all([
       // Get activity log entries for all projects belonging to this client
-      db.select({
-        id: projectActivityLog.id,
-        activityType: projectActivityLog.activityType,
-        title: projectActivityLog.title,
-        description: projectActivityLog.description,
-        metadata: projectActivityLog.metadata,
-        relatedId: projectActivityLog.relatedId,
-        relatedType: projectActivityLog.relatedType,
-        createdAt: projectActivityLog.createdAt,
-        projectId: projectActivityLog.projectId
-      }).from(projectActivityLog)
+      db
+        .select({
+          id: projectActivityLog.id,
+          activityType: projectActivityLog.activityType,
+          title: projectActivityLog.title,
+          description: projectActivityLog.description,
+          metadata: projectActivityLog.metadata,
+          relatedId: projectActivityLog.relatedId,
+          relatedType: projectActivityLog.relatedType,
+          createdAt: projectActivityLog.createdAt,
+          projectId: projectActivityLog.projectId,
+        })
+        .from(projectActivityLog)
         .innerJoin(projects, eq(projectActivityLog.projectId, projects.id))
         .where(eq(projects.clientId, clientId)),
-      
+
       // Get email logs with template information
-      db.select({
-        id: emailLogs.id,
-        clientId: emailLogs.clientId,
-        automationStepId: emailLogs.automationStepId,
-        status: emailLogs.status,
-        providerId: emailLogs.providerId,
-        sentAt: emailLogs.sentAt,
-        openedAt: emailLogs.openedAt,
-        clickedAt: emailLogs.clickedAt,
-        bouncedAt: emailLogs.bouncedAt,
-        templateName: templates.name,
-        templateSubject: templates.subject,
-        templateHtmlBody: templates.htmlBody,
-        templateTextBody: templates.textBody,
-        automationName: automations.name
-      })
+      db
+        .select({
+          id: emailLogs.id,
+          clientId: emailLogs.clientId,
+          automationStepId: emailLogs.automationStepId,
+          status: emailLogs.status,
+          providerId: emailLogs.providerId,
+          sentAt: emailLogs.sentAt,
+          openedAt: emailLogs.openedAt,
+          clickedAt: emailLogs.clickedAt,
+          bouncedAt: emailLogs.bouncedAt,
+          templateName: templates.name,
+          templateSubject: templates.subject,
+          templateHtmlBody: templates.htmlBody,
+          templateTextBody: templates.textBody,
+          automationName: automations.name,
+        })
         .from(emailLogs)
-        .leftJoin(automationSteps, eq(emailLogs.automationStepId, automationSteps.id))
+        .leftJoin(
+          automationSteps,
+          eq(emailLogs.automationStepId, automationSteps.id),
+        )
         .leftJoin(templates, eq(automationSteps.templateId, templates.id))
         .leftJoin(automations, eq(automationSteps.automationId, automations.id))
         .where(eq(emailLogs.clientId, clientId)),
-      
+
       // Get SMS logs with template information
-      db.select({
-        id: smsLogs.id,
-        clientId: smsLogs.clientId,
-        automationStepId: smsLogs.automationStepId,
-        status: smsLogs.status,
-        providerId: smsLogs.providerId,
-        sentAt: smsLogs.sentAt,
-        deliveredAt: smsLogs.deliveredAt,
-        templateName: templates.name,
-        templateTextBody: templates.textBody,
-        automationName: automations.name
-      })
+      db
+        .select({
+          id: smsLogs.id,
+          clientId: smsLogs.clientId,
+          automationStepId: smsLogs.automationStepId,
+          status: smsLogs.status,
+          providerId: smsLogs.providerId,
+          sentAt: smsLogs.sentAt,
+          deliveredAt: smsLogs.deliveredAt,
+          templateName: templates.name,
+          templateTextBody: templates.textBody,
+          automationName: automations.name,
+        })
         .from(smsLogs)
-        .leftJoin(automationSteps, eq(smsLogs.automationStepId, automationSteps.id))
+        .leftJoin(
+          automationSteps,
+          eq(smsLogs.automationStepId, automationSteps.id),
+        )
         .leftJoin(templates, eq(automationSteps.templateId, templates.id))
         .leftJoin(automations, eq(automationSteps.automationId, automations.id))
-        .where(eq(smsLogs.clientId, clientId))
+        .where(eq(smsLogs.clientId, clientId)),
     ]);
 
     // Combine all history into unified timeline with proper typing
     const history: TimelineEvent[] = [
-      ...activityLogs.map(log => ({
-        type: 'activity' as const,
+      ...activityLogs.map((log) => ({
+        type: "activity" as const,
         id: log.id,
         title: log.title,
         description: log.description || undefined,
         activityType: log.activityType,
         metadata: log.metadata,
-        createdAt: log.createdAt || new Date()
+        createdAt: log.createdAt || new Date(),
       })),
-      ...emailLogEntries.map(email => {
+      ...emailLogEntries.map((email) => {
         // Use proper timestamp precedence: first non-null of clickedAt, openedAt, sentAt, bouncedAt
-        const timestamp = email.clickedAt || email.openedAt || email.sentAt || email.bouncedAt;
-        
+        const timestamp =
+          email.clickedAt || email.openedAt || email.sentAt || email.bouncedAt;
+
         // Create a preview from template content (first 100 characters)
-        const templatePreview = email.templateTextBody 
-          ? email.templateTextBody.substring(0, 100) + (email.templateTextBody.length > 100 ? '...' : '')
+        const templatePreview = email.templateTextBody
+          ? email.templateTextBody.substring(0, 100) +
+            (email.templateTextBody.length > 100 ? "..." : "")
           : undefined;
-        
-        const title = email.automationName 
-          ? `${email.automationName} - Email sent` 
-          : 'Automated email sent';
-        
-        const description = email.templateSubject 
-          ? `Subject: ${email.templateSubject}` 
+
+        const title = email.automationName
+          ? `${email.automationName} - Email sent`
+          : "Automated email sent";
+
+        const description = email.templateSubject
+          ? `Subject: ${email.templateSubject}`
           : `Status: ${email.status}`;
-        
+
         return {
-          type: 'email' as const,
+          type: "email" as const,
           id: email.id,
           title,
           description,
@@ -1901,23 +2804,24 @@ export class DatabaseStorage implements IStorage {
           templateName: email.templateName || undefined,
           templateSubject: email.templateSubject || undefined,
           templatePreview,
-          automationName: email.automationName || undefined
+          automationName: email.automationName || undefined,
         };
       }),
-      ...smsLogEntries.map(sms => {
+      ...smsLogEntries.map((sms) => {
         // Create a preview from template content (first 100 characters)
-        const templatePreview = sms.templateTextBody 
-          ? sms.templateTextBody.substring(0, 100) + (sms.templateTextBody.length > 100 ? '...' : '')
+        const templatePreview = sms.templateTextBody
+          ? sms.templateTextBody.substring(0, 100) +
+            (sms.templateTextBody.length > 100 ? "..." : "")
           : undefined;
-        
-        const title = sms.automationName 
-          ? `${sms.automationName} - SMS sent` 
-          : 'Automated SMS sent';
-        
+
+        const title = sms.automationName
+          ? `${sms.automationName} - SMS sent`
+          : "Automated SMS sent";
+
         const description = templatePreview || `Status: ${sms.status}`;
-        
+
         return {
-          type: 'sms' as const,
+          type: "sms" as const,
           id: sms.id,
           title,
           description,
@@ -1928,76 +2832,102 @@ export class DatabaseStorage implements IStorage {
           // Enhanced fields
           templateName: sms.templateName || undefined,
           templatePreview,
-          automationName: sms.automationName || undefined
+          automationName: sms.automationName || undefined,
         };
-      })
+      }),
     ];
 
     // Global sort by createdAt descending (most recent first)
-    return history.sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    return history.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
   }
 
-
-  async getClientPortalTokensByClient(clientId: string, after?: Date): Promise<ClientPortalToken[]> {
+  async getClientPortalTokensByClient(
+    clientId: string,
+    after?: Date,
+  ): Promise<ClientPortalToken[]> {
     const conditions = [eq(clientPortalTokens.clientId, clientId)];
     if (after) {
       conditions.push(gte(clientPortalTokens.createdAt, after));
     }
-    
-    return await db.select().from(clientPortalTokens)
+
+    return await db
+      .select()
+      .from(clientPortalTokens)
       .where(and(...conditions))
       .orderBy(desc(clientPortalTokens.createdAt));
   }
 
-  async createClientPortalToken(tokenData: InsertClientPortalToken): Promise<ClientPortalToken> {
-    const [token] = await db.insert(clientPortalTokens).values(tokenData).returning();
+  async createClientPortalToken(
+    tokenData: InsertClientPortalToken,
+  ): Promise<ClientPortalToken> {
+    const [token] = await db
+      .insert(clientPortalTokens)
+      .values(tokenData)
+      .returning();
     return token;
   }
 
-  async validateClientPortalToken(token: string): Promise<ClientPortalToken | undefined> {
-    const [portalToken] = await db.select().from(clientPortalTokens)
-      .where(and(
-        eq(clientPortalTokens.token, token),
-        gte(clientPortalTokens.expiresAt, new Date())
-      ))
+  async validateClientPortalToken(
+    token: string,
+  ): Promise<ClientPortalToken | undefined> {
+    const [portalToken] = await db
+      .select()
+      .from(clientPortalTokens)
+      .where(
+        and(
+          eq(clientPortalTokens.token, token),
+          gte(clientPortalTokens.expiresAt, new Date()),
+        ),
+      )
       .limit(1);
     return portalToken;
   }
 
-  async getClientPortalProject(projectId: string, contactId: string, photographerId: string): Promise<any | null> {
+  async getClientPortalProject(
+    projectId: string,
+    contactId: string,
+    photographerId: string,
+  ): Promise<any | null> {
     // First, fetch the project and verify it belongs to the photographer (tenant isolation)
-    const [project] = await db.select({
-      id: projects.id,
-      title: projects.title,
-      projectType: projects.projectType,
-      eventDate: projects.eventDate,
-      status: projects.status,
-      clientId: projects.clientId,
-      photographerId: projects.photographerId,
-      stageId: projects.stageId,
-    })
-    .from(projects)
-    .where(and(
-      eq(projects.id, projectId),
-      eq(projects.photographerId, photographerId)
-    ))
-    .limit(1);
+    const [project] = await db
+      .select({
+        id: projects.id,
+        title: projects.title,
+        projectType: projects.projectType,
+        eventDate: projects.eventDate,
+        status: projects.status,
+        clientId: projects.clientId,
+        photographerId: projects.photographerId,
+        stageId: projects.stageId,
+      })
+      .from(projects)
+      .where(
+        and(
+          eq(projects.id, projectId),
+          eq(projects.photographerId, photographerId),
+        ),
+      )
+      .limit(1);
 
     if (!project) {
       return null;
     }
-    
+
     // Verify the contact belongs to the same photographer
-    const [contact] = await db.select()
+    const [contact] = await db
+      .select()
       .from(contacts)
-      .where(and(
-        eq(contacts.id, contactId),
-        eq(contacts.photographerId, photographerId)
-      ))
+      .where(
+        and(
+          eq(contacts.id, contactId),
+          eq(contacts.photographerId, photographerId),
+        ),
+      )
       .limit(1);
-    
+
     if (!contact) {
       return null;
     }
@@ -2006,12 +2936,15 @@ export class DatabaseStorage implements IStorage {
     const isPrimaryClient = project.clientId === contactId;
 
     // Check if contact is a participant
-    const [participant] = await db.select()
+    const [participant] = await db
+      .select()
       .from(projectParticipants)
-      .where(and(
-        eq(projectParticipants.projectId, projectId),
-        eq(projectParticipants.clientId, contactId)
-      ))
+      .where(
+        and(
+          eq(projectParticipants.projectId, projectId),
+          eq(projectParticipants.clientId, contactId),
+        ),
+      )
       .limit(1);
 
     const isParticipant = !!participant;
@@ -2022,93 +2955,135 @@ export class DatabaseStorage implements IStorage {
     }
 
     // Determine role
-    const role = isPrimaryClient ? 'PRIMARY' : 'PARTICIPANT';
+    const role = isPrimaryClient ? "PRIMARY" : "PARTICIPANT";
 
     // Fetch related data in parallel
-    const [client, photographer, stage, smartFilesList, checklistItemsList, galleriesList, projectNotesList, activitiesList] = await Promise.all([
+    const [
+      client,
+      photographer,
+      stage,
+      smartFilesList,
+      checklistItemsList,
+      galleriesList,
+      projectNotesList,
+      activitiesList,
+    ] = await Promise.all([
       // Fetch client info
-      db.select().from(contacts).where(eq(contacts.id, project.clientId)).limit(1).then(r => r[0]),
-      
+      db
+        .select()
+        .from(contacts)
+        .where(eq(contacts.id, project.clientId))
+        .limit(1)
+        .then((r) => r[0]),
+
       // Fetch photographer info
-      db.select().from(photographers).where(eq(photographers.id, project.photographerId)).limit(1).then(r => r[0]),
-      
+      db
+        .select()
+        .from(photographers)
+        .where(eq(photographers.id, project.photographerId))
+        .limit(1)
+        .then((r) => r[0]),
+
       // Fetch stage info
-      project.stageId 
-        ? db.select().from(stages).where(eq(stages.id, project.stageId)).limit(1).then(r => r[0])
+      project.stageId
+        ? db
+            .select()
+            .from(stages)
+            .where(eq(stages.id, project.stageId))
+            .limit(1)
+            .then((r) => r[0])
         : Promise.resolve(null),
-      
+
       // Fetch smart files sent to this project via projectSmartFiles (only client-visible statuses)
-      db.select({
-        id: projectSmartFiles.id,
-        title: projectSmartFiles.smartFileName,
-        status: projectSmartFiles.status,
-        totalCents: projectSmartFiles.totalCents,
-        token: projectSmartFiles.token,
-        createdAt: projectSmartFiles.createdAt,
-      })
-      .from(projectSmartFiles)
-      .where(and(
-        eq(projectSmartFiles.projectId, projectId),
-        // Only show SENT or later statuses (not DRAFT)
-        inArray(projectSmartFiles.status, ['SENT', 'VIEWED', 'ACCEPTED', 'DEPOSIT_PAID', 'PAID'])
-      ))
-      .orderBy(desc(projectSmartFiles.createdAt)),
-      
+      db
+        .select({
+          id: projectSmartFiles.id,
+          title: projectSmartFiles.smartFileName,
+          status: projectSmartFiles.status,
+          totalCents: projectSmartFiles.totalCents,
+          token: projectSmartFiles.token,
+          createdAt: projectSmartFiles.createdAt,
+        })
+        .from(projectSmartFiles)
+        .where(
+          and(
+            eq(projectSmartFiles.projectId, projectId),
+            // Only show SENT or later statuses (not DRAFT)
+            inArray(projectSmartFiles.status, [
+              "SENT",
+              "VIEWED",
+              "ACCEPTED",
+              "DEPOSIT_PAID",
+              "PAID",
+            ]),
+          ),
+        )
+        .orderBy(desc(projectSmartFiles.createdAt)),
+
       // Fetch checklist items
-      db.select()
+      db
+        .select()
         .from(projectChecklistItems)
         .where(eq(projectChecklistItems.projectId, projectId))
         .orderBy(projectChecklistItems.orderIndex),
-      
+
       // Fetch galleries linked to this project with image counts (exclude deleted)
-      db.select({
-        id: galleries.id,
-        title: galleries.title,
-        isPublic: galleries.isPublic,
-        createdAt: galleries.createdAt,
-      })
-      .from(galleries)
-      .where(and(
-        eq(galleries.projectId, projectId),
-        isNull(galleries.deletedAt)
-      ))
-      .orderBy(desc(galleries.createdAt))
-      .then(async (galleriesList) => {
-        // Fetch image counts separately for each gallery
-        return Promise.all(galleriesList.map(async (gallery) => {
-          const [countResult] = await db.select({ count: sql<number>`count(*)` })
-            .from(galleryImages)
-            .where(eq(galleryImages.galleryId, gallery.id));
-          return {
-            ...gallery,
-            imageCount: Number(countResult?.count || 0),
-          };
-        }));
-      }),
-      
+      db
+        .select({
+          id: galleries.id,
+          title: galleries.title,
+          isPublic: galleries.isPublic,
+          createdAt: galleries.createdAt,
+        })
+        .from(galleries)
+        .where(
+          and(eq(galleries.projectId, projectId), isNull(galleries.deletedAt)),
+        )
+        .orderBy(desc(galleries.createdAt))
+        .then(async (galleriesList) => {
+          // Fetch image counts separately for each gallery
+          return Promise.all(
+            galleriesList.map(async (gallery) => {
+              const [countResult] = await db
+                .select({ count: sql<number>`count(*)` })
+                .from(galleryImages)
+                .where(eq(galleryImages.galleryId, gallery.id));
+              return {
+                ...gallery,
+                imageCount: Number(countResult?.count || 0),
+              };
+            }),
+          );
+        }),
+
       // Fetch project notes
-      db.select()
+      db
+        .select()
         .from(projectNotes)
         .where(eq(projectNotes.projectId, projectId))
         .orderBy(desc(projectNotes.createdAt)),
-      
+
       // Fetch project activities (from project activity log)
-      db.select()
+      db
+        .select()
         .from(projectActivityLog)
         .where(eq(projectActivityLog.projectId, projectId))
         .orderBy(desc(projectActivityLog.createdAt))
         .limit(50), // Limit to recent 50 activities
     ]);
 
-    console.log(`📁 [CLIENT PORTAL PROJECT] Project ${projectId} Smart Files query returned:`, {
-      count: smartFilesList.length,
-      files: smartFilesList.map(f => ({
-        id: f.id,
-        title: f.title,
-        status: f.status,
-        createdAt: f.createdAt
-      }))
-    });
+    console.log(
+      `📁 [CLIENT PORTAL PROJECT] Project ${projectId} Smart Files query returned:`,
+      {
+        count: smartFilesList.length,
+        files: smartFilesList.map((f) => ({
+          id: f.id,
+          title: f.title,
+          status: f.status,
+          createdAt: f.createdAt,
+        })),
+      },
+    );
 
     // Build the client portal project response
     return {
@@ -2119,21 +3094,25 @@ export class DatabaseStorage implements IStorage {
       status: project.status,
       role,
       stage: stage ? { name: stage.name } : null,
-      client: client ? {
-        firstName: client.firstName,
-        lastName: client.lastName,
-        email: client.email,
-        phone: client.phone,
-      } : null,
-      photographer: photographer ? {
-        businessName: photographer.businessName,
-        logoUrl: photographer.logoUrl,
-      } : null,
+      client: client
+        ? {
+            firstName: client.firstName,
+            lastName: client.lastName,
+            email: client.email,
+            phone: client.phone,
+          }
+        : null,
+      photographer: photographer
+        ? {
+            businessName: photographer.businessName,
+            logoUrl: photographer.logoUrl,
+          }
+        : null,
       smartFiles: smartFilesList,
       checklistItems: checklistItemsList,
       galleries: galleriesList,
       notes: projectNotesList,
-      activities: activitiesList.map(activity => ({
+      activities: activitiesList.map((activity) => ({
         id: activity.id,
         type: activity.activityType,
         title: activity.title,
@@ -2149,79 +3128,112 @@ export class DatabaseStorage implements IStorage {
     return token;
   }
 
-  async createMagicLinkToken(clientId: string, photographerId: string): Promise<PortalToken> {
-    const crypto = await import('crypto');
-    const token = crypto.randomBytes(32).toString('hex');
+  async createMagicLinkToken(
+    clientId: string,
+    photographerId: string,
+  ): Promise<PortalToken> {
+    const crypto = await import("crypto");
+    const token = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getMinutes() + 30); // 30-minute expiry
 
     return this.createPortalToken({
       token,
-      tokenType: 'MAGIC_LINK',
+      tokenType: "MAGIC_LINK",
       projectId: null,
       clientId,
       photographerId,
-      expiresAt
+      expiresAt,
     });
   }
 
-  async validatePortalToken(tokenString: string): Promise<PortalToken | undefined> {
-    const [token] = await db.select().from(portalTokens)
-      .where(and(
-        eq(portalTokens.token, tokenString),
-        gte(portalTokens.expiresAt, new Date())
-      ))
+  async validatePortalToken(
+    tokenString: string,
+  ): Promise<PortalToken | undefined> {
+    const [token] = await db
+      .select()
+      .from(portalTokens)
+      .where(
+        and(
+          eq(portalTokens.token, tokenString),
+          gte(portalTokens.expiresAt, new Date()),
+        ),
+      )
       .limit(1);
     return token;
   }
 
   async updatePortalTokenLastUsed(id: string): Promise<void> {
-    await db.update(portalTokens)
+    await db
+      .update(portalTokens)
       .set({ lastUsedAt: new Date() })
       .where(eq(portalTokens.id, id));
   }
 
   // Booking methods
   async getBookingsByPhotographer(photographerId: string): Promise<Booking[]> {
-    return await db.select().from(bookings)
+    return await db
+      .select()
+      .from(bookings)
       .where(eq(bookings.photographerId, photographerId))
       .orderBy(desc(bookings.startAt));
   }
 
   async getBookingsByProject(projectId: string): Promise<Booking[]> {
-    return await db.select().from(bookings)
+    return await db
+      .select()
+      .from(bookings)
       .where(eq(bookings.projectId, projectId))
       .orderBy(desc(bookings.startAt));
   }
 
-  async getBookingsByPhotographerInRange(photographerId: string, startDate: string, endDate: string): Promise<Booking[]> {
+  async getBookingsByPhotographerInRange(
+    photographerId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<Booking[]> {
     // Filter bookings that overlap with the given date range
     // A booking overlaps if: booking.startAt < endDate+1day AND booking.endAt > startDate
     const rangeStart = new Date(startDate);
     const rangeEnd = new Date(endDate);
     rangeEnd.setDate(rangeEnd.getDate() + 1); // Include the end date fully
 
-    return await db.select().from(bookings)
-      .where(and(
-        eq(bookings.photographerId, photographerId),
-        lte(bookings.startAt, rangeEnd),
-        gte(bookings.endAt, rangeStart)
-      ))
+    return await db
+      .select()
+      .from(bookings)
+      .where(
+        and(
+          eq(bookings.photographerId, photographerId),
+          lte(bookings.startAt, rangeEnd),
+          gte(bookings.endAt, rangeStart),
+        ),
+      )
       .orderBy(desc(bookings.startAt));
   }
 
   async getBooking(id: string): Promise<Booking | undefined> {
-    const [booking] = await db.select().from(bookings).where(eq(bookings.id, id));
+    const [booking] = await db
+      .select()
+      .from(bookings)
+      .where(eq(bookings.id, id));
     return booking || undefined;
   }
 
   async getBookingByToken(token: string): Promise<Booking | undefined> {
-    const [booking] = await db.select().from(bookings).where(eq(bookings.bookingToken, token));
+    const [booking] = await db
+      .select()
+      .from(bookings)
+      .where(eq(bookings.bookingToken, token));
     return booking || undefined;
   }
 
-  async getBookingByProjectSmartFileId(projectSmartFileId: string): Promise<Booking | undefined> {
-    const [booking] = await db.select().from(bookings).where(eq(bookings.projectSmartFileId, projectSmartFileId));
+  async getBookingByProjectSmartFileId(
+    projectSmartFileId: string,
+  ): Promise<Booking | undefined> {
+    const [booking] = await db
+      .select()
+      .from(bookings)
+      .where(eq(bookings.projectSmartFileId, projectSmartFileId));
     return booking || undefined;
   }
 
@@ -2231,7 +3243,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateBooking(id: string, booking: Partial<Booking>): Promise<Booking> {
-    const [updatedBooking] = await db.update(bookings)
+    const [updatedBooking] = await db
+      .update(bookings)
       .set(booking)
       .where(eq(bookings.id, id))
       .returning();
@@ -2242,36 +3255,73 @@ export class DatabaseStorage implements IStorage {
     await db.delete(bookings).where(eq(bookings.id, id));
   }
 
-  async getPaymentsDueInRange(photographerId: string, startDate: string, endDate: string): Promise<Array<{ id: string; dueDate: string; amountCents: number; description: string; status: string; clientName: string; projectId: string; smartFileInstanceId: string }>> {
+  async getPaymentsDueInRange(
+    photographerId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<
+    Array<{
+      id: string;
+      dueDate: string;
+      amountCents: number;
+      description: string;
+      status: string;
+      clientName: string;
+      projectId: string;
+      smartFileInstanceId: string;
+    }>
+  > {
     // Get project smart files for this photographer that have payment schedules
-    const instances = await db.select({
-      id: projectSmartFiles.id,
-      projectId: projectSmartFiles.projectId,
-      paymentSchedule: projectSmartFiles.paymentSchedule,
-      clientFirstName: contacts.firstName,
-      clientLastName: contacts.lastName,
-    })
-    .from(projectSmartFiles)
-    .innerJoin(projects, eq(projectSmartFiles.projectId, projects.id))
-    .leftJoin(contacts, eq(projects.clientId, contacts.id))
-    .where(and(
-      eq(projects.photographerId, photographerId),
-      isNotNull(projectSmartFiles.paymentSchedule)
-    ));
+    const instances = await db
+      .select({
+        id: projectSmartFiles.id,
+        projectId: projectSmartFiles.projectId,
+        paymentSchedule: projectSmartFiles.paymentSchedule,
+        clientFirstName: contacts.firstName,
+        clientLastName: contacts.lastName,
+      })
+      .from(projectSmartFiles)
+      .innerJoin(projects, eq(projectSmartFiles.projectId, projects.id))
+      .leftJoin(contacts, eq(projects.clientId, contacts.id))
+      .where(
+        and(
+          eq(projects.photographerId, photographerId),
+          isNotNull(projectSmartFiles.paymentSchedule),
+        ),
+      );
 
     const rangeStart = new Date(startDate);
     const rangeEnd = new Date(endDate);
     rangeEnd.setDate(rangeEnd.getDate() + 1); // Include end date
 
-    const paymentsDue: Array<{ id: string; dueDate: string; amountCents: number; description: string; status: string; clientName: string; projectId: string; smartFileInstanceId: string }> = [];
+    const paymentsDue: Array<{
+      id: string;
+      dueDate: string;
+      amountCents: number;
+      description: string;
+      status: string;
+      clientName: string;
+      projectId: string;
+      smartFileInstanceId: string;
+    }> = [];
 
     for (const instance of instances) {
-      if (!instance.paymentSchedule || !Array.isArray(instance.paymentSchedule)) continue;
+      if (!instance.paymentSchedule || !Array.isArray(instance.paymentSchedule))
+        continue;
 
-      const clientName = [instance.clientFirstName, instance.clientLastName].filter(Boolean).join(' ') || 'Client';
+      const clientName =
+        [instance.clientFirstName, instance.clientLastName]
+          .filter(Boolean)
+          .join(" ") || "Client";
 
-      for (const installment of instance.paymentSchedule as Array<{ id: string; dueDate: string; amountCents: number; description: string; status: string }>) {
-        if (!installment.dueDate || installment.status === 'PAID') continue;
+      for (const installment of instance.paymentSchedule as Array<{
+        id: string;
+        dueDate: string;
+        amountCents: number;
+        description: string;
+        status: string;
+      }>) {
+        if (!installment.dueDate || installment.status === "PAID") continue;
 
         const dueDate = new Date(installment.dueDate);
         if (dueDate >= rangeStart && dueDate < rangeEnd) {
@@ -2294,12 +3344,19 @@ export class DatabaseStorage implements IStorage {
 
   // Short Link methods
   async getShortLink(shortCode: string): Promise<ShortLink | undefined> {
-    const [link] = await db.select().from(shortLinks).where(eq(shortLinks.shortCode, shortCode));
+    const [link] = await db
+      .select()
+      .from(shortLinks)
+      .where(eq(shortLinks.shortCode, shortCode));
     return link || undefined;
   }
 
-  async getShortLinksByPhotographer(photographerId: string): Promise<ShortLink[]> {
-    return await db.select().from(shortLinks)
+  async getShortLinksByPhotographer(
+    photographerId: string,
+  ): Promise<ShortLink[]> {
+    return await db
+      .select()
+      .from(shortLinks)
       .where(eq(shortLinks.photographerId, photographerId))
       .orderBy(desc(shortLinks.createdAt));
   }
@@ -2309,23 +3366,37 @@ export class DatabaseStorage implements IStorage {
     return newLink;
   }
 
-  async getShortLinkByPhotographerAndTarget(photographerId: string, targetUrl: string): Promise<ShortLink | undefined> {
-    const [link] = await db.select().from(shortLinks)
-      .where(and(
-        eq(shortLinks.photographerId, photographerId),
-        eq(shortLinks.targetUrl, targetUrl)
-      ));
+  async getShortLinkByPhotographerAndTarget(
+    photographerId: string,
+    targetUrl: string,
+  ): Promise<ShortLink | undefined> {
+    const [link] = await db
+      .select()
+      .from(shortLinks)
+      .where(
+        and(
+          eq(shortLinks.photographerId, photographerId),
+          eq(shortLinks.targetUrl, targetUrl),
+        ),
+      );
     return link || undefined;
   }
 
-  async getShortLinkByPhotographerAndPathname(photographerId: string, pathname: string): Promise<ShortLink | undefined> {
+  async getShortLinkByPhotographerAndPathname(
+    photographerId: string,
+    pathname: string,
+  ): Promise<ShortLink | undefined> {
     // Match by pathname pattern (ignores domain) - useful for finding legacy records with dev domains
     // Uses SQL LIKE with the pathname at the end of the target_url
-    const [link] = await db.select().from(shortLinks)
-      .where(and(
-        eq(shortLinks.photographerId, photographerId),
-        sql`${shortLinks.targetUrl} LIKE '%' || ${pathname}`
-      ))
+    const [link] = await db
+      .select()
+      .from(shortLinks)
+      .where(
+        and(
+          eq(shortLinks.photographerId, photographerId),
+          sql`${shortLinks.targetUrl} LIKE '%' || ${pathname}`,
+        ),
+      )
       .orderBy(desc(shortLinks.createdAt))
       .limit(1);
     return link || undefined;
@@ -2334,33 +3405,40 @@ export class DatabaseStorage implements IStorage {
   async findOrCreateShortLink(shortLink: InsertShortLink): Promise<ShortLink> {
     const existing = await this.getShortLinkByPhotographerAndTarget(
       shortLink.photographerId,
-      shortLink.targetUrl
+      shortLink.targetUrl,
     );
-    
+
     if (existing) {
-      console.log(`♻️ Reusing existing short link ${existing.shortCode} for target: ${shortLink.targetUrl}`);
+      console.log(
+        `♻️ Reusing existing short link ${existing.shortCode} for target: ${shortLink.targetUrl}`,
+      );
       return existing;
     }
-    
-    console.log(`🆕 Creating new short link for target: ${shortLink.targetUrl}`);
+
+    console.log(
+      `🆕 Creating new short link for target: ${shortLink.targetUrl}`,
+    );
     const [newLink] = await db.insert(shortLinks).values(shortLink).returning();
     return newLink;
   }
 
   async incrementShortLinkClicks(shortCode: string): Promise<void> {
-    await db.update(shortLinks)
+    await db
+      .update(shortLinks)
       .set({ clicks: sql`${shortLinks.clicks} + 1` })
       .where(eq(shortLinks.shortCode, shortCode));
   }
 
   async updateShortLinkTargetUrl(id: string, targetUrl: string): Promise<void> {
-    await db.update(shortLinks)
-      .set({ targetUrl })
-      .where(eq(shortLinks.id, id));
+    await db.update(shortLinks).set({ targetUrl }).where(eq(shortLinks.id, id));
   }
 
-  async updateShortLink(id: string, data: Partial<ShortLink>): Promise<ShortLink> {
-    const [updated] = await db.update(shortLinks)
+  async updateShortLink(
+    id: string,
+    data: Partial<ShortLink>,
+  ): Promise<ShortLink> {
+    const [updated] = await db
+      .update(shortLinks)
       .set(data)
       .where(eq(shortLinks.id, id))
       .returning();
@@ -2368,24 +3446,33 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Availability Slot methods
-  async getAvailabilitySlotsByPhotographer(photographerId: string): Promise<AvailabilitySlot[]> {
-    return await db.select().from(availabilitySlots)
+  async getAvailabilitySlotsByPhotographer(
+    photographerId: string,
+  ): Promise<AvailabilitySlot[]> {
+    return await db
+      .select()
+      .from(availabilitySlots)
       .where(eq(availabilitySlots.photographerId, photographerId))
       .orderBy(asc(availabilitySlots.startAt));
   }
 
   async getAvailabilitySlot(id: string): Promise<AvailabilitySlot | undefined> {
-    const [slot] = await db.select().from(availabilitySlots).where(eq(availabilitySlots.id, id));
+    const [slot] = await db
+      .select()
+      .from(availabilitySlots)
+      .where(eq(availabilitySlots.id, id));
     return slot || undefined;
   }
 
   // Old createAvailabilitySlot method removed - use template-based system instead
 
-  async createAvailabilitySlotsBatch(slots: InsertAvailabilitySlot[]): Promise<AvailabilitySlot[]> {
+  async createAvailabilitySlotsBatch(
+    slots: InsertAvailabilitySlot[],
+  ): Promise<AvailabilitySlot[]> {
     if (slots.length === 0) {
       return [];
     }
-    
+
     // Bulk insert all slots in a single database operation
     return await db.insert(availabilitySlots).values(slots).returning();
   }
@@ -2394,35 +3481,60 @@ export class DatabaseStorage implements IStorage {
 
   // Old deleteAvailabilitySlot method removed - use template-based system instead
 
-  async getAvailableSlots(photographerId: string, afterDate: Date): Promise<AvailabilitySlot[]> {
-    return await db.select().from(availabilitySlots)
-      .where(and(
-        eq(availabilitySlots.photographerId, photographerId),
-        eq(availabilitySlots.isBooked, false),
-        gt(availabilitySlots.startAt, afterDate)
-      ))
+  async getAvailableSlots(
+    photographerId: string,
+    afterDate: Date,
+  ): Promise<AvailabilitySlot[]> {
+    return await db
+      .select()
+      .from(availabilitySlots)
+      .where(
+        and(
+          eq(availabilitySlots.photographerId, photographerId),
+          eq(availabilitySlots.isBooked, false),
+          gt(availabilitySlots.startAt, afterDate),
+        ),
+      )
       .orderBy(asc(availabilitySlots.startAt));
   }
 
   // Daily Availability Template methods
-  async getDailyAvailabilityTemplatesByPhotographer(photographerId: string): Promise<DailyAvailabilityTemplate[]> {
-    return await db.select().from(dailyAvailabilityTemplates)
+  async getDailyAvailabilityTemplatesByPhotographer(
+    photographerId: string,
+  ): Promise<DailyAvailabilityTemplate[]> {
+    return await db
+      .select()
+      .from(dailyAvailabilityTemplates)
       .where(eq(dailyAvailabilityTemplates.photographerId, photographerId))
       .orderBy(asc(dailyAvailabilityTemplates.dayOfWeek));
   }
 
-  async getDailyAvailabilityTemplate(id: string): Promise<DailyAvailabilityTemplate | undefined> {
-    const [template] = await db.select().from(dailyAvailabilityTemplates).where(eq(dailyAvailabilityTemplates.id, id));
+  async getDailyAvailabilityTemplate(
+    id: string,
+  ): Promise<DailyAvailabilityTemplate | undefined> {
+    const [template] = await db
+      .select()
+      .from(dailyAvailabilityTemplates)
+      .where(eq(dailyAvailabilityTemplates.id, id));
     return template || undefined;
   }
 
-  async createDailyAvailabilityTemplate(template: InsertDailyAvailabilityTemplate): Promise<DailyAvailabilityTemplate> {
-    const [newTemplate] = await db.insert(dailyAvailabilityTemplates).values(template).returning();
+  async createDailyAvailabilityTemplate(
+    template: InsertDailyAvailabilityTemplate,
+  ): Promise<DailyAvailabilityTemplate> {
+    const [newTemplate] = await db
+      .insert(dailyAvailabilityTemplates)
+      .values(template)
+      .returning();
     return newTemplate;
   }
 
-  async updateDailyAvailabilityTemplate(id: string, template: Partial<DailyAvailabilityTemplate>): Promise<DailyAvailabilityTemplate> {
-    const [updatedTemplate] = await db.update(dailyAvailabilityTemplates)
+  async updateDailyAvailabilityTemplate(
+    id: string,
+    template: Partial<DailyAvailabilityTemplate>,
+  ): Promise<DailyAvailabilityTemplate> {
+    const [updatedTemplate] = await db
+      .update(dailyAvailabilityTemplates)
       .set(template)
       .where(eq(dailyAvailabilityTemplates.id, id))
       .returning();
@@ -2433,54 +3545,81 @@ export class DatabaseStorage implements IStorage {
     // Use transaction to safely delete template and all related data
     await db.transaction(async (trx) => {
       // First delete all breaks related to this template
-      await trx.delete(dailyAvailabilityBreaks)
+      await trx
+        .delete(dailyAvailabilityBreaks)
         .where(eq(dailyAvailabilityBreaks.templateId, id));
-      
+
       // Delete any availability slots that were generated from this template
-      await trx.delete(availabilitySlots)
+      await trx
+        .delete(availabilitySlots)
         .where(eq(availabilitySlots.sourceTemplateId, id));
-      
+
       // Finally delete the template itself
-      await trx.delete(dailyAvailabilityTemplates)
+      await trx
+        .delete(dailyAvailabilityTemplates)
         .where(eq(dailyAvailabilityTemplates.id, id));
     });
   }
 
   // Daily Availability Break methods
-  async getDailyAvailabilityBreaksByTemplate(templateId: string): Promise<DailyAvailabilityBreak[]> {
-    return await db.select().from(dailyAvailabilityBreaks)
+  async getDailyAvailabilityBreaksByTemplate(
+    templateId: string,
+  ): Promise<DailyAvailabilityBreak[]> {
+    return await db
+      .select()
+      .from(dailyAvailabilityBreaks)
       .where(eq(dailyAvailabilityBreaks.templateId, templateId))
       .orderBy(asc(dailyAvailabilityBreaks.startTime));
   }
 
-  async getDailyAvailabilityBreaksByPhotographer(photographerId: string): Promise<DailyAvailabilityBreak[]> {
+  async getDailyAvailabilityBreaksByPhotographer(
+    photographerId: string,
+  ): Promise<DailyAvailabilityBreak[]> {
     // Join with templates to get all breaks for a photographer's templates
-    return await db.select({
-      id: dailyAvailabilityBreaks.id,
-      templateId: dailyAvailabilityBreaks.templateId,
-      startTime: dailyAvailabilityBreaks.startTime,
-      endTime: dailyAvailabilityBreaks.endTime,
-      label: dailyAvailabilityBreaks.label,
-      createdAt: dailyAvailabilityBreaks.createdAt
-    })
+    return await db
+      .select({
+        id: dailyAvailabilityBreaks.id,
+        templateId: dailyAvailabilityBreaks.templateId,
+        startTime: dailyAvailabilityBreaks.startTime,
+        endTime: dailyAvailabilityBreaks.endTime,
+        label: dailyAvailabilityBreaks.label,
+        createdAt: dailyAvailabilityBreaks.createdAt,
+      })
       .from(dailyAvailabilityBreaks)
-      .innerJoin(dailyAvailabilityTemplates, eq(dailyAvailabilityBreaks.templateId, dailyAvailabilityTemplates.id))
+      .innerJoin(
+        dailyAvailabilityTemplates,
+        eq(dailyAvailabilityBreaks.templateId, dailyAvailabilityTemplates.id),
+      )
       .where(eq(dailyAvailabilityTemplates.photographerId, photographerId))
       .orderBy(asc(dailyAvailabilityBreaks.startTime));
   }
 
-  async getDailyAvailabilityBreak(id: string): Promise<DailyAvailabilityBreak | undefined> {
-    const [breakTime] = await db.select().from(dailyAvailabilityBreaks).where(eq(dailyAvailabilityBreaks.id, id));
+  async getDailyAvailabilityBreak(
+    id: string,
+  ): Promise<DailyAvailabilityBreak | undefined> {
+    const [breakTime] = await db
+      .select()
+      .from(dailyAvailabilityBreaks)
+      .where(eq(dailyAvailabilityBreaks.id, id));
     return breakTime || undefined;
   }
 
-  async createDailyAvailabilityBreak(breakTime: InsertDailyAvailabilityBreak): Promise<DailyAvailabilityBreak> {
-    const [newBreak] = await db.insert(dailyAvailabilityBreaks).values(breakTime).returning();
+  async createDailyAvailabilityBreak(
+    breakTime: InsertDailyAvailabilityBreak,
+  ): Promise<DailyAvailabilityBreak> {
+    const [newBreak] = await db
+      .insert(dailyAvailabilityBreaks)
+      .values(breakTime)
+      .returning();
     return newBreak;
   }
 
-  async updateDailyAvailabilityBreak(id: string, breakTime: Partial<DailyAvailabilityBreak>): Promise<DailyAvailabilityBreak> {
-    const [updatedBreak] = await db.update(dailyAvailabilityBreaks)
+  async updateDailyAvailabilityBreak(
+    id: string,
+    breakTime: Partial<DailyAvailabilityBreak>,
+  ): Promise<DailyAvailabilityBreak> {
+    const [updatedBreak] = await db
+      .update(dailyAvailabilityBreaks)
       .set(breakTime)
       .where(eq(dailyAvailabilityBreaks.id, id))
       .returning();
@@ -2488,46 +3627,77 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteDailyAvailabilityBreak(id: string): Promise<void> {
-    await db.delete(dailyAvailabilityBreaks).where(eq(dailyAvailabilityBreaks.id, id));
+    await db
+      .delete(dailyAvailabilityBreaks)
+      .where(eq(dailyAvailabilityBreaks.id, id));
   }
 
   // Daily Availability Override methods
-  async getDailyAvailabilityOverridesByPhotographer(photographerId: string, startDate?: string, endDate?: string): Promise<DailyAvailabilityOverride[]> {
-    let query = db.select().from(dailyAvailabilityOverrides)
+  async getDailyAvailabilityOverridesByPhotographer(
+    photographerId: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<DailyAvailabilityOverride[]> {
+    let query = db
+      .select()
+      .from(dailyAvailabilityOverrides)
       .where(eq(dailyAvailabilityOverrides.photographerId, photographerId));
-    
+
     if (startDate && endDate) {
-      query = query.where(and(
-        eq(dailyAvailabilityOverrides.photographerId, photographerId),
-        gte(dailyAvailabilityOverrides.date, startDate),
-        lte(dailyAvailabilityOverrides.date, endDate)
-      ));
+      query = query.where(
+        and(
+          eq(dailyAvailabilityOverrides.photographerId, photographerId),
+          gte(dailyAvailabilityOverrides.date, startDate),
+          lte(dailyAvailabilityOverrides.date, endDate),
+        ),
+      );
     }
-    
+
     return await query.orderBy(asc(dailyAvailabilityOverrides.date));
   }
 
-  async getDailyAvailabilityOverrideByDate(photographerId: string, date: string): Promise<DailyAvailabilityOverride | undefined> {
-    const [override] = await db.select().from(dailyAvailabilityOverrides)
-      .where(and(
-        eq(dailyAvailabilityOverrides.photographerId, photographerId),
-        eq(dailyAvailabilityOverrides.date, date)
-      ));
+  async getDailyAvailabilityOverrideByDate(
+    photographerId: string,
+    date: string,
+  ): Promise<DailyAvailabilityOverride | undefined> {
+    const [override] = await db
+      .select()
+      .from(dailyAvailabilityOverrides)
+      .where(
+        and(
+          eq(dailyAvailabilityOverrides.photographerId, photographerId),
+          eq(dailyAvailabilityOverrides.date, date),
+        ),
+      );
     return override || undefined;
   }
 
-  async getDailyAvailabilityOverride(id: string): Promise<DailyAvailabilityOverride | undefined> {
-    const [override] = await db.select().from(dailyAvailabilityOverrides).where(eq(dailyAvailabilityOverrides.id, id));
+  async getDailyAvailabilityOverride(
+    id: string,
+  ): Promise<DailyAvailabilityOverride | undefined> {
+    const [override] = await db
+      .select()
+      .from(dailyAvailabilityOverrides)
+      .where(eq(dailyAvailabilityOverrides.id, id));
     return override || undefined;
   }
 
-  async createDailyAvailabilityOverride(override: InsertDailyAvailabilityOverride): Promise<DailyAvailabilityOverride> {
-    const [newOverride] = await db.insert(dailyAvailabilityOverrides).values(override).returning();
+  async createDailyAvailabilityOverride(
+    override: InsertDailyAvailabilityOverride,
+  ): Promise<DailyAvailabilityOverride> {
+    const [newOverride] = await db
+      .insert(dailyAvailabilityOverrides)
+      .values(override)
+      .returning();
     return newOverride;
   }
 
-  async updateDailyAvailabilityOverride(id: string, override: Partial<DailyAvailabilityOverride>): Promise<DailyAvailabilityOverride> {
-    const [updatedOverride] = await db.update(dailyAvailabilityOverrides)
+  async updateDailyAvailabilityOverride(
+    id: string,
+    override: Partial<DailyAvailabilityOverride>,
+  ): Promise<DailyAvailabilityOverride> {
+    const [updatedOverride] = await db
+      .update(dailyAvailabilityOverrides)
       .set(override)
       .where(eq(dailyAvailabilityOverrides.id, id))
       .returning();
@@ -2538,40 +3708,50 @@ export class DatabaseStorage implements IStorage {
     // Use transaction to safely delete override and clean up related slots
     await db.transaction(async (trx) => {
       // First get the override to know which date needs cleanup
-      const [override] = await trx.select().from(dailyAvailabilityOverrides)
+      const [override] = await trx
+        .select()
+        .from(dailyAvailabilityOverrides)
         .where(eq(dailyAvailabilityOverrides.id, id));
-      
+
       if (override) {
         // Delete any availability slots generated for this date and photographer
         // This handles both template-generated slots and override-specific slots
         const targetDate = new Date(override.date);
         const startOfDay = new Date(targetDate.setHours(0, 0, 0, 0));
         const endOfDay = new Date(targetDate.setHours(23, 59, 59, 999));
-        
-        await trx.delete(availabilitySlots)
-          .where(and(
-            eq(availabilitySlots.photographerId, override.photographerId),
-            gte(availabilitySlots.startAt, startOfDay),
-            lte(availabilitySlots.startAt, endOfDay)
-          ));
+
+        await trx
+          .delete(availabilitySlots)
+          .where(
+            and(
+              eq(availabilitySlots.photographerId, override.photographerId),
+              gte(availabilitySlots.startAt, startOfDay),
+              lte(availabilitySlots.startAt, endOfDay),
+            ),
+          );
       }
-      
+
       // Finally delete the override itself
-      await trx.delete(dailyAvailabilityOverrides)
+      await trx
+        .delete(dailyAvailabilityOverrides)
         .where(eq(dailyAvailabilityOverrides.id, id));
     });
   }
 
   // Google Calendar Integration methods
-  async storeGoogleCalendarCredentials(photographerId: string, credentials: {
-    accessToken: string;
-    refreshToken?: string;
-    expiryDate?: Date;
-    scope?: string;
-    calendarId?: string;
-    email?: string;
-  }): Promise<void> {
-    await db.update(photographers)
+  async storeGoogleCalendarCredentials(
+    photographerId: string,
+    credentials: {
+      accessToken: string;
+      refreshToken?: string;
+      expiryDate?: Date;
+      scope?: string;
+      calendarId?: string;
+      email?: string;
+    },
+  ): Promise<void> {
+    await db
+      .update(photographers)
       .set({
         googleCalendarAccessToken: credentials.accessToken,
         googleCalendarRefreshToken: credentials.refreshToken || null,
@@ -2579,7 +3759,7 @@ export class DatabaseStorage implements IStorage {
         googleCalendarScope: credentials.scope || null,
         googleCalendarId: credentials.calendarId || null,
         googleEmail: credentials.email || null,
-        googleCalendarConnectedAt: new Date()
+        googleCalendarConnectedAt: new Date(),
       })
       .where(eq(photographers.id, photographerId));
   }
@@ -2593,15 +3773,16 @@ export class DatabaseStorage implements IStorage {
     calendarId?: string;
     email?: string;
   } | null> {
-    const [photographer] = await db.select({
-      accessToken: photographers.googleCalendarAccessToken,
-      refreshToken: photographers.googleCalendarRefreshToken,
-      expiryDate: photographers.googleCalendarTokenExpiry,
-      scope: photographers.googleCalendarScope,
-      connectedAt: photographers.googleCalendarConnectedAt,
-      calendarId: photographers.googleCalendarId,
-      email: photographers.googleEmail
-    })
+    const [photographer] = await db
+      .select({
+        accessToken: photographers.googleCalendarAccessToken,
+        refreshToken: photographers.googleCalendarRefreshToken,
+        expiryDate: photographers.googleCalendarTokenExpiry,
+        scope: photographers.googleCalendarScope,
+        connectedAt: photographers.googleCalendarConnectedAt,
+        calendarId: photographers.googleCalendarId,
+        email: photographers.googleEmail,
+      })
       .from(photographers)
       .where(eq(photographers.id, photographerId));
 
@@ -2616,26 +3797,29 @@ export class DatabaseStorage implements IStorage {
       scope: photographer.scope || undefined,
       connectedAt: photographer.connectedAt || undefined,
       calendarId: photographer.calendarId || undefined,
-      email: photographer.email || undefined
+      email: photographer.email || undefined,
     };
   }
 
   async clearGoogleCalendarCredentials(photographerId: string): Promise<void> {
-    await db.update(photographers)
+    await db
+      .update(photographers)
       .set({
         googleCalendarAccessToken: null,
         googleCalendarRefreshToken: null,
         googleCalendarTokenExpiry: null,
         googleCalendarScope: null,
         googleCalendarConnectedAt: null,
-        googleCalendarId: null
+        googleCalendarId: null,
       })
       .where(eq(photographers.id, photographerId));
   }
 
-  async hasValidGoogleCalendarCredentials(photographerId: string): Promise<boolean> {
+  async hasValidGoogleCalendarCredentials(
+    photographerId: string,
+  ): Promise<boolean> {
     const credentials = await this.getGoogleCalendarCredentials(photographerId);
-    
+
     if (!credentials || !credentials.accessToken) {
       return false;
     }
@@ -2644,8 +3828,10 @@ export class DatabaseStorage implements IStorage {
     if (credentials.expiryDate) {
       const bufferTime = 5 * 60 * 1000; // 5 minutes in milliseconds
       const now = new Date();
-      const expiryWithBuffer = new Date(credentials.expiryDate.getTime() - bufferTime);
-      
+      const expiryWithBuffer = new Date(
+        credentials.expiryDate.getTime() - bufferTime,
+      );
+
       if (now >= expiryWithBuffer) {
         return false; // Token is expired or expires soon
       }
@@ -2654,63 +3840,75 @@ export class DatabaseStorage implements IStorage {
     return true;
   }
 
-  async storeGoogleCalendarId(photographerId: string, calendarId: string): Promise<void> {
-    await db.update(photographers)
+  async storeGoogleCalendarId(
+    photographerId: string,
+    calendarId: string,
+  ): Promise<void> {
+    await db
+      .update(photographers)
       .set({
-        googleCalendarId: calendarId
+        googleCalendarId: calendarId,
       })
       .where(eq(photographers.id, photographerId));
   }
 
   // Projects - NEW IMPLEMENTATIONS
   // FLATTENED to avoid Drizzle's nested object issue with leftJoin returning null
-  async getProjectsByPhotographer(photographerId: string, projectType?: string): Promise<ProjectWithClientAndStage[]> {
-    const rows = await db.select({
-      // Project fields
-      id: projects.id,
-      photographerId: projects.photographerId,
-      clientId: projects.clientId,
-      title: projects.title,
-      projectType: projects.projectType,
-      eventDate: projects.eventDate,
-      hasEventDate: projects.hasEventDate,
-      stageId: projects.stageId,
-      stageEnteredAt: projects.stageEnteredAt,
-      leadSource: projects.leadSource,
-      status: projects.status,
-      smsOptIn: projects.smsOptIn,
-      emailOptIn: projects.emailOptIn,
-      notes: projects.notes,
-      createdAt: projects.createdAt,
-      // Gallery fields
-      galleryUrl: projects.galleryUrl,
-      galleryId: projects.galleryId,
-      galleryReady: projects.galleryReady,
-      galleryCreatedAt: projects.galleryCreatedAt,
-      gallerySharedAt: projects.gallerySharedAt,
-      isPublicGallery: projects.isPublicGallery,
-      // Client fields - FLATTENED
-      clientDataId: contacts.id,
-      clientDataFirstName: contacts.firstName,
-      clientDataLastName: contacts.lastName,
-      clientDataEmail: contacts.email,
-      clientDataPhone: contacts.phone,
-      // Stage fields - FLATTENED
-      stageDataId: stages.id,
-      stageDataName: stages.name,
-      stageDataIsDefault: stages.isDefault,
-      stageDataOrderIndex: stages.orderIndex
-    })
+  async getProjectsByPhotographer(
+    photographerId: string,
+    projectType?: string,
+  ): Promise<ProjectWithClientAndStage[]> {
+    const rows = await db
+      .select({
+        // Project fields
+        id: projects.id,
+        photographerId: projects.photographerId,
+        clientId: projects.clientId,
+        title: projects.title,
+        projectType: projects.projectType,
+        eventDate: projects.eventDate,
+        hasEventDate: projects.hasEventDate,
+        stageId: projects.stageId,
+        stageEnteredAt: projects.stageEnteredAt,
+        leadSource: projects.leadSource,
+        status: projects.status,
+        smsOptIn: projects.smsOptIn,
+        emailOptIn: projects.emailOptIn,
+        notes: projects.notes,
+        createdAt: projects.createdAt,
+        // Gallery fields
+        galleryUrl: projects.galleryUrl,
+        galleryId: projects.galleryId,
+        galleryReady: projects.galleryReady,
+        galleryCreatedAt: projects.galleryCreatedAt,
+        gallerySharedAt: projects.gallerySharedAt,
+        isPublicGallery: projects.isPublicGallery,
+        // Client fields - FLATTENED
+        clientDataId: contacts.id,
+        clientDataFirstName: contacts.firstName,
+        clientDataLastName: contacts.lastName,
+        clientDataEmail: contacts.email,
+        clientDataPhone: contacts.phone,
+        // Stage fields - FLATTENED
+        stageDataId: stages.id,
+        stageDataName: stages.name,
+        stageDataIsDefault: stages.isDefault,
+        stageDataOrderIndex: stages.orderIndex,
+      })
       .from(projects)
       .leftJoin(contacts, eq(projects.clientId, contacts.id))
       .leftJoin(stages, eq(projects.stageId, stages.id))
-      .where(projectType ? 
-        and(eq(projects.photographerId, photographerId), eq(projects.projectType, projectType)) :
-        eq(projects.photographerId, photographerId)
+      .where(
+        projectType
+          ? and(
+              eq(projects.photographerId, photographerId),
+              eq(projects.projectType, projectType),
+            )
+          : eq(projects.photographerId, photographerId),
       )
       .orderBy(desc(projects.createdAt));
-      
-    return rows.map(row => ({
+
+    return rows.map((row) => ({
       id: row.id,
       photographerId: row.photographerId,
       clientId: row.clientId,
@@ -2732,66 +3930,71 @@ export class DatabaseStorage implements IStorage {
       galleryCreatedAt: row.galleryCreatedAt,
       gallerySharedAt: row.gallerySharedAt,
       isPublicGallery: row.isPublicGallery,
-      client: row.clientDataId ? {
-        id: row.clientDataId,
-        firstName: row.clientDataFirstName,
-        lastName: row.clientDataLastName,
-        email: row.clientDataEmail,
-        phone: row.clientDataPhone
-      } : null,
-      stage: row.stageDataId ? {
-        id: row.stageDataId,
-        name: row.stageDataName,
-        isDefault: row.stageDataIsDefault,
-        orderIndex: row.stageDataOrderIndex
-      } : null
+      client: row.clientDataId
+        ? {
+            id: row.clientDataId,
+            firstName: row.clientDataFirstName,
+            lastName: row.clientDataLastName,
+            email: row.clientDataEmail,
+            phone: row.clientDataPhone,
+          }
+        : null,
+      stage: row.stageDataId
+        ? {
+            id: row.stageDataId,
+            name: row.stageDataName,
+            isDefault: row.stageDataIsDefault,
+            orderIndex: row.stageDataOrderIndex,
+          }
+        : null,
     }));
   }
 
   // FLATTENED to avoid Drizzle's nested object issue with leftJoin returning null
   async getProject(id: string): Promise<ProjectWithClientAndStage | undefined> {
-    const [row] = await db.select({
-      // Project fields
-      id: projects.id,
-      photographerId: projects.photographerId,
-      clientId: projects.clientId,
-      title: projects.title,
-      projectType: projects.projectType,
-      eventDate: projects.eventDate,
-      hasEventDate: projects.hasEventDate,
-      stageId: projects.stageId,
-      stageEnteredAt: projects.stageEnteredAt,
-      leadSource: projects.leadSource,
-      status: projects.status,
-      smsOptIn: projects.smsOptIn,
-      emailOptIn: projects.emailOptIn,
-      notes: projects.notes,
-      createdAt: projects.createdAt,
-      // Gallery fields
-      galleryUrl: projects.galleryUrl,
-      galleryId: projects.galleryId,
-      galleryReady: projects.galleryReady,
-      galleryCreatedAt: projects.galleryCreatedAt,
-      gallerySharedAt: projects.gallerySharedAt,
-      // Client fields - FLATTENED
-      clientDataId: contacts.id,
-      clientDataFirstName: contacts.firstName,
-      clientDataLastName: contacts.lastName,
-      clientDataEmail: contacts.email,
-      clientDataPhone: contacts.phone,
-      // Stage fields - FLATTENED
-      stageDataId: stages.id,
-      stageDataName: stages.name,
-      stageDataIsDefault: stages.isDefault,
-      stageDataOrderIndex: stages.orderIndex
-    })
+    const [row] = await db
+      .select({
+        // Project fields
+        id: projects.id,
+        photographerId: projects.photographerId,
+        clientId: projects.clientId,
+        title: projects.title,
+        projectType: projects.projectType,
+        eventDate: projects.eventDate,
+        hasEventDate: projects.hasEventDate,
+        stageId: projects.stageId,
+        stageEnteredAt: projects.stageEnteredAt,
+        leadSource: projects.leadSource,
+        status: projects.status,
+        smsOptIn: projects.smsOptIn,
+        emailOptIn: projects.emailOptIn,
+        notes: projects.notes,
+        createdAt: projects.createdAt,
+        // Gallery fields
+        galleryUrl: projects.galleryUrl,
+        galleryId: projects.galleryId,
+        galleryReady: projects.galleryReady,
+        galleryCreatedAt: projects.galleryCreatedAt,
+        gallerySharedAt: projects.gallerySharedAt,
+        // Client fields - FLATTENED
+        clientDataId: contacts.id,
+        clientDataFirstName: contacts.firstName,
+        clientDataLastName: contacts.lastName,
+        clientDataEmail: contacts.email,
+        clientDataPhone: contacts.phone,
+        // Stage fields - FLATTENED
+        stageDataId: stages.id,
+        stageDataName: stages.name,
+        stageDataIsDefault: stages.isDefault,
+        stageDataOrderIndex: stages.orderIndex,
+      })
       .from(projects)
       .leftJoin(contacts, eq(projects.clientId, contacts.id))
       .leftJoin(stages, eq(projects.stageId, stages.id))
       .where(eq(projects.id, id));
-      
+
     if (!row) return undefined;
-    
+
     return {
       id: row.id,
       photographerId: row.photographerId,
@@ -2813,42 +4016,50 @@ export class DatabaseStorage implements IStorage {
       galleryReady: row.galleryReady,
       galleryCreatedAt: row.galleryCreatedAt,
       gallerySharedAt: row.gallerySharedAt,
-      client: row.clientDataId ? {
-        id: row.clientDataId,
-        firstName: row.clientDataFirstName,
-        lastName: row.clientDataLastName,
-        email: row.clientDataEmail,
-        phone: row.clientDataPhone
-      } : null,
-      stage: row.stageDataId ? {
-        id: row.stageDataId,
-        name: row.stageDataName,
-        isDefault: row.stageDataIsDefault,
-        orderIndex: row.stageDataOrderIndex
-      } : null
+      client: row.clientDataId
+        ? {
+            id: row.clientDataId,
+            firstName: row.clientDataFirstName,
+            lastName: row.clientDataLastName,
+            email: row.clientDataEmail,
+            phone: row.clientDataPhone,
+          }
+        : null,
+      stage: row.stageDataId
+        ? {
+            id: row.stageDataId,
+            name: row.stageDataName,
+            isDefault: row.stageDataIsDefault,
+            orderIndex: row.stageDataOrderIndex,
+          }
+        : null,
     };
   }
 
   async createProject(insertProject: InsertProject): Promise<Project> {
     // If no stage provided, assign default stage automatically
     let finalStageId = insertProject.stageId;
-    
+
     if (!finalStageId) {
       // Find default stage for this photographer (unified pipeline - no projectType filter)
       // First try to find a stage marked as default, then fall back to first by orderIndex
-      const [defaultStage] = await db.select()
+      const [defaultStage] = await db
+        .select()
         .from(stages)
-        .where(and(
-          eq(stages.photographerId, insertProject.photographerId),
-          eq(stages.isDefault, true)
-        ))
+        .where(
+          and(
+            eq(stages.photographerId, insertProject.photographerId),
+            eq(stages.isDefault, true),
+          ),
+        )
         .limit(1);
 
       if (defaultStage) {
         finalStageId = defaultStage.id;
       } else {
         // Fall back to first stage by orderIndex
-        const [firstStage] = await db.select()
+        const [firstStage] = await db
+          .select()
           .from(stages)
           .where(eq(stages.photographerId, insertProject.photographerId))
           .orderBy(asc(stages.orderIndex))
@@ -2856,20 +4067,21 @@ export class DatabaseStorage implements IStorage {
         finalStageId = firstStage?.id || null;
       }
     }
-    
+
     // Inherit contact's opt-in preferences if not explicitly provided
     let finalSmsOptIn = insertProject.smsOptIn;
     let finalEmailOptIn = insertProject.emailOptIn;
-    
+
     if (finalSmsOptIn === undefined || finalEmailOptIn === undefined) {
-      const [contact] = await db.select({
-        smsOptIn: contacts.smsOptIn,
-        emailOptIn: contacts.emailOptIn
-      })
+      const [contact] = await db
+        .select({
+          smsOptIn: contacts.smsOptIn,
+          emailOptIn: contacts.emailOptIn,
+        })
         .from(contacts)
         .where(eq(contacts.id, insertProject.clientId))
         .limit(1);
-      
+
       if (contact) {
         if (finalSmsOptIn === undefined) {
           finalSmsOptIn = contact.smsOptIn;
@@ -2879,7 +4091,7 @@ export class DatabaseStorage implements IStorage {
         }
       }
     }
-    
+
     // Set stageEnteredAt timestamp when assigning to any stage
     const projectData = {
       ...insertProject,
@@ -2887,49 +4099,53 @@ export class DatabaseStorage implements IStorage {
       stageEnteredAt: finalStageId ? new Date() : null,
       hasEventDate: !!insertProject.eventDate,
       smsOptIn: finalSmsOptIn,
-      emailOptIn: finalEmailOptIn
+      emailOptIn: finalEmailOptIn,
     };
-    
+
     const [project] = await db.insert(projects).values(projectData).returning();
-    
+
     // Log project creation to client history
     await db.insert(projectActivityLog).values({
       projectId: project.id,
-      activityType: 'PROJECT_CREATED',
-      action: 'CREATED',
-      title: 'Project Created',
+      activityType: "PROJECT_CREATED",
+      action: "CREATED",
+      title: "Project Created",
       description: `${project.projectType} project "${project.title}" was created`,
       metadata: JSON.stringify({
         projectType: project.projectType,
         projectTitle: project.title,
-        leadSource: project.leadSource
+        leadSource: project.leadSource,
       }),
       relatedId: project.id,
-      relatedType: 'PROJECT'
+      relatedType: "PROJECT",
     });
-    
+
     // Auto-subscribe to wedding campaigns when creating in inquiry stage
     if (project.stageId) {
       await this.checkAndSubscribeToWeddingCampaign(project);
     }
-    
+
     return project;
   }
 
-  async updateProject(id: string, projectUpdate: Partial<Project>): Promise<Project> {
+  async updateProject(
+    id: string,
+    projectUpdate: Partial<Project>,
+  ): Promise<Project> {
     // If stageId is being updated, set stageEnteredAt timestamp
     // If eventDate is being updated, set hasEventDate based on whether date exists
     const updateData = {
       ...projectUpdate,
       ...(projectUpdate.stageId !== undefined && {
-        stageEnteredAt: projectUpdate.stageId ? new Date() : null
+        stageEnteredAt: projectUpdate.stageId ? new Date() : null,
       }),
       ...(projectUpdate.eventDate !== undefined && {
-        hasEventDate: !!projectUpdate.eventDate
-      })
+        hasEventDate: !!projectUpdate.eventDate,
+      }),
     };
-    
-    const [updated] = await db.update(projects)
+
+    const [updated] = await db
+      .update(projects)
       .set(updateData)
       .where(eq(projects.id, id))
       .returning();
@@ -2938,37 +4154,40 @@ export class DatabaseStorage implements IStorage {
     if (projectUpdate.stageId) {
       await this.checkAndSubscribeToWeddingCampaign(updated);
     }
-    
+
     return updated;
   }
 
-  async getProjectParticipants(projectId: string): Promise<(ProjectParticipant & { client: Contact })[]> {
+  async getProjectParticipants(
+    projectId: string,
+  ): Promise<(ProjectParticipant & { client: Contact })[]> {
     // Flatten select to avoid Drizzle's nested object issue with table references
-    const rows = await db.select({
-      id: projectParticipants.id,
-      projectId: projectParticipants.projectId,
-      clientId: projectParticipants.clientId,
-      addedBy: projectParticipants.addedBy,
-      inviteSent: projectParticipants.inviteSent,
-      inviteSentAt: projectParticipants.inviteSentAt,
-      createdAt: projectParticipants.createdAt,
-      contactId: contacts.id,
-      contactPhotographerId: contacts.photographerId,
-      contactFirstName: contacts.firstName,
-      contactLastName: contacts.lastName,
-      contactEmail: contacts.email,
-      contactPhone: contacts.phone,
-      contactSmsOptIn: contacts.smsOptIn,
-      contactEmailOptIn: contacts.emailOptIn,
-      contactNotes: contacts.notes,
-      contactCreatedAt: contacts.createdAt
-    })
+    const rows = await db
+      .select({
+        id: projectParticipants.id,
+        projectId: projectParticipants.projectId,
+        clientId: projectParticipants.clientId,
+        addedBy: projectParticipants.addedBy,
+        inviteSent: projectParticipants.inviteSent,
+        inviteSentAt: projectParticipants.inviteSentAt,
+        createdAt: projectParticipants.createdAt,
+        contactId: contacts.id,
+        contactPhotographerId: contacts.photographerId,
+        contactFirstName: contacts.firstName,
+        contactLastName: contacts.lastName,
+        contactEmail: contacts.email,
+        contactPhone: contacts.phone,
+        contactSmsOptIn: contacts.smsOptIn,
+        contactEmailOptIn: contacts.emailOptIn,
+        contactNotes: contacts.notes,
+        contactCreatedAt: contacts.createdAt,
+      })
       .from(projectParticipants)
       .innerJoin(contacts, eq(projectParticipants.clientId, contacts.id))
       .where(eq(projectParticipants.projectId, projectId))
       .orderBy(desc(projectParticipants.createdAt));
-      
-    return rows.map(row => ({
+
+    return rows.map((row) => ({
       id: row.id,
       projectId: row.projectId,
       clientId: row.clientId,
@@ -2986,57 +4205,60 @@ export class DatabaseStorage implements IStorage {
         smsOptIn: row.contactSmsOptIn,
         emailOptIn: row.contactEmailOptIn,
         notes: row.contactNotes,
-        createdAt: row.contactCreatedAt
-      } as Contact
+        createdAt: row.contactCreatedAt,
+      } as Contact,
     }));
   }
 
   // FLATTENED to avoid Drizzle's nested object issue with leftJoin returning null
-  async getParticipantProjects(clientId: string): Promise<(ProjectParticipant & { project: ProjectWithClientAndStage })[]> {
-    const rows = await db.select({
-      participantId: projectParticipants.id,
-      participantProjectId: projectParticipants.projectId,
-      participantClientId: projectParticipants.clientId,
-      participantAddedBy: projectParticipants.addedBy,
-      participantInviteSent: projectParticipants.inviteSent,
-      participantInviteSentAt: projectParticipants.inviteSentAt,
-      participantCreatedAt: projectParticipants.createdAt,
-      // Project fields
-      id: projects.id,
-      photographerId: projects.photographerId,
-      projectClientId: projects.clientId,
-      title: projects.title,
-      projectType: projects.projectType,
-      eventDate: projects.eventDate,
-      hasEventDate: projects.hasEventDate,
-      stageId: projects.stageId,
-      stageEnteredAt: projects.stageEnteredAt,
-      leadSource: projects.leadSource,
-      status: projects.status,
-      smsOptIn: projects.smsOptIn,
-      emailOptIn: projects.emailOptIn,
-      notes: projects.notes,
-      createdAt: projects.createdAt,
-      // Client fields - FLATTENED
-      clientDataId: contacts.id,
-      clientDataFirstName: contacts.firstName,
-      clientDataLastName: contacts.lastName,
-      clientDataEmail: contacts.email,
-      clientDataPhone: contacts.phone,
-      // Stage fields - FLATTENED
-      stageDataId: stages.id,
-      stageDataName: stages.name,
-      stageDataIsDefault: stages.isDefault,
-      stageDataOrderIndex: stages.orderIndex
-    })
+  async getParticipantProjects(
+    clientId: string,
+  ): Promise<(ProjectParticipant & { project: ProjectWithClientAndStage })[]> {
+    const rows = await db
+      .select({
+        participantId: projectParticipants.id,
+        participantProjectId: projectParticipants.projectId,
+        participantClientId: projectParticipants.clientId,
+        participantAddedBy: projectParticipants.addedBy,
+        participantInviteSent: projectParticipants.inviteSent,
+        participantInviteSentAt: projectParticipants.inviteSentAt,
+        participantCreatedAt: projectParticipants.createdAt,
+        // Project fields
+        id: projects.id,
+        photographerId: projects.photographerId,
+        projectClientId: projects.clientId,
+        title: projects.title,
+        projectType: projects.projectType,
+        eventDate: projects.eventDate,
+        hasEventDate: projects.hasEventDate,
+        stageId: projects.stageId,
+        stageEnteredAt: projects.stageEnteredAt,
+        leadSource: projects.leadSource,
+        status: projects.status,
+        smsOptIn: projects.smsOptIn,
+        emailOptIn: projects.emailOptIn,
+        notes: projects.notes,
+        createdAt: projects.createdAt,
+        // Client fields - FLATTENED
+        clientDataId: contacts.id,
+        clientDataFirstName: contacts.firstName,
+        clientDataLastName: contacts.lastName,
+        clientDataEmail: contacts.email,
+        clientDataPhone: contacts.phone,
+        // Stage fields - FLATTENED
+        stageDataId: stages.id,
+        stageDataName: stages.name,
+        stageDataIsDefault: stages.isDefault,
+        stageDataOrderIndex: stages.orderIndex,
+      })
       .from(projectParticipants)
       .innerJoin(projects, eq(projectParticipants.projectId, projects.id))
       .leftJoin(contacts, eq(projects.clientId, contacts.id))
       .leftJoin(stages, eq(projects.stageId, stages.id))
       .where(eq(projectParticipants.clientId, clientId))
       .orderBy(desc(projectParticipants.createdAt));
-      
-    return rows.map(row => ({
+
+    return rows.map((row) => ({
       id: row.participantId,
       projectId: row.participantProjectId,
       clientId: row.participantClientId,
@@ -3060,38 +4282,57 @@ export class DatabaseStorage implements IStorage {
         emailOptIn: row.emailOptIn,
         notes: row.notes,
         createdAt: row.createdAt,
-        client: row.clientDataId ? {
-          id: row.clientDataId,
-          firstName: row.clientDataFirstName,
-          lastName: row.clientDataLastName,
-          email: row.clientDataEmail,
-          phone: row.clientDataPhone
-        } : null,
-        stage: row.stageDataId ? {
-          id: row.stageDataId,
-          name: row.stageDataName,
-          isDefault: row.stageDataIsDefault,
-          orderIndex: row.stageDataOrderIndex
-        } : null
-      }
+        client: row.clientDataId
+          ? {
+              id: row.clientDataId,
+              firstName: row.clientDataFirstName,
+              lastName: row.clientDataLastName,
+              email: row.clientDataEmail,
+              phone: row.clientDataPhone,
+            }
+          : null,
+        stage: row.stageDataId
+          ? {
+              id: row.stageDataId,
+              name: row.stageDataName,
+              isDefault: row.stageDataIsDefault,
+              orderIndex: row.stageDataOrderIndex,
+            }
+          : null,
+      },
     }));
   }
 
-  async addProjectParticipant(participant: InsertProjectParticipant): Promise<ProjectParticipant> {
-    const [created] = await db.insert(projectParticipants).values(participant).returning();
+  async addProjectParticipant(
+    participant: InsertProjectParticipant,
+  ): Promise<ProjectParticipant> {
+    const [created] = await db
+      .insert(projectParticipants)
+      .values(participant)
+      .returning();
     return created;
   }
 
-  async removeProjectParticipant(projectId: string, clientId: string): Promise<void> {
-    await db.delete(projectParticipants)
-      .where(and(
-        eq(projectParticipants.projectId, projectId),
-        eq(projectParticipants.clientId, clientId)
-      ));
+  async removeProjectParticipant(
+    projectId: string,
+    clientId: string,
+  ): Promise<void> {
+    await db
+      .delete(projectParticipants)
+      .where(
+        and(
+          eq(projectParticipants.projectId, projectId),
+          eq(projectParticipants.clientId, clientId),
+        ),
+      );
   }
 
-  async updateProjectParticipantRole(participantId: string, role: string | null): Promise<ProjectParticipant | undefined> {
-    const [updated] = await db.update(projectParticipants)
+  async updateProjectParticipantRole(
+    participantId: string,
+    role: string | null,
+  ): Promise<ProjectParticipant | undefined> {
+    const [updated] = await db
+      .update(projectParticipants)
       .set({ role })
       .where(eq(projectParticipants.id, participantId))
       .returning();
@@ -3099,7 +4340,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getProjectNotes(projectId: string): Promise<ProjectNote[]> {
-    const notes = await db.select()
+    const notes = await db
+      .select()
       .from(projectNotes)
       .where(eq(projectNotes.projectId, projectId))
       .orderBy(desc(projectNotes.createdAt));
@@ -3116,16 +4358,24 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Photographer Tags
-  async getPhotographerTags(photographerId: string): Promise<PhotographerTag[]> {
-    return await db.select()
+  async getPhotographerTags(
+    photographerId: string,
+  ): Promise<PhotographerTag[]> {
+    return await db
+      .select()
       .from(photographerTags)
       .where(eq(photographerTags.photographerId, photographerId))
       .orderBy(photographerTags.name);
   }
 
-  async createPhotographerTag(photographerId: string, name: string, color?: string): Promise<PhotographerTag> {
-    const [created] = await db.insert(photographerTags)
-      .values({ photographerId, name, color: color || '#6366f1' })
+  async createPhotographerTag(
+    photographerId: string,
+    name: string,
+    color?: string,
+  ): Promise<PhotographerTag> {
+    const [created] = await db
+      .insert(photographerTags)
+      .values({ photographerId, name, color: color || "#6366f1" })
       .returning();
     return created;
   }
@@ -3135,87 +4385,120 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateProjectTags(projectId: string, tags: string[]): Promise<void> {
-    await db.update(projects)
-      .set({ tags })
-      .where(eq(projects.id, projectId));
+    await db.update(projects).set({ tags }).where(eq(projects.id, projectId));
   }
 
-  private async checkAndSubscribeToWeddingCampaign(project: Project): Promise<void> {
+  private async checkAndSubscribeToWeddingCampaign(
+    project: Project,
+  ): Promise<void> {
     try {
-      console.log(`🔍 AUTO-SUBSCRIPTION CHECK: Project ${project.id}, Type: ${project.projectType}, Stage: ${project.stageId}`);
-      
+      console.log(
+        `🔍 AUTO-SUBSCRIPTION CHECK: Project ${project.id}, Type: ${project.projectType}, Stage: ${project.stageId}`,
+      );
+
       // Only process wedding projects
-      if (project.projectType !== 'WEDDING') {
-        console.log(`❌ Skipping auto-subscription: Not a wedding project (${project.projectType})`);
+      if (project.projectType !== "WEDDING") {
+        console.log(
+          `❌ Skipping auto-subscription: Not a wedding project (${project.projectType})`,
+        );
         return;
       }
 
       // Get the stage to check if it's inquiry stage
-      const stage = await db.select()
+      const stage = await db
+        .select()
         .from(stages)
         .where(eq(stages.id, project.stageId!))
         .limit(1);
 
-      console.log(`🔍 Stage check: Found ${stage.length} stages, Stage name: ${stage[0]?.name}`);
-      if (!stage.length || stage[0].name !== 'Inquiry') {
-        console.log(`❌ Skipping auto-subscription: Not in Inquiry stage (current: ${stage[0]?.name || 'unknown'})`);
+      console.log(
+        `🔍 Stage check: Found ${stage.length} stages, Stage name: ${stage[0]?.name}`,
+      );
+      if (!stage.length || stage[0].name !== "Inquiry") {
+        console.log(
+          `❌ Skipping auto-subscription: Not in Inquiry stage (current: ${stage[0]?.name || "unknown"})`,
+        );
         return;
       }
 
       // Check if wedding campaign is enabled for this photographer
-      const campaignSettings = await db.select()
+      const campaignSettings = await db
+        .select()
         .from(staticCampaignSettings)
-        .where(and(
-          eq(staticCampaignSettings.photographerId, project.photographerId),
-          eq(staticCampaignSettings.projectType, 'WEDDING')
-        ))
+        .where(
+          and(
+            eq(staticCampaignSettings.photographerId, project.photographerId),
+            eq(staticCampaignSettings.projectType, "WEDDING"),
+          ),
+        )
         .limit(1);
 
-      console.log(`🔍 Campaign settings: Found ${campaignSettings.length} settings, Enabled: ${campaignSettings[0]?.campaignEnabled}`);
+      console.log(
+        `🔍 Campaign settings: Found ${campaignSettings.length} settings, Enabled: ${campaignSettings[0]?.campaignEnabled}`,
+      );
       if (!campaignSettings.length || !campaignSettings[0].campaignEnabled) {
-        console.log(`❌ Skipping auto-subscription: Wedding campaign not enabled`);
+        console.log(
+          `❌ Skipping auto-subscription: Wedding campaign not enabled`,
+        );
         return;
       }
 
       // Get the contact to check email opt-in
-      const contact = await db.select()
+      const contact = await db
+        .select()
         .from(contacts)
         .where(eq(contacts.id, project.clientId))
         .limit(1);
 
-      console.log(`🔍 Contact check: Found ${contact.length} contacts, Email opt-in: ${contact[0]?.emailOptIn}, Has email: ${!!contact[0]?.email}`);
+      console.log(
+        `🔍 Contact check: Found ${contact.length} contacts, Email opt-in: ${contact[0]?.emailOptIn}, Has email: ${!!contact[0]?.email}`,
+      );
       if (!contact.length || !contact[0].emailOptIn || !contact[0].email) {
-        console.log(`❌ Skipping auto-subscription: Contact has no email opt-in or email address`);
+        console.log(
+          `❌ Skipping auto-subscription: Contact has no email opt-in or email address`,
+        );
         return;
       }
 
       // Find the active wedding campaign for this photographer
-      const weddingCampaign = await db.select()
+      const weddingCampaign = await db
+        .select()
         .from(dripCampaigns)
-        .where(and(
-          eq(dripCampaigns.photographerId, project.photographerId),
-          eq(dripCampaigns.projectType, 'WEDDING'),
-          eq(dripCampaigns.status, 'APPROVED'),
-          eq(dripCampaigns.enabled, true)
-        ))
+        .where(
+          and(
+            eq(dripCampaigns.photographerId, project.photographerId),
+            eq(dripCampaigns.projectType, "WEDDING"),
+            eq(dripCampaigns.status, "APPROVED"),
+            eq(dripCampaigns.enabled, true),
+          ),
+        )
         .limit(1);
 
-      console.log(`🔍 Wedding campaign: Found ${weddingCampaign.length} campaigns`);
+      console.log(
+        `🔍 Wedding campaign: Found ${weddingCampaign.length} campaigns`,
+      );
       if (!weddingCampaign.length) {
-        console.log(`❌ Skipping auto-subscription: No active wedding campaign found`);
+        console.log(
+          `❌ Skipping auto-subscription: No active wedding campaign found`,
+        );
         return;
       }
 
       // Check if already subscribed
-      const existingSubscription = await db.select()
+      const existingSubscription = await db
+        .select()
         .from(dripCampaignSubscriptions)
-        .where(and(
-          eq(dripCampaignSubscriptions.projectId, project.id),
-          eq(dripCampaignSubscriptions.campaignId, weddingCampaign[0].id)
-        ))
+        .where(
+          and(
+            eq(dripCampaignSubscriptions.projectId, project.id),
+            eq(dripCampaignSubscriptions.campaignId, weddingCampaign[0].id),
+          ),
+        )
         .limit(1);
 
-      console.log(`🔍 Existing subscription: Found ${existingSubscription.length} subscriptions`);
+      console.log(
+        `🔍 Existing subscription: Found ${existingSubscription.length} subscriptions`,
+      );
       if (existingSubscription.length) {
         console.log(`❌ Skipping auto-subscription: Already subscribed`);
         return;
@@ -3230,30 +4513,34 @@ export class DatabaseStorage implements IStorage {
         startedAt: now,
         nextEmailIndex: 0,
         nextEmailAt: now, // Send first email immediately
-        status: 'ACTIVE'
+        status: "ACTIVE",
       });
 
-      console.log(`✅ AUTO-SUBSCRIBED: Project ${project.id} (${contact[0].firstName} ${contact[0].lastName}) to wedding campaign ${weddingCampaign[0].name}`);
+      console.log(
+        `✅ AUTO-SUBSCRIBED: Project ${project.id} (${contact[0].firstName} ${contact[0].lastName}) to wedding campaign ${weddingCampaign[0].name}`,
+      );
     } catch (error) {
-      console.error('❌ ERROR in auto-subscribing to wedding campaign:', error);
+      console.error("❌ ERROR in auto-subscribing to wedding campaign:", error);
     }
   }
 
   async getProjectHistory(projectId: string): Promise<TimelineEvent[]> {
     // Fetch all project-specific events
-    const activityLogs = await db.select({
-      id: projectActivityLog.id,
-      activityType: projectActivityLog.activityType,
-      title: projectActivityLog.title,
-      description: projectActivityLog.description,
-      metadata: projectActivityLog.metadata,
-      relatedId: projectActivityLog.relatedId,
-      relatedType: projectActivityLog.relatedType,
-      createdAt: projectActivityLog.createdAt
-    }).from(projectActivityLog)
+    const activityLogs = await db
+      .select({
+        id: projectActivityLog.id,
+        activityType: projectActivityLog.activityType,
+        title: projectActivityLog.title,
+        description: projectActivityLog.description,
+        metadata: projectActivityLog.metadata,
+        relatedId: projectActivityLog.relatedId,
+        relatedType: projectActivityLog.relatedType,
+        createdAt: projectActivityLog.createdAt,
+      })
+      .from(projectActivityLog)
       .where(eq(projectActivityLog.projectId, projectId))
       .orderBy(desc(projectActivityLog.createdAt));
-    
+
     // Temporarily disabled queries causing issues
     const emailLogEntries: any[] = [];
     const smsLogEntries: any[] = [];
@@ -3265,7 +4552,7 @@ export class DatabaseStorage implements IStorage {
     // Add activity log events
     for (const log of activityLogs) {
       timeline.push({
-        type: 'activity',
+        type: "activity",
         id: log.id,
         title: log.title,
         description: log.description || undefined,
@@ -3273,17 +4560,18 @@ export class DatabaseStorage implements IStorage {
         metadata: log.metadata,
         relatedId: log.relatedId || undefined,
         relatedType: log.relatedType || undefined,
-        createdAt: log.createdAt!
+        createdAt: log.createdAt!,
       });
     }
 
     // Add automated email events
     for (const email of emailLogEntries) {
-      const subject = email.templateSubject || 'Email';
-      const preview = email.templateName || email.automationName || 'Automated email';
-      
+      const subject = email.templateSubject || "Email";
+      const preview =
+        email.templateName || email.automationName || "Automated email";
+
       timeline.push({
-        type: 'email',
+        type: "email",
         id: email.id,
         title: subject,
         description: preview,
@@ -3295,36 +4583,45 @@ export class DatabaseStorage implements IStorage {
         createdAt: email.sentAt || new Date(),
         templateName: email.templateName || undefined,
         templateSubject: email.templateSubject || undefined,
-        automationName: email.automationName || undefined
+        automationName: email.automationName || undefined,
       });
     }
 
     // Add manual email events (from emailHistory)
     for (const email of emailHistoryEntries) {
-      const recipients = email.toEmails?.join(', ') || 'Unknown';
-      const source = email.source === 'GMAIL' ? '📧 Gmail' : email.source === 'SENDGRID' ? '📧 SendGrid' : '📧 Email';
-      
+      const recipients = email.toEmails?.join(", ") || "Unknown";
+      const source =
+        email.source === "GMAIL"
+          ? "📧 Gmail"
+          : email.source === "SENDGRID"
+            ? "📧 SendGrid"
+            : "📧 Email";
+
       timeline.push({
-        type: 'email',
+        type: "email",
         id: email.id,
-        title: email.subject || 'Email',
-        description: `${source} to ${recipients}${email.bodyPreview ? ': ' + email.bodyPreview.substring(0, 100) : ''}`,
-        status: 'sent',
+        title: email.subject || "Email",
+        description: `${source} to ${recipients}${email.bodyPreview ? ": " + email.bodyPreview.substring(0, 100) : ""}`,
+        status: "sent",
         sentAt: email.sentAt || email.createdAt || undefined,
         createdAt: email.createdAt || new Date(),
         templateName: undefined,
-        templateSubject: email.subject || undefined
+        templateSubject: email.subject || undefined,
       });
     }
 
     // Add SMS events
     for (const sms of smsLogEntries) {
-      const isInbound = sms.direction === 'INBOUND';
-      const title = isInbound ? `📱 SMS from ${sms.fromPhone || 'client'}` : `📱 SMS to ${sms.toPhone || 'client'}`;
-      const preview = sms.messageBody ? sms.messageBody.substring(0, 100) : (sms.templateName || sms.automationName || 'SMS message');
-      
+      const isInbound = sms.direction === "INBOUND";
+      const title = isInbound
+        ? `📱 SMS from ${sms.fromPhone || "client"}`
+        : `📱 SMS to ${sms.toPhone || "client"}`;
+      const preview = sms.messageBody
+        ? sms.messageBody.substring(0, 100)
+        : sms.templateName || sms.automationName || "SMS message";
+
       timeline.push({
-        type: 'sms',
+        type: "sms",
         id: sms.id,
         title,
         description: preview,
@@ -3335,7 +4632,7 @@ export class DatabaseStorage implements IStorage {
         direction: sms.direction,
         messageBody: sms.messageBody || undefined,
         templateName: sms.templateName || undefined,
-        automationName: sms.automationName || undefined
+        automationName: sms.automationName || undefined,
       });
     }
 
@@ -3350,57 +4647,82 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Stripe Connect Integration methods
-  async updatePhotographerStripeAccount(photographerId: string, stripeData: {
-    stripeConnectAccountId?: string;
-    stripeAccountStatus?: string;
-    payoutEnabled?: boolean;
-    onboardingCompleted?: boolean;
-    stripeOnboardingCompletedAt?: Date;
-    platformFeePercent?: number;
-  }): Promise<void> {
-    await db.update(photographers)
+  async updatePhotographerStripeAccount(
+    photographerId: string,
+    stripeData: {
+      stripeConnectAccountId?: string;
+      stripeAccountStatus?: string;
+      payoutEnabled?: boolean;
+      onboardingCompleted?: boolean;
+      stripeOnboardingCompletedAt?: Date;
+      platformFeePercent?: number;
+    },
+  ): Promise<void> {
+    await db
+      .update(photographers)
       .set(stripeData)
       .where(eq(photographers.id, photographerId));
   }
 
   // Photographer Earnings methods
-  async getEarningsByPhotographer(photographerId: string): Promise<PhotographerEarnings[]> {
-    return await db.select()
+  async getEarningsByPhotographer(
+    photographerId: string,
+  ): Promise<PhotographerEarnings[]> {
+    return await db
+      .select()
       .from(photographerEarnings)
       .where(eq(photographerEarnings.photographerId, photographerId))
       .orderBy(desc(photographerEarnings.createdAt));
   }
 
-  async getEarningsByProject(projectId: string): Promise<PhotographerEarnings[]> {
-    return await db.select()
+  async getEarningsByProject(
+    projectId: string,
+  ): Promise<PhotographerEarnings[]> {
+    return await db
+      .select()
       .from(photographerEarnings)
       .where(eq(photographerEarnings.projectId, projectId))
       .orderBy(desc(photographerEarnings.createdAt));
   }
 
-  async getEarningsByPaymentIntentId(paymentIntentId: string): Promise<PhotographerEarnings | undefined> {
-    const [earnings] = await db.select()
+  async getEarningsByPaymentIntentId(
+    paymentIntentId: string,
+  ): Promise<PhotographerEarnings | undefined> {
+    const [earnings] = await db
+      .select()
       .from(photographerEarnings)
       .where(eq(photographerEarnings.paymentIntentId, paymentIntentId))
       .limit(1);
     return earnings || undefined;
   }
 
-  async getEarningsByTransferId(transferId: string): Promise<PhotographerEarnings | undefined> {
-    const [earnings] = await db.select()
+  async getEarningsByTransferId(
+    transferId: string,
+  ): Promise<PhotographerEarnings | undefined> {
+    const [earnings] = await db
+      .select()
       .from(photographerEarnings)
       .where(eq(photographerEarnings.transferId, transferId))
       .limit(1);
     return earnings || undefined;
   }
 
-  async createEarnings(earnings: InsertPhotographerEarnings): Promise<PhotographerEarnings> {
-    const [created] = await db.insert(photographerEarnings).values(earnings).returning();
+  async createEarnings(
+    earnings: InsertPhotographerEarnings,
+  ): Promise<PhotographerEarnings> {
+    const [created] = await db
+      .insert(photographerEarnings)
+      .values(earnings)
+      .returning();
     return created;
   }
 
-  async updateEarnings(id: string, earnings: Partial<PhotographerEarnings>): Promise<PhotographerEarnings> {
-    const [updated] = await db.update(photographerEarnings)
+  async updateEarnings(
+    id: string,
+    earnings: Partial<PhotographerEarnings>,
+  ): Promise<PhotographerEarnings> {
+    const [updated] = await db
+      .update(photographerEarnings)
       .set(earnings)
       .where(eq(photographerEarnings.id, id))
       .returning();
@@ -3408,66 +4730,92 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Photographer Payouts methods
-  async getPayoutsByPhotographer(photographerId: string): Promise<PhotographerPayouts[]> {
-    return await db.select()
+  async getPayoutsByPhotographer(
+    photographerId: string,
+  ): Promise<PhotographerPayouts[]> {
+    return await db
+      .select()
       .from(photographerPayouts)
       .where(eq(photographerPayouts.photographerId, photographerId))
       .orderBy(desc(photographerPayouts.createdAt));
   }
 
-  async getPayoutByStripePayoutId(stripePayoutId: string): Promise<PhotographerPayouts | undefined> {
-    const [payout] = await db.select()
+  async getPayoutByStripePayoutId(
+    stripePayoutId: string,
+  ): Promise<PhotographerPayouts | undefined> {
+    const [payout] = await db
+      .select()
       .from(photographerPayouts)
       .where(eq(photographerPayouts.stripePayoutId, stripePayoutId))
       .limit(1);
     return payout || undefined;
   }
 
-  async createPayout(payout: InsertPhotographerPayouts): Promise<PhotographerPayouts> {
-    const [created] = await db.insert(photographerPayouts).values(payout).returning();
+  async createPayout(
+    payout: InsertPhotographerPayouts,
+  ): Promise<PhotographerPayouts> {
+    const [created] = await db
+      .insert(photographerPayouts)
+      .values(payout)
+      .returning();
     return created;
   }
 
-  async updatePayout(id: string, payout: Partial<PhotographerPayouts>): Promise<PhotographerPayouts> {
-    const [updated] = await db.update(photographerPayouts)
+  async updatePayout(
+    id: string,
+    payout: Partial<PhotographerPayouts>,
+  ): Promise<PhotographerPayouts> {
+    const [updated] = await db
+      .update(photographerPayouts)
       .set(payout)
       .where(eq(photographerPayouts.id, id))
       .returning();
     return updated;
   }
 
-  async getPhotographerBalance(photographerId: string, currency: string = 'USD'): Promise<{ availableCents: number; pendingCents: number }> {
+  async getPhotographerBalance(
+    photographerId: string,
+    currency: string = "USD",
+  ): Promise<{ availableCents: number; pendingCents: number }> {
     // Get all earnings for this photographer in the specified currency
-    const earnings = await db.select()
+    const earnings = await db
+      .select()
       .from(photographerEarnings)
-      .where(and(
-        eq(photographerEarnings.photographerId, photographerId),
-        eq(photographerEarnings.currency, currency)
-      ));
+      .where(
+        and(
+          eq(photographerEarnings.photographerId, photographerId),
+          eq(photographerEarnings.currency, currency),
+        ),
+      );
 
     // Calculate pending earnings (not yet transferred to Stripe Connect account)
     const pendingCents = earnings
-      .filter(earning => earning.status === 'pending')
+      .filter((earning) => earning.status === "pending")
       .reduce((sum, earning) => sum + earning.photographerEarningsCents, 0);
 
     // Calculate total transferred earnings (available for payout)
     const transferredEarnings = earnings
-      .filter(earning => earning.status === 'transferred')
+      .filter((earning) => earning.status === "transferred")
       .reduce((sum, earning) => sum + earning.photographerEarningsCents, 0);
 
     // Get all payouts for this photographer in the specified currency
-    const payouts = await db.select()
+    const payouts = await db
+      .select()
       .from(photographerPayouts)
-      .where(and(
-        eq(photographerPayouts.photographerId, photographerId),
-        eq(photographerPayouts.currency, currency)
-      ));
+      .where(
+        and(
+          eq(photographerPayouts.photographerId, photographerId),
+          eq(photographerPayouts.currency, currency),
+        ),
+      );
 
     // Calculate total amount already paid out or pending payout
     // We subtract both 'paid' and 'pending' payouts to get true available balance
     // Exclude 'failed' and 'cancelled' payouts as they don't affect available balance
     const allocatedCents = payouts
-      .filter(payout => payout.status === 'paid' || payout.status === 'pending')
+      .filter(
+        (payout) => payout.status === "paid" || payout.status === "pending",
+      )
       .reduce((sum, payout) => sum + payout.amountCents, 0);
 
     // Available balance = transferred earnings minus already allocated payouts
@@ -3476,62 +4824,80 @@ export class DatabaseStorage implements IStorage {
 
     return {
       availableCents,
-      pendingCents
+      pendingCents,
     };
   }
 
   // Drip Campaigns methods
-  async getDripCampaignsByPhotographer(photographerId: string, projectType?: string): Promise<DripCampaignWithEmails[]> {
-    const query = db.select()
+  async getDripCampaignsByPhotographer(
+    photographerId: string,
+    projectType?: string,
+  ): Promise<DripCampaignWithEmails[]> {
+    const query = db
+      .select()
       .from(dripCampaigns)
       .where(eq(dripCampaigns.photographerId, photographerId))
       .orderBy(desc(dripCampaigns.createdAt));
-    
+
     if (projectType) {
-      query.where(and(
-        eq(dripCampaigns.photographerId, photographerId),
-        eq(dripCampaigns.projectType, projectType)
-      ));
+      query.where(
+        and(
+          eq(dripCampaigns.photographerId, photographerId),
+          eq(dripCampaigns.projectType, projectType),
+        ),
+      );
     }
-    
+
     const campaigns = await query;
-    
+
     // Get emails for each campaign
     const campaignsWithEmails: DripCampaignWithEmails[] = [];
     for (const campaign of campaigns) {
       const emails = await this.getDripCampaignEmails(campaign.id);
       campaignsWithEmails.push({
         ...campaign,
-        emails
+        emails,
       });
     }
-    
+
     return campaignsWithEmails;
   }
 
-  async getDripCampaign(id: string): Promise<DripCampaignWithEmails | undefined> {
-    const [campaign] = await db.select()
+  async getDripCampaign(
+    id: string,
+  ): Promise<DripCampaignWithEmails | undefined> {
+    const [campaign] = await db
+      .select()
       .from(dripCampaigns)
       .where(eq(dripCampaigns.id, id))
       .limit(1);
-    
+
     if (!campaign) return undefined;
-    
+
     const emails = await this.getDripCampaignEmails(campaign.id);
-    
+
     return {
       ...campaign,
-      emails
+      emails,
     };
   }
 
-  async createDripCampaign(campaign: InsertDripCampaign): Promise<DripCampaign> {
-    const [created] = await db.insert(dripCampaigns).values(campaign).returning();
+  async createDripCampaign(
+    campaign: InsertDripCampaign,
+  ): Promise<DripCampaign> {
+    const [created] = await db
+      .insert(dripCampaigns)
+      .values(campaign)
+      .returning();
     return created;
   }
 
-  async updateDripCampaign(id: string, campaign: Partial<DripCampaign>): Promise<DripCampaign> {
-    const [updated] = await db.update(dripCampaigns)
+  async updateDripCampaign(
+    id: string,
+    campaign: Partial<DripCampaign>,
+  ): Promise<DripCampaign> {
+    const [updated] = await db
+      .update(dripCampaigns)
       .set(campaign)
       .where(eq(dripCampaigns.id, id))
       .returning();
@@ -3540,31 +4906,45 @@ export class DatabaseStorage implements IStorage {
 
   async deleteDripCampaign(id: string): Promise<void> {
     // Delete related data first (cascading delete)
-    await db.delete(dripEmailDeliveries)
+    await db
+      .delete(dripEmailDeliveries)
       .where(eq(dripEmailDeliveries.emailId, id)); // Need to join through subscriptions
-    await db.delete(dripCampaignSubscriptions)
+    await db
+      .delete(dripCampaignSubscriptions)
       .where(eq(dripCampaignSubscriptions.campaignId, id));
-    await db.delete(dripCampaignEmails)
+    await db
+      .delete(dripCampaignEmails)
       .where(eq(dripCampaignEmails.campaignId, id));
-    await db.delete(dripCampaigns)
-      .where(eq(dripCampaigns.id, id));
+    await db.delete(dripCampaigns).where(eq(dripCampaigns.id, id));
   }
 
   // Drip Campaign Emails methods
-  async getDripCampaignEmails(campaignId: string): Promise<DripCampaignEmail[]> {
-    return await db.select()
+  async getDripCampaignEmails(
+    campaignId: string,
+  ): Promise<DripCampaignEmail[]> {
+    return await db
+      .select()
       .from(dripCampaignEmails)
       .where(eq(dripCampaignEmails.campaignId, campaignId))
       .orderBy(asc(dripCampaignEmails.sequenceIndex));
   }
 
-  async createDripCampaignEmail(email: InsertDripCampaignEmail): Promise<DripCampaignEmail> {
-    const [created] = await db.insert(dripCampaignEmails).values(email).returning();
+  async createDripCampaignEmail(
+    email: InsertDripCampaignEmail,
+  ): Promise<DripCampaignEmail> {
+    const [created] = await db
+      .insert(dripCampaignEmails)
+      .values(email)
+      .returning();
     return created;
   }
 
-  async updateDripCampaignEmail(id: string, email: Partial<DripCampaignEmail>): Promise<DripCampaignEmail> {
-    const [updated] = await db.update(dripCampaignEmails)
+  async updateDripCampaignEmail(
+    id: string,
+    email: Partial<DripCampaignEmail>,
+  ): Promise<DripCampaignEmail> {
+    const [updated] = await db
+      .update(dripCampaignEmails)
       .set(email)
       .where(eq(dripCampaignEmails.id, id))
       .returning();
@@ -3573,35 +4953,44 @@ export class DatabaseStorage implements IStorage {
 
   async deleteDripCampaignEmail(id: string): Promise<void> {
     // Delete related deliveries first
-    await db.delete(dripEmailDeliveries)
+    await db
+      .delete(dripEmailDeliveries)
       .where(eq(dripEmailDeliveries.emailId, id));
-    await db.delete(dripCampaignEmails)
-      .where(eq(dripCampaignEmails.id, id));
+    await db.delete(dripCampaignEmails).where(eq(dripCampaignEmails.id, id));
   }
 
   // Individual Email Approval Methods
-  async approveEmail(emailId: string, approvedBy: string): Promise<DripCampaignEmail> {
-    const [updated] = await db.update(dripCampaignEmails)
+  async approveEmail(
+    emailId: string,
+    approvedBy: string,
+  ): Promise<DripCampaignEmail> {
+    const [updated] = await db
+      .update(dripCampaignEmails)
       .set({
-        approvalStatus: 'APPROVED',
+        approvalStatus: "APPROVED",
         approvedAt: new Date(),
         approvedBy,
-        rejectionReason: null
+        rejectionReason: null,
       })
       .where(eq(dripCampaignEmails.id, emailId))
       .returning();
     return updated;
   }
 
-  async rejectEmail(emailId: string, rejectedBy: string, reason: string): Promise<DripCampaignEmail> {
-    const [updated] = await db.update(dripCampaignEmails)
+  async rejectEmail(
+    emailId: string,
+    rejectedBy: string,
+    reason: string,
+  ): Promise<DripCampaignEmail> {
+    const [updated] = await db
+      .update(dripCampaignEmails)
       .set({
-        approvalStatus: 'REJECTED',
+        approvalStatus: "REJECTED",
         approvedAt: null,
         approvedBy: null,
         rejectionReason: reason,
         lastEditedAt: new Date(),
-        lastEditedBy: rejectedBy
+        lastEditedBy: rejectedBy,
       })
       .where(eq(dripCampaignEmails.id, emailId))
       .returning();
@@ -3625,16 +5014,17 @@ export class DatabaseStorage implements IStorage {
       includeSignature?: boolean;
       signatureStyle?: string;
     },
-    editedBy: string
+    editedBy: string,
   ): Promise<DripCampaignEmail> {
     // First get the current content to save as original if not already saved
-    const [currentEmail] = await db.select()
+    const [currentEmail] = await db
+      .select()
       .from(dripCampaignEmails)
       .where(eq(dripCampaignEmails.id, emailId))
       .limit(1);
-    
+
     if (!currentEmail) {
-      throw new Error('Email not found');
+      throw new Error("Email not found");
     }
 
     // If this is the first edit, save original content
@@ -3645,27 +5035,35 @@ export class DatabaseStorage implements IStorage {
       updateData.originalTextBody = currentEmail.textBody;
       updateData.hasManualEdits = true;
     }
-    
+
     updateData.lastEditedAt = new Date();
     updateData.lastEditedBy = editedBy;
-    updateData.approvalStatus = 'PENDING'; // Reset approval status on edit
+    updateData.approvalStatus = "PENDING"; // Reset approval status on edit
     updateData.approvedAt = null;
     updateData.approvedBy = null;
 
-    const [updated] = await db.update(dripCampaignEmails)
+    const [updated] = await db
+      .update(dripCampaignEmails)
       .set(updateData)
       .where(eq(dripCampaignEmails.id, emailId))
       .returning();
     return updated;
   }
 
-  async bulkUpdateEmailSequence(emailUpdates: Array<{ id: string; sequenceIndex: number; weeksAfterStart: number }>): Promise<void> {
+  async bulkUpdateEmailSequence(
+    emailUpdates: Array<{
+      id: string;
+      sequenceIndex: number;
+      weeksAfterStart: number;
+    }>,
+  ): Promise<void> {
     await db.transaction(async (tx) => {
       for (const update of emailUpdates) {
-        await tx.update(dripCampaignEmails)
-          .set({ 
-            sequenceIndex: update.sequenceIndex, 
-            weeksAfterStart: update.weeksAfterStart 
+        await tx
+          .update(dripCampaignEmails)
+          .set({
+            sequenceIndex: update.sequenceIndex,
+            weeksAfterStart: update.weeksAfterStart,
           })
           .where(eq(dripCampaignEmails.id, update.id));
       }
@@ -3673,25 +5071,33 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Campaign Versioning Methods
-  async createCampaignVersion(campaignId: string, versionData: Partial<DripCampaign>, changedBy: string, changeDescription: string): Promise<DripCampaign> {
+  async createCampaignVersion(
+    campaignId: string,
+    versionData: Partial<DripCampaign>,
+    changedBy: string,
+    changeDescription: string,
+  ): Promise<DripCampaign> {
     return await db.transaction(async (tx) => {
       // Get current campaign
-      const [currentCampaign] = await tx.select()
+      const [currentCampaign] = await tx
+        .select()
         .from(dripCampaigns)
         .where(eq(dripCampaigns.id, campaignId))
         .limit(1);
-      
+
       if (!currentCampaign) {
-        throw new Error('Campaign not found');
+        throw new Error("Campaign not found");
       }
 
       // Mark current version as not current
-      await tx.update(dripCampaigns)
+      await tx
+        .update(dripCampaigns)
         .set({ isCurrentVersion: false })
         .where(eq(dripCampaigns.id, campaignId));
 
       // Create new version
-      const [newVersion] = await tx.insert(dripCampaigns)
+      const [newVersion] = await tx
+        .insert(dripCampaigns)
         .values({
           ...currentCampaign,
           ...versionData,
@@ -3700,7 +5106,7 @@ export class DatabaseStorage implements IStorage {
           parentCampaignId: currentCampaign.parentCampaignId || campaignId,
           isCurrentVersion: true,
           versionNotes: changeDescription,
-          createdAt: new Date()
+          createdAt: new Date(),
         })
         .returning();
 
@@ -3708,11 +5114,11 @@ export class DatabaseStorage implements IStorage {
       await tx.insert(dripCampaignVersionHistory).values({
         campaignId: newVersion.id,
         version: newVersion.version,
-        changeType: 'CREATED',
+        changeType: "CREATED",
         changeDescription,
         changedBy,
         previousData: JSON.stringify(currentCampaign),
-        newData: JSON.stringify(newVersion)
+        newData: JSON.stringify(newVersion),
       });
 
       return newVersion;
@@ -3720,19 +5126,29 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getCampaignVersionHistory(campaignId: string): Promise<any[]> {
-    return await db.select()
+    return await db
+      .select()
       .from(dripCampaignVersionHistory)
       .where(eq(dripCampaignVersionHistory.campaignId, campaignId))
       .orderBy(desc(dripCampaignVersionHistory.createdAt));
   }
 
-  async logCampaignChange(campaignId: string, changeType: string, changeDescription: string, changedBy: string, affectedEmailId?: string, previousData?: any, newData?: any): Promise<void> {
+  async logCampaignChange(
+    campaignId: string,
+    changeType: string,
+    changeDescription: string,
+    changedBy: string,
+    affectedEmailId?: string,
+    previousData?: any,
+    newData?: any,
+  ): Promise<void> {
     // Get current campaign version
-    const [campaign] = await db.select()
+    const [campaign] = await db
+      .select()
       .from(dripCampaigns)
       .where(eq(dripCampaigns.id, campaignId))
       .limit(1);
-    
+
     if (!campaign) return;
 
     await db.insert(dripCampaignVersionHistory).values({
@@ -3743,7 +5159,7 @@ export class DatabaseStorage implements IStorage {
       changedBy,
       affectedEmailId,
       previousData: previousData ? JSON.stringify(previousData) : null,
-      newData: newData ? JSON.stringify(newData) : null
+      newData: newData ? JSON.stringify(newData) : null,
     });
   }
 
@@ -3753,259 +5169,314 @@ export class DatabaseStorage implements IStorage {
     if (!campaign) return undefined;
 
     const emails = await this.getDripCampaignEmails(campaignId);
-    
+
     const stats = {
       totalEmails: emails.length,
-      approvedEmails: emails.filter(e => e.approvalStatus === 'APPROVED').length,
-      pendingEmails: emails.filter(e => e.approvalStatus === 'PENDING').length,
-      rejectedEmails: emails.filter(e => e.approvalStatus === 'REJECTED').length,
-      editedEmails: emails.filter(e => e.hasManualEdits).length
+      approvedEmails: emails.filter((e) => e.approvalStatus === "APPROVED")
+        .length,
+      pendingEmails: emails.filter((e) => e.approvalStatus === "PENDING")
+        .length,
+      rejectedEmails: emails.filter((e) => e.approvalStatus === "REJECTED")
+        .length,
+      editedEmails: emails.filter((e) => e.hasManualEdits).length,
     };
 
     return {
       ...campaign,
       emails,
-      stats
+      stats,
     };
   }
 
   // Static Campaign Settings methods
-  async getStaticCampaignSettings(photographerId: string, projectType: string): Promise<StaticCampaignSettings | undefined> {
-    const [settings] = await db.select()
+  async getStaticCampaignSettings(
+    photographerId: string,
+    projectType: string,
+  ): Promise<StaticCampaignSettings | undefined> {
+    const [settings] = await db
+      .select()
       .from(staticCampaignSettings)
-      .where(and(
-        eq(staticCampaignSettings.photographerId, photographerId),
-        eq(staticCampaignSettings.projectType, projectType)
-      ));
+      .where(
+        and(
+          eq(staticCampaignSettings.photographerId, photographerId),
+          eq(staticCampaignSettings.projectType, projectType),
+        ),
+      );
     return settings;
   }
 
-  async saveStaticCampaignSettings(settings: InsertStaticCampaignSettings): Promise<StaticCampaignSettings> {
+  async saveStaticCampaignSettings(
+    settings: InsertStaticCampaignSettings,
+  ): Promise<StaticCampaignSettings> {
     // Try to find existing settings first
-    const existing = await this.getStaticCampaignSettings(settings.photographerId, settings.projectType);
-    
+    const existing = await this.getStaticCampaignSettings(
+      settings.photographerId,
+      settings.projectType,
+    );
+
     if (existing) {
       // Update existing settings
-      const [updated] = await db.update(staticCampaignSettings)
+      const [updated] = await db
+        .update(staticCampaignSettings)
         .set({
           campaignEnabled: settings.campaignEnabled,
           emailToggles: settings.emailToggles,
-          updatedAt: new Date()
+          updatedAt: new Date(),
         })
-        .where(and(
-          eq(staticCampaignSettings.photographerId, settings.photographerId),
-          eq(staticCampaignSettings.projectType, settings.projectType)
-        ))
+        .where(
+          and(
+            eq(staticCampaignSettings.photographerId, settings.photographerId),
+            eq(staticCampaignSettings.projectType, settings.projectType),
+          ),
+        )
         .returning();
       return updated;
     } else {
       // Create new settings
-      const [created] = await db.insert(staticCampaignSettings).values(settings).returning();
+      const [created] = await db
+        .insert(staticCampaignSettings)
+        .values(settings)
+        .returning();
       return created;
     }
   }
 
   // Drip Campaign Subscriptions methods
-  async getDripCampaignSubscriptionsByPhotographer(photographerId: string): Promise<DripCampaignSubscriptionWithDetails[]> {
-    return await db.select({
-      id: dripCampaignSubscriptions.id,
-      campaignId: dripCampaignSubscriptions.campaignId,
-      projectId: dripCampaignSubscriptions.projectId,
-      clientId: dripCampaignSubscriptions.clientId,
-      startedAt: dripCampaignSubscriptions.startedAt,
-      nextEmailIndex: dripCampaignSubscriptions.nextEmailIndex,
-      nextEmailAt: dripCampaignSubscriptions.nextEmailAt,
-      completedAt: dripCampaignSubscriptions.completedAt,
-      unsubscribedAt: dripCampaignSubscriptions.unsubscribedAt,
-      status: dripCampaignSubscriptions.status,
-      campaign: {
-        id: dripCampaigns.id,
-        photographerId: dripCampaigns.photographerId,
-        projectType: dripCampaigns.projectType,
-        name: dripCampaigns.name,
-        targetStageId: dripCampaigns.targetStageId,
-        status: dripCampaigns.status,
-        maxDurationMonths: dripCampaigns.maxDurationMonths,
-        emailFrequencyWeeks: dripCampaigns.emailFrequencyWeeks,
-        generatedByAi: dripCampaigns.generatedByAi,
-        aiPrompt: dripCampaigns.aiPrompt,
-        businessContext: dripCampaigns.businessContext,
-        approvedAt: dripCampaigns.approvedAt,
-        approvedBy: dripCampaigns.approvedBy,
-        createdAt: dripCampaigns.createdAt,
-        enabled: dripCampaigns.enabled
-      },
-      project: {
-        title: projects.title,
-        eventDate: projects.eventDate
-      },
-      client: {
-        firstName: contacts.firstName,
-        lastName: contacts.lastName,
-        email: contacts.email
-      }
-    })
+  async getDripCampaignSubscriptionsByPhotographer(
+    photographerId: string,
+  ): Promise<DripCampaignSubscriptionWithDetails[]> {
+    return await db
+      .select({
+        id: dripCampaignSubscriptions.id,
+        campaignId: dripCampaignSubscriptions.campaignId,
+        projectId: dripCampaignSubscriptions.projectId,
+        clientId: dripCampaignSubscriptions.clientId,
+        startedAt: dripCampaignSubscriptions.startedAt,
+        nextEmailIndex: dripCampaignSubscriptions.nextEmailIndex,
+        nextEmailAt: dripCampaignSubscriptions.nextEmailAt,
+        completedAt: dripCampaignSubscriptions.completedAt,
+        unsubscribedAt: dripCampaignSubscriptions.unsubscribedAt,
+        status: dripCampaignSubscriptions.status,
+        campaign: {
+          id: dripCampaigns.id,
+          photographerId: dripCampaigns.photographerId,
+          projectType: dripCampaigns.projectType,
+          name: dripCampaigns.name,
+          targetStageId: dripCampaigns.targetStageId,
+          status: dripCampaigns.status,
+          maxDurationMonths: dripCampaigns.maxDurationMonths,
+          emailFrequencyWeeks: dripCampaigns.emailFrequencyWeeks,
+          generatedByAi: dripCampaigns.generatedByAi,
+          aiPrompt: dripCampaigns.aiPrompt,
+          businessContext: dripCampaigns.businessContext,
+          approvedAt: dripCampaigns.approvedAt,
+          approvedBy: dripCampaigns.approvedBy,
+          createdAt: dripCampaigns.createdAt,
+          enabled: dripCampaigns.enabled,
+        },
+        project: {
+          title: projects.title,
+          eventDate: projects.eventDate,
+        },
+        client: {
+          firstName: contacts.firstName,
+          lastName: contacts.lastName,
+          email: contacts.email,
+        },
+      })
       .from(dripCampaignSubscriptions)
-      .innerJoin(dripCampaigns, eq(dripCampaignSubscriptions.campaignId, dripCampaigns.id))
+      .innerJoin(
+        dripCampaigns,
+        eq(dripCampaignSubscriptions.campaignId, dripCampaigns.id),
+      )
       .innerJoin(projects, eq(dripCampaignSubscriptions.projectId, projects.id))
       .innerJoin(contacts, eq(dripCampaignSubscriptions.clientId, contacts.id))
       .where(eq(dripCampaigns.photographerId, photographerId))
       .orderBy(desc(dripCampaignSubscriptions.startedAt));
   }
 
-  async getDripCampaignSubscriptionsByCampaign(campaignId: string): Promise<DripCampaignSubscriptionWithDetails[]> {
-    return await db.select({
-      id: dripCampaignSubscriptions.id,
-      campaignId: dripCampaignSubscriptions.campaignId,
-      projectId: dripCampaignSubscriptions.projectId,
-      clientId: dripCampaignSubscriptions.clientId,
-      startedAt: dripCampaignSubscriptions.startedAt,
-      nextEmailIndex: dripCampaignSubscriptions.nextEmailIndex,
-      nextEmailAt: dripCampaignSubscriptions.nextEmailAt,
-      completedAt: dripCampaignSubscriptions.completedAt,
-      unsubscribedAt: dripCampaignSubscriptions.unsubscribedAt,
-      status: dripCampaignSubscriptions.status,
-      campaign: {
-        id: dripCampaigns.id,
-        photographerId: dripCampaigns.photographerId,
-        projectType: dripCampaigns.projectType,
-        name: dripCampaigns.name,
-        targetStageId: dripCampaigns.targetStageId,
-        status: dripCampaigns.status,
-        maxDurationMonths: dripCampaigns.maxDurationMonths,
-        emailFrequencyWeeks: dripCampaigns.emailFrequencyWeeks,
-        generatedByAi: dripCampaigns.generatedByAi,
-        aiPrompt: dripCampaigns.aiPrompt,
-        businessContext: dripCampaigns.businessContext,
-        approvedAt: dripCampaigns.approvedAt,
-        approvedBy: dripCampaigns.approvedBy,
-        createdAt: dripCampaigns.createdAt,
-        enabled: dripCampaigns.enabled
-      },
-      project: {
-        title: projects.title,
-        eventDate: projects.eventDate
-      },
-      client: {
-        firstName: contacts.firstName,
-        lastName: contacts.lastName,
-        email: contacts.email
-      }
-    })
+  async getDripCampaignSubscriptionsByCampaign(
+    campaignId: string,
+  ): Promise<DripCampaignSubscriptionWithDetails[]> {
+    return await db
+      .select({
+        id: dripCampaignSubscriptions.id,
+        campaignId: dripCampaignSubscriptions.campaignId,
+        projectId: dripCampaignSubscriptions.projectId,
+        clientId: dripCampaignSubscriptions.clientId,
+        startedAt: dripCampaignSubscriptions.startedAt,
+        nextEmailIndex: dripCampaignSubscriptions.nextEmailIndex,
+        nextEmailAt: dripCampaignSubscriptions.nextEmailAt,
+        completedAt: dripCampaignSubscriptions.completedAt,
+        unsubscribedAt: dripCampaignSubscriptions.unsubscribedAt,
+        status: dripCampaignSubscriptions.status,
+        campaign: {
+          id: dripCampaigns.id,
+          photographerId: dripCampaigns.photographerId,
+          projectType: dripCampaigns.projectType,
+          name: dripCampaigns.name,
+          targetStageId: dripCampaigns.targetStageId,
+          status: dripCampaigns.status,
+          maxDurationMonths: dripCampaigns.maxDurationMonths,
+          emailFrequencyWeeks: dripCampaigns.emailFrequencyWeeks,
+          generatedByAi: dripCampaigns.generatedByAi,
+          aiPrompt: dripCampaigns.aiPrompt,
+          businessContext: dripCampaigns.businessContext,
+          approvedAt: dripCampaigns.approvedAt,
+          approvedBy: dripCampaigns.approvedBy,
+          createdAt: dripCampaigns.createdAt,
+          enabled: dripCampaigns.enabled,
+        },
+        project: {
+          title: projects.title,
+          eventDate: projects.eventDate,
+        },
+        client: {
+          firstName: contacts.firstName,
+          lastName: contacts.lastName,
+          email: contacts.email,
+        },
+      })
       .from(dripCampaignSubscriptions)
-      .innerJoin(dripCampaigns, eq(dripCampaignSubscriptions.campaignId, dripCampaigns.id))
+      .innerJoin(
+        dripCampaigns,
+        eq(dripCampaignSubscriptions.campaignId, dripCampaigns.id),
+      )
       .innerJoin(projects, eq(dripCampaignSubscriptions.projectId, projects.id))
       .innerJoin(contacts, eq(dripCampaignSubscriptions.clientId, contacts.id))
       .where(eq(dripCampaignSubscriptions.campaignId, campaignId))
       .orderBy(desc(dripCampaignSubscriptions.startedAt));
   }
 
-  async getDripCampaignSubscription(id: string): Promise<DripCampaignSubscriptionWithDetails | undefined> {
-    const [subscription] = await db.select({
-      id: dripCampaignSubscriptions.id,
-      campaignId: dripCampaignSubscriptions.campaignId,
-      projectId: dripCampaignSubscriptions.projectId,
-      clientId: dripCampaignSubscriptions.clientId,
-      startedAt: dripCampaignSubscriptions.startedAt,
-      nextEmailIndex: dripCampaignSubscriptions.nextEmailIndex,
-      nextEmailAt: dripCampaignSubscriptions.nextEmailAt,
-      completedAt: dripCampaignSubscriptions.completedAt,
-      unsubscribedAt: dripCampaignSubscriptions.unsubscribedAt,
-      status: dripCampaignSubscriptions.status,
-      campaign: {
-        id: dripCampaigns.id,
-        photographerId: dripCampaigns.photographerId,
-        projectType: dripCampaigns.projectType,
-        name: dripCampaigns.name,
-        targetStageId: dripCampaigns.targetStageId,
-        status: dripCampaigns.status,
-        maxDurationMonths: dripCampaigns.maxDurationMonths,
-        emailFrequencyWeeks: dripCampaigns.emailFrequencyWeeks,
-        generatedByAi: dripCampaigns.generatedByAi,
-        aiPrompt: dripCampaigns.aiPrompt,
-        businessContext: dripCampaigns.businessContext,
-        approvedAt: dripCampaigns.approvedAt,
-        approvedBy: dripCampaigns.approvedBy,
-        createdAt: dripCampaigns.createdAt,
-        enabled: dripCampaigns.enabled
-      },
-      project: {
-        title: projects.title,
-        eventDate: projects.eventDate
-      },
-      client: {
-        firstName: contacts.firstName,
-        lastName: contacts.lastName,
-        email: contacts.email
-      }
-    })
+  async getDripCampaignSubscription(
+    id: string,
+  ): Promise<DripCampaignSubscriptionWithDetails | undefined> {
+    const [subscription] = await db
+      .select({
+        id: dripCampaignSubscriptions.id,
+        campaignId: dripCampaignSubscriptions.campaignId,
+        projectId: dripCampaignSubscriptions.projectId,
+        clientId: dripCampaignSubscriptions.clientId,
+        startedAt: dripCampaignSubscriptions.startedAt,
+        nextEmailIndex: dripCampaignSubscriptions.nextEmailIndex,
+        nextEmailAt: dripCampaignSubscriptions.nextEmailAt,
+        completedAt: dripCampaignSubscriptions.completedAt,
+        unsubscribedAt: dripCampaignSubscriptions.unsubscribedAt,
+        status: dripCampaignSubscriptions.status,
+        campaign: {
+          id: dripCampaigns.id,
+          photographerId: dripCampaigns.photographerId,
+          projectType: dripCampaigns.projectType,
+          name: dripCampaigns.name,
+          targetStageId: dripCampaigns.targetStageId,
+          status: dripCampaigns.status,
+          maxDurationMonths: dripCampaigns.maxDurationMonths,
+          emailFrequencyWeeks: dripCampaigns.emailFrequencyWeeks,
+          generatedByAi: dripCampaigns.generatedByAi,
+          aiPrompt: dripCampaigns.aiPrompt,
+          businessContext: dripCampaigns.businessContext,
+          approvedAt: dripCampaigns.approvedAt,
+          approvedBy: dripCampaigns.approvedBy,
+          createdAt: dripCampaigns.createdAt,
+          enabled: dripCampaigns.enabled,
+        },
+        project: {
+          title: projects.title,
+          eventDate: projects.eventDate,
+        },
+        client: {
+          firstName: contacts.firstName,
+          lastName: contacts.lastName,
+          email: contacts.email,
+        },
+      })
       .from(dripCampaignSubscriptions)
-      .innerJoin(dripCampaigns, eq(dripCampaignSubscriptions.campaignId, dripCampaigns.id))
+      .innerJoin(
+        dripCampaigns,
+        eq(dripCampaignSubscriptions.campaignId, dripCampaigns.id),
+      )
       .innerJoin(projects, eq(dripCampaignSubscriptions.projectId, projects.id))
       .innerJoin(contacts, eq(dripCampaignSubscriptions.clientId, contacts.id))
       .where(eq(dripCampaignSubscriptions.id, id))
       .limit(1);
-    
+
     return subscription || undefined;
   }
 
-  async getDueDripCampaignSubscriptions(): Promise<DripCampaignSubscriptionWithDetails[]> {
+  async getDueDripCampaignSubscriptions(): Promise<
+    DripCampaignSubscriptionWithDetails[]
+  > {
     const now = new Date();
-    return await db.select({
-      id: dripCampaignSubscriptions.id,
-      campaignId: dripCampaignSubscriptions.campaignId,
-      projectId: dripCampaignSubscriptions.projectId,
-      clientId: dripCampaignSubscriptions.clientId,
-      startedAt: dripCampaignSubscriptions.startedAt,
-      nextEmailIndex: dripCampaignSubscriptions.nextEmailIndex,
-      nextEmailAt: dripCampaignSubscriptions.nextEmailAt,
-      completedAt: dripCampaignSubscriptions.completedAt,
-      unsubscribedAt: dripCampaignSubscriptions.unsubscribedAt,
-      status: dripCampaignSubscriptions.status,
-      campaign: {
-        id: dripCampaigns.id,
-        photographerId: dripCampaigns.photographerId,
-        projectType: dripCampaigns.projectType,
-        name: dripCampaigns.name,
-        targetStageId: dripCampaigns.targetStageId,
-        status: dripCampaigns.status,
-        maxDurationMonths: dripCampaigns.maxDurationMonths,
-        emailFrequencyWeeks: dripCampaigns.emailFrequencyWeeks,
-        generatedByAi: dripCampaigns.generatedByAi,
-        aiPrompt: dripCampaigns.aiPrompt,
-        businessContext: dripCampaigns.businessContext,
-        approvedAt: dripCampaigns.approvedAt,
-        approvedBy: dripCampaigns.approvedBy,
-        createdAt: dripCampaigns.createdAt,
-        enabled: dripCampaigns.enabled
-      },
-      project: {
-        title: projects.title,
-        eventDate: projects.eventDate
-      },
-      client: {
-        firstName: contacts.firstName,
-        lastName: contacts.lastName,
-        email: contacts.email
-      }
-    })
+    return await db
+      .select({
+        id: dripCampaignSubscriptions.id,
+        campaignId: dripCampaignSubscriptions.campaignId,
+        projectId: dripCampaignSubscriptions.projectId,
+        clientId: dripCampaignSubscriptions.clientId,
+        startedAt: dripCampaignSubscriptions.startedAt,
+        nextEmailIndex: dripCampaignSubscriptions.nextEmailIndex,
+        nextEmailAt: dripCampaignSubscriptions.nextEmailAt,
+        completedAt: dripCampaignSubscriptions.completedAt,
+        unsubscribedAt: dripCampaignSubscriptions.unsubscribedAt,
+        status: dripCampaignSubscriptions.status,
+        campaign: {
+          id: dripCampaigns.id,
+          photographerId: dripCampaigns.photographerId,
+          projectType: dripCampaigns.projectType,
+          name: dripCampaigns.name,
+          targetStageId: dripCampaigns.targetStageId,
+          status: dripCampaigns.status,
+          maxDurationMonths: dripCampaigns.maxDurationMonths,
+          emailFrequencyWeeks: dripCampaigns.emailFrequencyWeeks,
+          generatedByAi: dripCampaigns.generatedByAi,
+          aiPrompt: dripCampaigns.aiPrompt,
+          businessContext: dripCampaigns.businessContext,
+          approvedAt: dripCampaigns.approvedAt,
+          approvedBy: dripCampaigns.approvedBy,
+          createdAt: dripCampaigns.createdAt,
+          enabled: dripCampaigns.enabled,
+        },
+        project: {
+          title: projects.title,
+          eventDate: projects.eventDate,
+        },
+        client: {
+          firstName: contacts.firstName,
+          lastName: contacts.lastName,
+          email: contacts.email,
+        },
+      })
       .from(dripCampaignSubscriptions)
-      .innerJoin(dripCampaigns, eq(dripCampaignSubscriptions.campaignId, dripCampaigns.id))
+      .innerJoin(
+        dripCampaigns,
+        eq(dripCampaignSubscriptions.campaignId, dripCampaigns.id),
+      )
       .innerJoin(projects, eq(dripCampaignSubscriptions.projectId, projects.id))
       .innerJoin(contacts, eq(dripCampaignSubscriptions.clientId, contacts.id))
-      .where(and(
-        eq(dripCampaignSubscriptions.status, 'ACTIVE'),
-        lte(dripCampaignSubscriptions.nextEmailAt, now)
-      ));
+      .where(
+        and(
+          eq(dripCampaignSubscriptions.status, "ACTIVE"),
+          lte(dripCampaignSubscriptions.nextEmailAt, now),
+        ),
+      );
   }
 
-  async createDripCampaignSubscription(subscription: InsertDripCampaignSubscription): Promise<DripCampaignSubscription> {
-    const [created] = await db.insert(dripCampaignSubscriptions).values(subscription).returning();
+  async createDripCampaignSubscription(
+    subscription: InsertDripCampaignSubscription,
+  ): Promise<DripCampaignSubscription> {
+    const [created] = await db
+      .insert(dripCampaignSubscriptions)
+      .values(subscription)
+      .returning();
     return created;
   }
 
-  async updateDripCampaignSubscription(id: string, subscription: Partial<DripCampaignSubscription>): Promise<DripCampaignSubscription> {
-    const [updated] = await db.update(dripCampaignSubscriptions)
+  async updateDripCampaignSubscription(
+    id: string,
+    subscription: Partial<DripCampaignSubscription>,
+  ): Promise<DripCampaignSubscription> {
+    const [updated] = await db
+      .update(dripCampaignSubscriptions)
       .set(subscription)
       .where(eq(dripCampaignSubscriptions.id, id))
       .returning();
@@ -4013,20 +5484,32 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Drip Email Deliveries methods
-  async getDripEmailDeliveriesBySubscription(subscriptionId: string): Promise<DripEmailDelivery[]> {
-    return await db.select()
+  async getDripEmailDeliveriesBySubscription(
+    subscriptionId: string,
+  ): Promise<DripEmailDelivery[]> {
+    return await db
+      .select()
       .from(dripEmailDeliveries)
       .where(eq(dripEmailDeliveries.subscriptionId, subscriptionId))
       .orderBy(desc(dripEmailDeliveries.createdAt));
   }
 
-  async createDripEmailDelivery(delivery: InsertDripEmailDelivery): Promise<DripEmailDelivery> {
-    const [created] = await db.insert(dripEmailDeliveries).values(delivery).returning();
+  async createDripEmailDelivery(
+    delivery: InsertDripEmailDelivery,
+  ): Promise<DripEmailDelivery> {
+    const [created] = await db
+      .insert(dripEmailDeliveries)
+      .values(delivery)
+      .returning();
     return created;
   }
 
-  async updateDripEmailDelivery(id: string, delivery: Partial<DripEmailDelivery>): Promise<DripEmailDelivery> {
-    const [updated] = await db.update(dripEmailDeliveries)
+  async updateDripEmailDelivery(
+    id: string,
+    delivery: Partial<DripEmailDelivery>,
+  ): Promise<DripEmailDelivery> {
+    const [updated] = await db
+      .update(dripEmailDeliveries)
       .set(delivery)
       .where(eq(dripEmailDeliveries.id, id))
       .returning();
@@ -4040,46 +5523,56 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateSmsLogStatus(providerId: string, status: string): Promise<void> {
-    await db.update(smsLogs)
-      .set({ 
+    await db
+      .update(smsLogs)
+      .set({
         status,
-        deliveredAt: status === 'delivered' ? new Date() : undefined
+        deliveredAt: status === "delivered" ? new Date() : undefined,
       })
       .where(eq(smsLogs.providerId, providerId));
   }
 
-  async getSmsLogByProviderId(providerId: string, clientId: string): Promise<SmsLog | undefined> {
-    const [log] = await db.select()
+  async getSmsLogByProviderId(
+    providerId: string,
+    clientId: string,
+  ): Promise<SmsLog | undefined> {
+    const [log] = await db
+      .select()
       .from(smsLogs)
-      .where(and(
-        eq(smsLogs.providerId, providerId),
-        eq(smsLogs.clientId, clientId)
-      ))
+      .where(
+        and(eq(smsLogs.providerId, providerId), eq(smsLogs.clientId, clientId)),
+      )
       .limit(1);
     return log;
   }
 
   async updateSmsLogImageUrl(id: string, imageUrl: string): Promise<void> {
-    await db.update(smsLogs)
-      .set({ imageUrl })
-      .where(eq(smsLogs.id, id));
+    await db.update(smsLogs).set({ imageUrl }).where(eq(smsLogs.id, id));
   }
 
   // Email History
-  async createEmailHistory(emailHistoryData: InsertEmailHistory): Promise<EmailHistory> {
-    const [created] = await db.insert(emailHistory).values(emailHistoryData).returning();
+  async createEmailHistory(
+    emailHistoryData: InsertEmailHistory,
+  ): Promise<EmailHistory> {
+    const [created] = await db
+      .insert(emailHistory)
+      .values(emailHistoryData)
+      .returning();
     return created;
   }
 
-  async getEmailHistoryByPhotographer(photographerId: string, filters: {
-    direction?: 'INBOUND' | 'OUTBOUND';
-    source?: 'AUTOMATION' | 'DRIP_CAMPAIGN' | 'MANUAL' | 'CLIENT_REPLY';
-    clientId?: string;
-    projectId?: string;
-    limit?: number;
-  } = {}): Promise<EmailHistory[]> {
+  async getEmailHistoryByPhotographer(
+    photographerId: string,
+    filters: {
+      direction?: "INBOUND" | "OUTBOUND";
+      source?: "AUTOMATION" | "DRIP_CAMPAIGN" | "MANUAL" | "CLIENT_REPLY";
+      clientId?: string;
+      projectId?: string;
+      limit?: number;
+    } = {},
+  ): Promise<EmailHistory[]> {
     const conditions = [eq(emailHistory.photographerId, photographerId)];
-    
+
     if (filters.direction) {
       conditions.push(eq(emailHistory.direction, filters.direction));
     }
@@ -4093,7 +5586,8 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(emailHistory.projectId, filters.projectId));
     }
 
-    let query = db.select()
+    let query = db
+      .select()
       .from(emailHistory)
       .where(and(...conditions))
       .orderBy(desc(emailHistory.sentAt));
@@ -4106,68 +5600,81 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getEmailHistoryByClient(clientId: string): Promise<EmailHistory[]> {
-    return await db.select()
+    return await db
+      .select()
       .from(emailHistory)
       .where(eq(emailHistory.clientId, clientId))
       .orderBy(desc(emailHistory.sentAt));
   }
 
   async getEmailHistoryByProject(projectId: string): Promise<EmailHistory[]> {
-    return await db.select()
+    return await db
+      .select()
       .from(emailHistory)
       .where(eq(emailHistory.projectId, projectId))
       .orderBy(desc(emailHistory.sentAt));
   }
 
-  async getEmailHistoryByThread(gmailThreadId: string, photographerId?: string): Promise<EmailHistory[]> {
+  async getEmailHistoryByThread(
+    gmailThreadId: string,
+    photographerId?: string,
+  ): Promise<EmailHistory[]> {
     const conditions = [eq(emailHistory.gmailThreadId, gmailThreadId)];
-    
+
     // Filter by photographer for security if provided
     if (photographerId) {
       conditions.push(eq(emailHistory.photographerId, photographerId));
     }
-    
-    return await db.select()
+
+    return await db
+      .select()
       .from(emailHistory)
       .where(and(...conditions))
       .orderBy(asc(emailHistory.sentAt)); // Order chronologically for thread view
   }
-  
+
   // Smart Files
-  async getSmartFilesByPhotographer(photographerId: string): Promise<SmartFile[]> {
-    return await db.select()
+  async getSmartFilesByPhotographer(
+    photographerId: string,
+  ): Promise<SmartFile[]> {
+    return await db
+      .select()
       .from(smartFiles)
       .where(eq(smartFiles.photographerId, photographerId))
       .orderBy(desc(smartFiles.createdAt));
   }
 
   async getSmartFile(id: string): Promise<SmartFileWithPages | undefined> {
-    const [smartFile] = await db.select()
+    const [smartFile] = await db
+      .select()
       .from(smartFiles)
       .where(eq(smartFiles.id, id));
-    
+
     if (!smartFile) return undefined;
 
-    const pages = await db.select()
+    const pages = await db
+      .select()
       .from(smartFilePages)
       .where(eq(smartFilePages.smartFileId, id))
       .orderBy(asc(smartFilePages.pageOrder));
 
     return {
       ...smartFile,
-      pages
+      pages,
     };
   }
 
   async createSmartFile(smartFile: InsertSmartFile): Promise<SmartFile> {
-    const [created] = await db.insert(smartFiles)
-      .values(smartFile)
-      .returning();
+    const [created] = await db.insert(smartFiles).values(smartFile).returning();
     return created;
   }
 
-  async updateSmartFile(id: string, smartFile: Partial<SmartFile>): Promise<SmartFile> {
-    const [updated] = await db.update(smartFiles)
+  async updateSmartFile(
+    id: string,
+    smartFile: Partial<SmartFile>,
+  ): Promise<SmartFile> {
+    const [updated] = await db
+      .update(smartFiles)
       .set({ ...smartFile, updatedAt: new Date() })
       .where(eq(smartFiles.id, id))
       .returning();
@@ -4175,20 +5682,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteSmartFile(id: string): Promise<void> {
-    await db.delete(smartFiles)
-      .where(eq(smartFiles.id, id));
+    await db.delete(smartFiles).where(eq(smartFiles.id, id));
   }
 
   // Smart File Pages
   async createSmartFilePage(page: InsertSmartFilePage): Promise<SmartFilePage> {
-    const [created] = await db.insert(smartFilePages)
-      .values(page)
-      .returning();
+    const [created] = await db.insert(smartFilePages).values(page).returning();
     return created;
   }
 
-  async updateSmartFilePage(id: string, page: Partial<SmartFilePage>): Promise<SmartFilePage> {
-    const [updated] = await db.update(smartFilePages)
+  async updateSmartFilePage(
+    id: string,
+    page: Partial<SmartFilePage>,
+  ): Promise<SmartFilePage> {
+    const [updated] = await db
+      .update(smartFilePages)
       .set(page)
       .where(eq(smartFilePages.id, id))
       .returning();
@@ -4196,59 +5704,80 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteSmartFilePage(id: string): Promise<void> {
-    await db.delete(smartFilePages)
-      .where(eq(smartFilePages.id, id));
+    await db.delete(smartFilePages).where(eq(smartFilePages.id, id));
   }
 
-  async reorderSmartFilePages(smartFileId: string, pageOrders: { id: string, pageOrder: number }[]): Promise<void> {
+  async reorderSmartFilePages(
+    smartFileId: string,
+    pageOrders: { id: string; pageOrder: number }[],
+  ): Promise<void> {
     await db.transaction(async (tx) => {
       // First, set all pages to negative temporary values to avoid unique constraint violations
       for (let i = 0; i < pageOrders.length; i++) {
         const { id } = pageOrders[i];
-        await tx.update(smartFilePages)
+        await tx
+          .update(smartFilePages)
           .set({ pageOrder: -(i + 1) })
-          .where(and(
-            eq(smartFilePages.id, id),
-            eq(smartFilePages.smartFileId, smartFileId)
-          ));
+          .where(
+            and(
+              eq(smartFilePages.id, id),
+              eq(smartFilePages.smartFileId, smartFileId),
+            ),
+          );
       }
-      
+
       // Then update to final positions
       for (const { id, pageOrder } of pageOrders) {
-        await tx.update(smartFilePages)
+        await tx
+          .update(smartFilePages)
           .set({ pageOrder })
-          .where(and(
-            eq(smartFilePages.id, id),
-            eq(smartFilePages.smartFileId, smartFileId)
-          ));
+          .where(
+            and(
+              eq(smartFilePages.id, id),
+              eq(smartFilePages.smartFileId, smartFileId),
+            ),
+          );
       }
     });
   }
 
   // Project Smart Files
-  async getProjectSmartFilesByProject(projectId: string): Promise<ProjectSmartFile[]> {
-    return await db.select()
+  async getProjectSmartFilesByProject(
+    projectId: string,
+  ): Promise<ProjectSmartFile[]> {
+    return await db
+      .select()
       .from(projectSmartFiles)
       .where(eq(projectSmartFiles.projectId, projectId))
       .orderBy(desc(projectSmartFiles.createdAt));
   }
 
-  async attachSmartFileToProject(projectSmartFile: InsertProjectSmartFile): Promise<ProjectSmartFile> {
-    const [created] = await db.insert(projectSmartFiles)
+  async attachSmartFileToProject(
+    projectSmartFile: InsertProjectSmartFile,
+  ): Promise<ProjectSmartFile> {
+    const [created] = await db
+      .insert(projectSmartFiles)
       .values(projectSmartFile)
       .returning();
     return created;
   }
 
-  async createProjectSmartFile(projectSmartFile: InsertProjectSmartFile): Promise<ProjectSmartFile> {
-    const [created] = await db.insert(projectSmartFiles)
+  async createProjectSmartFile(
+    projectSmartFile: InsertProjectSmartFile,
+  ): Promise<ProjectSmartFile> {
+    const [created] = await db
+      .insert(projectSmartFiles)
       .values(projectSmartFile)
       .returning();
     return created;
   }
 
-  async updateProjectSmartFile(id: string, update: Partial<ProjectSmartFile>): Promise<ProjectSmartFile> {
-    const [updated] = await db.update(projectSmartFiles)
+  async updateProjectSmartFile(
+    id: string,
+    update: Partial<ProjectSmartFile>,
+  ): Promise<ProjectSmartFile> {
+    const [updated] = await db
+      .update(projectSmartFiles)
       .set({ ...update, updatedAt: new Date() })
       .where(eq(projectSmartFiles.id, id))
       .returning();
@@ -4256,70 +5785,94 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteProjectSmartFile(id: string): Promise<void> {
-    await db.delete(projectSmartFiles)
-      .where(eq(projectSmartFiles.id, id));
+    await db.delete(projectSmartFiles).where(eq(projectSmartFiles.id, id));
   }
 
-  async getProjectSmartFileByToken(token: string): Promise<ProjectSmartFile | undefined> {
-    const [projectSmartFile] = await db.select()
+  async getProjectSmartFileByToken(
+    token: string,
+  ): Promise<ProjectSmartFile | undefined> {
+    const [projectSmartFile] = await db
+      .select()
       .from(projectSmartFiles)
       .where(eq(projectSmartFiles.token, token));
     return projectSmartFile || undefined;
   }
 
-  async getExpiringSmartFiles(daysUntilExpiration: number): Promise<ProjectSmartFile[]> {
+  async getExpiringSmartFiles(
+    daysUntilExpiration: number,
+  ): Promise<ProjectSmartFile[]> {
     const now = new Date();
-    const expirationThreshold = new Date(now.getTime() + daysUntilExpiration * 24 * 60 * 60 * 1000);
+    const expirationThreshold = new Date(
+      now.getTime() + daysUntilExpiration * 24 * 60 * 60 * 1000,
+    );
 
     // Find smart files that:
     // 1. Have an expiration date set
     // 2. Expire within the threshold (but not already expired)
     // 3. Status is SENT or VIEWED (not yet accepted/paid)
     // 4. Haven't had a reminder sent yet
-    return await db.select()
+    return await db
+      .select()
       .from(projectSmartFiles)
       .where(
         and(
           isNotNull(projectSmartFiles.expiresAt),
           gt(projectSmartFiles.expiresAt, now),
           lte(projectSmartFiles.expiresAt, expirationThreshold),
-          inArray(projectSmartFiles.status, ['SENT', 'VIEWED']),
-          isNull(projectSmartFiles.expirationReminderSentAt)
-        )
+          inArray(projectSmartFiles.status, ["SENT", "VIEWED"]),
+          isNull(projectSmartFiles.expirationReminderSentAt),
+        ),
       );
   }
 
   // Payment Transactions
-  async getPaymentTransactionsByProjectSmartFile(projectSmartFileId: string): Promise<PaymentTransaction[]> {
-    return await db.select()
+  async getPaymentTransactionsByProjectSmartFile(
+    projectSmartFileId: string,
+  ): Promise<PaymentTransaction[]> {
+    return await db
+      .select()
       .from(paymentTransactions)
       .where(eq(paymentTransactions.projectSmartFileId, projectSmartFileId))
       .orderBy(desc(paymentTransactions.createdAt));
   }
 
-  async getPaymentTransactionsByProject(projectId: string): Promise<PaymentTransaction[]> {
-    return await db.select()
+  async getPaymentTransactionsByProject(
+    projectId: string,
+  ): Promise<PaymentTransaction[]> {
+    return await db
+      .select()
       .from(paymentTransactions)
       .where(eq(paymentTransactions.projectId, projectId))
       .orderBy(desc(paymentTransactions.createdAt));
   }
 
-  async getPaymentTransaction(id: string): Promise<PaymentTransaction | undefined> {
-    const [transaction] = await db.select()
+  async getPaymentTransaction(
+    id: string,
+  ): Promise<PaymentTransaction | undefined> {
+    const [transaction] = await db
+      .select()
       .from(paymentTransactions)
       .where(eq(paymentTransactions.id, id));
     return transaction || undefined;
   }
 
-  async getPaymentTransactionByStripePaymentIntentId(stripePaymentIntentId: string): Promise<PaymentTransaction | undefined> {
-    const [transaction] = await db.select()
+  async getPaymentTransactionByStripePaymentIntentId(
+    stripePaymentIntentId: string,
+  ): Promise<PaymentTransaction | undefined> {
+    const [transaction] = await db
+      .select()
       .from(paymentTransactions)
-      .where(eq(paymentTransactions.stripePaymentIntentId, stripePaymentIntentId));
+      .where(
+        eq(paymentTransactions.stripePaymentIntentId, stripePaymentIntentId),
+      );
     return transaction || undefined;
   }
 
-  async createPaymentTransaction(transaction: InsertPaymentTransaction): Promise<PaymentTransaction> {
-    const [created] = await db.insert(paymentTransactions)
+  async createPaymentTransaction(
+    transaction: InsertPaymentTransaction,
+  ): Promise<PaymentTransaction> {
+    const [created] = await db
+      .insert(paymentTransactions)
       .values(transaction)
       .returning();
     return created;
@@ -4339,26 +5892,28 @@ export class DatabaseStorage implements IStorage {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
     // 1. Get project counts in a single query
-    const allProjects = await db.select({
-      id: projects.id,
-      status: projects.status,
-      stageId: projects.stageId,
-      projectType: projects.projectType
-    })
+    const allProjects = await db
+      .select({
+        id: projects.id,
+        status: projects.status,
+        stageId: projects.stageId,
+        projectType: projects.projectType,
+      })
       .from(projects)
       .where(eq(projects.photographerId, photographerId));
 
-    const activeProjects = allProjects.filter(p =>
-      p.status !== 'archived' && p.status !== 'ARCHIVED'
+    const activeProjects = allProjects.filter(
+      (p) => p.status !== "archived" && p.status !== "ARCHIVED",
     );
     const totalProjects = activeProjects.length;
 
     // 2. Get first stages for each project type to count new leads
-    const allStages = await db.select({
-      id: stages.id,
-      projectType: stages.projectType,
-      order: stages.orderIndex
-    })
+    const allStages = await db
+      .select({
+        id: stages.id,
+        projectType: stages.projectType,
+        order: stages.orderIndex,
+      })
       .from(stages)
       .where(eq(stages.photographerId, photographerId));
 
@@ -4375,60 +5930,65 @@ export class DatabaseStorage implements IStorage {
         firstStageIds.add(typeStages[0].id);
       }
     }
-    const newLeads = activeProjects.filter(p => p.stageId && firstStageIds.has(p.stageId)).length;
+    const newLeads = activeProjects.filter(
+      (p) => p.stageId && firstStageIds.has(p.stageId),
+    ).length;
 
     // 3. Get revenue with date filtering at database level
-    const ytdTransactions = await db.select({
-      amountCents: paymentTransactions.amountCents,
-      createdAt: paymentTransactions.createdAt
-    })
+    const ytdTransactions = await db
+      .select({
+        amountCents: paymentTransactions.amountCents,
+        createdAt: paymentTransactions.createdAt,
+      })
       .from(paymentTransactions)
       .where(
         and(
           eq(paymentTransactions.photographerId, photographerId),
-          eq(paymentTransactions.status, 'COMPLETED'),
-          gte(paymentTransactions.createdAt, startOfYear)
-        )
+          eq(paymentTransactions.status, "COMPLETED"),
+          gte(paymentTransactions.createdAt, startOfYear),
+        ),
       );
 
     const totalRevenue = Math.round(
-      ytdTransactions.reduce((sum, t) => sum + (t.amountCents || 0), 0) / 100
+      ytdTransactions.reduce((sum, t) => sum + (t.amountCents || 0), 0) / 100,
     );
 
     const monthlyRevenue = Math.round(
       ytdTransactions
-        .filter(t => t.createdAt && new Date(t.createdAt) >= startOfMonth)
-        .reduce((sum, t) => sum + (t.amountCents || 0), 0) / 100
+        .filter((t) => t.createdAt && new Date(t.createdAt) >= startOfMonth)
+        .reduce((sum, t) => sum + (t.amountCents || 0), 0) / 100,
     );
 
     // 4. Get pending/overdue from smart files with outstanding balances
     // Batch query: get all project smart files for active projects in one query
-    const activeProjectIds = activeProjects.map(p => p.id);
+    const activeProjectIds = activeProjects.map((p) => p.id);
 
     let allProjectSmartFiles: ProjectSmartFile[] = [];
     if (activeProjectIds.length > 0) {
-      allProjectSmartFiles = await db.select()
+      allProjectSmartFiles = await db
+        .select()
         .from(projectSmartFiles)
         .where(
           and(
             inArray(projectSmartFiles.projectId, activeProjectIds),
             // Only include statuses that could have outstanding balances
-            inArray(projectSmartFiles.status, ['ACCEPTED', 'DEPOSIT_PAID'])
-          )
+            inArray(projectSmartFiles.status, ["ACCEPTED", "DEPOSIT_PAID"]),
+          ),
         );
     }
 
     // Batch query: get all transactions for these smart files in one query
-    const psfIds = allProjectSmartFiles.map(psf => psf.id);
+    const psfIds = allProjectSmartFiles.map((psf) => psf.id);
     let allPsfTransactions: PaymentTransaction[] = [];
     if (psfIds.length > 0) {
-      allPsfTransactions = await db.select()
+      allPsfTransactions = await db
+        .select()
         .from(paymentTransactions)
         .where(
           and(
             inArray(paymentTransactions.projectSmartFileId, psfIds),
-            eq(paymentTransactions.status, 'COMPLETED')
-          )
+            eq(paymentTransactions.status, "COMPLETED"),
+          ),
         );
     }
 
@@ -4446,7 +6006,10 @@ export class DatabaseStorage implements IStorage {
 
     for (const psf of allProjectSmartFiles) {
       const psfTransactions = transactionsByPsf.get(psf.id) || [];
-      const paidCents = psfTransactions.reduce((sum, t) => sum + (t.amountCents || 0), 0);
+      const paidCents = psfTransactions.reduce(
+        (sum, t) => sum + (t.amountCents || 0),
+        0,
+      );
       const totalCents = psf.totalCents || 0;
       const remainingCents = Math.max(0, totalCents - paidCents);
 
@@ -4455,16 +6018,17 @@ export class DatabaseStorage implements IStorage {
       pendingPaymentsCents += remainingCents;
 
       // Check for overdue installments
-      const schedule = psf.paymentSchedule && Array.isArray(psf.paymentSchedule)
-        ? psf.paymentSchedule
-        : [];
+      const schedule =
+        psf.paymentSchedule && Array.isArray(psf.paymentSchedule)
+          ? psf.paymentSchedule
+          : [];
 
       let overdueFromSchedule = 0;
       for (const inst of schedule as any[]) {
-        if (inst.status === 'PAID') continue;
+        if (inst.status === "PAID") continue;
         const dueDate = inst.dueDate ? new Date(inst.dueDate) : null;
         if (dueDate && !isNaN(dueDate.getTime()) && dueDate < now) {
-          overdueFromSchedule += (inst.amountCents || 0);
+          overdueFromSchedule += inst.amountCents || 0;
         }
       }
 
@@ -4480,41 +6044,62 @@ export class DatabaseStorage implements IStorage {
       totalRevenue,
       monthlyRevenue,
       pendingPayments,
-      overduePayments
+      overduePayments,
     };
   }
 
   // Saved Payment Methods (for autopay)
-  async getSavedPaymentMethodsByContact(contactId: string): Promise<SavedPaymentMethod[]> {
-    return await db.select()
+  async getSavedPaymentMethodsByContact(
+    contactId: string,
+  ): Promise<SavedPaymentMethod[]> {
+    return await db
+      .select()
       .from(savedPaymentMethods)
       .where(eq(savedPaymentMethods.contactId, contactId))
-      .orderBy(desc(savedPaymentMethods.isDefault), desc(savedPaymentMethods.createdAt));
+      .orderBy(
+        desc(savedPaymentMethods.isDefault),
+        desc(savedPaymentMethods.createdAt),
+      );
   }
 
-  async getSavedPaymentMethod(id: string): Promise<SavedPaymentMethod | undefined> {
-    const [method] = await db.select()
+  async getSavedPaymentMethod(
+    id: string,
+  ): Promise<SavedPaymentMethod | undefined> {
+    const [method] = await db
+      .select()
       .from(savedPaymentMethods)
       .where(eq(savedPaymentMethods.id, id));
     return method || undefined;
   }
 
-  async getSavedPaymentMethodByStripeId(stripePaymentMethodId: string): Promise<SavedPaymentMethod | undefined> {
-    const [method] = await db.select()
+  async getSavedPaymentMethodByStripeId(
+    stripePaymentMethodId: string,
+  ): Promise<SavedPaymentMethod | undefined> {
+    const [method] = await db
+      .select()
       .from(savedPaymentMethods)
-      .where(eq(savedPaymentMethods.stripePaymentMethodId, stripePaymentMethodId));
+      .where(
+        eq(savedPaymentMethods.stripePaymentMethodId, stripePaymentMethodId),
+      );
     return method || undefined;
   }
 
-  async createSavedPaymentMethod(paymentMethod: InsertSavedPaymentMethod): Promise<SavedPaymentMethod> {
-    const [created] = await db.insert(savedPaymentMethods)
+  async createSavedPaymentMethod(
+    paymentMethod: InsertSavedPaymentMethod,
+  ): Promise<SavedPaymentMethod> {
+    const [created] = await db
+      .insert(savedPaymentMethods)
       .values(paymentMethod)
       .returning();
     return created;
   }
 
-  async updateSavedPaymentMethod(id: string, paymentMethod: Partial<SavedPaymentMethod>): Promise<SavedPaymentMethod> {
-    const [updated] = await db.update(savedPaymentMethods)
+  async updateSavedPaymentMethod(
+    id: string,
+    paymentMethod: Partial<SavedPaymentMethod>,
+  ): Promise<SavedPaymentMethod> {
+    const [updated] = await db
+      .update(savedPaymentMethods)
       .set(paymentMethod)
       .where(eq(savedPaymentMethods.id, id))
       .returning();
@@ -4522,29 +6107,37 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteSavedPaymentMethod(id: string): Promise<void> {
-    await db.delete(savedPaymentMethods)
-      .where(eq(savedPaymentMethods.id, id));
+    await db.delete(savedPaymentMethods).where(eq(savedPaymentMethods.id, id));
   }
 
-  async setDefaultPaymentMethod(contactId: string, paymentMethodId: string): Promise<void> {
+  async setDefaultPaymentMethod(
+    contactId: string,
+    paymentMethodId: string,
+  ): Promise<void> {
     await db.transaction(async (tx) => {
       // First, unset all defaults for this contact
-      await tx.update(savedPaymentMethods)
+      await tx
+        .update(savedPaymentMethods)
         .set({ isDefault: false })
         .where(eq(savedPaymentMethods.contactId, contactId));
-      
+
       // Then set the new default
-      await tx.update(savedPaymentMethods)
+      await tx
+        .update(savedPaymentMethods)
         .set({ isDefault: true })
         .where(eq(savedPaymentMethods.id, paymentMethodId));
-      
+
       // Also update the contact's defaultPaymentMethodId
-      const [method] = await tx.select({ stripePaymentMethodId: savedPaymentMethods.stripePaymentMethodId })
+      const [method] = await tx
+        .select({
+          stripePaymentMethodId: savedPaymentMethods.stripePaymentMethodId,
+        })
         .from(savedPaymentMethods)
         .where(eq(savedPaymentMethods.id, paymentMethodId));
-      
+
       if (method) {
-        await tx.update(contacts)
+        await tx
+          .update(contacts)
           .set({ defaultPaymentMethodId: method.stripePaymentMethodId })
           .where(eq(contacts.id, contactId));
       }
@@ -4557,7 +6150,9 @@ export class DatabaseStorage implements IStorage {
     const smsContacts = await db
       .selectDistinct({
         contactId: smsLogs.clientId,
-        lastMessageAt: sql<Date>`MAX(${smsLogs.createdAt})`.as('last_message_at')
+        lastMessageAt: sql<Date>`MAX(${smsLogs.createdAt})`.as(
+          "last_message_at",
+        ),
       })
       .from(smsLogs)
       .innerJoin(contacts, eq(smsLogs.clientId, contacts.id))
@@ -4568,8 +6163,11 @@ export class DatabaseStorage implements IStorage {
     // Get contact details, last SMS preview, and unread status for each
     const conversations = await Promise.all(
       smsContacts.map(async ({ contactId, lastMessageAt }) => {
-        const [contact] = await db.select().from(contacts).where(eq(contacts.id, contactId));
-        
+        const [contact] = await db
+          .select()
+          .from(contacts)
+          .where(eq(contacts.id, contactId));
+
         // Get last SMS message
         const [lastSms] = await db
           .select()
@@ -4585,8 +6183,8 @@ export class DatabaseStorage implements IStorage {
           .where(
             and(
               eq(conversationReads.photographerId, photographerId),
-              eq(conversationReads.contactId, contactId)
-            )
+              eq(conversationReads.contactId, contactId),
+            ),
           );
 
         // Count unread SMS messages (only INBOUND messages after last read timestamp)
@@ -4597,36 +6195,41 @@ export class DatabaseStorage implements IStorage {
               .where(
                 and(
                   eq(smsLogs.clientId, contactId),
-                  eq(smsLogs.direction, 'INBOUND'), // Only count messages FROM clients
-                  gt(smsLogs.createdAt, conversationRead.lastReadAt)
-                )
+                  eq(smsLogs.direction, "INBOUND"), // Only count messages FROM clients
+                  gt(smsLogs.createdAt, conversationRead.lastReadAt),
+                ),
               )
-              .then(result => result[0]?.count || 0)
+              .then((result) => result[0]?.count || 0)
           : await db
               .select({ count: sql<number>`count(*)` })
               .from(smsLogs)
               .where(
                 and(
                   eq(smsLogs.clientId, contactId),
-                  eq(smsLogs.direction, 'INBOUND') // Only count messages FROM clients
-                )
+                  eq(smsLogs.direction, "INBOUND"), // Only count messages FROM clients
+                ),
               )
-              .then(result => result[0]?.count || 0);
+              .then((result) => result[0]?.count || 0);
 
         return {
           contact,
-          lastMessage: lastSms?.messageBody || '',
+          lastMessage: lastSms?.messageBody || "",
           lastMessageAt: lastMessageAt,
           unreadCount: Number(unreadCount) || 0,
-          lastReadAt: conversationRead?.lastReadAt
+          lastReadAt: conversationRead?.lastReadAt,
         };
-      })
+      }),
     );
 
     return conversations;
   }
 
-  async getInboxThread(contactId: string, photographerId: string, limit: number = 50, offset: number = 0): Promise<{ messages: any[], hasMore: boolean }> {
+  async getInboxThread(
+    contactId: string,
+    photographerId: string,
+    limit: number = 50,
+    offset: number = 0,
+  ): Promise<{ messages: any[]; hasMore: boolean }> {
     // Get all SMS messages for this contact
     const smsMessages = await db
       .select()
@@ -4641,32 +6244,32 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(emailHistory.clientId, contactId),
-          eq(emailHistory.photographerId, photographerId)
-        )
+          eq(emailHistory.photographerId, photographerId),
+        ),
       )
       .orderBy(asc(emailHistory.createdAt));
 
     // Combine and format all messages
     const allMessages = [
-      ...smsMessages.map(sms => ({
-        type: 'SMS',
+      ...smsMessages.map((sms) => ({
+        type: "SMS",
         id: sms.id,
         content: sms.messageBody,
         direction: sms.direction,
         timestamp: sms.createdAt,
-        isInbound: sms.direction === 'INBOUND',
+        isInbound: sms.direction === "INBOUND",
         status: sms.status, // Include delivery status
-        imageUrl: sms.imageUrl // Include MMS image URL
+        imageUrl: sms.imageUrl, // Include MMS image URL
       })),
-      ...emailEvents.map(email => ({
-        type: 'EMAIL',
+      ...emailEvents.map((email) => ({
+        type: "EMAIL",
         id: email.id,
         content: null, // No content shown, just notification
         direction: email.direction,
         timestamp: email.createdAt || email.sentAt,
-        isInbound: email.direction === 'INBOUND',
-        subject: email.subject
-      }))
+        isInbound: email.direction === "INBOUND",
+        subject: email.subject,
+      })),
     ];
 
     // Sort by timestamp DESC (newest first)
@@ -4684,11 +6287,14 @@ export class DatabaseStorage implements IStorage {
     return { messages, hasMore };
   }
 
-  async markConversationAsRead(photographerId: string, contactId: string): Promise<void> {
+  async markConversationAsRead(
+    photographerId: string,
+    contactId: string,
+  ): Promise<void> {
     await this.upsertConversationRead({
       photographerId,
       contactId,
-      lastReadAt: new Date()
+      lastReadAt: new Date(),
     });
   }
 
@@ -4702,7 +6308,7 @@ export class DatabaseStorage implements IStorage {
     // Get all contacts with SMS activity
     const smsContacts = await db
       .selectDistinct({
-        contactId: smsLogs.clientId
+        contactId: smsLogs.clientId,
       })
       .from(smsLogs)
       .innerJoin(contacts, eq(smsLogs.clientId, contacts.id))
@@ -4711,7 +6317,7 @@ export class DatabaseStorage implements IStorage {
     let totalUnread = 0;
 
     for (const { contactId } of smsContacts) {
-      const conversationRead = reads.find(r => r.contactId === contactId);
+      const conversationRead = reads.find((r) => r.contactId === contactId);
 
       // Only count INBOUND messages (from client to photographer)
       const unreadCount = conversationRead
@@ -4721,21 +6327,21 @@ export class DatabaseStorage implements IStorage {
             .where(
               and(
                 eq(smsLogs.clientId, contactId),
-                eq(smsLogs.direction, 'INBOUND'), // Only inbound messages
-                gt(smsLogs.createdAt, conversationRead.lastReadAt)
-              )
+                eq(smsLogs.direction, "INBOUND"), // Only inbound messages
+                gt(smsLogs.createdAt, conversationRead.lastReadAt),
+              ),
             )
-            .then(result => result[0]?.count || 0)
+            .then((result) => result[0]?.count || 0)
         : await db
             .select({ count: sql<number>`count(*)` })
             .from(smsLogs)
             .where(
               and(
                 eq(smsLogs.clientId, contactId),
-                eq(smsLogs.direction, 'INBOUND') // Only inbound messages
-              )
+                eq(smsLogs.direction, "INBOUND"), // Only inbound messages
+              ),
             )
-            .then(result => result[0]?.count || 0);
+            .then((result) => result[0]?.count || 0);
 
       totalUnread += Number(unreadCount) || 0;
     }
@@ -4743,7 +6349,9 @@ export class DatabaseStorage implements IStorage {
     return totalUnread;
   }
 
-  async upsertConversationRead(data: InsertConversationRead): Promise<ConversationRead> {
+  async upsertConversationRead(
+    data: InsertConversationRead,
+  ): Promise<ConversationRead> {
     // Check if record exists
     const [existing] = await db
       .select()
@@ -4751,8 +6359,8 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(conversationReads.photographerId, data.photographerId),
-          eq(conversationReads.contactId, data.contactId)
-        )
+          eq(conversationReads.contactId, data.contactId),
+        ),
       );
 
     if (existing) {
@@ -4761,7 +6369,7 @@ export class DatabaseStorage implements IStorage {
         .update(conversationReads)
         .set({
           lastReadAt: data.lastReadAt,
-          updatedAt: new Date()
+          updatedAt: new Date(),
         })
         .where(eq(conversationReads.id, existing.id))
         .returning();
@@ -4776,59 +6384,80 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getConversationRead(photographerId: string, contactId: string): Promise<ConversationRead | undefined> {
+  async getConversationRead(
+    photographerId: string,
+    contactId: string,
+  ): Promise<ConversationRead | undefined> {
     const [conversationRead] = await db
       .select()
       .from(conversationReads)
       .where(
         and(
           eq(conversationReads.photographerId, photographerId),
-          eq(conversationReads.contactId, contactId)
-        )
+          eq(conversationReads.contactId, contactId),
+        ),
       );
     return conversationRead || undefined;
   }
-  
+
   // Admin Methods
-  async getAllPhotographersWithStats(): Promise<Array<Photographer & { clientCount: number }>> {
+  async getAllPhotographersWithStats(): Promise<
+    Array<Photographer & { clientCount: number }>
+  > {
     const photographersList = await db.select().from(photographers);
-    
+
     // Get contact counts for each photographer
     const photographersWithStats = await Promise.all(
       photographersList.map(async (photographer) => {
-        const contactCount = await db.select({ count: sql<number>`count(*)` })
+        const contactCount = await db
+          .select({ count: sql<number>`count(*)` })
           .from(contacts)
           .where(eq(contacts.photographerId, photographer.id));
-        
+
         return {
           ...photographer,
-          clientCount: Number(contactCount[0]?.count || 0)
+          clientCount: Number(contactCount[0]?.count || 0),
         };
-      })
+      }),
     );
-    
+
     return photographersWithStats;
   }
-  
-  async logAdminActivity(activity: InsertAdminActivityLog): Promise<AdminActivityLog> {
-    const [log] = await db.insert(adminActivityLog).values(activity).returning();
+
+  async logAdminActivity(
+    activity: InsertAdminActivityLog,
+  ): Promise<AdminActivityLog> {
+    const [log] = await db
+      .insert(adminActivityLog)
+      .values(activity)
+      .returning();
     return log;
   }
-  
-  async getAdminActivityLog(adminUserId?: string, limit: number = 100): Promise<AdminActivityLog[]> {
-    let query = db.select().from(adminActivityLog).orderBy(desc(adminActivityLog.createdAt));
-    
+
+  async getAdminActivityLog(
+    adminUserId?: string,
+    limit: number = 100,
+  ): Promise<AdminActivityLog[]> {
+    let query = db
+      .select()
+      .from(adminActivityLog)
+      .orderBy(desc(adminActivityLog.createdAt));
+
     if (adminUserId) {
       query = query.where(eq(adminActivityLog.adminUserId, adminUserId)) as any;
     }
-    
+
     query = query.limit(limit) as any;
-    
+
     return await query;
   }
 
-  async updatePhotographerSubscription(photographerId: string, subscriptionStatus: string): Promise<Photographer> {
-    const [updated] = await db.update(photographers)
+  async updatePhotographerSubscription(
+    photographerId: string,
+    subscriptionStatus: string,
+  ): Promise<Photographer> {
+    const [updated] = await db
+      .update(photographers)
       .set({ subscriptionStatus })
       .where(eq(photographers.id, photographerId))
       .returning();
@@ -4837,27 +6466,31 @@ export class DatabaseStorage implements IStorage {
 
   // Ad Campaigns
   async getAdCampaigns(photographerId: string): Promise<AdCampaign[]> {
-    return await db.select()
+    return await db
+      .select()
       .from(adCampaigns)
       .where(eq(adCampaigns.photographerId, photographerId));
   }
 
   async getAdCampaign(id: string): Promise<AdCampaign | undefined> {
-    const [campaign] = await db.select()
+    const [campaign] = await db
+      .select()
       .from(adCampaigns)
       .where(eq(adCampaigns.id, id));
     return campaign || undefined;
   }
 
   async createAdCampaign(campaign: InsertAdCampaign): Promise<AdCampaign> {
-    const [created] = await db.insert(adCampaigns)
-      .values(campaign)
-      .returning();
+    const [created] = await db.insert(adCampaigns).values(campaign).returning();
     return created;
   }
 
-  async updateAdCampaign(id: string, campaign: Partial<AdCampaign>): Promise<AdCampaign> {
-    const [updated] = await db.update(adCampaigns)
+  async updateAdCampaign(
+    id: string,
+    campaign: Partial<AdCampaign>,
+  ): Promise<AdCampaign> {
+    const [updated] = await db
+      .update(adCampaigns)
       .set({ ...campaign, updatedAt: new Date() })
       .where(eq(adCampaigns.id, id))
       .returning();
@@ -4865,61 +6498,67 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Ad Payment Methods
-  async getAdPaymentMethods(photographerId: string): Promise<AdPaymentMethod[]> {
-    return await db.select()
+  async getAdPaymentMethods(
+    photographerId: string,
+  ): Promise<AdPaymentMethod[]> {
+    return await db
+      .select()
       .from(adPaymentMethods)
       .where(eq(adPaymentMethods.photographerId, photographerId));
   }
 
-  async createAdPaymentMethod(method: InsertAdPaymentMethod): Promise<AdPaymentMethod> {
-    const [created] = await db.insert(adPaymentMethods)
+  async createAdPaymentMethod(
+    method: InsertAdPaymentMethod,
+  ): Promise<AdPaymentMethod> {
+    const [created] = await db
+      .insert(adPaymentMethods)
       .values(method)
       .returning();
     return created;
   }
 
   async deleteAdPaymentMethod(id: string): Promise<void> {
-    await db.delete(adPaymentMethods)
-      .where(eq(adPaymentMethods.id, id));
+    await db.delete(adPaymentMethods).where(eq(adPaymentMethods.id, id));
   }
 
   // Native Galleries
   async getGalleriesByPhotographer(photographerId: string): Promise<Gallery[]> {
     // Flatten select to avoid Drizzle nested object issue with leftJoin returning null
     // NOTE: galleries table does NOT have publicToken column - use id as identifier
-    const results = await db.select({
-      id: galleries.id,
-      photographerId: galleries.photographerId,
-      projectId: galleries.projectId,
-      title: galleries.title,
-      description: galleries.description,
-      status: galleries.status,
-      isPublic: galleries.isPublic,
-      coverImageId: galleries.coverImageId,
-      sharedAt: galleries.sharedAt,
-      deletedAt: galleries.deletedAt,
-      createdAt: galleries.createdAt,
-      updatedAt: galleries.updatedAt,
-      coverImageUrl: galleryImages.webUrl,
-      coverImageThumbnailUrl: galleryImages.thumbnailUrl
-    })
+    const results = await db
+      .select({
+        id: galleries.id,
+        photographerId: galleries.photographerId,
+        projectId: galleries.projectId,
+        title: galleries.title,
+        description: galleries.description,
+        status: galleries.status,
+        isPublic: galleries.isPublic,
+        coverImageId: galleries.coverImageId,
+        sharedAt: galleries.sharedAt,
+        deletedAt: galleries.deletedAt,
+        createdAt: galleries.createdAt,
+        updatedAt: galleries.updatedAt,
+        coverImageUrl: galleryImages.webUrl,
+        coverImageThumbnailUrl: galleryImages.thumbnailUrl,
+      })
       .from(galleries)
       .leftJoin(
         galleryImages,
         and(
           eq(galleryImages.id, galleries.coverImageId),
-          isNull(galleryImages.deletedAt)
-        )
+          isNull(galleryImages.deletedAt),
+        ),
       )
       .where(
         and(
           eq(galleries.photographerId, photographerId),
-          isNull(galleries.deletedAt)
-        )
+          isNull(galleries.deletedAt),
+        ),
       )
       .orderBy(desc(galleries.createdAt));
-    
-    return results.map(r => ({
+
+    return results.map((r) => ({
       id: r.id,
       photographerId: r.photographerId,
       projectId: r.projectId,
@@ -4933,47 +6572,47 @@ export class DatabaseStorage implements IStorage {
       deletedAt: r.deletedAt,
       createdAt: r.createdAt,
       updatedAt: r.updatedAt,
-      coverImage: r.coverImageUrl ? { url: r.coverImageUrl, thumbnailUrl: r.coverImageThumbnailUrl } : undefined
+      coverImage: r.coverImageUrl
+        ? { url: r.coverImageUrl, thumbnailUrl: r.coverImageThumbnailUrl }
+        : undefined,
     }));
   }
 
   async getGalleriesByProject(projectId: string): Promise<Gallery[]> {
     // Flatten select to avoid Drizzle nested object issue with leftJoin returning null
     // NOTE: galleries table does NOT have publicToken column - use id as identifier
-    const results = await db.select({
-      id: galleries.id,
-      photographerId: galleries.photographerId,
-      projectId: galleries.projectId,
-      title: galleries.title,
-      description: galleries.description,
-      status: galleries.status,
-      isPublic: galleries.isPublic,
-      imageCount: galleries.imageCount,
-      coverImageId: galleries.coverImageId,
-      sharedAt: galleries.sharedAt,
-      deletedAt: galleries.deletedAt,
-      createdAt: galleries.createdAt,
-      updatedAt: galleries.updatedAt,
-      coverImageUrl: galleryImages.webUrl,
-      coverImageThumbnailUrl: galleryImages.thumbnailUrl
-    })
+    const results = await db
+      .select({
+        id: galleries.id,
+        photographerId: galleries.photographerId,
+        projectId: galleries.projectId,
+        title: galleries.title,
+        description: galleries.description,
+        status: galleries.status,
+        isPublic: galleries.isPublic,
+        imageCount: galleries.imageCount,
+        coverImageId: galleries.coverImageId,
+        sharedAt: galleries.sharedAt,
+        deletedAt: galleries.deletedAt,
+        createdAt: galleries.createdAt,
+        updatedAt: galleries.updatedAt,
+        coverImageUrl: galleryImages.webUrl,
+        coverImageThumbnailUrl: galleryImages.thumbnailUrl,
+      })
       .from(galleries)
       .leftJoin(
         galleryImages,
         and(
           eq(galleryImages.id, galleries.coverImageId),
-          isNull(galleryImages.deletedAt)
-        )
+          isNull(galleryImages.deletedAt),
+        ),
       )
       .where(
-        and(
-          eq(galleries.projectId, projectId),
-          isNull(galleries.deletedAt)
-        )
+        and(eq(galleries.projectId, projectId), isNull(galleries.deletedAt)),
       )
       .orderBy(desc(galleries.createdAt));
-    
-    return results.map(r => ({
+
+    return results.map((r) => ({
       id: r.id,
       photographerId: r.photographerId,
       projectId: r.projectId,
@@ -4988,53 +6627,54 @@ export class DatabaseStorage implements IStorage {
       deletedAt: r.deletedAt,
       createdAt: r.createdAt,
       updatedAt: r.updatedAt,
-      coverImage: r.coverImageUrl ? { url: r.coverImageUrl, thumbnailUrl: r.coverImageThumbnailUrl } : undefined
+      coverImage: r.coverImageUrl
+        ? { url: r.coverImageUrl, thumbnailUrl: r.coverImageThumbnailUrl }
+        : undefined,
     }));
   }
 
   async getGallery(id: string): Promise<GalleryWithImages | undefined> {
     // Flatten select to avoid Drizzle nested object issue with leftJoin returning null
     // NOTE: galleries table does NOT have publicToken column - use id as identifier
-    const [result] = await db.select({
-      id: galleries.id,
-      photographerId: galleries.photographerId,
-      projectId: galleries.projectId,
-      title: galleries.title,
-      description: galleries.description,
-      status: galleries.status,
-      isPublic: galleries.isPublic,
-      coverImageId: galleries.coverImageId,
-      sharedAt: galleries.sharedAt,
-      deletedAt: galleries.deletedAt,
-      createdAt: galleries.createdAt,
-      updatedAt: galleries.updatedAt,
-      coverImageUrl: galleryImages.webUrl,
-      coverImageThumbnailUrl: galleryImages.thumbnailUrl,
-      coverImageFileSize: galleryImages.fileSize
-    })
+    const [result] = await db
+      .select({
+        id: galleries.id,
+        photographerId: galleries.photographerId,
+        projectId: galleries.projectId,
+        title: galleries.title,
+        description: galleries.description,
+        status: galleries.status,
+        isPublic: galleries.isPublic,
+        coverImageId: galleries.coverImageId,
+        sharedAt: galleries.sharedAt,
+        deletedAt: galleries.deletedAt,
+        createdAt: galleries.createdAt,
+        updatedAt: galleries.updatedAt,
+        coverImageUrl: galleryImages.webUrl,
+        coverImageThumbnailUrl: galleryImages.thumbnailUrl,
+        coverImageFileSize: galleryImages.fileSize,
+      })
       .from(galleries)
       .leftJoin(
         galleryImages,
         and(
           eq(galleryImages.id, galleries.coverImageId),
-          isNull(galleryImages.deletedAt)
-        )
+          isNull(galleryImages.deletedAt),
+        ),
       )
       .where(eq(galleries.id, id));
-    
+
     if (!result) return undefined;
 
-    const images = await db.select()
+    const images = await db
+      .select()
       .from(galleryImages)
       .where(
-        and(
-          eq(galleryImages.galleryId, id),
-          isNull(galleryImages.deletedAt)
-        )
+        and(eq(galleryImages.galleryId, id), isNull(galleryImages.deletedAt)),
       )
       .orderBy(asc(galleryImages.sortIndex));
 
-    return { 
+    return {
       id: result.id,
       photographerId: result.photographerId,
       projectId: result.projectId,
@@ -5048,18 +6688,23 @@ export class DatabaseStorage implements IStorage {
       deletedAt: result.deletedAt,
       createdAt: result.createdAt,
       updatedAt: result.updatedAt,
-      coverImage: result.coverImageUrl ? { 
-        url: result.coverImageUrl, 
-        thumbnailUrl: result.coverImageThumbnailUrl,
-        fileSize: result.coverImageFileSize
-      } : undefined,
-      images 
+      coverImage: result.coverImageUrl
+        ? {
+            url: result.coverImageUrl,
+            thumbnailUrl: result.coverImageThumbnailUrl,
+            fileSize: result.coverImageFileSize,
+          }
+        : undefined,
+      images,
     };
   }
 
   async getPublicGalleries(photographerId: string): Promise<any[]> {
-    console.log('🔍 DEBUG: getPublicGalleries FIXED VERSION called for', photographerId);
-    
+    console.log(
+      "🔍 DEBUG: getPublicGalleries FIXED VERSION called for",
+      photographerId,
+    );
+
     // NOTE: galleries table does NOT have publicToken column - use gallery ID instead
     try {
       const results = await db
@@ -5071,7 +6716,7 @@ export class DatabaseStorage implements IStorage {
           isPublic: galleries.isPublic,
           sharedAt: galleries.sharedAt,
           createdAt: galleries.createdAt,
-          projectId: galleries.projectId
+          projectId: galleries.projectId,
         })
         .from(galleries)
         .where(
@@ -5079,14 +6724,18 @@ export class DatabaseStorage implements IStorage {
             eq(galleries.photographerId, photographerId),
             eq(galleries.isPublic, true),
             isNotNull(galleries.sharedAt),
-            isNull(galleries.deletedAt)
-          )
+            isNull(galleries.deletedAt),
+          ),
         )
         .orderBy(desc(galleries.sharedAt));
-      
-      console.log('🔍 DEBUG: getPublicGalleries query succeeded, found', results.length, 'galleries');
-      
-      return results.map(row => ({
+
+      console.log(
+        "🔍 DEBUG: getPublicGalleries query succeeded, found",
+        results.length,
+        "galleries",
+      );
+
+      return results.map((row) => ({
         id: row.id,
         title: row.title,
         description: row.description,
@@ -5095,23 +6744,22 @@ export class DatabaseStorage implements IStorage {
         publicToken: row.id, // Use gallery ID as public token (galleries don't have publicToken column)
         sharedAt: row.sharedAt,
         createdAt: row.createdAt,
-        project: null // Simplified - no longer fetching project/client info
+        project: null, // Simplified - no longer fetching project/client info
       }));
     } catch (error) {
-      console.error('🔍 DEBUG: getPublicGalleries FAILED with error:', error);
+      console.error("🔍 DEBUG: getPublicGalleries FAILED with error:", error);
       throw error;
     }
   }
 
   async createGallery(gallery: InsertGallery): Promise<Gallery> {
-    const [created] = await db.insert(galleries)
-      .values(gallery)
-      .returning();
+    const [created] = await db.insert(galleries).values(gallery).returning();
     return created;
   }
 
   async updateGallery(id: string, gallery: Partial<Gallery>): Promise<Gallery> {
-    const [updated] = await db.update(galleries)
+    const [updated] = await db
+      .update(galleries)
       .set({ ...gallery, updatedAt: new Date() })
       .where(eq(galleries.id, id))
       .returning();
@@ -5120,30 +6768,33 @@ export class DatabaseStorage implements IStorage {
 
   async deleteGallery(id: string): Promise<void> {
     const deletedAt = new Date();
-    
+
     // Soft delete: mark gallery as deleted
-    await db.update(galleries)
-      .set({ deletedAt })
-      .where(eq(galleries.id, id));
-    
+    await db.update(galleries).set({ deletedAt }).where(eq(galleries.id, id));
+
     // Cascade: soft-delete all gallery images (only non-deleted ones)
-    const images = await db.select()
+    const images = await db
+      .select()
       .from(galleryImages)
       .where(
         and(
           eq(galleryImages.galleryId, id),
-          isNull(galleryImages.deletedAt) // Only delete non-deleted images
-        )
+          isNull(galleryImages.deletedAt), // Only delete non-deleted images
+        ),
       );
-    
+
     if (images.length > 0) {
-      const imageIds = images.map(img => img.id);
-      await db.update(galleryImages)
+      const imageIds = images.map((img) => img.id);
+      await db
+        .update(galleryImages)
         .set({ deletedAt })
         .where(inArray(galleryImages.id, imageIds)); // Only update fetched image IDs
-      
+
       // Decrement storage bytes for all images
-      const totalBytes = images.reduce((sum, img) => sum + (img.fileSize || 0), 0);
+      const totalBytes = images.reduce(
+        (sum, img) => sum + (img.fileSize || 0),
+        0,
+      );
       if (totalBytes > 0 && images[0].photographerId) {
         await db.execute(sql`
           UPDATE photographers 
@@ -5158,35 +6809,42 @@ export class DatabaseStorage implements IStorage {
 
   async restoreGallery(id: string): Promise<void> {
     // Get gallery to check its deletedAt timestamp
-    const [gallery] = await db.select()
+    const [gallery] = await db
+      .select()
       .from(galleries)
       .where(eq(galleries.id, id));
-    
+
     if (!gallery || !gallery.deletedAt) return;
-    
+
     // Restore gallery
-    await db.update(galleries)
+    await db
+      .update(galleries)
       .set({ deletedAt: null })
       .where(eq(galleries.id, id));
-    
+
     // Cascade: restore only images deleted at same time as gallery (prevents restoring individually-deleted images)
-    const images = await db.select()
+    const images = await db
+      .select()
       .from(galleryImages)
       .where(
         and(
           eq(galleryImages.galleryId, id),
-          eq(galleryImages.deletedAt, gallery.deletedAt) // Only images deleted with gallery
-        )
+          eq(galleryImages.deletedAt, gallery.deletedAt), // Only images deleted with gallery
+        ),
       );
-    
+
     if (images.length > 0) {
-      const imageIds = images.map(img => img.id);
-      await db.update(galleryImages)
+      const imageIds = images.map((img) => img.id);
+      await db
+        .update(galleryImages)
         .set({ deletedAt: null })
         .where(inArray(galleryImages.id, imageIds));
-      
+
       // Increment storage bytes for images that were deleted with gallery
-      const totalBytes = images.reduce((sum, img) => sum + (img.fileSize || 0), 0);
+      const totalBytes = images.reduce(
+        (sum, img) => sum + (img.fileSize || 0),
+        0,
+      );
       if (totalBytes > 0 && images[0].photographerId) {
         await db.execute(sql`
           UPDATE photographers 
@@ -5201,13 +6859,14 @@ export class DatabaseStorage implements IStorage {
 
   async getDeletedGalleries(photographerId: string): Promise<Gallery[]> {
     // Get soft-deleted galleries for trash view
-    const results = await db.select()
+    const results = await db
+      .select()
       .from(galleries)
       .where(
         and(
           eq(galleries.photographerId, photographerId),
-          isNotNull(galleries.deletedAt)
-        )
+          isNotNull(galleries.deletedAt),
+        ),
       )
       .orderBy(desc(galleries.deletedAt));
     return results;
@@ -5215,64 +6874,69 @@ export class DatabaseStorage implements IStorage {
 
   async permanentlyDeleteGallery(id: string): Promise<void> {
     // Hard delete for cleanup after 30 days
-    await db.delete(galleries)
-      .where(eq(galleries.id, id));
+    await db.delete(galleries).where(eq(galleries.id, id));
   }
 
   async incrementGalleryViewCount(id: string): Promise<void> {
-    await db.update(galleries)
+    await db
+      .update(galleries)
       .set({ viewCount: sql`${galleries.viewCount} + 1` })
       .where(eq(galleries.id, id));
   }
 
   // Gallery Images
-  async getGalleryImages(galleryId: string, contactId?: string): Promise<GalleryImageWithFavorites[]> {
-    const images = await db.select()
+  async getGalleryImages(
+    galleryId: string,
+    contactId?: string,
+  ): Promise<GalleryImageWithFavorites[]> {
+    const images = await db
+      .select()
       .from(galleryImages)
       .where(
         and(
           eq(galleryImages.galleryId, galleryId),
-          isNull(galleryImages.deletedAt) // Filter out soft-deleted images
-        )
+          isNull(galleryImages.deletedAt), // Filter out soft-deleted images
+        ),
       )
       .orderBy(asc(galleryImages.sortIndex));
 
     if (!contactId) {
-      return images.map(img => ({ ...img, isFavorited: false }));
+      return images.map((img) => ({ ...img, isFavorited: false }));
     }
 
     // Get favorites for this contact
-    const favorites = await db.select()
+    const favorites = await db
+      .select()
       .from(galleryFavorites)
       .where(
         and(
           eq(galleryFavorites.galleryId, galleryId),
-          eq(galleryFavorites.contactId, contactId)
-        )
+          eq(galleryFavorites.contactId, contactId),
+        ),
       );
 
-    const favoritedImageIds = new Set(favorites.map(f => f.imageId));
+    const favoritedImageIds = new Set(favorites.map((f) => f.imageId));
 
-    return images.map(img => ({
+    return images.map((img) => ({
       ...img,
-      isFavorited: favoritedImageIds.has(img.id)
+      isFavorited: favoritedImageIds.has(img.id),
     }));
   }
 
   async getGalleryImage(id: string): Promise<GalleryImage | undefined> {
-    const [image] = await db.select()
+    const [image] = await db
+      .select()
       .from(galleryImages)
       .where(eq(galleryImages.id, id));
     return image || undefined;
   }
 
   async createGalleryImage(image: InsertGalleryImage): Promise<GalleryImage> {
-    const [created] = await db.insert(galleryImages)
-      .values(image)
-      .returning();
+    const [created] = await db.insert(galleryImages).values(image).returning();
 
     // Increment gallery image count
-    await db.update(galleries)
+    await db
+      .update(galleries)
       .set({ imageCount: sql`${galleries.imageCount} + 1` })
       .where(eq(galleries.id, image.galleryId));
 
@@ -5290,8 +6954,12 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async updateGalleryImage(id: string, image: Partial<GalleryImage>): Promise<GalleryImage> {
-    const [updated] = await db.update(galleryImages)
+  async updateGalleryImage(
+    id: string,
+    image: Partial<GalleryImage>,
+  ): Promise<GalleryImage> {
+    const [updated] = await db
+      .update(galleryImages)
       .set(image)
       .where(eq(galleryImages.id, id))
       .returning();
@@ -5302,12 +6970,14 @@ export class DatabaseStorage implements IStorage {
     const image = await this.getGalleryImage(id);
     if (image) {
       // Soft delete: mark as deleted instead of removing
-      await db.update(galleryImages)
+      await db
+        .update(galleryImages)
         .set({ deletedAt: new Date() })
         .where(eq(galleryImages.id, id));
 
       // Decrement gallery image count
-      await db.update(galleries)
+      await db
+        .update(galleries)
         .set({ imageCount: sql`${galleries.imageCount} - 1` })
         .where(eq(galleries.id, image.galleryId));
 
@@ -5328,12 +6998,14 @@ export class DatabaseStorage implements IStorage {
     const image = await this.getGalleryImage(id);
     if (image && image.deletedAt) {
       // Restore soft-deleted image
-      await db.update(galleryImages)
+      await db
+        .update(galleryImages)
         .set({ deletedAt: null })
         .where(eq(galleryImages.id, id));
 
       // Increment gallery image count
-      await db.update(galleries)
+      await db
+        .update(galleries)
         .set({ imageCount: sql`${galleries.imageCount} + 1` })
         .where(eq(galleries.id, image.galleryId));
 
@@ -5352,13 +7024,14 @@ export class DatabaseStorage implements IStorage {
 
   async getDeletedGalleryImages(galleryId: string): Promise<GalleryImage[]> {
     // Get soft-deleted images for trash view
-    const images = await db.select()
+    const images = await db
+      .select()
       .from(galleryImages)
       .where(
         and(
           eq(galleryImages.galleryId, galleryId),
-          isNotNull(galleryImages.deletedAt)
-        )
+          isNotNull(galleryImages.deletedAt),
+        ),
       )
       .orderBy(desc(galleryImages.deletedAt));
     return images;
@@ -5366,24 +7039,30 @@ export class DatabaseStorage implements IStorage {
 
   async permanentlyDeleteGalleryImage(id: string): Promise<void> {
     // Hard delete for cleanup after 30 days (no storage tracking needed - already decremented)
-    await db.delete(galleryImages)
-      .where(eq(galleryImages.id, id));
+    await db.delete(galleryImages).where(eq(galleryImages.id, id));
   }
 
-  async reorderGalleryImages(imageOrders: { id: string, sortIndex: number }[]): Promise<void> {
+  async reorderGalleryImages(
+    imageOrders: { id: string; sortIndex: number }[],
+  ): Promise<void> {
     await Promise.all(
       imageOrders.map(({ id, sortIndex }) =>
-        db.update(galleryImages)
+        db
+          .update(galleryImages)
           .set({ sortIndex })
-          .where(eq(galleryImages.id, id))
-      )
+          .where(eq(galleryImages.id, id)),
+      ),
     );
   }
 
   // Gallery Favorites
-  async getFavorites(galleryId: string, contactId?: string | null, sessionId?: string | null): Promise<string[]> {
+  async getFavorites(
+    galleryId: string,
+    contactId?: string | null,
+    sessionId?: string | null,
+  ): Promise<string[]> {
     const conditions = [eq(galleryFavorites.galleryId, galleryId)];
-    
+
     if (contactId) {
       conditions.push(eq(galleryFavorites.contactId, contactId));
     } else if (sessionId) {
@@ -5392,55 +7071,66 @@ export class DatabaseStorage implements IStorage {
       return []; // No identifier provided
     }
 
-    const favorites = await db.select()
+    const favorites = await db
+      .select()
       .from(galleryFavorites)
       .where(and(...conditions));
-    return favorites.map(f => f.imageId);
+    return favorites.map((f) => f.imageId);
   }
 
-  async toggleFavorite(favorite: InsertGalleryFavorite): Promise<{ action: 'added' | 'removed' }> {
+  async toggleFavorite(
+    favorite: InsertGalleryFavorite,
+  ): Promise<{ action: "added" | "removed" }> {
     // Build conditions based on whether contactId or sessionId is provided
     const conditions = [
       eq(galleryFavorites.galleryId, favorite.galleryId),
-      eq(galleryFavorites.imageId, favorite.imageId)
+      eq(galleryFavorites.imageId, favorite.imageId),
     ];
-    
+
     if (favorite.contactId) {
       conditions.push(eq(galleryFavorites.contactId, favorite.contactId));
     } else if (favorite.sessionId) {
       conditions.push(eq(galleryFavorites.sessionId, favorite.sessionId));
     } else {
-      throw new Error('Either contactId or sessionId must be provided');
+      throw new Error("Either contactId or sessionId must be provided");
     }
 
     // Check if favorite already exists
-    const [existing] = await db.select()
+    const [existing] = await db
+      .select()
       .from(galleryFavorites)
       .where(and(...conditions));
 
     if (existing) {
       // Remove favorite
-      await db.delete(galleryFavorites)
+      await db
+        .delete(galleryFavorites)
         .where(eq(galleryFavorites.id, existing.id));
-      return { action: 'removed' };
+      return { action: "removed" };
     } else {
       // Add favorite
-      await db.insert(galleryFavorites)
-        .values(favorite);
-      return { action: 'added' };
+      await db.insert(galleryFavorites).values(favorite);
+      return { action: "added" };
     }
   }
 
   // Gallery Downloads
-  async createGalleryDownload(download: InsertGalleryDownload): Promise<GalleryDownload> {
-    const [created] = await db.insert(galleryDownloads)
+  async createGalleryDownload(
+    download: InsertGalleryDownload,
+  ): Promise<GalleryDownload> {
+    const [created] = await db
+      .insert(galleryDownloads)
       .values(download)
       .returning();
     return created;
   }
 
-  async updateGalleryDownload(id: string, download: Partial<GalleryDownload>): Promise<GalleryDownload> {
-    const [updated] = await db.update(galleryDownloads)
+  async updateGalleryDownload(
+    id: string,
+    download: Partial<GalleryDownload>,
+  ): Promise<GalleryDownload> {
+    const [updated] = await db
+      .update(galleryDownloads)
       .set(download)
       .where(eq(galleryDownloads.id, id))
       .returning();
@@ -5448,21 +7138,26 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getGalleryDownload(id: string): Promise<GalleryDownload | undefined> {
-    const [download] = await db.select()
+    const [download] = await db
+      .select()
       .from(galleryDownloads)
       .where(eq(galleryDownloads.id, id));
     return download || undefined;
   }
 
   // Gallery Views (analytics)
-  async trackGalleryView(galleryId: string, contactId: string | null, ipAddress?: string, userAgent?: string): Promise<void> {
-    await db.insert(galleryViews)
-      .values({
-        galleryId,
-        contactId,
-        ipAddress,
-        userAgent
-      });
+  async trackGalleryView(
+    galleryId: string,
+    contactId: string | null,
+    ipAddress?: string,
+    userAgent?: string,
+  ): Promise<void> {
+    await db.insert(galleryViews).values({
+      galleryId,
+      contactId,
+      ipAddress,
+      userAgent,
+    });
 
     // Increment view count
     await this.incrementGalleryViewCount(galleryId);
@@ -5470,14 +7165,16 @@ export class DatabaseStorage implements IStorage {
 
   // Gallery Plans
   async getGalleryPlans(): Promise<any[]> {
-    return await db.select()
+    return await db
+      .select()
       .from(galleryPlans)
       .where(eq(galleryPlans.isActive, true))
       .orderBy(galleryPlans.sortOrder);
   }
 
   async getGalleryPlan(id: string): Promise<any | undefined> {
-    const [plan] = await db.select()
+    const [plan] = await db
+      .select()
       .from(galleryPlans)
       .where(eq(galleryPlans.id, id));
     return plan || undefined;
@@ -5488,10 +7185,11 @@ export class DatabaseStorage implements IStorage {
     limitBytes: number | null;
     planName: string | null;
   }> {
-    const [photographer] = await db.select({
-      galleryStorageBytes: photographers.galleryStorageBytes,
-      galleryPlanId: photographers.galleryPlanId
-    })
+    const [photographer] = await db
+      .select({
+        galleryStorageBytes: photographers.galleryStorageBytes,
+        galleryPlanId: photographers.galleryPlanId,
+      })
       .from(photographers)
       .where(eq(photographers.id, photographerId));
 
@@ -5499,23 +7197,28 @@ export class DatabaseStorage implements IStorage {
       return { usedBytes: 0, limitBytes: null, planName: null };
     }
 
-    const usedBytes = parseInt(photographer.galleryStorageBytes || '0', 10);
+    const usedBytes = parseInt(photographer.galleryStorageBytes || "0", 10);
 
     if (!photographer.galleryPlanId) {
       return { usedBytes, limitBytes: null, planName: null };
     }
 
     const plan = await this.getGalleryPlan(photographer.galleryPlanId);
-    const limitBytes = plan?.storageLimitBytes ? parseInt(plan.storageLimitBytes, 10) : null;
-    
+    const limitBytes = plan?.storageLimitBytes
+      ? parseInt(plan.storageLimitBytes, 10)
+      : null;
+
     return {
       usedBytes,
       limitBytes,
-      planName: plan?.displayName || null
+      planName: plan?.displayName || null,
     };
   }
 
-  async checkStorageQuota(photographerId: string, additionalBytes: number): Promise<{
+  async checkStorageQuota(
+    photographerId: string,
+    additionalBytes: number,
+  ): Promise<{
     allowed: boolean;
     reason?: string;
   }> {
@@ -5531,7 +7234,7 @@ export class DatabaseStorage implements IStorage {
     if (newTotal > usage.limitBytes) {
       return {
         allowed: false,
-        reason: `Storage quota exceeded. Used: ${(usage.usedBytes / (1024 ** 3)).toFixed(2)}GB, Limit: ${(usage.limitBytes / (1024 ** 3)).toFixed(2)}GB`
+        reason: `Storage quota exceeded. Used: ${(usage.usedBytes / 1024 ** 3).toFixed(2)}GB, Limit: ${(usage.limitBytes / 1024 ** 3).toFixed(2)}GB`,
       };
     }
 
@@ -5539,34 +7242,46 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Testimonials
-  async getTestimonialsByPhotographer(photographerId: string, status?: string): Promise<Testimonial[]> {
+  async getTestimonialsByPhotographer(
+    photographerId: string,
+    status?: string,
+  ): Promise<Testimonial[]> {
     const conditions = [eq(testimonials.photographerId, photographerId)];
     if (status) {
       conditions.push(eq(testimonials.status, status));
     }
-    
-    return await db.select()
+
+    return await db
+      .select()
       .from(testimonials)
       .where(and(...conditions))
       .orderBy(desc(testimonials.createdAt));
   }
 
   async getTestimonial(id: string): Promise<Testimonial | undefined> {
-    const [testimonial] = await db.select()
+    const [testimonial] = await db
+      .select()
       .from(testimonials)
       .where(eq(testimonials.id, id));
     return testimonial || undefined;
   }
 
-  async createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial> {
-    const [created] = await db.insert(testimonials)
+  async createTestimonial(
+    testimonial: InsertTestimonial,
+  ): Promise<Testimonial> {
+    const [created] = await db
+      .insert(testimonials)
       .values(testimonial)
       .returning();
     return created;
   }
 
-  async updateTestimonial(id: string, testimonial: Partial<Testimonial>): Promise<Testimonial> {
-    const [updated] = await db.update(testimonials)
+  async updateTestimonial(
+    id: string,
+    testimonial: Partial<Testimonial>,
+  ): Promise<Testimonial> {
+    const [updated] = await db
+      .update(testimonials)
       .set(testimonial)
       .where(eq(testimonials.id, id))
       .returning();
@@ -5574,16 +7289,19 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteTestimonial(id: string): Promise<void> {
-    await db.delete(testimonials)
-      .where(eq(testimonials.id, id));
+    await db.delete(testimonials).where(eq(testimonials.id, id));
   }
 
-  async approveTestimonial(id: string, approvedBy: string): Promise<Testimonial> {
-    const [updated] = await db.update(testimonials)
+  async approveTestimonial(
+    id: string,
+    approvedBy: string,
+  ): Promise<Testimonial> {
+    const [updated] = await db
+      .update(testimonials)
       .set({
-        status: 'APPROVED',
+        status: "APPROVED",
         approvedAt: new Date(),
-        approvedBy
+        approvedBy,
       })
       .where(eq(testimonials.id, id))
       .returning();
@@ -5591,8 +7309,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async rejectTestimonial(id: string): Promise<Testimonial> {
-    const [updated] = await db.update(testimonials)
-      .set({ status: 'REJECTED' })
+    const [updated] = await db
+      .update(testimonials)
+      .set({ status: "REJECTED" })
       .where(eq(testimonials.id, id))
       .returning();
     return updated;
@@ -5601,147 +7320,205 @@ export class DatabaseStorage implements IStorage {
   async toggleFeaturedTestimonial(id: string): Promise<Testimonial> {
     const testimonial = await this.getTestimonial(id);
     if (!testimonial) {
-      throw new Error('Testimonial not found');
+      throw new Error("Testimonial not found");
     }
-    
-    const [updated] = await db.update(testimonials)
+
+    const [updated] = await db
+      .update(testimonials)
       .set({ isFeatured: !testimonial.isFeatured })
       .where(eq(testimonials.id, id))
       .returning();
     return updated;
   }
 
-  async getApprovedTestimonials(photographerId: string, featuredOnly?: boolean): Promise<Testimonial[]> {
+  async getApprovedTestimonials(
+    photographerId: string,
+    featuredOnly?: boolean,
+  ): Promise<Testimonial[]> {
     const conditions = [
       eq(testimonials.photographerId, photographerId),
-      eq(testimonials.status, 'APPROVED')
+      eq(testimonials.status, "APPROVED"),
     ];
 
     if (featuredOnly) {
       conditions.push(eq(testimonials.isFeatured, true));
     }
 
-    return await db.select()
+    return await db
+      .select()
       .from(testimonials)
       .where(and(...conditions))
-      .orderBy(
-        desc(testimonials.isFeatured),
-        desc(testimonials.createdAt)
-      );
+      .orderBy(desc(testimonials.isFeatured), desc(testimonials.createdAt));
   }
 
-  async globalSearch(photographerId: string, query: string, limit: number = 10): Promise<{
-    contacts: Array<{ id: string; firstName: string; lastName: string; email: string | null; phone: string | null }>;
-    projects: Array<{ id: string; title: string; projectType: string | null; eventDate: string | null; clientFirstName: string | null; clientLastName: string | null }>;
+  async globalSearch(
+    photographerId: string,
+    query: string,
+    limit: number = 10,
+  ): Promise<{
+    contacts: Array<{
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string | null;
+      phone: string | null;
+    }>;
+    projects: Array<{
+      id: string;
+      title: string;
+      projectType: string | null;
+      eventDate: string | null;
+      clientFirstName: string | null;
+      clientLastName: string | null;
+    }>;
     smartFiles: Array<{ id: string; name: string; status: string }>;
   }> {
     // Escape SQL LIKE wildcards to prevent injection
-    const escapedQuery = query.replace(/[%_\\]/g, '\\$&');
+    const escapedQuery = query.replace(/[%_\\]/g, "\\$&");
     const searchPattern = `%${escapedQuery}%`;
 
     // Run all three queries in parallel - using flat select pattern per CLAUDE.md
-    const [contactResults, projectResults, smartFileResults] = await Promise.all([
-      // Contacts search
-      db.select({
+    const [contactResults, projectResults, smartFileResults] =
+      await Promise.all([
+        // Contacts search
+        db
+          .select({
+            id: contacts.id,
+            firstName: contacts.firstName,
+            lastName: contacts.lastName,
+            email: contacts.email,
+            phone: contacts.phone,
+          })
+          .from(contacts)
+          .where(
+            and(
+              eq(contacts.photographerId, photographerId),
+              or(
+                ilike(contacts.firstName, searchPattern),
+                ilike(contacts.lastName, searchPattern),
+                ilike(contacts.email, searchPattern),
+                ilike(contacts.phone, searchPattern),
+              ),
+            ),
+          )
+          .limit(limit),
+
+        // Projects search with client name - FLATTENED per CLAUDE.md pattern
+        db
+          .select({
+            id: projects.id,
+            title: projects.title,
+            projectType: projects.projectType,
+            eventDate: projects.eventDate,
+            clientFirstName: contacts.firstName,
+            clientLastName: contacts.lastName,
+          })
+          .from(projects)
+          .innerJoin(contacts, eq(projects.clientId, contacts.id))
+          .where(
+            and(
+              eq(projects.photographerId, photographerId),
+              or(
+                ilike(projects.title, searchPattern),
+                ilike(contacts.firstName, searchPattern),
+                ilike(contacts.lastName, searchPattern),
+              ),
+            ),
+          )
+          .limit(limit),
+
+        // Smart files search (templates only)
+        db
+          .select({
+            id: smartFiles.id,
+            name: smartFiles.name,
+            status: smartFiles.status,
+          })
+          .from(smartFiles)
+          .where(
+            and(
+              eq(smartFiles.photographerId, photographerId),
+              ilike(smartFiles.name, searchPattern),
+            ),
+          )
+          .limit(limit),
+      ]);
+
+    return {
+      contacts: contactResults,
+      projects: projectResults,
+      smartFiles: smartFileResults,
+    };
+  }
+
+  async getRecentContacts(
+    photographerId: string,
+    limit: number = 5,
+  ): Promise<
+    Array<{
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string | null;
+      phone: string | null;
+    }>
+  > {
+    return await db
+      .select({
         id: contacts.id,
         firstName: contacts.firstName,
         lastName: contacts.lastName,
         email: contacts.email,
-        phone: contacts.phone
+        phone: contacts.phone,
       })
       .from(contacts)
-      .where(and(
-        eq(contacts.photographerId, photographerId),
-        or(
-          ilike(contacts.firstName, searchPattern),
-          ilike(contacts.lastName, searchPattern),
-          ilike(contacts.email, searchPattern),
-          ilike(contacts.phone, searchPattern)
-        )
-      ))
-      .limit(limit),
+      .where(eq(contacts.photographerId, photographerId))
+      .orderBy(desc(contacts.createdAt))
+      .limit(limit);
+  }
 
-      // Projects search with client name - FLATTENED per CLAUDE.md pattern
-      db.select({
+  async getRecentProjects(
+    photographerId: string,
+    limit: number = 5,
+  ): Promise<
+    Array<{
+      id: string;
+      title: string;
+      projectType: string | null;
+      eventDate: string | null;
+      clientFirstName: string | null;
+      clientLastName: string | null;
+    }>
+  > {
+    return await db
+      .select({
         id: projects.id,
         title: projects.title,
         projectType: projects.projectType,
         eventDate: projects.eventDate,
         clientFirstName: contacts.firstName,
-        clientLastName: contacts.lastName
+        clientLastName: contacts.lastName,
       })
       .from(projects)
       .innerJoin(contacts, eq(projects.clientId, contacts.id))
-      .where(and(
-        eq(projects.photographerId, photographerId),
-        or(
-          ilike(projects.title, searchPattern),
-          ilike(contacts.firstName, searchPattern),
-          ilike(contacts.lastName, searchPattern)
-        )
-      ))
-      .limit(limit),
-
-      // Smart files search (templates only)
-      db.select({
-        id: smartFiles.id,
-        name: smartFiles.name,
-        status: smartFiles.status
-      })
-      .from(smartFiles)
-      .where(and(
-        eq(smartFiles.photographerId, photographerId),
-        ilike(smartFiles.name, searchPattern)
-      ))
-      .limit(limit)
-    ]);
-
-    return {
-      contacts: contactResults,
-      projects: projectResults,
-      smartFiles: smartFileResults
-    };
-  }
-
-  async getRecentContacts(photographerId: string, limit: number = 5): Promise<Array<{ id: string; firstName: string; lastName: string; email: string | null; phone: string | null }>> {
-    return await db.select({
-      id: contacts.id,
-      firstName: contacts.firstName,
-      lastName: contacts.lastName,
-      email: contacts.email,
-      phone: contacts.phone
-    })
-    .from(contacts)
-    .where(eq(contacts.photographerId, photographerId))
-    .orderBy(desc(contacts.createdAt))
-    .limit(limit);
-  }
-
-  async getRecentProjects(photographerId: string, limit: number = 5): Promise<Array<{ id: string; title: string; projectType: string | null; eventDate: string | null; clientFirstName: string | null; clientLastName: string | null }>> {
-    return await db.select({
-      id: projects.id,
-      title: projects.title,
-      projectType: projects.projectType,
-      eventDate: projects.eventDate,
-      clientFirstName: contacts.firstName,
-      clientLastName: contacts.lastName
-    })
-    .from(projects)
-    .innerJoin(contacts, eq(projects.clientId, contacts.id))
-    .where(eq(projects.photographerId, photographerId))
-    .orderBy(desc(projects.createdAt))
-    .limit(limit);
+      .where(eq(projects.photographerId, photographerId))
+      .orderBy(desc(projects.createdAt))
+      .limit(limit);
   }
 
   // Notifications
-  async getNotifications(photographerId: string, options?: { read?: boolean; limit?: number; offset?: number }): Promise<Notification[]> {
+  async getNotifications(
+    photographerId: string,
+    options?: { read?: boolean; limit?: number; offset?: number },
+  ): Promise<Notification[]> {
     const conditions = [eq(notifications.photographerId, photographerId)];
 
     if (options?.read !== undefined) {
       conditions.push(eq(notifications.read, options.read));
     }
 
-    const query = db.select()
+    const query = db
+      .select()
       .from(notifications)
       .where(and(...conditions))
       .orderBy(desc(notifications.createdAt));
@@ -5757,31 +7534,39 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getNotificationById(id: string): Promise<Notification | undefined> {
-    const [notification] = await db.select()
+    const [notification] = await db
+      .select()
       .from(notifications)
       .where(eq(notifications.id, id));
     return notification || undefined;
   }
 
   async getUnreadNotificationCount(photographerId: string): Promise<number> {
-    const result = await db.select({ count: sql<number>`count(*)` })
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
       .from(notifications)
-      .where(and(
-        eq(notifications.photographerId, photographerId),
-        eq(notifications.read, false)
-      ));
+      .where(
+        and(
+          eq(notifications.photographerId, photographerId),
+          eq(notifications.read, false),
+        ),
+      );
     return Number(result[0]?.count || 0);
   }
 
-  async createNotification(notification: InsertNotification): Promise<Notification> {
-    const [created] = await db.insert(notifications)
+  async createNotification(
+    notification: InsertNotification,
+  ): Promise<Notification> {
+    const [created] = await db
+      .insert(notifications)
       .values(notification)
       .returning();
     return created;
   }
 
   async markNotificationAsRead(id: string): Promise<Notification | undefined> {
-    const [updated] = await db.update(notifications)
+    const [updated] = await db
+      .update(notifications)
       .set({ read: true, readAt: new Date() })
       .where(eq(notifications.id, id))
       .returning();
@@ -5789,29 +7574,37 @@ export class DatabaseStorage implements IStorage {
   }
 
   async markAllNotificationsAsRead(photographerId: string): Promise<number> {
-    const result = await db.update(notifications)
+    const result = await db
+      .update(notifications)
       .set({ read: true, readAt: new Date() })
-      .where(and(
-        eq(notifications.photographerId, photographerId),
-        eq(notifications.read, false)
-      ));
+      .where(
+        and(
+          eq(notifications.photographerId, photographerId),
+          eq(notifications.read, false),
+        ),
+      );
     return result.rowCount || 0;
   }
 
   async deleteNotification(id: string): Promise<void> {
-    await db.delete(notifications)
-      .where(eq(notifications.id, id));
+    await db.delete(notifications).where(eq(notifications.id, id));
   }
 
-  async deleteOldNotifications(photographerId: string, olderThanDays: number): Promise<number> {
+  async deleteOldNotifications(
+    photographerId: string,
+    olderThanDays: number,
+  ): Promise<number> {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
 
-    const result = await db.delete(notifications)
-      .where(and(
-        eq(notifications.photographerId, photographerId),
-        lte(notifications.createdAt, cutoffDate)
-      ));
+    const result = await db
+      .delete(notifications)
+      .where(
+        and(
+          eq(notifications.photographerId, photographerId),
+          lte(notifications.createdAt, cutoffDate),
+        ),
+      );
     return result.rowCount || 0;
   }
 }

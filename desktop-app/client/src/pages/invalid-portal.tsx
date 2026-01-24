@@ -10,15 +10,14 @@ export default function InvalidPortal() {
             <AlertCircle className="h-10 w-10 text-destructive" />
           </div>
         </div>
-        
-        <h1 className="text-3xl font-bold mb-3">
-          Invalid Portal URL
-        </h1>
-        
+
+        <h1 className="text-3xl font-bold mb-3">Invalid Portal URL</h1>
+
         <p className="text-muted-foreground mb-6">
-          The base portal domain cannot be accessed directly. Please use your photographer's specific portal link.
+          The base portal domain cannot be accessed directly. Please use your
+          photographer's specific portal link.
         </p>
-        
+
         <div className="bg-muted/50 rounded-lg p-4 mb-6">
           <p className="text-sm text-muted-foreground mb-2">
             Portal links look like this:
@@ -27,9 +26,9 @@ export default function InvalidPortal() {
             yourphotographer.tpcportal.co
           </code>
         </div>
-        
-        <Button 
-          onClick={() => window.location.href = 'https://thephotocrm.com'}
+
+        <Button
+          onClick={() => (window.location.href = "https://thephotocrm.com")}
           data-testid="button-home"
         >
           Go to thePhotoCrm.com

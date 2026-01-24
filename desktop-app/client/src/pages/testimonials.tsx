@@ -10,12 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,7 +36,7 @@ interface Testimonial {
   testimonialText: string;
   projectId: string | null;
   contactId: string | null;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  status: "PENDING" | "APPROVED" | "REJECTED";
   isFeatured: boolean;
   eventDate: string | null;
   eventType: string | null;
@@ -53,20 +48,21 @@ export default function Testimonials() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [selectedTab, setSelectedTab] = useState<string>("pending");
-  
+
   const { data: testimonials = [], isLoading } = useQuery<Testimonial[]>({
-    queryKey: ['/api/testimonials'],
+    queryKey: ["/api/testimonials"],
   });
 
   const approveMutation = useMutation({
     mutationFn: async (id: string) => {
-      return await apiRequest('POST', `/api/testimonials/${id}/approve`);
+      return await apiRequest("POST", `/api/testimonials/${id}/approve`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/testimonials'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/testimonials"] });
       toast({
         title: "Review approved",
-        description: "The review is now visible on your public testimonials page.",
+        description:
+          "The review is now visible on your public testimonials page.",
       });
     },
     onError: (error: any) => {
@@ -80,10 +76,10 @@ export default function Testimonials() {
 
   const rejectMutation = useMutation({
     mutationFn: async (id: string) => {
-      return await apiRequest('POST', `/api/testimonials/${id}/reject`);
+      return await apiRequest("POST", `/api/testimonials/${id}/reject`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/testimonials'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/testimonials"] });
       toast({
         title: "Review rejected",
         description: "The review has been rejected.",
@@ -100,10 +96,13 @@ export default function Testimonials() {
 
   const toggleFeaturedMutation = useMutation({
     mutationFn: async (id: string) => {
-      return await apiRequest('POST', `/api/testimonials/${id}/toggle-featured`);
+      return await apiRequest(
+        "POST",
+        `/api/testimonials/${id}/toggle-featured`,
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/testimonials'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/testimonials"] });
       toast({
         title: "Featured status updated",
       });
@@ -119,10 +118,10 @@ export default function Testimonials() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      return await apiRequest('DELETE', `/api/testimonials/${id}`);
+      return await apiRequest("DELETE", `/api/testimonials/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/testimonials'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/testimonials"] });
       toast({
         title: "Review deleted",
       });
@@ -136,9 +135,9 @@ export default function Testimonials() {
     },
   });
 
-  const pendingReviews = testimonials.filter(t => t.status === 'PENDING');
-  const approvedReviews = testimonials.filter(t => t.status === 'APPROVED');
-  const rejectedReviews = testimonials.filter(t => t.status === 'REJECTED');
+  const pendingReviews = testimonials.filter((t) => t.status === "PENDING");
+  const approvedReviews = testimonials.filter((t) => t.status === "APPROVED");
+  const rejectedReviews = testimonials.filter((t) => t.status === "REJECTED");
 
   const copyReviewLink = () => {
     const link = `${window.location.origin}/reviews/submit/${user?.photographerId}`;
@@ -168,12 +167,17 @@ export default function Testimonials() {
 
   const renderTestimonialCard = (testimonial: Testimonial) => {
     return (
-      <Card key={testimonial.id} data-testid={`card-testimonial-${testimonial.id}`}>
+      <Card
+        key={testimonial.id}
+        data-testid={`card-testimonial-${testimonial.id}`}
+      >
         <CardHeader>
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <CardTitle className="text-lg">{testimonial.clientName}</CardTitle>
+                <CardTitle className="text-lg">
+                  {testimonial.clientName}
+                </CardTitle>
                 {testimonial.isFeatured && (
                   <Badge variant="default" className="bg-purple-500">
                     <Sparkles className="w-3 h-3 mr-1" />
@@ -182,11 +186,11 @@ export default function Testimonials() {
                 )}
                 <Badge
                   variant={
-                    testimonial.status === 'APPROVED'
-                      ? 'default'
-                      : testimonial.status === 'PENDING'
-                      ? 'secondary'
-                      : 'destructive'
+                    testimonial.status === "APPROVED"
+                      ? "default"
+                      : testimonial.status === "PENDING"
+                        ? "secondary"
+                        : "destructive"
                   }
                   data-testid={`badge-status-${testimonial.id}`}
                 >
@@ -199,7 +203,8 @@ export default function Testimonials() {
           {testimonial.eventType && (
             <CardDescription>
               {testimonial.eventType}
-              {testimonial.eventDate && ` • ${format(new Date(testimonial.eventDate), 'MMM d, yyyy')}`}
+              {testimonial.eventDate &&
+                ` • ${format(new Date(testimonial.eventDate), "MMM d, yyyy")}`}
             </CardDescription>
           )}
         </CardHeader>
@@ -208,12 +213,13 @@ export default function Testimonials() {
             "{testimonial.testimonialText}"
           </p>
           <div className="text-xs text-gray-500 mb-4">
-            Submitted {format(new Date(testimonial.createdAt), 'MMM d, yyyy')}
-            {testimonial.approvedAt && ` • Approved ${format(new Date(testimonial.approvedAt), 'MMM d, yyyy')}`}
+            Submitted {format(new Date(testimonial.createdAt), "MMM d, yyyy")}
+            {testimonial.approvedAt &&
+              ` • Approved ${format(new Date(testimonial.approvedAt), "MMM d, yyyy")}`}
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {testimonial.status === 'PENDING' && (
+            {testimonial.status === "PENDING" && (
               <>
                 <Button
                   size="sm"
@@ -237,7 +243,7 @@ export default function Testimonials() {
               </>
             )}
 
-            {testimonial.status === 'APPROVED' && (
+            {testimonial.status === "APPROVED" && (
               <Button
                 size="sm"
                 variant={testimonial.isFeatured ? "secondary" : "outline"}
@@ -265,7 +271,8 @@ export default function Testimonials() {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Delete Review</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to delete this review? This action cannot be undone.
+                    Are you sure you want to delete this review? This action
+                    cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
