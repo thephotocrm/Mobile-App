@@ -78,17 +78,30 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
   const [isAppleAvailable, setIsAppleAvailable] = useState(false);
 
-  // Google Auth setup - use Expo auth proxy for redirect URI
-  const redirectUri = makeRedirectUri({
-    scheme: "thephotocrm",
-    useProxy: true,
-  });
+  // Debug logging for Google OAuth troubleshooting
+  if (__DEV__) {
+    const debugRedirectUri = makeRedirectUri({ scheme: "thephotocrm" });
+    console.log("[LoginScreen] Redirect URI:", debugRedirectUri);
+    console.log(
+      "[LoginScreen] Web Client ID:",
+      googleClientId ? "SET" : "NOT SET",
+    );
+    console.log(
+      "[LoginScreen] iOS Client ID:",
+      googleIosClientId ? "SET" : "NOT SET",
+    );
+    console.log(
+      "[LoginScreen] Android Client ID:",
+      googleAndroidClientId ? "SET" : "NOT SET",
+    );
+  }
 
+  // Google Auth setup - expo-auth-session v7+ handles redirect URI per platform automatically
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId: googleClientId,
     iosClientId: googleIosClientId,
     androidClientId: googleAndroidClientId,
-    redirectUri,
+    // Do NOT pass redirectUri - expo-auth-session handles it per platform
   });
 
   useEffect(() => {

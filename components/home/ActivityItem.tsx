@@ -1,11 +1,6 @@
 import React from "react";
-import { View, StyleSheet, Pressable, Text } from "react-native";
+import { View, StyleSheet, Pressable, Text, Linking } from "react-native";
 import * as Haptics from "expo-haptics";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import {
@@ -53,8 +48,6 @@ interface ActivityItemProps {
   showDivider?: boolean;
 }
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 // Helper function to convert hex to rgba
 const hexToRgba = (hex: string, opacity: number): string => {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -95,11 +88,6 @@ export function ActivityItem({
 }: ActivityItemProps) {
   const { theme, isDark } = useTheme();
   const config = NOTIFICATION_TYPE_CONFIG[notification.type];
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: withSpring(scale.value) }],
-  }));
 
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -111,18 +99,16 @@ export function ActivityItem({
 
   return (
     <View>
-      <AnimatedPressable
+      <Pressable
         onPress={handlePress}
-        onPressIn={() => (scale.value = 0.98)}
-        onPressOut={() => (scale.value = 1)}
-        style={[
-          animatedStyle,
+        style={({ pressed }) => [
           styles.container,
           isUnread && {
             backgroundColor: isDark
               ? `${BlysColors.primary}08`
               : `${BlysColors.primary}05`,
           },
+          pressed && { opacity: 0.95 },
         ]}
       >
         {/* Avatar/Icon */}
@@ -181,7 +167,7 @@ export function ActivityItem({
             />
           )}
         </View>
-      </AnimatedPressable>
+      </Pressable>
 
       {/* Divider */}
       {showDivider && (
@@ -203,6 +189,11 @@ interface EmptyActivityStateProps {
 
 export function EmptyActivityState({ onReachOut }: EmptyActivityStateProps) {
   const { theme, isDark } = useTheme();
+
+  const handleHelpPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    Linking.openURL("https://help.thephotocrm.com/tips/follow-up-templates");
+  };
 
   return (
     <View style={styles.emptyContainer}>
@@ -235,6 +226,18 @@ export function EmptyActivityState({ onReachOut }: EmptyActivityStateProps) {
         <Feather name="send" size={14} color={BlysColors.primary} />
         <Text style={[styles.emptyButtonText, { color: BlysColors.primary }]}>
           Reach out to leads?
+        </Text>
+      </Pressable>
+      <Pressable
+        onPress={handleHelpPress}
+        style={({ pressed }) => [
+          styles.emptyHelpLink,
+          pressed && { opacity: 0.6 },
+        ]}
+      >
+        <Feather name="zap" size={12} color={BlysColors.primary} />
+        <Text style={[styles.emptyHelpText, { color: BlysColors.primary }]}>
+          Client follow-up templates
         </Text>
       </Pressable>
     </View>
@@ -325,6 +328,16 @@ const styles = StyleSheet.create({
   },
   emptyButtonText: {
     fontSize: 14,
+    fontWeight: "500",
+  },
+  emptyHelpLink: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: Spacing.md,
+    gap: 6,
+  },
+  emptyHelpText: {
+    fontSize: 12,
     fontWeight: "500",
   },
 });

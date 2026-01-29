@@ -1,11 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Pressable, Text, Linking } from "react-native";
 import * as Haptics from "expo-haptics";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { Spacing, BorderRadius, Shadows, BlysColors } from "@/constants/theme";
@@ -22,8 +17,6 @@ interface ScheduleCardProps {
   day: BookingGroup;
   onPress: () => void;
 }
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 // Get client initials from title
 const getInitials = (title: string): string => {
@@ -66,11 +59,6 @@ const getShootTypeIcon = (
 
 export function ScheduleCard({ day, onPress }: ScheduleCardProps) {
   const { theme, isDark } = useTheme();
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: withSpring(scale.value) }],
-  }));
 
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -84,18 +72,16 @@ export function ScheduleCard({ day, onPress }: ScheduleCardProps) {
   };
 
   return (
-    <AnimatedPressable
+    <Pressable
       onPress={handlePress}
-      onPressIn={() => (scale.value = 0.97)}
-      onPressOut={() => (scale.value = 1)}
-      style={[
-        animatedStyle,
+      style={({ pressed }) => [
         styles.card,
         {
           backgroundColor: theme.backgroundCard,
           borderColor: isDark ? theme.border : "transparent",
           borderWidth: isDark ? 1 : 0,
         },
+        pressed && { opacity: 0.95 },
       ]}
     >
       {/* Day Header */}
@@ -173,6 +159,7 @@ export function ScheduleCard({ day, onPress }: ScheduleCardProps) {
                 {booking.location && (
                   <Pressable
                     onPress={() => handleNavigate(booking.location!)}
+                    delayPressIn={50}
                     style={({ pressed }) => [
                       styles.locationRow,
                       pressed && { opacity: 0.7 },
@@ -204,7 +191,7 @@ export function ScheduleCard({ day, onPress }: ScheduleCardProps) {
           );
         })}
       </View>
-    </AnimatedPressable>
+    </Pressable>
   );
 }
 
@@ -215,6 +202,11 @@ interface EmptyScheduleCardProps {
 
 export function EmptyScheduleCard({ onAddShoot }: EmptyScheduleCardProps) {
   const { theme, isDark } = useTheme();
+
+  const handleHelpPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    Linking.openURL("https://help.thephotocrm.com/tips/booking-tips");
+  };
 
   return (
     <View
@@ -248,6 +240,18 @@ export function EmptyScheduleCard({ onAddShoot }: EmptyScheduleCardProps) {
       >
         <Feather name="plus" size={14} color="#FFFFFF" />
         <Text style={styles.emptyButtonText}>Add Shoot</Text>
+      </Pressable>
+      <Pressable
+        onPress={handleHelpPress}
+        style={({ pressed }) => [
+          styles.emptyHelpLink,
+          pressed && { opacity: 0.6 },
+        ]}
+      >
+        <Feather name="book-open" size={12} color={BlysColors.primary} />
+        <Text style={[styles.emptyHelpText, { color: BlysColors.primary }]}>
+          Booking tips for photographers
+        </Text>
       </Pressable>
     </View>
   );
@@ -363,5 +367,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     color: "#FFFFFF",
+  },
+  emptyHelpLink: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: Spacing.md,
+    gap: 6,
+  },
+  emptyHelpText: {
+    fontSize: 12,
+    fontWeight: "500",
   },
 });

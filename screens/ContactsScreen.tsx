@@ -5,8 +5,8 @@ import {
   Pressable,
   TextInput,
   ActivityIndicator,
-  Alert,
 } from "react-native";
+import * as Haptics from "expo-haptics";
 import { Feather } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
@@ -250,9 +250,10 @@ export default function ContactsScreen() {
           { backgroundColor: theme.primary, bottom: tabBarHeight + Spacing.md },
           pressed && { opacity: 0.9, transform: [{ scale: 0.95 }] },
         ]}
-        onPress={() =>
-          Alert.alert("New Contact", "Create contact feature coming soon!")
-        }
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          navigation.navigate("AddContact");
+        }}
       >
         <Feather name="plus" size={24} color="#FFFFFF" />
       </Pressable>

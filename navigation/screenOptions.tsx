@@ -47,6 +47,7 @@ interface MainScreenOptionsParams {
   isDark: boolean;
   title: string;
   onSearchPress?: () => void;
+  transparentHeader?: boolean;
 }
 
 export const getMainScreenOptions = ({
@@ -54,6 +55,7 @@ export const getMainScreenOptions = ({
   isDark,
   title,
   onSearchPress,
+  transparentHeader = false,
 }: MainScreenOptionsParams): NativeStackNavigationOptions => ({
   headerTransparent: true,
   headerShadowVisible: false,
@@ -64,6 +66,12 @@ export const getMainScreenOptions = ({
     backgroundColor: theme.backgroundRoot,
   },
   header: function CustomHeader() {
-    return <MainHeader title={title} onSearchPress={onSearchPress} />;
+    return (
+      <MainHeader
+        title={title}
+        onSearchPress={onSearchPress}
+        transparent={transparentHeader}
+      />
+    );
   },
 });

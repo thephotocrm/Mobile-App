@@ -398,6 +398,22 @@ export function createTenantContext(user: User | null): TenantContext {
   };
 }
 
+export interface PhotographerProfile {
+  id: string;
+  businessName: string;
+  photographerName?: string;
+  email?: string;
+  phone?: string;
+  logoUrl?: string;
+  websiteUrl?: string;
+  timezone?: string;
+}
+
+export const photographersApi = {
+  getMe: (token: string, tenant?: TenantContext) =>
+    api.get<PhotographerProfile>("/api/photographers/me", token, tenant),
+};
+
 export const authApi = {
   login: (email: string, password: string) =>
     api.post<LoginResponse>("/api/auth/login", { email, password }),
@@ -617,6 +633,13 @@ export const conversationsApi = {
     ),
 };
 
+// Attendance response from POST /api/bookings/:id/attendance
+export interface AttendanceResponse {
+  success: boolean;
+  attendance: "SHOWED" | "NO_SHOW";
+  message: string;
+}
+
 export const bookingsApi = {
   getAll: (token: string, tenant?: TenantContext) =>
     api.get<Booking[]>("/api/bookings", token, tenant),
@@ -633,6 +656,20 @@ export const bookingsApi = {
     data: Partial<Booking>,
     tenant?: TenantContext,
   ) => api.put<Booking>(`/api/bookings/${id}`, data, token, tenant),
+
+  // POST /api/bookings/:id/attendance - Record client attendance for a meeting
+  recordAttendance: (
+    token: string,
+    bookingId: string,
+    showed: boolean,
+    tenant?: TenantContext,
+  ) =>
+    api.post<AttendanceResponse>(
+      `/api/bookings/${bookingId}/attendance`,
+      { showed },
+      token,
+      tenant,
+    ),
 };
 
 export const stagesApi = {
@@ -953,6 +990,74 @@ export const clientPortalApi = {
   ) =>
     api.get<PaymentSummary>(
       `/api/client-portal/projects/${projectId}/payment-summary`,
+      token,
+      tenant,
+    ),
+};
+
+// Pose Gallery types
+import { PoseCategory, PoseTag } from "@/constants/poses";
+
+export interface CustomPose {
+  id: string;
+  imageUrl: string;
+  category: PoseCategory;
+  tags: PoseTag[];
+  title?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface CreateCustomPoseRequest {
+  imageUrl: string;
+  category: PoseCategory;
+  tags?: PoseTag[];
+  title?: string;
+  notes?: string;
+}
+
+export interface FavoritesResponse {
+  favorites: string[];
+}
+
+export interface ToggleFavoriteResponse {
+  poseId: string;
+  isFavorite: boolean;
+}
+
+export interface CustomPosesResponse {
+  poses: CustomPose[];
+}
+
+export const posesApi = {
+  // GET /api/poses/favorites - Get array of favorited pose IDs
+  getFavorites: (token: string, tenant?: TenantContext) =>
+    api.get<FavoritesResponse>("/api/poses/favorites", token, tenant),
+
+  // POST /api/poses/favorites/:poseId - Toggle favorite status for a pose
+  toggleFavorite: (token: string, poseId: string, tenant?: TenantContext) =>
+    api.post<ToggleFavoriteResponse>(
+      `/api/poses/favorites/${encodeURIComponent(poseId)}`,
+      {},
+      token,
+      tenant,
+    ),
+
+  // GET /api/poses/custom - Get user's custom poses
+  getCustomPoses: (token: string, tenant?: TenantContext) =>
+    api.get<CustomPosesResponse>("/api/poses/custom", token, tenant),
+
+  // POST /api/poses/custom - Create a new custom pose
+  createCustomPose: (
+    token: string,
+    data: CreateCustomPoseRequest,
+    tenant?: TenantContext,
+  ) => api.post<CustomPose>("/api/poses/custom", data, token, tenant),
+
+  // DELETE /api/poses/custom/:poseId - Delete a custom pose
+  deleteCustomPose: (token: string, poseId: string, tenant?: TenantContext) =>
+    api.delete<{ success: boolean }>(
+      `/api/poses/custom/${encodeURIComponent(poseId)}`,
       token,
       tenant,
     ),

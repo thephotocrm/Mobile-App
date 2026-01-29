@@ -88,3 +88,41 @@ export async function setBadgeCount(count: number): Promise<void> {
 export async function getBadgeCount(): Promise<number> {
   return await Notifications.getBadgeCountAsync();
 }
+
+/**
+ * Set up notification categories for actionable notifications.
+ * Categories define action buttons that appear on notifications.
+ */
+export async function setupNotificationCategories(): Promise<void> {
+  // Categories only work on physical devices, not simulators or web
+  if (Platform.OS === "web" || !Device.isDevice) {
+    if (__DEV__) {
+      console.log(
+        "[PUSH] Skipping notification categories setup (web or simulator)",
+      );
+    }
+    return;
+  }
+
+  try {
+    // Set up "attendance" category for meeting attendance prompts
+    await Notifications.setNotificationCategoryAsync("attendance", [
+      {
+        identifier: "showed_up",
+        buttonTitle: "Showed Up",
+        options: { opensAppToForeground: true },
+      },
+      {
+        identifier: "no_show",
+        buttonTitle: "No-show",
+        options: { isDestructive: true, opensAppToForeground: true },
+      },
+    ]);
+
+    if (__DEV__) {
+      console.log("[PUSH] Notification categories registered successfully");
+    }
+  } catch (error) {
+    console.error("[PUSH] Failed to set up notification categories:", error);
+  }
+}

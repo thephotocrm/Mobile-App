@@ -11,16 +11,11 @@
     "scheme": "thephotocrm",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "extra": {
-      "eas": {
-        "projectId": "cbbce86b-1967-4eec-a895-b1954270f408"
-      }
-    },
     "ios": {
       "appleTeamId": "U8642G7Q84",
       "supportsTablet": true,
       "bundleIdentifier": "app.replit.pixelpot",
-      "buildNumber": "1",
+      "buildNumber": "7",
       "deploymentTarget": "15.0",
       "usesAppleSignIn": true,
       "infoPlist": {
@@ -77,6 +72,12 @@
     ],
     "experiments": {
       "reactCompiler": true
+    },
+    "extra": {
+      "googleClientId": "905635479138-ut0qbr1417vh2pj3u1i0tbgin1h89g0s.apps.googleusercontent.com",
+      "eas": {
+        "projectId": "7e10e045-b3f4-4acd-beb8-87af60faf425"
+      }
     }
   }
 }

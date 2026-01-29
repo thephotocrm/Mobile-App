@@ -241,19 +241,22 @@ export default function ProjectsListScreen() {
       icon: "calendar",
       label: "Wedding",
       color: "#EC4899",
-      onPress: () => console.log("Create wedding project"),
+      onPress: () =>
+        navigation.navigate("AddProject", { projectType: "WEDDING" }),
     },
     {
       icon: "gift",
       label: "Engagement",
       color: "#8B5CF6",
-      onPress: () => console.log("Create engagement project"),
+      onPress: () =>
+        navigation.navigate("AddProject", { projectType: "ENGAGEMENT" }),
     },
     {
       icon: "user",
       label: "Portrait",
       color: "#3B82F6",
-      onPress: () => console.log("Create portrait project"),
+      onPress: () =>
+        navigation.navigate("AddProject", { projectType: "PORTRAIT" }),
     },
   ];
 

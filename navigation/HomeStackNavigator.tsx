@@ -22,6 +22,7 @@ export function HomeStackNavigator() {
           theme,
           isDark,
           title: "Home",
+          transparentHeader: true,
         })}
       />
     </Stack.Navigator>

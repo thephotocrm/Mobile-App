@@ -77,12 +77,12 @@ const TOOLS: ToolItem[] = [
     available: false,
   },
   {
-    id: "5",
-    title: "Gallery",
-    description: "Share photo galleries with clients",
+    id: "pose-gallery",
+    title: "Pose Gallery",
+    description: "Browse pose references for shoots",
     icon: "image",
     color: "#EC4899",
-    available: false,
+    available: true,
   },
   {
     id: "6",
@@ -127,6 +127,8 @@ export function ToolsScreen() {
         navigation.navigate("Contacts");
       } else if (tool.id === "automations") {
         navigation.navigate("Automations");
+      } else if (tool.id === "pose-gallery") {
+        navigation.navigate("PoseGallery");
       }
     }
   };

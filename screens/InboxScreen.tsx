@@ -26,6 +26,7 @@ import {
 import { useTheme } from "@/hooks/useTheme";
 import { useScreenInsets } from "@/hooks/useScreenInsets";
 import { useAuth } from "@/contexts/AuthContext";
+import { useInbox } from "@/contexts/InboxContext";
 import { inboxApi, createTenantContext, Contact } from "@/services/api";
 
 type NavigationProp = NativeStackNavigationProp<
@@ -185,6 +186,7 @@ const FilterTabs = ({
 export default function InboxScreen() {
   const { theme, isDark } = useTheme();
   const { token, user } = useAuth();
+  const { decrementUnreadCount, refreshUnreadCount } = useInbox();
   const navigation = useNavigation<NavigationProp>();
   const { paddingTop, paddingBottom } = useScreenInsets();
   const tabBarHeight = useBottomTabBarHeight();
@@ -315,6 +317,9 @@ export default function InboxScreen() {
 
       setAllConversations(result);
       hasLoadedOnce.current = true;
+
+      // Sync the global badge count with actual data
+      refreshUnreadCount();
     } catch (err) {
       console.error("Error loading conversations:", err);
       setError("Failed to load conversations");
@@ -339,7 +344,7 @@ export default function InboxScreen() {
   const handleConversationPress = (conversation: ConversationItem) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    // Clear unread count locally when opening conversation
+    // Clear unread count locally and update global badge when opening conversation
     if (conversation.unreadCount > 0) {
       setAllConversations((prev) =>
         prev.map((conv) =>
@@ -348,6 +353,8 @@ export default function InboxScreen() {
             : conv,
         ),
       );
+      // Immediately update the global badge count
+      decrementUnreadCount(conversation.unreadCount);
     }
 
     navigation.navigate("ThreadDetail", {
@@ -694,12 +701,15 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 5,
+    paddingHorizontal: 4,
   },
   filterTabBadgeText: {
     color: "#FFFFFF",
     fontSize: 11,
     fontWeight: "700",
+    textAlign: "center",
+    includeFontPadding: false,
+    textAlignVertical: "center",
   },
   // Search styles
   searchWrapper: {

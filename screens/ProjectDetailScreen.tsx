@@ -25,7 +25,10 @@ import {
 } from "@/services/api";
 import { ProjectsStackParamList } from "@/navigation/ProjectsStackNavigator";
 
-type ProjectDetailRouteProp = RouteProp<ProjectsStackParamList, "ProjectDetail">;
+type ProjectDetailRouteProp = RouteProp<
+  ProjectsStackParamList,
+  "ProjectDetail"
+>;
 
 type TabType = "activity" | "payments" | "files" | "details";
 
@@ -218,7 +221,10 @@ export default function ProjectDetailScreen() {
                   color={theme.textSecondary}
                 />
                 <ThemedText
-                  style={[styles.emptyStateText, { color: theme.textSecondary }]}
+                  style={[
+                    styles.emptyStateText,
+                    { color: theme.textSecondary },
+                  ]}
                 >
                   No activity yet
                 </ThemedText>
@@ -359,7 +365,9 @@ export default function ProjectDetailScreen() {
                   >
                     Event Date
                   </ThemedText>
-                  <ThemedText style={styles.detailValue}>{eventDate}</ThemedText>
+                  <ThemedText style={styles.detailValue}>
+                    {eventDate}
+                  </ThemedText>
                 </View>
               </View>
 
@@ -500,7 +508,10 @@ export default function ProjectDetailScreen() {
               >
                 <Feather name="users" size={48} color={theme.textSecondary} />
                 <ThemedText
-                  style={[styles.emptyStateText, { color: theme.textSecondary }]}
+                  style={[
+                    styles.emptyStateText,
+                    { color: theme.textSecondary },
+                  ]}
                 >
                   No contacts linked
                 </ThemedText>

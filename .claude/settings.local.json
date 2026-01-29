@@ -19,7 +19,9 @@
       "Bash(npm ls:*)",
       "Bash(npx expo install:*)",
       "Bash(npx eslint:*)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "WebSearch",
+      "WebFetch(domain:www.pexels.com)"
     ]
   }
 }

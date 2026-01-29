@@ -14,9 +14,14 @@ import { RootStackParamList } from "@/navigation/RootNavigator";
 interface MainHeaderProps {
   title: string;
   onSearchPress?: () => void;
+  transparent?: boolean;
 }
 
-export function MainHeader({ title, onSearchPress }: MainHeaderProps) {
+export function MainHeader({
+  title,
+  onSearchPress,
+  transparent = false,
+}: MainHeaderProps) {
   const { theme, isDark } = useTheme();
   const { user } = useAuth();
   const insets = useSafeAreaInsets();
@@ -38,6 +43,19 @@ export function MainHeader({ title, onSearchPress }: MainHeaderProps) {
     return emailName.slice(0, 2).toUpperCase();
   };
 
+  // Use light colors when header is transparent (over purple blob)
+  const textColor = transparent ? "#FFFFFF" : theme.text;
+  const avatarBg = transparent
+    ? "rgba(255,255,255,0.2)"
+    : isDark
+      ? "#404244"
+      : "#E0DBD3";
+  const avatarTextColor = transparent
+    ? "#FFFFFF"
+    : isDark
+      ? "#9CA3AF"
+      : "#6B7280";
+
   const headerContent = (
     <View style={[styles.headerContent, { paddingTop: insets.top }]}>
       <Pressable
@@ -45,10 +63,10 @@ export function MainHeader({ title, onSearchPress }: MainHeaderProps) {
         style={styles.iconButton}
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
       >
-        <Feather name="search" size={22} color={theme.text} />
+        <Feather name="search" size={22} color={textColor} />
       </Pressable>
 
-      <ThemedText style={[Typography.h4, { color: theme.text }]}>
+      <ThemedText style={[Typography.h4, { color: textColor }]}>
         {title}
       </ThemedText>
 
@@ -57,21 +75,18 @@ export function MainHeader({ title, onSearchPress }: MainHeaderProps) {
         style={styles.iconButton}
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
       >
-        <View
-          style={[
-            styles.avatarContainer,
-            { backgroundColor: isDark ? "#404244" : "#E0DBD3" },
-          ]}
-        >
-          <Text
-            style={[styles.initials, { color: isDark ? "#9CA3AF" : "#6B7280" }]}
-          >
+        <View style={[styles.avatarContainer, { backgroundColor: avatarBg }]}>
+          <Text style={[styles.initials, { color: avatarTextColor }]}>
             {getInitials()}
           </Text>
         </View>
       </Pressable>
     </View>
   );
+
+  if (transparent) {
+    return <View style={styles.header}>{headerContent}</View>;
+  }
 
   if (Platform.OS === "ios") {
     return (

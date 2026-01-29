@@ -6,10 +6,13 @@ import {
   RefreshControl,
   Text,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
+import Svg, { Path } from "react-native-svg";
 import Animated, {
   Easing,
   FadeInUp,
@@ -18,7 +21,11 @@ import Animated, {
 import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { Skeleton } from "@/components/Skeleton";
-import { PriorityCard, PriorityType } from "@/components/home/PriorityCard";
+import {
+  PriorityCard,
+  PriorityType,
+  getRotatingTip,
+} from "@/components/home/PriorityCard";
 import {
   FloatingActionButton,
   FABAction,
@@ -33,12 +40,17 @@ import {
   EmptyActivityState,
 } from "@/components/home/ActivityItem";
 import {
+  GettingStartedCard,
+  useGettingStartedVisible,
+} from "@/components/home/GettingStartedCard";
+import {
   Spacing,
   BorderRadius,
   Typography,
   Shadows,
   BlysColors,
   StatColors,
+  GradientColors,
 } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
@@ -48,10 +60,12 @@ import {
   bookingsApi,
   notificationsApi,
   inboxApi,
+  photographersApi,
   createTenantContext,
   ReportsSummary,
   Booking,
   Notification,
+  PhotographerProfile,
 } from "@/services/api";
 
 // Helper function to check if date is today
@@ -147,6 +161,7 @@ export function HomeScreen() {
   const { theme, isDark } = useTheme();
   const { user, token } = useAuth();
   const tabBarHeight = useBottomTabBarHeight();
+  const insets = useSafeAreaInsets();
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [priorityDismissed, setPriorityDismissed] = useState(false);
@@ -156,10 +171,27 @@ export function HomeScreen() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadInquiries, setUnreadInquiries] = useState(0);
+  const [photographerProfile, setPhotographerProfile] =
+    useState<PhotographerProfile | null>(null);
+  const [gettingStartedVisible, hideGettingStarted] =
+    useGettingStartedVisible();
 
-  // Get user's name from email or default
-  const userName = user?.email?.split("@")[0] || "Samantha";
-  const displayName = userName.charAt(0).toUpperCase() + userName.slice(1);
+  // Get display name: photographer first name > business name > email prefix
+  const getDisplayName = (): string => {
+    if (photographerProfile?.photographerName) {
+      // Extract first name from full name (e.g., "John Smith" -> "John")
+      const firstName = photographerProfile.photographerName
+        .trim()
+        .split(/\s+/)[0];
+      return firstName;
+    }
+    if (photographerProfile?.businessName) {
+      return photographerProfile.businessName;
+    }
+    const emailPrefix = user?.email?.split("@")[0] || "there";
+    return emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
+  };
+  const displayName = getDisplayName();
 
   const tenant = createTenantContext(user);
 
@@ -168,13 +200,19 @@ export function HomeScreen() {
     if (!token) return;
 
     try {
-      const [summaryRes, bookingsRes, notificationsRes, conversationsRes] =
-        await Promise.allSettled([
-          reportsApi.getSummary(token, tenant),
-          bookingsApi.getAll(token, tenant),
-          notificationsApi.getAll(token, tenant, 10),
-          inboxApi.getConversations(token, tenant),
-        ]);
+      const [
+        summaryRes,
+        bookingsRes,
+        notificationsRes,
+        conversationsRes,
+        profileRes,
+      ] = await Promise.allSettled([
+        reportsApi.getSummary(token, tenant),
+        bookingsApi.getAll(token, tenant),
+        notificationsApi.getAll(token, tenant, 10),
+        inboxApi.getConversations(token, tenant),
+        photographersApi.getMe(token, tenant),
+      ]);
 
       if (summaryRes.status === "fulfilled") {
         setSummary(summaryRes.value);
@@ -203,6 +241,10 @@ export function HomeScreen() {
         );
         setUnreadInquiries(totalUnread);
       }
+
+      if (profileRes.status === "fulfilled") {
+        setPhotographerProfile(profileRes.value);
+      }
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     }
@@ -226,20 +268,6 @@ export function HomeScreen() {
     setRefreshing(false);
   }, [fetchDashboardData]);
 
-  // Get context message for subtitle
-  const getContextMessage = (): string => {
-    const todayShoots = bookings.filter((b) =>
-      isToday(new Date(b.startAt)),
-    ).length;
-    if (todayShoots > 0) {
-      return `You have ${todayShoots} shoot${todayShoots > 1 ? "s" : ""} today`;
-    }
-    if (unreadInquiries > 0) {
-      return `${unreadInquiries} inquiries waiting for reply`;
-    }
-    return "Your schedule is clear today";
-  };
-
   // Determine priority card type and content
   const getPriorityData = (): {
     type: PriorityType;
@@ -247,6 +275,8 @@ export function HomeScreen() {
     subtitle: string;
     actionLabel: string;
     onAction: () => void;
+    tipIcon?: keyof typeof import("@expo/vector-icons").Feather.glyphMap;
+    learnMoreUrl?: string;
   } | null => {
     if (priorityDismissed) return null;
 
@@ -285,13 +315,25 @@ export function HomeScreen() {
       };
     }
 
-    // Fallback motivational message
+    // Rotating motivational tip when no urgent actions
+    const tip = getRotatingTip();
     return {
-      type: "empty",
-      title: "Follow up with inquiries within 24 hours",
-      subtitle: "Quick responses lead to more bookings",
-      actionLabel: "View Tips",
-      onAction: () => {},
+      type: "tip",
+      title: tip.title,
+      subtitle: tip.subtitle,
+      actionLabel: tip.actionLabel,
+      tipIcon: tip.icon,
+      learnMoreUrl: tip.learnMoreUrl,
+      onAction: () => {
+        const nav = navigation as any;
+        if (tip.screen === "Calendar") {
+          nav.navigate("ToolsTab", { screen: "Calendar" });
+        } else if (tip.screen === "AddProject") {
+          nav.getParent()?.navigate("AddProject");
+        } else {
+          nav.navigate(tip.screen);
+        }
+      },
     };
   };
 
@@ -299,32 +341,34 @@ export function HomeScreen() {
   const fabActions: FABAction[] = [
     {
       icon: "user-plus",
-      label: "Add New Lead",
+      label: "Create Contact",
       color: StatColors.inquiries,
-      onPress: () => (navigation as any).navigate("InboxTab"),
-    },
-    {
-      icon: "dollar-sign",
-      label: "Log Payment",
-      color: StatColors.payments,
-      onPress: () => (navigation as any).navigate("ToolsTab"),
-    },
-    {
-      icon: "edit-3",
-      label: "Quick Note",
-      color: BlysColors.primary,
-      onPress: () => {},
+      onPress: () => (navigation.getParent() as any)?.navigate("AddContact"),
     },
     {
       icon: "folder-plus",
-      label: "New Project",
+      label: "Create Project",
       color: StatColors.projects,
-      onPress: () => (navigation as any).navigate("ProjectsTab"),
+      onPress: () => (navigation.getParent() as any)?.navigate("AddProject"),
+    },
+    {
+      icon: "calendar",
+      label: "View Calendar",
+      color: "#C92667",
+      onPress: () =>
+        (navigation as any).navigate("ToolsTab", { screen: "Calendar" }),
     },
   ];
 
   const priorityData = getPriorityData();
   const groupedBookings = groupBookingsByDate(bookings);
+
+  // Check if this is a brand new user (show onboarding)
+  const isNewUser =
+    (summary?.activeProjects ?? 0) === 0 &&
+    (summary?.upcomingEvents ?? 0) === 0 &&
+    unreadInquiries === 0 &&
+    gettingStartedVisible;
 
   // Loading skeleton
   if (isLoading) {
@@ -384,237 +428,277 @@ export function HomeScreen() {
     );
   }
 
+  // Calculate header height for blob positioning
+  const headerHeight = insets.top + 44 + Spacing.sm;
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.backgroundRoot }}>
       <ScreenScrollView
-        style={{ backgroundColor: theme.backgroundRoot }}
+        style={{ backgroundColor: "transparent" }}
+        contentContainerStyle={{ paddingTop: 0, paddingHorizontal: 0 }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={BlysColors.primary}
+            tintColor="#FFFFFF"
             colors={[BlysColors.primary]}
           />
         }
       >
-        <View
-          style={[styles.container, { backgroundColor: theme.backgroundRoot }]}
-        >
-          {/* Welcome Message with Context */}
-          <Animated.View
-            entering={FadeInUp.delay(50)
-              .duration(400)
-              .easing(Easing.out(Easing.cubic))}
-            style={styles.welcomeSection}
-          >
-            <ThemedText
-              style={[styles.welcomeText, { color: theme.textSecondary }]}
+        {/* Wrapper for blob + content - blob is absolute within this */}
+        <View style={styles.scrollWrapper}>
+          {/* Background Blob - absolutely positioned, doesn't affect content flow */}
+          <View style={[styles.blobContainer, { marginTop: -headerHeight }]}>
+            <Svg
+              width="100%"
+              height="100%"
+              viewBox="0 0 400 250"
+              preserveAspectRatio="none"
             >
-              {getGreeting()},
-            </ThemedText>
-            <ThemedText style={[styles.userName, { color: theme.text }]}>
-              {displayName}
-            </ThemedText>
-            <ThemedText
-              style={[styles.contextText, { color: theme.textTertiary }]}
-            >
-              {getContextMessage()}
-            </ThemedText>
-          </Animated.View>
-
-          {/* Priority Card */}
-          {priorityData && (
-            <PriorityCard
-              type={priorityData.type}
-              title={priorityData.title}
-              subtitle={priorityData.subtitle}
-              actionLabel={priorityData.actionLabel}
-              onAction={priorityData.onAction}
-              onDismiss={() => setPriorityDismissed(true)}
-            />
-          )}
-
-          {/* Stats Section - Hierarchical Layout */}
-          <Animated.View
-            entering={FadeInUp.delay(200)
-              .duration(400)
-              .easing(Easing.out(Easing.cubic))}
-          >
-            {/* Top row: Pending Payments (full width, prominent) */}
-            <StatCard
-              label="Pending Payments"
-              value={summary?.pendingPayments ?? 0}
-              icon="dollar-sign"
-              color={StatColors.payments}
-              size="large"
-              actionLabel="Collect"
-              onPress={() => (navigation as any).navigate("ToolsTab")}
-            />
-
-            {/* Second row: New Inquiries + Upcoming Events */}
-            <View style={styles.statsGrid}>
-              <StatCard
-                label="New Inquiries"
-                value={unreadInquiries}
-                icon="mail"
-                color={StatColors.inquiries}
-                trend={
-                  unreadInquiries > 0
-                    ? { value: unreadInquiries, direction: "up" }
-                    : undefined
-                }
-                onPress={() => (navigation as any).navigate("InboxTab")}
+              <Path
+                d="M0,0 L400,0 L400,180 Q200,280 0,180 L0,0 Z"
+                fill="#7C3AED"
               />
-              <StatCard
-                label="Upcoming Events"
-                value={summary?.upcomingEvents ?? 0}
-                icon="calendar"
-                color={StatColors.events}
-                onPress={() => (navigation as any).navigate("BookingsTab")}
-              />
-            </View>
+            </Svg>
+          </View>
 
-            {/* Third row: Active Projects + Awaiting Response */}
-            <View style={styles.statsGrid}>
-              <StatCard
-                label="Active Projects"
-                value={summary?.activeProjects ?? 0}
-                icon="briefcase"
-                color={StatColors.projects}
-                onPress={() => (navigation as any).navigate("ProjectsTab")}
-              />
-              <StatCard
-                label="Awaiting Response"
-                value={summary?.recentBookings ?? 0}
-                icon="clock"
-                color={StatColors.awaiting}
-                onPress={() => (navigation as any).navigate("InboxTab")}
-              />
-            </View>
-          </Animated.View>
-
-          {/* Schedule Section */}
-          <Animated.View
-            entering={FadeInUp.delay(300)
-              .duration(400)
-              .easing(Easing.out(Easing.cubic))}
-          >
-            <View style={styles.sectionHeader}>
-              <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
-                Schedule
-              </ThemedText>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.seeAllButton,
-                  pressed && { opacity: 0.7 },
-                ]}
-                onPress={() => (navigation as any).navigate("BookingsTab")}
-              >
-                <ThemedText
-                  style={[styles.seeAllText, { color: BlysColors.primary }]}
-                >
-                  See All
-                </ThemedText>
-              </Pressable>
-            </View>
-          </Animated.View>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.scheduleScrollContent}
-            style={styles.scheduleScroll}
-          >
-            {groupedBookings.length > 0 ? (
-              groupedBookings.map((day, index) => (
-                <Animated.View
-                  key={day.id}
-                  entering={FadeInRight.delay(350 + index * 80).duration(400)}
-                >
-                  <ScheduleCard
-                    day={day}
-                    onPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                      (navigation as any).navigate("BookingsTab");
-                    }}
-                  />
-                </Animated.View>
-              ))
-            ) : (
-              <Animated.View entering={FadeInRight.delay(350).duration(400)}>
-                <EmptyScheduleCard
-                  onAddShoot={() => (navigation as any).navigate("BookingsTab")}
-                />
-              </Animated.View>
-            )}
-          </ScrollView>
-
-          {/* Recent Activity Section */}
-          <Animated.View
-            entering={FadeInUp.delay(400)
-              .duration(400)
-              .easing(Easing.out(Easing.cubic))}
-            style={styles.section}
-          >
-            <View style={styles.sectionHeader}>
-              <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
-                Recent Activity
-              </ThemedText>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.seeAllButton,
-                  pressed && { opacity: 0.7 },
-                ]}
-                onPress={() => (navigation as any).navigate("NotificationsTab")}
-              >
-                <ThemedText
-                  style={[styles.seeAllText, { color: BlysColors.primary }]}
-                >
-                  See All
-                </ThemedText>
-              </Pressable>
-            </View>
-
-            {/* Activity List */}
-            <View
+          {/* Content - uses paddingTop for greeting position */}
+          <View style={styles.container}>
+            {/* Welcome Message */}
+            <Animated.View
+              entering={FadeInUp.delay(50)
+                .duration(400)
+                .easing(Easing.out(Easing.cubic))}
               style={[
-                styles.activityList,
-                {
-                  backgroundColor: theme.backgroundCard,
-                  borderColor: isDark ? theme.border : "transparent",
-                  borderWidth: isDark ? 1 : 0,
-                },
+                styles.welcomeSection,
+                { paddingTop: headerHeight + Spacing.sm },
               ]}
             >
-              {notifications.length > 0 ? (
-                notifications.map((notification, index) => (
-                  <Animated.View
-                    key={notification.id}
-                    entering={FadeInRight.delay(450 + index * 60).duration(400)}
+              <Text style={styles.greetingLine}>
+                <Text style={styles.greetingText}>{getGreeting()}, </Text>
+                <Text style={styles.userName}>{displayName}</Text>
+              </Text>
+            </Animated.View>
+
+            {/* Getting Started Card for new users */}
+            {isNewUser && <GettingStartedCard onDismiss={hideGettingStarted} />}
+
+            {/* Priority Card */}
+            {priorityData && (
+              <PriorityCard
+                type={priorityData.type}
+                title={priorityData.title}
+                subtitle={priorityData.subtitle}
+                actionLabel={priorityData.actionLabel}
+                onAction={priorityData.onAction}
+                onDismiss={() => setPriorityDismissed(true)}
+                tipIcon={priorityData.tipIcon}
+                learnMoreUrl={priorityData.learnMoreUrl}
+              />
+            )}
+
+            {/* Stats Section - Hierarchical Layout */}
+            <Animated.View
+              entering={FadeInUp.delay(200)
+                .duration(400)
+                .easing(Easing.out(Easing.cubic))}
+            >
+              {/* Top row: Pending Payments (full width, prominent) */}
+              <StatCard
+                label="Pending Payments"
+                value={summary?.pendingPayments ?? 0}
+                icon="dollar-sign"
+                color={StatColors.payments}
+                size="large"
+                actionLabel="Collect"
+                isCurrency
+                celebratory
+                onPress={() => (navigation as any).navigate("ToolsTab")}
+              />
+
+              {/* Second row: New Inquiries + Upcoming Events */}
+              <View style={styles.statsGrid}>
+                <StatCard
+                  label="New Inquiries"
+                  value={unreadInquiries}
+                  icon="mail"
+                  color={StatColors.inquiries}
+                  trend={
+                    unreadInquiries > 0
+                      ? { value: unreadInquiries, direction: "up" }
+                      : undefined
+                  }
+                  emptyMessage="Time to market yourself"
+                  helpUrl="https://help.thephotocrm.com/tips/getting-more-inquiries"
+                  onPress={() => (navigation as any).navigate("InboxTab")}
+                />
+                <StatCard
+                  label="Upcoming Events"
+                  value={summary?.upcomingEvents ?? 0}
+                  icon="calendar"
+                  color={StatColors.events}
+                  emptyMessage="Book your next shoot"
+                  helpUrl="https://help.thephotocrm.com/getting-started/booking-first-shoot"
+                  onPress={() => (navigation as any).navigate("BookingsTab")}
+                />
+              </View>
+
+              {/* Third row: Active Projects + Awaiting Response */}
+              <View style={styles.statsGrid}>
+                <StatCard
+                  label="Active Projects"
+                  value={summary?.activeProjects ?? 0}
+                  icon="briefcase"
+                  color={StatColors.projects}
+                  emptyMessage="Start your first project"
+                  helpUrl="https://help.thephotocrm.com/getting-started/project-management"
+                  onPress={() => (navigation as any).navigate("ProjectsTab")}
+                />
+                <StatCard
+                  label="Awaiting Response"
+                  value={summary?.recentBookings ?? 0}
+                  icon="clock"
+                  color={StatColors.awaiting}
+                  celebratory
+                  helpUrl="https://help.thephotocrm.com/tips/follow-up-best-practices"
+                  onPress={() => (navigation as any).navigate("InboxTab")}
+                />
+              </View>
+            </Animated.View>
+
+            {/* Schedule Section */}
+            <Animated.View
+              entering={FadeInUp.delay(300)
+                .duration(400)
+                .easing(Easing.out(Easing.cubic))}
+            >
+              <View style={styles.sectionHeader}>
+                <ThemedText
+                  style={[styles.sectionTitle, { color: theme.text }]}
+                >
+                  Schedule
+                </ThemedText>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.seeAllButton,
+                    pressed && { opacity: 0.7 },
+                  ]}
+                  onPress={() => (navigation as any).navigate("BookingsTab")}
+                >
+                  <ThemedText
+                    style={[styles.seeAllText, { color: BlysColors.primary }]}
                   >
-                    <ActivityItem
-                      notification={notification}
-                      showDivider={index < notifications.length - 1}
+                    See All
+                  </ThemedText>
+                </Pressable>
+              </View>
+            </Animated.View>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.scheduleScrollContent}
+              style={styles.scheduleScroll}
+            >
+              {groupedBookings.length > 0 ? (
+                groupedBookings.map((day, index) => (
+                  <Animated.View
+                    key={day.id}
+                    entering={FadeInRight.delay(350 + index * 80).duration(400)}
+                  >
+                    <ScheduleCard
+                      day={day}
                       onPress={() => {
-                        if (notification.projectId) {
-                          (navigation as any).navigate("ProjectsTab");
-                        } else {
-                          (navigation as any).navigate("NotificationsTab");
-                        }
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        (navigation as any).navigate("BookingsTab");
                       }}
                     />
                   </Animated.View>
                 ))
               ) : (
-                <EmptyActivityState
-                  onReachOut={() => (navigation as any).navigate("InboxTab")}
-                />
+                <Animated.View entering={FadeInRight.delay(350).duration(400)}>
+                  <EmptyScheduleCard
+                    onAddShoot={() =>
+                      (navigation as any).navigate("BookingsTab")
+                    }
+                  />
+                </Animated.View>
               )}
-            </View>
-          </Animated.View>
+            </ScrollView>
 
-          {/* Bottom spacing for FAB */}
-          <View style={{ height: tabBarHeight + 80 }} />
+            {/* Recent Activity Section */}
+            <Animated.View
+              entering={FadeInUp.delay(400)
+                .duration(400)
+                .easing(Easing.out(Easing.cubic))}
+              style={styles.section}
+            >
+              <View style={styles.sectionHeader}>
+                <ThemedText
+                  style={[styles.sectionTitle, { color: theme.text }]}
+                >
+                  Recent Activity
+                </ThemedText>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.seeAllButton,
+                    pressed && { opacity: 0.7 },
+                  ]}
+                  onPress={() =>
+                    (navigation as any).navigate("NotificationsTab")
+                  }
+                >
+                  <ThemedText
+                    style={[styles.seeAllText, { color: BlysColors.primary }]}
+                  >
+                    See All
+                  </ThemedText>
+                </Pressable>
+              </View>
+
+              {/* Activity List */}
+              <View
+                style={[
+                  styles.activityList,
+                  {
+                    backgroundColor: theme.backgroundCard,
+                    borderColor: isDark ? theme.border : "transparent",
+                    borderWidth: isDark ? 1 : 0,
+                  },
+                ]}
+              >
+                {notifications.length > 0 ? (
+                  notifications.map((notification, index) => (
+                    <Animated.View
+                      key={notification.id}
+                      entering={FadeInRight.delay(450 + index * 60).duration(
+                        400,
+                      )}
+                    >
+                      <ActivityItem
+                        notification={notification}
+                        showDivider={index < notifications.length - 1}
+                        onPress={() => {
+                          if (notification.projectId) {
+                            (navigation as any).navigate("ProjectsTab");
+                          } else {
+                            (navigation as any).navigate("NotificationsTab");
+                          }
+                        }}
+                      />
+                    </Animated.View>
+                  ))
+                ) : (
+                  <EmptyActivityState
+                    onReachOut={() => (navigation as any).navigate("InboxTab")}
+                  />
+                )}
+              </View>
+            </Animated.View>
+
+            {/* Bottom spacing for FAB */}
+            <View style={{ height: tabBarHeight + 80 }} />
+          </View>
         </View>
       </ScreenScrollView>
 
@@ -627,25 +711,43 @@ export function HomeScreen() {
   );
 }
 
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+
 const styles = StyleSheet.create({
+  scrollWrapper: {
+    position: "relative",
+    minHeight: SCREEN_HEIGHT,
+  },
+  blobContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: SCREEN_HEIGHT * 0.52,
+    zIndex: 0,
+  },
   container: {
-    flex: 1,
+    position: "relative",
+    zIndex: 1,
     paddingHorizontal: Spacing.screenHorizontal,
   },
   welcomeSection: {
     marginBottom: Spacing.lg,
-    paddingTop: Spacing.sm,
   },
-  welcomeText: {
-    ...Typography.bodySmall,
+  greetingLine: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "baseline",
+  },
+  greetingText: {
+    fontSize: 28,
+    color: "rgba(255,255,255,0.85)",
+    fontWeight: "400",
   },
   userName: {
-    ...Typography.h2,
-    marginTop: 2,
-  },
-  contextText: {
-    ...Typography.caption,
-    marginTop: 4,
+    fontSize: 34,
+    color: "#FFFFFF",
+    fontFamily: "DancingScript_700Bold",
   },
   statsGrid: {
     flexDirection: "row",

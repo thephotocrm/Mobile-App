@@ -4,14 +4,19 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import MainTabNavigator from "@/navigation/MainTabNavigator";
 import { SettingsScreen } from "@/screens/SettingsScreen";
+import { AddContactScreen } from "@/screens/AddContactScreen";
+import { AddProjectScreen } from "@/screens/AddProjectScreen";
 import LoginScreen from "@/screens/LoginScreen";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
+import { ProjectType } from "@/services/api";
 
 export type RootStackParamList = {
   Login: undefined;
   MainTabs: undefined;
   Settings: undefined;
+  AddContact: undefined;
+  AddProject: { projectType?: ProjectType } | undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -52,6 +57,24 @@ export function RootNavigator() {
             <Stack.Screen
               name="Settings"
               component={SettingsScreen}
+              options={{
+                contentStyle: {
+                  backgroundColor: theme.backgroundRoot,
+                },
+              }}
+            />
+            <Stack.Screen
+              name="AddContact"
+              component={AddContactScreen}
+              options={{
+                contentStyle: {
+                  backgroundColor: theme.backgroundRoot,
+                },
+              }}
+            />
+            <Stack.Screen
+              name="AddProject"
+              component={AddProjectScreen}
               options={{
                 contentStyle: {
                   backgroundColor: theme.backgroundRoot,

@@ -1,21 +1,83 @@
 import React from "react";
-import { View, StyleSheet, Pressable, Text } from "react-native";
+import { View, StyleSheet, Pressable, Text, Linking } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import Animated, {
   FadeInUp,
   FadeOutRight,
   Easing,
-  useAnimatedStyle,
-  withSpring,
-  useSharedValue,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { Spacing, BorderRadius, Shadows, BlysColors } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 
-export type PriorityType = "inquiry" | "shoot" | "payment" | "empty";
+export type PriorityType = "inquiry" | "shoot" | "payment" | "empty" | "tip";
+
+// Rotating motivational tips for when there are no urgent actions
+export const MOTIVATION_TIPS = [
+  {
+    id: "response-time",
+    title: "Quick tip",
+    subtitle: "Respond to inquiries within 2 hours for 3x more bookings",
+    icon: "zap" as keyof typeof Feather.glyphMap,
+    actionLabel: "Check Inbox",
+    screen: "InboxTab",
+    learnMoreUrl: "https://help.thephotocrm.com/tips/response-time-guide",
+    detail:
+      "Studies show photographers who respond within 2 hours book 3x more clients",
+  },
+  {
+    id: "social-share",
+    title: "Growth idea",
+    subtitle: "Post your best work on social media today",
+    icon: "trending-up" as keyof typeof Feather.glyphMap,
+    actionLabel: "View Gallery",
+    screen: "ProjectsTab",
+    learnMoreUrl: "https://help.thephotocrm.com/tips/social-media-growth",
+    detail: "Consistent posting builds your brand and attracts ideal clients",
+  },
+  {
+    id: "week-prep",
+    title: "Stay sharp",
+    subtitle: "Review your upcoming week and prepare shot lists",
+    icon: "calendar" as keyof typeof Feather.glyphMap,
+    actionLabel: "View Calendar",
+    screen: "Calendar",
+    learnMoreUrl: "https://help.thephotocrm.com/tips/shoot-preparation",
+    detail:
+      "Prepared photographers deliver better results and feel less stressed",
+  },
+  {
+    id: "client-love",
+    title: "Client love",
+    subtitle: "Send a check-in message to a past client",
+    icon: "heart" as keyof typeof Feather.glyphMap,
+    actionLabel: "View Contacts",
+    screen: "ContactsTab",
+    learnMoreUrl: "https://help.thephotocrm.com/tips/client-retention",
+    detail:
+      "Past clients are your best source of referrals and repeat bookings",
+  },
+  {
+    id: "portfolio",
+    title: "Portfolio tip",
+    subtitle: "Add your recent shoots to showcase your style",
+    icon: "image" as keyof typeof Feather.glyphMap,
+    actionLabel: "Add Project",
+    screen: "AddProject",
+    learnMoreUrl: "https://help.thephotocrm.com/tips/portfolio-building",
+    detail: "A curated portfolio helps clients visualize working with you",
+  },
+];
+
+// Get a tip based on session or time (rotates through tips)
+export function getRotatingTip(): (typeof MOTIVATION_TIPS)[0] {
+  // Use hour of day to rotate tips (changes every few hours)
+  const hour = new Date().getHours();
+  const tipIndex = Math.floor(hour / 5) % MOTIVATION_TIPS.length;
+  return MOTIVATION_TIPS[tipIndex];
+}
 
 interface PriorityCardProps {
   type: PriorityType;
@@ -24,6 +86,8 @@ interface PriorityCardProps {
   actionLabel: string;
   onAction: () => void;
   onDismiss: () => void;
+  tipIcon?: keyof typeof Feather.glyphMap;
+  learnMoreUrl?: string;
 }
 
 const PRIORITY_CONFIG: Record<
@@ -59,9 +123,13 @@ const PRIORITY_CONFIG: Record<
     iconBg: BlysColors.primary,
     label: "TIP",
   },
+  tip: {
+    icon: "sun",
+    gradient: ["#FEF3C7", "#FDE68A"], // Warm amber gradient
+    iconBg: "#F59E0B",
+    label: "TIP",
+  },
 };
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export function PriorityCard({
   type,
@@ -70,14 +138,14 @@ export function PriorityCard({
   actionLabel,
   onAction,
   onDismiss,
+  tipIcon,
+  learnMoreUrl,
 }: PriorityCardProps) {
   const { theme, isDark } = useTheme();
   const config = PRIORITY_CONFIG[type];
-  const scale = useSharedValue(1);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: withSpring(scale.value) }],
-  }));
+  // Use custom tip icon if provided, otherwise use config icon
+  const displayIcon = tipIcon || config.icon;
 
   const handleAction = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -87,6 +155,13 @@ export function PriorityCard({
   const handleDismiss = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onDismiss();
+  };
+
+  const handleLearnMore = () => {
+    if (learnMoreUrl) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      Linking.openURL(learnMoreUrl);
+    }
   };
 
   const gradientColors = isDark
@@ -101,11 +176,9 @@ export function PriorityCard({
       exiting={FadeOutRight.duration(300)}
       style={styles.container}
     >
-      <AnimatedPressable
+      <Pressable
         onPress={handleAction}
-        onPressIn={() => (scale.value = 0.98)}
-        onPressOut={() => (scale.value = 1)}
-        style={animatedStyle}
+        style={({ pressed }) => [pressed && { opacity: 0.95 }]}
       >
         <LinearGradient
           colors={gradientColors}
@@ -139,14 +212,33 @@ export function PriorityCard({
           <View
             style={[styles.iconContainer, { backgroundColor: config.iconBg }]}
           >
-            <Feather name={config.icon} size={20} color="#FFFFFF" />
+            <Feather name={displayIcon} size={20} color="#FFFFFF" />
           </View>
 
           {/* Content */}
           <View style={styles.content}>
-            <Text style={[styles.label, { color: config.iconBg }]}>
-              {config.label}
-            </Text>
+            <View style={styles.labelRow}>
+              <Text style={[styles.label, { color: config.iconBg }]}>
+                {config.label}
+              </Text>
+              {learnMoreUrl && type === "tip" && (
+                <Pressable
+                  onPress={handleLearnMore}
+                  style={({ pressed }) => [
+                    styles.infoButton,
+                    {
+                      backgroundColor: isDark
+                        ? `${config.iconBg}20`
+                        : `${config.iconBg}15`,
+                    },
+                    pressed && { opacity: 0.6 },
+                  ]}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Feather name="info" size={10} color={config.iconBg} />
+                </Pressable>
+              )}
+            </View>
             <ThemedText
               style={[styles.title, { color: isDark ? theme.text : "#1F2937" }]}
               numberOfLines={1}
@@ -177,7 +269,7 @@ export function PriorityCard({
             <Feather name="arrow-right" size={14} color="#FFFFFF" />
           </Pressable>
         </LinearGradient>
-      </AnimatedPressable>
+      </Pressable>
     </Animated.View>
   );
 }
@@ -216,11 +308,23 @@ const styles = StyleSheet.create({
     marginLeft: Spacing.md,
     marginRight: Spacing.sm,
   },
+  labelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginBottom: 2,
+  },
   label: {
     fontSize: 10,
     fontWeight: "700",
     letterSpacing: 1,
-    marginBottom: 2,
+  },
+  infoButton: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 15,

@@ -3,27 +3,36 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ToolsScreen } from "@/screens/ToolsScreen";
 import ContactsScreen from "@/screens/ContactsScreen";
 import ContactDetailScreen from "@/screens/ContactDetailScreen";
+import { AddContactScreen } from "@/screens/AddContactScreen";
 import { CalendarScreen } from "@/screens/CalendarScreen";
 import { AddEventScreen } from "@/screens/AddEventScreen";
 import { AutomationsScreen } from "@/screens/AutomationsScreen";
 import { AutomationDetailScreen } from "@/screens/AutomationDetailScreen";
 import BookingDetailScreen from "@/screens/BookingDetailScreen";
+import { PoseGalleryScreen } from "@/screens/PoseGalleryScreen";
+import { PoseDetailScreen } from "@/screens/PoseDetailScreen";
+import { AddPoseScreen } from "@/screens/AddPoseScreen";
 import {
   getMainScreenOptions,
   getCommonScreenOptions,
 } from "@/navigation/screenOptions";
 import { useTheme } from "@/hooks/useTheme";
 import { Automation } from "@/services/api";
+import { Pose } from "@/constants/poses";
 
 export type ToolsStackParamList = {
   Tools: undefined;
   Contacts: undefined;
   ContactDetail: { contactId: string };
+  AddContact: undefined;
   Calendar: undefined;
   AddEvent: undefined;
   Automations: undefined;
   AutomationDetail: { automation: Automation };
   BookingDetail: { bookingId: string };
+  PoseGallery: undefined;
+  PoseDetail: { poseId: string; poses: Pose[] };
+  AddPose: undefined;
 };
 
 const Stack = createNativeStackNavigator<ToolsStackParamList>();
@@ -54,6 +63,14 @@ export function ToolsStackNavigator() {
         component={ContactDetailScreen}
         options={{
           title: "Contact Details",
+        }}
+      />
+      <Stack.Screen
+        name="AddContact"
+        component={AddContactScreen}
+        options={{
+          headerShown: false,
+          presentation: "modal",
         }}
       />
       <Stack.Screen
@@ -90,6 +107,30 @@ export function ToolsStackNavigator() {
         component={BookingDetailScreen}
         options={{
           title: "Booking Details",
+        }}
+      />
+      <Stack.Screen
+        name="PoseGallery"
+        component={PoseGalleryScreen}
+        options={{
+          title: "Pose Gallery",
+        }}
+      />
+      <Stack.Screen
+        name="PoseDetail"
+        component={PoseDetailScreen}
+        options={{
+          headerShown: false,
+          presentation: "fullScreenModal",
+          animation: "fade",
+        }}
+      />
+      <Stack.Screen
+        name="AddPose"
+        component={AddPoseScreen}
+        options={{
+          headerShown: false,
+          presentation: "modal",
         }}
       />
     </Stack.Navigator>

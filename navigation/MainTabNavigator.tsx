@@ -38,9 +38,7 @@ function TabIcon({
         <Feather name={name} size={size} color={iconColor} />
         {badge !== undefined && badge > 0 && (
           <View style={styles.badge}>
-            <Text style={styles.badgeText}>
-              {badge > 99 ? "99+" : badge}
-            </Text>
+            <Text style={styles.badgeText}>{badge > 99 ? "99+" : badge}</Text>
           </View>
         )}
       </View>
@@ -187,6 +185,30 @@ const styles = StyleSheet.create({
     gap: 4,
     minHeight: 44,
     overflow: "visible",
+  },
+  iconContainer: {
+    position: "relative",
+    width: 28,
+    height: 28,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  badge: {
+    position: "absolute",
+    top: -4,
+    right: -8,
+    backgroundColor: MessagingColors.unreadBadge,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 4,
+  },
+  badgeText: {
+    color: "#FFFFFF",
+    fontSize: 10,
+    fontWeight: "700",
   },
   tabLabel: {
     fontSize: 10,

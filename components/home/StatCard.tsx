@@ -1,14 +1,15 @@
 import React from "react";
-import { View, StyleSheet, Pressable, Text } from "react-native";
+import { View, StyleSheet, Pressable, Text, Linking } from "react-native";
 import * as Haptics from "expo-haptics";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
-import { Spacing, BorderRadius, Typography, Shadows } from "@/constants/theme";
+import {
+  Spacing,
+  BorderRadius,
+  Typography,
+  Shadows,
+  BlysColors,
+} from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 
 interface TrendData {
@@ -25,9 +26,11 @@ interface StatCardProps {
   size?: "normal" | "large";
   onPress?: () => void;
   actionLabel?: string;
+  emptyMessage?: string; // Encouraging message when value = 0
+  celebratory?: boolean; // For "zero is good" cases (like pending payments)
+  isCurrency?: boolean; // Format value as currency
+  helpUrl?: string; // URL to help article for this metric
 }
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 // Helper function to convert hex to rgba
 const hexToRgba = (hex: string, opacity: number): string => {
@@ -35,6 +38,16 @@ const hexToRgba = (hex: string, opacity: number): string => {
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+};
+
+// Format currency helper
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
 };
 
 export function StatCard({
@@ -46,28 +59,38 @@ export function StatCard({
   size = "normal",
   onPress,
   actionLabel,
+  emptyMessage,
+  celebratory = false,
+  isCurrency = false,
+  helpUrl,
 }: StatCardProps) {
   const { theme, isDark } = useTheme();
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: withSpring(scale.value) }],
-  }));
 
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onPress?.();
   };
 
+  const handleHelpPress = () => {
+    if (helpUrl) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      Linking.openURL(helpUrl);
+    }
+  };
+
   const isLarge = size === "large";
+  const isEmpty = value === 0;
+  const showCelebration = isEmpty && celebratory;
+  const showEncouragement = isEmpty && emptyMessage && !celebratory;
+  const showHelpIcon = isEmpty && helpUrl && !celebratory;
+
+  // Format the display value
+  const displayValue = isCurrency ? formatCurrency(value) : value.toString();
 
   return (
-    <AnimatedPressable
+    <Pressable
       onPress={handlePress}
-      onPressIn={() => (scale.value = 0.95)}
-      onPressOut={() => (scale.value = 1)}
-      style={[
-        animatedStyle,
+      style={({ pressed }) => [
         styles.container,
         isLarge && styles.containerLarge,
         {
@@ -75,6 +98,7 @@ export function StatCard({
           borderColor: isDark ? theme.border : "transparent",
           borderWidth: isDark ? 1 : 0,
         },
+        pressed && { opacity: 0.95 },
       ]}
     >
       {/* Header with icon and trend */}
@@ -128,16 +152,30 @@ export function StatCard({
         )}
       </View>
 
-      {/* Value */}
-      <ThemedText
-        style={[
-          styles.value,
-          isLarge && styles.valueLarge,
-          { color: theme.text },
-        ]}
-      >
-        {value}
-      </ThemedText>
+      {/* Value with optional celebration indicator */}
+      <View style={styles.valueRow}>
+        <ThemedText
+          style={[
+            styles.value,
+            isLarge && styles.valueLarge,
+            { color: theme.text },
+          ]}
+        >
+          {displayValue}
+        </ThemedText>
+        {showCelebration && (
+          <View
+            style={[
+              styles.celebrationBadge,
+              {
+                backgroundColor: isDark ? "rgba(34, 197, 94, 0.2)" : "#DCFCE7",
+              },
+            ]}
+          >
+            <Feather name="check" size={12} color="#22C55E" />
+          </View>
+        )}
+      </View>
 
       {/* Label */}
       <ThemedText
@@ -147,6 +185,49 @@ export function StatCard({
         {label}
       </ThemedText>
 
+      {/* Encouraging message for empty states */}
+      {showEncouragement && (
+        <View style={styles.emptyMessageRow}>
+          <Text
+            style={[styles.emptyMessage, { color: theme.textTertiary }]}
+            numberOfLines={1}
+          >
+            {emptyMessage}
+          </Text>
+          {showHelpIcon && (
+            <Pressable
+              onPress={handleHelpPress}
+              style={({ pressed }) => [
+                styles.helpButton,
+                {
+                  backgroundColor: isDark
+                    ? `${BlysColors.primary}15`
+                    : `${BlysColors.primary}10`,
+                },
+                pressed && { opacity: 0.6 },
+              ]}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Feather
+                name="help-circle"
+                size={12}
+                color={BlysColors.primary}
+              />
+            </Pressable>
+          )}
+        </View>
+      )}
+
+      {/* Celebratory message */}
+      {showCelebration && (
+        <Text
+          style={[styles.celebratoryMessage, { color: "#22C55E" }]}
+          numberOfLines={1}
+        >
+          All caught up!
+        </Text>
+      )}
+
       {/* Action button (for large cards) */}
       {isLarge && actionLabel && (
         <View style={[styles.actionButton, { backgroundColor: color }]}>
@@ -154,7 +235,7 @@ export function StatCard({
           <Feather name="arrow-right" size={12} color="#FFFFFF" />
         </View>
       )}
-    </AnimatedPressable>
+    </Pressable>
   );
 }
 
@@ -195,6 +276,11 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "600",
   },
+  valueRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
   value: {
     fontSize: 28,
     fontWeight: "700",
@@ -205,9 +291,39 @@ const styles = StyleSheet.create({
     fontSize: 36,
     lineHeight: 42,
   },
+  celebrationBadge: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   label: {
     ...Typography.caption,
     marginTop: 2,
+  },
+  emptyMessageRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+    gap: 6,
+  },
+  emptyMessage: {
+    fontSize: 10,
+    fontWeight: "500",
+    flex: 1,
+  },
+  helpButton: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  celebratoryMessage: {
+    fontSize: 10,
+    fontWeight: "600",
+    marginTop: 4,
   },
   actionButton: {
     flexDirection: "row",

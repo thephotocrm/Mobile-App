@@ -11,6 +11,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import * as Haptics from "expo-haptics";
 import Animated, {
   FadeInUp,
@@ -244,8 +245,11 @@ export function CalendarScreen() {
   const { theme, isDark } = useTheme();
   const { token, user } = useAuth();
   const insets = useSafeAreaInsets();
+  const tabBarHeight = useBottomTabBarHeight();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [currentWeekStart, setCurrentWeekStart] = useState(() => getStartOfWeek(new Date()));
+  const [currentWeekStart, setCurrentWeekStart] = useState(() =>
+    getStartOfWeek(new Date()),
+  );
   const [refreshing, setRefreshing] = useState(false);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [templates, setTemplates] = useState<DailyAvailabilityTemplate[]>([]);
@@ -302,7 +306,10 @@ export function CalendarScreen() {
   );
 
   // Generate dates for the strip (Sunday-Saturday)
-  const dates = useMemo(() => getWeekDates(currentWeekStart), [currentWeekStart]);
+  const dates = useMemo(
+    () => getWeekDates(currentWeekStart),
+    [currentWeekStart],
+  );
 
   // Get day info (status + event count) for a date
   const getDayInfo = useCallback(
@@ -351,7 +358,7 @@ export function CalendarScreen() {
   const handleNextWeek = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const dayOfWeek = selectedDate.getDay();
-    setCurrentWeekStart(prev => {
+    setCurrentWeekStart((prev) => {
       const newWeekStart = getNextWeekStart(prev);
       // Update selected date to same day of week in new week
       const newSelectedDate = new Date(newWeekStart);
@@ -364,7 +371,7 @@ export function CalendarScreen() {
   const handlePrevWeek = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const dayOfWeek = selectedDate.getDay();
-    setCurrentWeekStart(prev => {
+    setCurrentWeekStart((prev) => {
       const newWeekStart = getPrevWeekStart(prev);
       // Update selected date to same day of week in new week
       const newSelectedDate = new Date(newWeekStart);
@@ -416,402 +423,367 @@ export function CalendarScreen() {
   };
 
   return (
-    <ScreenScrollView
-      style={{ backgroundColor: theme.backgroundRoot }}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          tintColor={CalendarColors.primary}
-          colors={[CalendarColors.primary]}
-        />
-      }
-    >
-      <View
-        style={[styles.container, { backgroundColor: theme.backgroundRoot }]}
+    <View style={{ flex: 1, backgroundColor: theme.backgroundRoot }}>
+      <ScreenScrollView
+        style={{ backgroundColor: theme.backgroundRoot }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={CalendarColors.primary}
+            colors={[CalendarColors.primary]}
+          />
+        }
       >
-        {/* Header */}
-        <Animated.View
-          entering={FadeInUp.duration(400).easing(Easing.out(Easing.cubic))}
-          style={styles.header}
+        <View
+          style={[styles.container, { backgroundColor: theme.backgroundRoot }]}
         >
-          <View style={styles.headerLeft}>
-            <ThemedText
-              style={[styles.greeting, { color: theme.textSecondary }]}
-            >
-              {getGreeting()}
-            </ThemedText>
-            <ThemedText style={[styles.userName, { color: theme.text }]}>
-              {displayName}
-            </ThemedText>
-          </View>
-          <Pressable
-            onPress={() => (navigation as any).navigate("Settings")}
-            style={({ pressed }) => [
-              styles.avatarButton,
-              { backgroundColor: CalendarColors.eventCardBg },
-              pressed && { opacity: 0.7 },
-            ]}
-          >
-            <Feather name="user" size={20} color={CalendarColors.primary} />
-          </Pressable>
-        </Animated.View>
-
-        {/* Month/Year Header */}
-        <Animated.View
-          entering={FadeInUp.delay(100)
-            .duration(400)
-            .easing(Easing.out(Easing.cubic))}
-          style={styles.monthYearHeader}
-        >
-          <ThemedText style={[styles.monthYearText, { color: theme.text }]}>
-            {currentWeekStart.toLocaleDateString("en-US", {
-              month: "long",
-              year: "numeric",
-            })}
-          </ThemedText>
-        </Animated.View>
-
-        {/* Horizontal Date Strip */}
-        <Animated.View
-          entering={FadeInUp.delay(150)
-            .duration(400)
-            .easing(Easing.out(Easing.cubic))}
-          style={styles.dateStripContainer}
-        >
-          <GestureDetector gesture={weekSwipeGesture}>
-            <Animated.View style={[styles.dateStripContent, dateStripAnimatedStyle]}>
-              {dates.map((date, index) => {
-                const selected = isSelected(date);
-                const today = isToday(date);
-                const dayInfo = getDayInfo(date);
-                return (
-                  <Pressable
-                    key={index}
-                    onPress={() => handleDateSelect(date)}
-                    style={({ pressed }) => [
-                      styles.dateItem,
-                      selected && [
-                        styles.dateItemSelected,
-                        { backgroundColor: CalendarColors.primary },
-                      ],
-                      pressed && !selected && { opacity: 0.7 },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.dateNumber,
-                        { color: selected ? "#FFFFFF" : theme.text },
-                        today && !selected && { color: CalendarColors.primary },
-                      ]}
-                    >
-                      {date.getDate()}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.dateDay,
-                        {
-                          color: selected
-                            ? "rgba(255,255,255,0.8)"
-                            : theme.textTertiary,
-                        },
-                        today && !selected && { color: CalendarColors.primary },
-                      ]}
-                    >
-                      {date
-                        .toLocaleDateString("en-US", { weekday: "short" })
-                        .toUpperCase()}
-                    </Text>
-                    {/* Availability indicator */}
-                    <View style={styles.dateIndicators}>
-                      {dayInfo.status !== "available" && (
-                        <View
-                          style={[
-                            styles.statusDot,
-                            {
-                              backgroundColor: selected
-                                ? "rgba(255,255,255,0.9)"
-                                : getStatusColor(dayInfo.status),
-                            },
-                          ]}
-                        />
-                      )}
-                      {dayInfo.eventCount > 0 && (
-                        <View style={styles.eventDots}>
-                          {Array.from({
-                            length: Math.min(dayInfo.eventCount, 3),
-                          }).map((_, i) => (
-                            <View
-                              key={i}
-                              style={[
-                                styles.eventDot,
-                                {
-                                  backgroundColor: selected
-                                    ? "rgba(255,255,255,0.7)"
-                                    : CalendarColors.primary,
-                                },
-                              ]}
-                            />
-                          ))}
-                        </View>
-                      )}
-                    </View>
-                  </Pressable>
-                );
-              })}
-            </Animated.View>
-          </GestureDetector>
-        </Animated.View>
-
-        {/* Schedule Section */}
-        <Animated.View
-          entering={FadeInUp.delay(200)
-            .duration(400)
-            .easing(Easing.out(Easing.cubic))}
-        >
-          <View style={styles.sectionHeader}>
-            <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
-              {isToday(selectedDate)
-                ? "Schedule Today"
-                : `Schedule for ${selectedDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
-            </ThemedText>
-            <ThemedText
-              style={[styles.sectionSubtitle, { color: theme.textSecondary }]}
-            >
-              {eventsForDate.length}{" "}
-              {eventsForDate.length === 1 ? "event" : "events"}
-            </ThemedText>
-          </View>
-        </Animated.View>
-
-        {/* Availability Status Card */}
-        {selectedDayInfo.status !== "available" && (
+          {/* Header */}
           <Animated.View
-            entering={FadeInUp.delay(220).duration(400)}
-            style={styles.availabilityCardContainer}
+            entering={FadeInUp.duration(400).easing(Easing.out(Easing.cubic))}
+            style={styles.header}
           >
-            <View
-              style={[
-                styles.availabilityCard,
-                {
-                  backgroundColor:
-                    selectedDayInfo.status === "blocked"
-                      ? isDark
-                        ? "rgba(245, 158, 11, 0.15)"
-                        : "#FEF3C7"
-                      : isDark
-                        ? "rgba(139, 92, 246, 0.15)"
-                        : "#EDE9FE",
-                  borderLeftColor: getStatusColor(selectedDayInfo.status),
-                },
+            <View style={styles.headerLeft}>
+              <ThemedText
+                style={[styles.greeting, { color: theme.textSecondary }]}
+              >
+                {getGreeting()}
+              </ThemedText>
+              <ThemedText style={[styles.userName, { color: theme.text }]}>
+                {displayName}
+              </ThemedText>
+            </View>
+            <Pressable
+              onPress={() => (navigation as any).navigate("Settings")}
+              style={({ pressed }) => [
+                styles.avatarButton,
+                { backgroundColor: CalendarColors.eventCardBg },
+                pressed && { opacity: 0.7 },
               ]}
             >
-              <View style={styles.availabilityCardContent}>
+              <Feather name="user" size={20} color={CalendarColors.primary} />
+            </Pressable>
+          </Animated.View>
+
+          {/* Month/Year Header */}
+          <Animated.View
+            entering={FadeInUp.delay(100)
+              .duration(400)
+              .easing(Easing.out(Easing.cubic))}
+            style={styles.monthYearHeader}
+          >
+            <ThemedText style={[styles.monthYearText, { color: theme.text }]}>
+              {currentWeekStart.toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric",
+              })}
+            </ThemedText>
+          </Animated.View>
+
+          {/* Horizontal Date Strip */}
+          <Animated.View
+            entering={FadeInUp.delay(150)
+              .duration(400)
+              .easing(Easing.out(Easing.cubic))}
+            style={styles.dateStripContainer}
+          >
+            <GestureDetector gesture={weekSwipeGesture}>
+              <Animated.View
+                style={[styles.dateStripContent, dateStripAnimatedStyle]}
+              >
+                {dates.map((date, index) => {
+                  const selected = isSelected(date);
+                  const today = isToday(date);
+                  const dayInfo = getDayInfo(date);
+                  return (
+                    <Pressable
+                      key={index}
+                      onPress={() => handleDateSelect(date)}
+                      style={({ pressed }) => [
+                        styles.dateItem,
+                        selected && [
+                          styles.dateItemSelected,
+                          { backgroundColor: CalendarColors.primary },
+                        ],
+                        pressed && !selected && { opacity: 0.7 },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.dateNumber,
+                          { color: selected ? "#FFFFFF" : theme.text },
+                          today &&
+                            !selected && { color: CalendarColors.primary },
+                        ]}
+                      >
+                        {date.getDate()}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.dateDay,
+                          {
+                            color: selected
+                              ? "rgba(255,255,255,0.8)"
+                              : theme.textTertiary,
+                          },
+                          today &&
+                            !selected && { color: CalendarColors.primary },
+                        ]}
+                      >
+                        {date
+                          .toLocaleDateString("en-US", { weekday: "short" })
+                          .toUpperCase()}
+                      </Text>
+                      {/* Availability indicator */}
+                      <View style={styles.dateIndicators}>
+                        {dayInfo.status !== "available" && (
+                          <View
+                            style={[
+                              styles.statusDot,
+                              {
+                                backgroundColor: selected
+                                  ? "rgba(255,255,255,0.9)"
+                                  : getStatusColor(dayInfo.status),
+                              },
+                            ]}
+                          />
+                        )}
+                        {dayInfo.eventCount > 0 && (
+                          <View style={styles.eventDots}>
+                            {Array.from({
+                              length: Math.min(dayInfo.eventCount, 3),
+                            }).map((_, i) => (
+                              <View
+                                key={i}
+                                style={[
+                                  styles.eventDot,
+                                  {
+                                    backgroundColor: selected
+                                      ? "rgba(255,255,255,0.7)"
+                                      : CalendarColors.primary,
+                                  },
+                                ]}
+                              />
+                            ))}
+                          </View>
+                        )}
+                      </View>
+                    </Pressable>
+                  );
+                })}
+              </Animated.View>
+            </GestureDetector>
+          </Animated.View>
+
+          {/* Schedule Section */}
+          <Animated.View
+            entering={FadeInUp.delay(200)
+              .duration(400)
+              .easing(Easing.out(Easing.cubic))}
+          >
+            <View style={styles.sectionHeader}>
+              <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
+                {isToday(selectedDate)
+                  ? "Schedule Today"
+                  : `Schedule for ${selectedDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
+              </ThemedText>
+              <ThemedText
+                style={[styles.sectionSubtitle, { color: theme.textSecondary }]}
+              >
+                {eventsForDate.length}{" "}
+                {eventsForDate.length === 1 ? "event" : "events"}
+              </ThemedText>
+            </View>
+          </Animated.View>
+
+          {/* Availability Status Card */}
+          {selectedDayInfo.status !== "available" && (
+            <Animated.View
+              entering={FadeInUp.delay(220).duration(400)}
+              style={styles.availabilityCardContainer}
+            >
+              <View
+                style={[
+                  styles.availabilityCard,
+                  {
+                    backgroundColor:
+                      selectedDayInfo.status === "blocked"
+                        ? isDark
+                          ? "rgba(245, 158, 11, 0.15)"
+                          : "#FEF3C7"
+                        : isDark
+                          ? "rgba(139, 92, 246, 0.15)"
+                          : "#EDE9FE",
+                    borderLeftColor: getStatusColor(selectedDayInfo.status),
+                  },
+                ]}
+              >
+                <View style={styles.availabilityCardContent}>
+                  <View
+                    style={[
+                      styles.availabilityIcon,
+                      {
+                        backgroundColor:
+                          selectedDayInfo.status === "blocked"
+                            ? "#F59E0B"
+                            : "#8B5CF6",
+                      },
+                    ]}
+                  >
+                    <Feather
+                      name={
+                        selectedDayInfo.status === "blocked" ? "slash" : "clock"
+                      }
+                      size={14}
+                      color="#FFFFFF"
+                    />
+                  </View>
+                  <View style={styles.availabilityTextContainer}>
+                    <ThemedText
+                      style={[styles.availabilityTitle, { color: theme.text }]}
+                    >
+                      {selectedDayInfo.status === "blocked"
+                        ? "Blocked"
+                        : "Custom Hours"}
+                    </ThemedText>
+                    <ThemedText
+                      style={[
+                        styles.availabilitySubtitle,
+                        { color: theme.textSecondary },
+                      ]}
+                    >
+                      {selectedDayInfo.status === "blocked"
+                        ? selectedDayInfo.override?.reason || "Time off"
+                        : `Available ${selectedDayInfo.override?.startTime || ""} - ${selectedDayInfo.override?.endTime || ""}`}
+                    </ThemedText>
+                  </View>
+                </View>
+              </View>
+            </Animated.View>
+          )}
+
+          {/* Events List */}
+          <View style={styles.eventsContainer}>
+            {loading ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator
+                  size="large"
+                  color={CalendarColors.primary}
+                />
+              </View>
+            ) : error ? (
+              <Animated.View
+                entering={FadeInUp.delay(250).duration(400)}
+                style={[
+                  styles.emptyState,
+                  {
+                    backgroundColor: theme.backgroundCard,
+                    borderColor: isDark ? theme.border : "transparent",
+                    borderWidth: isDark ? 1 : 0,
+                  },
+                ]}
+              >
                 <View
                   style={[
-                    styles.availabilityIcon,
+                    styles.emptyIcon,
                     {
-                      backgroundColor:
-                        selectedDayInfo.status === "blocked"
-                          ? "#F59E0B"
-                          : "#8B5CF6",
+                      backgroundColor: isDark
+                        ? theme.backgroundSecondary
+                        : "#FEF2F2",
+                    },
+                  ]}
+                >
+                  <Feather name="alert-circle" size={24} color="#EF4444" />
+                </View>
+                <ThemedText style={[styles.emptyTitle, { color: theme.text }]}>
+                  {error}
+                </ThemedText>
+                <Pressable
+                  onPress={() => {
+                    setLoading(true);
+                    loadData();
+                  }}
+                  style={({ pressed }) => [
+                    styles.retryButton,
+                    { backgroundColor: CalendarColors.primary },
+                    pressed && { opacity: 0.8 },
+                  ]}
+                >
+                  <Text style={styles.retryButtonText}>Try Again</Text>
+                </Pressable>
+              </Animated.View>
+            ) : eventsForDate.length === 0 ? (
+              <Animated.View
+                entering={FadeInUp.delay(250).duration(400)}
+                style={[
+                  styles.emptyState,
+                  {
+                    backgroundColor: theme.backgroundCard,
+                    borderColor: isDark ? theme.border : "transparent",
+                    borderWidth: isDark ? 1 : 0,
+                  },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.emptyIcon,
+                    {
+                      backgroundColor: isDark
+                        ? theme.backgroundSecondary
+                        : "#F5F3FF",
                     },
                   ]}
                 >
                   <Feather
-                    name={
-                      selectedDayInfo.status === "blocked" ? "slash" : "clock"
-                    }
-                    size={14}
-                    color="#FFFFFF"
+                    name="calendar"
+                    size={24}
+                    color={CalendarColors.primary}
                   />
                 </View>
-                <View style={styles.availabilityTextContainer}>
-                  <ThemedText
-                    style={[styles.availabilityTitle, { color: theme.text }]}
-                  >
-                    {selectedDayInfo.status === "blocked"
-                      ? "Blocked"
-                      : "Custom Hours"}
-                  </ThemedText>
-                  <ThemedText
-                    style={[
-                      styles.availabilitySubtitle,
-                      { color: theme.textSecondary },
-                    ]}
-                  >
-                    {selectedDayInfo.status === "blocked"
-                      ? selectedDayInfo.override?.reason || "Time off"
-                      : `Available ${selectedDayInfo.override?.startTime || ""} - ${selectedDayInfo.override?.endTime || ""}`}
-                  </ThemedText>
-                </View>
-              </View>
-            </View>
-          </Animated.View>
-        )}
-
-        {/* Events List */}
-        <View style={styles.eventsContainer}>
-          {loading ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color={CalendarColors.primary} />
-            </View>
-          ) : error ? (
-            <Animated.View
-              entering={FadeInUp.delay(250).duration(400)}
-              style={[
-                styles.emptyState,
-                {
-                  backgroundColor: theme.backgroundCard,
-                  borderColor: isDark ? theme.border : "transparent",
-                  borderWidth: isDark ? 1 : 0,
-                },
-              ]}
-            >
-              <View
-                style={[
-                  styles.emptyIcon,
-                  {
-                    backgroundColor: isDark
-                      ? theme.backgroundSecondary
-                      : "#FEF2F2",
-                  },
-                ]}
-              >
-                <Feather name="alert-circle" size={24} color="#EF4444" />
-              </View>
-              <ThemedText style={[styles.emptyTitle, { color: theme.text }]}>
-                {error}
-              </ThemedText>
-              <Pressable
-                onPress={() => {
-                  setLoading(true);
-                  loadData();
-                }}
-                style={({ pressed }) => [
-                  styles.retryButton,
-                  { backgroundColor: CalendarColors.primary },
-                  pressed && { opacity: 0.8 },
-                ]}
-              >
-                <Text style={styles.retryButtonText}>Try Again</Text>
-              </Pressable>
-            </Animated.View>
-          ) : eventsForDate.length === 0 ? (
-            <Animated.View
-              entering={FadeInUp.delay(250).duration(400)}
-              style={[
-                styles.emptyState,
-                {
-                  backgroundColor: theme.backgroundCard,
-                  borderColor: isDark ? theme.border : "transparent",
-                  borderWidth: isDark ? 1 : 0,
-                },
-              ]}
-            >
-              <View
-                style={[
-                  styles.emptyIcon,
-                  {
-                    backgroundColor: isDark
-                      ? theme.backgroundSecondary
-                      : "#F5F3FF",
-                  },
-                ]}
-              >
-                <Feather
-                  name="calendar"
-                  size={24}
-                  color={CalendarColors.primary}
-                />
-              </View>
-              <ThemedText style={[styles.emptyTitle, { color: theme.text }]}>
-                No events scheduled
-              </ThemedText>
-              <ThemedText
-                style={[styles.emptySubtitle, { color: theme.textSecondary }]}
-              >
-                Tap the + button to add a new event
-              </ThemedText>
-            </Animated.View>
-          ) : (
-            eventsForDate.map((event, index) => (
-              <Animated.View
-                key={event.id}
-                entering={FadeInRight.delay(250 + index * 80).duration(400)}
-              >
-                <Pressable
-                  style={({ pressed }) => [
-                    styles.eventCard,
-                    {
-                      backgroundColor: isDark
-                        ? CalendarColors.eventCardBgDark
-                        : CalendarColors.eventCardBg,
-                    },
-                    pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
-                  ]}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    (navigation as any).navigate("BookingDetail", {
-                      bookingId: event.id,
-                    });
-                  }}
+                <ThemedText style={[styles.emptyTitle, { color: theme.text }]}>
+                  No events scheduled
+                </ThemedText>
+                <ThemedText
+                  style={[styles.emptySubtitle, { color: theme.textSecondary }]}
                 >
-                  <View style={styles.eventTimeContainer}>
-                    <Text
-                      style={[
-                        styles.eventTime,
-                        { color: CalendarColors.primary },
-                      ]}
-                    >
-                      {event.time}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.eventEndTime,
-                        {
-                          color: isDark
-                            ? "rgba(255,255,255,0.5)"
-                            : "rgba(0,0,0,0.4)",
-                        },
-                      ]}
-                    >
-                      {event.endTime}
-                    </Text>
-                  </View>
-                  <View style={styles.eventContent}>
-                    <ThemedText
-                      style={[
-                        styles.eventTitle,
-                        { color: isDark ? "#FFFFFF" : "#1A1A1A" },
-                      ]}
-                      numberOfLines={1}
-                    >
-                      {event.title}
-                    </ThemedText>
-                    <ThemedText
-                      style={[
-                        styles.eventSubtitle,
-                        {
-                          color: isDark
-                            ? "rgba(255,255,255,0.7)"
-                            : "rgba(0,0,0,0.6)",
-                        },
-                      ]}
-                    >
-                      {event.subtitle}
-                    </ThemedText>
-                    <View style={styles.eventMeta}>
-                      <Feather
-                        name="map-pin"
-                        size={12}
-                        color={
-                          isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.4)"
-                        }
-                      />
+                  Tap the + button to add a new event
+                </ThemedText>
+              </Animated.View>
+            ) : (
+              eventsForDate.map((event, index) => (
+                <Animated.View
+                  key={event.id}
+                  entering={FadeInRight.delay(250 + index * 80).duration(400)}
+                >
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.eventCard,
+                      {
+                        backgroundColor: isDark
+                          ? CalendarColors.eventCardBgDark
+                          : CalendarColors.eventCardBg,
+                      },
+                      pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
+                    ]}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      (navigation as any).navigate("BookingDetail", {
+                        bookingId: event.id,
+                      });
+                    }}
+                  >
+                    <View style={styles.eventTimeContainer}>
                       <Text
                         style={[
-                          styles.eventLocation,
+                          styles.eventTime,
+                          { color: CalendarColors.primary },
+                        ]}
+                      >
+                        {event.time}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.eventEndTime,
                           {
                             color: isDark
                               ? "rgba(255,255,255,0.5)"
@@ -819,111 +791,155 @@ export function CalendarScreen() {
                           },
                         ]}
                       >
-                        {event.location}
+                        {event.endTime}
                       </Text>
                     </View>
-                  </View>
-                  <View
-                    style={[
-                      styles.eventTypeIndicator,
-                      { backgroundColor: getEventTypeColor(event.type) },
-                    ]}
-                  >
-                    <Feather
-                      name={getEventTypeIcon(event.type)}
-                      size={14}
-                      color="#FFFFFF"
-                    />
-                  </View>
-                </Pressable>
-              </Animated.View>
-            ))
-          )}
-        </View>
-
-        {/* Reminders Section - Placeholder */}
-        <Animated.View
-          entering={FadeInUp.delay(400)
-            .duration(400)
-            .easing(Easing.out(Easing.cubic))}
-        >
-          <View style={styles.sectionHeader}>
-            <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
-              Reminders
-            </ThemedText>
+                    <View style={styles.eventContent}>
+                      <ThemedText
+                        style={[
+                          styles.eventTitle,
+                          { color: isDark ? "#FFFFFF" : "#1A1A1A" },
+                        ]}
+                        numberOfLines={1}
+                      >
+                        {event.title}
+                      </ThemedText>
+                      <ThemedText
+                        style={[
+                          styles.eventSubtitle,
+                          {
+                            color: isDark
+                              ? "rgba(255,255,255,0.7)"
+                              : "rgba(0,0,0,0.6)",
+                          },
+                        ]}
+                      >
+                        {event.subtitle}
+                      </ThemedText>
+                      <View style={styles.eventMeta}>
+                        <Feather
+                          name="map-pin"
+                          size={12}
+                          color={
+                            isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.4)"
+                          }
+                        />
+                        <Text
+                          style={[
+                            styles.eventLocation,
+                            {
+                              color: isDark
+                                ? "rgba(255,255,255,0.5)"
+                                : "rgba(0,0,0,0.4)",
+                            },
+                          ]}
+                        >
+                          {event.location}
+                        </Text>
+                      </View>
+                    </View>
+                    <View
+                      style={[
+                        styles.eventTypeIndicator,
+                        { backgroundColor: getEventTypeColor(event.type) },
+                      ]}
+                    >
+                      <Feather
+                        name={getEventTypeIcon(event.type)}
+                        size={14}
+                        color="#FFFFFF"
+                      />
+                    </View>
+                  </Pressable>
+                </Animated.View>
+              ))
+            )}
           </View>
-        </Animated.View>
 
-        <View style={styles.remindersContainer}>
-          <View
-            style={[
-              styles.placeholderCard,
-              {
-                backgroundColor: isDark
-                  ? CalendarColors.reminderCardBgDark
-                  : CalendarColors.reminderCardBg,
-              },
-            ]}
+          {/* Reminders Section - Placeholder */}
+          <Animated.View
+            entering={FadeInUp.delay(400)
+              .duration(400)
+              .easing(Easing.out(Easing.cubic))}
           >
-            <Feather name="clock" size={24} color={theme.textTertiary} />
-            <ThemedText
-              style={[styles.placeholderText, { color: theme.textSecondary }]}
+            <View style={styles.sectionHeader}>
+              <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
+                Reminders
+              </ThemedText>
+            </View>
+          </Animated.View>
+
+          <View style={styles.remindersContainer}>
+            <View
+              style={[
+                styles.placeholderCard,
+                {
+                  backgroundColor: isDark
+                    ? CalendarColors.reminderCardBgDark
+                    : CalendarColors.reminderCardBg,
+                },
+              ]}
             >
-              Reminders coming soon
-            </ThemedText>
+              <Feather name="clock" size={24} color={theme.textTertiary} />
+              <ThemedText
+                style={[styles.placeholderText, { color: theme.textSecondary }]}
+              >
+                Reminders coming soon
+              </ThemedText>
+            </View>
           </View>
-        </View>
 
-        {/* Legend */}
-        <Animated.View
-          entering={FadeInUp.delay(450).duration(400)}
-          style={styles.legendContainer}
-        >
-          <ThemedText
-            style={[styles.legendTitle, { color: theme.textTertiary }]}
+          {/* Legend */}
+          <Animated.View
+            entering={FadeInUp.delay(450).duration(400)}
+            style={styles.legendContainer}
           >
-            Calendar Legend
-          </ThemedText>
-          <View style={styles.legendItems}>
-            <View style={styles.legendItem}>
-              <View
-                style={[styles.legendDot, { backgroundColor: "#F59E0B" }]}
-              />
-              <ThemedText
-                style={[styles.legendText, { color: theme.textSecondary }]}
-              >
-                Blocked
-              </ThemedText>
+            <ThemedText
+              style={[styles.legendTitle, { color: theme.textTertiary }]}
+            >
+              Calendar Legend
+            </ThemedText>
+            <View style={styles.legendItems}>
+              <View style={styles.legendItem}>
+                <View
+                  style={[styles.legendDot, { backgroundColor: "#F59E0B" }]}
+                />
+                <ThemedText
+                  style={[styles.legendText, { color: theme.textSecondary }]}
+                >
+                  Blocked
+                </ThemedText>
+              </View>
+              <View style={styles.legendItem}>
+                <View
+                  style={[styles.legendDot, { backgroundColor: "#8B5CF6" }]}
+                />
+                <ThemedText
+                  style={[styles.legendText, { color: theme.textSecondary }]}
+                >
+                  Custom Hours
+                </ThemedText>
+              </View>
+              <View style={styles.legendItem}>
+                <View
+                  style={[
+                    styles.legendDot,
+                    { backgroundColor: CalendarColors.primary },
+                  ]}
+                />
+                <ThemedText
+                  style={[styles.legendText, { color: theme.textSecondary }]}
+                >
+                  Events
+                </ThemedText>
+              </View>
             </View>
-            <View style={styles.legendItem}>
-              <View
-                style={[styles.legendDot, { backgroundColor: "#8B5CF6" }]}
-              />
-              <ThemedText
-                style={[styles.legendText, { color: theme.textSecondary }]}
-              >
-                Custom Hours
-              </ThemedText>
-            </View>
-            <View style={styles.legendItem}>
-              <View
-                style={[
-                  styles.legendDot,
-                  { backgroundColor: CalendarColors.primary },
-                ]}
-              />
-              <ThemedText
-                style={[styles.legendText, { color: theme.textSecondary }]}
-              >
-                Events
-              </ThemedText>
-            </View>
-          </View>
-        </Animated.View>
+          </Animated.View>
 
-        {/* Bottom spacing */}
-        <View style={{ height: insets.bottom + Spacing.lg + 80 }} />
-      </View>
+          {/* Bottom spacing */}
+          <View style={{ height: insets.bottom + Spacing.lg + 80 }} />
+        </View>
+      </ScreenScrollView>
 
       {/* FAB */}
       <Pressable
@@ -931,7 +947,7 @@ export function CalendarScreen() {
           styles.fab,
           {
             backgroundColor: CalendarColors.primary,
-            bottom: insets.bottom + 20,
+            bottom: tabBarHeight + Spacing.md,
           },
           pressed && { opacity: 0.9, transform: [{ scale: 0.95 }] },
         ]}
@@ -942,7 +958,7 @@ export function CalendarScreen() {
       >
         <Feather name="plus" size={24} color="#FFFFFF" />
       </Pressable>
-    </ScreenScrollView>
+    </View>
   );
 }
 

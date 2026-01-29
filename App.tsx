@@ -5,6 +5,10 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import {
+  useFonts,
+  DancingScript_700Bold,
+} from "@expo-google-fonts/dancing-script";
 
 import { RootNavigator } from "@/navigation/RootNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -28,6 +32,9 @@ export default function App() {
   const [isDbReady, setIsDbReady] = useState(Platform.OS === "web");
   const [startupError, setStartupError] = useState<string | null>(null);
   const [initPhase, setInitPhase] = useState("starting");
+  const [fontsLoaded] = useFonts({
+    DancingScript_700Bold,
+  });
 
   useEffect(() => {
     logStartup("App component mounted");
@@ -104,7 +111,7 @@ export default function App() {
     );
   }
 
-  if (!isDbReady) {
+  if (!isDbReady || !fontsLoaded) {
     return (
       <SafeAreaProvider>
         <View style={styles.loadingContainer}>
@@ -121,15 +128,15 @@ export default function App() {
           <InboxProvider>
             <NotificationProvider>
               <SafeAreaProvider>
-              <GestureHandlerRootView style={styles.root}>
-                <KeyboardProvider>
-                  <NavigationContainer>
-                    <RootNavigator />
-                  </NavigationContainer>
-                  <StatusBar style="auto" />
-                </KeyboardProvider>
-              </GestureHandlerRootView>
-            </SafeAreaProvider>
+                <GestureHandlerRootView style={styles.root}>
+                  <KeyboardProvider>
+                    <NavigationContainer>
+                      <RootNavigator />
+                    </NavigationContainer>
+                    <StatusBar style="auto" />
+                  </KeyboardProvider>
+                </GestureHandlerRootView>
+              </SafeAreaProvider>
             </NotificationProvider>
           </InboxProvider>
         </AuthProvider>
