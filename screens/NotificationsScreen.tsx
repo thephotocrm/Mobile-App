@@ -17,6 +17,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
+import { useScreenInsets } from "@/hooks/useScreenInsets";
 import { useAuth } from "@/contexts/AuthContext";
 import { Feather } from "@expo/vector-icons";
 import {
@@ -64,6 +65,7 @@ const getDateSection = (dateString: string): string => {
 
 export function NotificationsScreen() {
   const { theme } = useTheme();
+  const screenInsets = useScreenInsets();
   const { token, user } = useAuth();
   const navigation = useNavigation<NavigationProp<RootTabParamList>>();
 
@@ -513,6 +515,7 @@ export function NotificationsScreen() {
           ListHeaderComponent={renderHeader}
           contentContainerStyle={[
             styles.listContent,
+            { paddingTop: screenInsets.paddingTop },
             groupedNotifications.length === 0 && styles.emptyListContent,
           ]}
           ListEmptyComponent={renderEmptyState}
@@ -579,7 +582,6 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: Spacing.md,
-    paddingTop: Spacing.xs,
     paddingBottom: Spacing.xxl,
   },
   emptyListContent: {

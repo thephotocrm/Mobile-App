@@ -29,6 +29,7 @@ import { Skeleton } from "@/components/Skeleton";
 import { QuickReplyTemplates } from "@/components/QuickReplyTemplates";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
+import { useInbox } from "@/contexts/InboxContext";
 import { Spacing, GradientColors, MessagingColors } from "@/constants/theme";
 import { InboxStackParamList } from "@/navigation/InboxStackNavigator";
 import { inboxApi, createTenantContext } from "@/services/api";
@@ -129,6 +130,7 @@ const MessageSkeleton = ({ isRight }: { isRight: boolean }) => (
 export default function ThreadDetailScreen() {
   const { theme, isDark } = useTheme();
   const { token, user } = useAuth();
+  const { refreshUnreadCount } = useInbox();
   const route = useRoute<ThreadDetailRouteProp>();
   const { conversationId, contactName } = route.params;
   const insets = useSafeAreaInsets();
@@ -146,6 +148,8 @@ export default function ThreadDetailScreen() {
   const [showQuickReplies, setShowQuickReplies] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [draftLoaded, setDraftLoaded] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const flatListRef = useRef<FlatList>(null);
   const scrollButtonOpacity = useRef(new Animated.Value(0)).current;
@@ -272,11 +276,14 @@ export default function ThreadDetailScreen() {
       const tenant = createTenantContext(user);
 
       // Use the correct inbox API endpoint - conversationId is actually the contactId
-      const thread = await inboxApi.getThread(token, conversationId, tenant);
+      const thread = await inboxApi.getThread(token, conversationId, tenant, {
+        limit: 50,
+        offset: 0,
+      });
 
       // API returns messages with: id, content, direction, timestamp, isInbound, status
-      const displayMessages: DisplayMessage[] = thread.messages.map(
-        (msg: any) => {
+      const displayMessages: DisplayMessage[] = thread.messages
+        .map((msg: any) => {
           // Use content field (API) or messageBody field (legacy) for message text
           const text = msg.content || msg.messageBody || "";
           // Use timestamp field (API) or sentAt field (legacy) for time
@@ -297,19 +304,85 @@ export default function ThreadDetailScreen() {
             timestamp: createdAt ? formatTimestamp(createdAt) : "",
             createdAt,
             status,
+            imageUrl: msg.imageUrl,
           };
-        },
-      );
+        })
+        // Filter out blank messages (no text and no image)
+        .filter(
+          (msg: DisplayMessage & { imageUrl?: string }) =>
+            msg.text.trim() !== "" || msg.imageUrl,
+        );
 
       // Sort messages by timestamp ascending (oldest first, newest at bottom)
       displayMessages.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
 
       setMessages(displayMessages);
+      setHasMore(thread.hasMore);
     } catch (error) {
       console.error("Error loading messages:", error);
       setMessages([]);
+      setHasMore(false);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadMoreMessages = async () => {
+    if (loadingMore || !hasMore || !token) return;
+
+    try {
+      setLoadingMore(true);
+
+      const tenant = createTenantContext(user);
+      const thread = await inboxApi.getThread(token, conversationId, tenant, {
+        limit: 50,
+        offset: messages.length,
+      });
+
+      const olderMessages: DisplayMessage[] = thread.messages
+        .map((msg: any) => {
+          const text = msg.content || msg.messageBody || "";
+          const msgTimestamp = msg.timestamp || msg.sentAt || "";
+          const createdAt = msgTimestamp
+            ? formatISOToTimestamp(msgTimestamp)
+            : 0;
+
+          let status: DisplayMessage["status"] = "sent";
+          if (msg.status === "delivered") status = "delivered";
+          else if (msg.status === "read") status = "read";
+
+          return {
+            id: msg.id,
+            text,
+            isSent: msg.direction === "OUTBOUND" || msg.isInbound === false,
+            timestamp: createdAt ? formatTimestamp(createdAt) : "",
+            createdAt,
+            status,
+            imageUrl: msg.imageUrl,
+          };
+        })
+        // Filter out blank messages
+        .filter(
+          (msg: DisplayMessage & { imageUrl?: string }) =>
+            msg.text.trim() !== "" || msg.imageUrl,
+        );
+
+      // Merge older messages with existing ones, avoiding duplicates
+      setMessages((prev) => {
+        const existingIds = new Set(prev.map((m) => m.id));
+        const newMessages = olderMessages.filter(
+          (m: DisplayMessage) => !existingIds.has(m.id),
+        );
+        // Combine and sort by timestamp ascending
+        const combined = [...newMessages, ...prev];
+        combined.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+        return combined;
+      });
+      setHasMore(thread.hasMore);
+    } catch (error) {
+      console.error("Error loading older messages:", error);
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -320,6 +393,8 @@ export default function ThreadDetailScreen() {
     try {
       const tenant = createTenantContext(user);
       await inboxApi.markRead(token, conversationId, tenant);
+      // Refresh the global badge count after marking as read
+      refreshUnreadCount();
     } catch (error) {
       console.error("Error marking messages as read:", error);
       // Don't show error to user - this is a background operation
@@ -711,6 +786,46 @@ export default function ThreadDetailScreen() {
     </View>
   );
 
+  // Render "Load Earlier Messages" button at the top of the list (footer in inverted list)
+  const renderLoadMoreButton = () => {
+    if (!hasMore) return null;
+
+    return (
+      <View style={styles.loadMoreContainer}>
+        <Pressable
+          onPress={loadMoreMessages}
+          disabled={loadingMore}
+          style={({ pressed }) => [
+            styles.loadMoreButton,
+            {
+              backgroundColor: isDark ? theme.backgroundTertiary : "#E5E7EB",
+              opacity: pressed ? 0.7 : 1,
+            },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="Load earlier messages"
+        >
+          {loadingMore ? (
+            <ActivityIndicator size="small" color={theme.textSecondary} />
+          ) : (
+            <>
+              <Feather
+                name="chevron-up"
+                size={16}
+                color={theme.textSecondary}
+              />
+              <ThemedText
+                style={[styles.loadMoreText, { color: theme.textSecondary }]}
+              >
+                Load earlier messages
+              </ThemedText>
+            </>
+          )}
+        </Pressable>
+      </View>
+    );
+  };
+
   // Character count for SMS
   const charCount = message.length;
   const maxChars = 160;
@@ -737,6 +852,7 @@ export default function ThreadDetailScreen() {
               processedMessages.length === 0 && styles.emptyListContent,
             ]}
             ListEmptyComponent={renderEmptyState}
+            ListFooterComponent={renderLoadMoreButton}
             onScroll={handleScroll}
             scrollEventThrottle={16}
             keyboardShouldPersistTaps="handled"
@@ -1096,5 +1212,23 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
+  },
+  // Load more button styles
+  loadMoreContainer: {
+    alignItems: "center",
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.md,
+  },
+  loadMoreButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: 16,
+    gap: Spacing.xs,
+  },
+  loadMoreText: {
+    fontSize: 13,
+    fontWeight: "500",
   },
 });

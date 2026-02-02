@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  View,
-  ScrollView,
-  Pressable,
-  StyleSheet,
-} from "react-native";
+import { View, ScrollView, Pressable, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
@@ -75,9 +70,7 @@ export function TagFilterChips({
         >
           {tag.label}
         </ThemedText>
-        {isSelected && (
-          <Feather name="check" size={12} color="#FFFFFF" />
-        )}
+        {isSelected && <Feather name="check" size={12} color="#FFFFFF" />}
       </Pressable>
     );
   };
@@ -92,9 +85,7 @@ export function TagFilterChips({
             >
               {groupName.toUpperCase()}
             </ThemedText>
-            <View style={styles.tagsRow}>
-              {tags.map(renderTag)}
-            </View>
+            <View style={styles.tagsRow}>{tags.map(renderTag)}</View>
           </View>
         ))}
       </View>
@@ -121,9 +112,7 @@ export function TagFilterChips({
           ]}
         >
           <Feather name="x" size={14} color={theme.textSecondary} />
-          <ThemedText
-            style={[styles.chipText, { color: theme.textSecondary }]}
-          >
+          <ThemedText style={[styles.chipText, { color: theme.textSecondary }]}>
             Clear
           </ThemedText>
         </Pressable>

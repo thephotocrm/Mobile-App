@@ -414,6 +414,8 @@ export default function InboxScreen() {
   useFocusEffect(
     useCallback(() => {
       loadConversations();
+      // Refresh the global badge count when returning to inbox
+      refreshUnreadCount();
     }, [token, user]),
   );
 

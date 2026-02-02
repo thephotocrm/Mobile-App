@@ -19,7 +19,12 @@ interface PoseCardProps {
   showTags?: boolean;
 }
 
-export function PoseCard({ pose, onPress, onFavoriteToggle, showTags = true }: PoseCardProps) {
+export function PoseCard({
+  pose,
+  onPress,
+  onFavoriteToggle,
+  showTags = true,
+}: PoseCardProps) {
   const { theme, isDark } = useTheme();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -104,16 +109,24 @@ export function PoseCard({ pose, onPress, onFavoriteToggle, showTags = true }: P
                 key={index}
                 style={[
                   styles.tagChip,
-                  { backgroundColor: isDark ? theme.backgroundSecondary : "#F0F0F0" },
+                  {
+                    backgroundColor: isDark
+                      ? theme.backgroundSecondary
+                      : "#F0F0F0",
+                  },
                 ]}
               >
-                <ThemedText style={[styles.tagText, { color: theme.textTertiary }]}>
+                <ThemedText
+                  style={[styles.tagText, { color: theme.textTertiary }]}
+                >
                   {tag}
                 </ThemedText>
               </View>
             ))}
             {pose.tags && pose.tags.length > 3 && (
-              <ThemedText style={[styles.moreTagsText, { color: theme.textTertiary }]}>
+              <ThemedText
+                style={[styles.moreTagsText, { color: theme.textTertiary }]}
+              >
                 +{pose.tags.length - 3}
               </ThemedText>
             )}

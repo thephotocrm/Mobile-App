@@ -79,17 +79,12 @@ export function NotificationProvider({
           tenant,
         );
         if (__DEV__) {
-          console.log(
-            "[PUSH] Attendance recorded via action button:",
-            result,
-          );
+          console.log("[PUSH] Attendance recorded via action button:", result);
         }
         // Show brief confirmation
         Alert.alert(
           "Attendance Recorded",
-          showed
-            ? "Client marked as showed up."
-            : "Client marked as no-show.",
+          showed ? "Client marked as showed up." : "Client marked as no-show.",
         );
       } catch (error) {
         console.error("[PUSH] Failed to record attendance:", error);
