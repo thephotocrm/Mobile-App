@@ -8,7 +8,7 @@ import {
   ScrollView,
   Dimensions,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
@@ -18,6 +18,7 @@ import Animated, {
   FadeInUp,
   FadeInRight,
 } from "react-native-reanimated";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { Skeleton } from "@/components/Skeleton";
@@ -250,15 +251,24 @@ export function HomeScreen() {
     }
   }, [token, tenant]);
 
-  // Initial data load
-  useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      await fetchDashboardData();
-      setIsLoading(false);
-    };
-    loadData();
-  }, [fetchDashboardData]);
+  // Initial data load + refresh on focus
+  useFocusEffect(
+    useCallback(() => {
+      const loadData = async () => {
+        if (!isLoading && summary) {
+          // Silent refresh on re-focus (no spinner)
+          await fetchDashboardData();
+          return;
+        }
+        setIsLoading(true);
+        await fetchDashboardData();
+        setIsLoading(false);
+      };
+      loadData();
+    }, [fetchDashboardData]),
+  );
+
+  useAutoRefresh(fetchDashboardData, 30000);
 
   // Pull-to-refresh handler
   const onRefresh = useCallback(async () => {

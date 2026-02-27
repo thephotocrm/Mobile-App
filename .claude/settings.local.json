@@ -21,7 +21,8 @@
       "Bash(npx eslint:*)",
       "Bash(npm run lint:*)",
       "WebSearch",
-      "WebFetch(domain:www.pexels.com)"
+      "WebFetch(domain:www.pexels.com)",
+      "Bash(gh repo view:*)"
     ]
   }
 }

@@ -1,6 +1,6 @@
 import Constants from "expo-constants";
 
-const API_BASE_URL =
+export const API_BASE_URL =
   Constants.expoConfig?.extra?.apiBaseUrl ||
   process.env.EXPO_PUBLIC_API_BASE_URL ||
   "https://app.thephotocrm.com";
@@ -390,6 +390,30 @@ export interface Booking {
   createdAt: string;
 }
 
+export interface SmartFile {
+  id: string;
+  name: string;
+  description?: string;
+  projectType?: string;
+  status: "ACTIVE" | "ARCHIVED";
+  createdAt: string;
+}
+
+export interface ProjectSmartFile {
+  id: string;
+  projectId: string;
+  smartFileId: string;
+  smartFileName: string;
+  status: string;
+  token: string;
+  sentAt?: string;
+  viewedAt?: string;
+  totalCents?: number;
+  amountPaidCents?: number;
+  balanceDueCents?: number;
+  createdAt: string;
+}
+
 // Helper to create tenant context from user
 export function createTenantContext(user: User | null): TenantContext {
   return {
@@ -515,6 +539,67 @@ export const projectsApi = {
     ),
 };
 
+export const smartFilesApi = {
+  // GET /api/smart-files - List photographer's smart file templates
+  getTemplates: (token: string, tenant?: TenantContext) =>
+    api.get<SmartFile[]>("/api/smart-files", token, tenant),
+
+  // GET /api/projects/:id/smart-files - Get attached smart files for a project
+  getProjectSmartFiles: (
+    token: string,
+    projectId: string,
+    tenant?: TenantContext,
+  ) =>
+    api.get<ProjectSmartFile[]>(
+      `/api/projects/${projectId}/smart-files`,
+      token,
+      tenant,
+    ),
+
+  // POST /api/projects/:id/smart-files - Attach a template to a project
+  attach: (
+    token: string,
+    projectId: string,
+    smartFileId: string,
+    tenant?: TenantContext,
+  ) =>
+    api.post<ProjectSmartFile>(
+      `/api/projects/${projectId}/smart-files`,
+      { smartFileId },
+      token,
+      tenant,
+    ),
+
+  // POST /api/projects/:id/smart-files/:sfId/send - Send smart file via email
+  sendEmail: (
+    token: string,
+    projectId: string,
+    projectSmartFileId: string,
+    subject: string,
+    message: string,
+    tenant?: TenantContext,
+  ) =>
+    api.post<{ success: boolean; token?: string }>(
+      `/api/projects/${projectId}/smart-files/${projectSmartFileId}/send`,
+      { subject, message },
+      token,
+      tenant,
+    ),
+
+  // DELETE /api/projects/:id/smart-files/:sfId - Remove smart file from project
+  remove: (
+    token: string,
+    projectId: string,
+    projectSmartFileId: string,
+    tenant?: TenantContext,
+  ) =>
+    api.delete<void>(
+      `/api/projects/${projectId}/smart-files/${projectSmartFileId}`,
+      token,
+      tenant,
+    ),
+};
+
 export const contactsApi = {
   getAll: (
     token: string,
@@ -548,12 +633,20 @@ export const contactsApi = {
 export const inboxApi = {
   // GET /api/inbox/conversations - Get all conversations for photographer
   // Returns raw API format with nested contact object
-  getConversations: (token: string, tenant?: TenantContext) =>
-    api.get<InboxConversationApiResponse[]>(
-      "/api/inbox/conversations",
+  // sortBy: "recent" (default) - most recent message first
+  // sortBy: "lastReply" - most recent inbound (client) message first
+  getConversations: (
+    token: string,
+    tenant?: TenantContext,
+    sortBy?: "recent" | "lastReply",
+  ) => {
+    const params = sortBy ? `?sortBy=${sortBy}` : "";
+    return api.get<InboxConversationApiResponse[]>(
+      `/api/inbox/conversations${params}`,
       token,
       tenant,
-    ),
+    );
+  },
 
   // GET /api/inbox/thread/:contactId - Get message thread with a specific contact
   getThread: (
@@ -675,6 +768,35 @@ export const bookingsApi = {
 export const stagesApi = {
   getAll: (token: string, tenant?: TenantContext) =>
     api.get<Stage[]>("/api/stages", token, tenant),
+};
+
+// Project Type (custom per photographer)
+export interface ProjectTypeRecord {
+  id: string;
+  photographerId: string;
+  name: string;
+  slug: string;
+  color: string;
+  orderIndex: number;
+  isDefault: boolean;
+  isArchived: boolean;
+  createdAt: string;
+}
+
+export const projectTypesApi = {
+  // GET /api/project-types - Get photographer's project types
+  getAll: (
+    token: string,
+    tenant?: TenantContext,
+    includeArchived?: boolean,
+  ) => {
+    const params = includeArchived ? "?includeArchived=true" : "";
+    return api.get<ProjectTypeRecord[]>(
+      `/api/project-types${params}`,
+      token,
+      tenant,
+    );
+  },
 };
 
 // Notification types from the API
@@ -1058,6 +1180,51 @@ export const posesApi = {
   deleteCustomPose: (token: string, poseId: string, tenant?: TenantContext) =>
     api.delete<{ success: boolean }>(
       `/api/poses/custom/${encodeURIComponent(poseId)}`,
+      token,
+      tenant,
+    ),
+};
+
+// Conversation Reminder types
+export interface ConversationReminder {
+  id: string;
+  contactId: string;
+  channel: "sms" | "email";
+  reminderAt: string;
+}
+
+export interface CreateReminderRequest {
+  contactId: string;
+  channel: "sms" | "email";
+  hoursFromNow: 1 | 6 | 24 | 72 | 168;
+}
+
+export const conversationRemindersApi = {
+  // GET /api/conversation-reminders/:contactId/sms - Check if reminder exists for contact
+  getForContact: (token: string, contactId: string, tenant?: TenantContext) =>
+    api.get<ConversationReminder | null>(
+      `/api/conversation-reminders/${contactId}/sms`,
+      token,
+      tenant,
+    ),
+
+  // POST /api/conversation-reminders - Create a new reminder
+  create: (
+    token: string,
+    data: CreateReminderRequest,
+    tenant?: TenantContext,
+  ) =>
+    api.post<ConversationReminder>(
+      "/api/conversation-reminders",
+      data,
+      token,
+      tenant,
+    ),
+
+  // DELETE /api/conversation-reminders/:reminderId - Cancel a reminder
+  delete: (token: string, reminderId: string, tenant?: TenantContext) =>
+    api.delete<{ success: boolean }>(
+      `/api/conversation-reminders/${reminderId}`,
       token,
       tenant,
     ),

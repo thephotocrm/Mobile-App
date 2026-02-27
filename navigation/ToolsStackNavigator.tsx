@@ -22,7 +22,7 @@ import { Pose } from "@/constants/poses";
 
 export type ToolsStackParamList = {
   Tools: undefined;
-  Contacts: undefined;
+  Contacts: { refresh?: number } | undefined;
   ContactDetail: { contactId: string };
   AddContact: undefined;
   Calendar: undefined;

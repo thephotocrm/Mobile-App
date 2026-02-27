@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -10,10 +10,15 @@ import {
   Platform,
   Alert,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import * as Haptics from "expo-haptics";
 import Animated, { FadeInUp, Easing } from "react-native-reanimated";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 import { ThemedText } from "@/components/ThemedText";
 import { Avatar } from "@/components/Avatar";
 import { ContactPickerModal } from "@/components/ContactPickerModal";
@@ -24,55 +29,32 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   projectsApi,
+  projectTypesApi,
   createTenantContext,
   ProjectType,
+  ProjectTypeRecord,
   Contact,
 } from "@/services/api";
 import { ProjectsStackParamList } from "@/navigation/ProjectsStackNavigator";
 
 type AddProjectRouteProp = RouteProp<ProjectsStackParamList, "AddProject">;
+type AddProjectNavigationProp = NativeStackNavigationProp<
+  ProjectsStackParamList,
+  "AddProject"
+>;
 
-// Project type options
-const PROJECT_TYPES: { id: ProjectType; label: string; color: string }[] = [
-  { id: "WEDDING", label: "Wedding", color: "#EC4899" },
-  { id: "ENGAGEMENT", label: "Engagement", color: "#8B5CF6" },
-  { id: "PORTRAIT", label: "Portrait", color: "#3B82F6" },
-  { id: "FAMILY", label: "Family", color: "#10B981" },
-  { id: "EVENT", label: "Event", color: "#F59E0B" },
-  { id: "OTHER", label: "Other", color: "#6B7280" },
-];
-
-// Generate dates for selection (next 365 days)
-const generateDateOptions = () => {
-  const dates: { date: Date; label: string }[] = [];
-  const today = new Date();
-
-  for (let i = 0; i < 365; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-
-    let label: string;
-    if (i === 0) {
-      label = "Today";
-    } else if (i === 1) {
-      label = "Tomorrow";
-    } else {
-      label = date.toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      });
-    }
-
-    dates.push({ date, label });
-  }
-  return dates;
+// Format date for display
+const formatDateDisplay = (date: Date): string => {
+  return date.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 };
 
-const DATE_OPTIONS = generateDateOptions();
-
 export function AddProjectScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<AddProjectNavigationProp>();
   const route = useRoute<AddProjectRouteProp>();
   const { theme, isDark } = useTheme();
   const insets = useSafeAreaInsets();
@@ -85,11 +67,51 @@ export function AddProjectScreen() {
   const [selectedClient, setSelectedClient] = useState<Contact | null>(null);
   const [selectedProjectType, setSelectedProjectType] =
     useState<ProjectType | null>(initialProjectType);
-  const [selectedDate, setSelectedDate] = useState<number | null>(null);
+  const [eventDate, setEventDate] = useState<Date | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [venue, setVenue] = useState("");
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
   const [showContactPicker, setShowContactPicker] = useState(false);
+
+  // Project types from API
+  const [projectTypes, setProjectTypes] = useState<ProjectTypeRecord[]>([]);
+  const [loadingProjectTypes, setLoadingProjectTypes] = useState(true);
+
+  // Fetch project types on mount
+  useEffect(() => {
+    const fetchProjectTypes = async () => {
+      if (!token) return;
+
+      try {
+        const tenant = createTenantContext(user);
+        const types = await projectTypesApi.getAll(token, tenant);
+        setProjectTypes(types);
+
+        // If we have an initial type from params, verify it exists
+        if (initialProjectType) {
+          const typeExists = types.some(t => t.slug === initialProjectType);
+          if (!typeExists) {
+            setSelectedProjectType(null);
+          }
+        }
+
+        // If no type selected, use the default one
+        if (!initialProjectType) {
+          const defaultType = types.find(t => t.isDefault);
+          if (defaultType) {
+            setSelectedProjectType(defaultType.slug as ProjectType);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch project types:", err);
+      } finally {
+        setLoadingProjectTypes(false);
+      }
+    };
+
+    fetchProjectTypes();
+  }, [token, user, initialProjectType]);
 
   const handleSave = async () => {
     if (!title.trim()) {
@@ -120,8 +142,8 @@ export function AddProjectScreen() {
         projectData.projectType = selectedProjectType;
       }
 
-      if (selectedDate !== null) {
-        projectData.eventDate = DATE_OPTIONS[selectedDate].date.toISOString();
+      if (eventDate) {
+        projectData.eventDate = eventDate.toISOString();
         projectData.hasEventDate = true;
       }
 
@@ -136,7 +158,7 @@ export function AddProjectScreen() {
       await projectsApi.create(token, projectData, tenant);
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      navigation.goBack();
+      navigation.navigate("ProjectsList", { refresh: Date.now() });
     } catch (err) {
       console.error("Failed to create project:", err);
       Alert.alert("Error", "Failed to create project. Please try again.");
@@ -293,53 +315,61 @@ export function AddProjectScreen() {
           <ThemedText style={[styles.label, { color: theme.textSecondary }]}>
             PROJECT TYPE
           </ThemedText>
-          <View style={styles.projectTypesContainer}>
-            {PROJECT_TYPES.map((type) => {
-              const isSelected = selectedProjectType === type.id;
-              return (
-                <Pressable
-                  key={type.id}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    setSelectedProjectType(isSelected ? null : type.id);
-                  }}
-                  style={[
-                    styles.projectTypePill,
-                    {
-                      backgroundColor: isSelected
-                        ? type.color
-                        : isDark
-                          ? theme.backgroundSecondary
-                          : "#F5F5F5",
-                      borderColor: isSelected
-                        ? type.color
-                        : isDark
-                          ? theme.border
-                          : "#E5E7EB",
-                      borderWidth: 1,
-                    },
-                  ]}
-                >
-                  <View
+          {loadingProjectTypes ? (
+            <View style={styles.projectTypesLoading}>
+              <ActivityIndicator size="small" color={BlysColors.primary} />
+            </View>
+          ) : (
+            <View style={styles.projectTypesContainer}>
+              {projectTypes.map((type) => {
+                const isSelected = selectedProjectType === type.slug;
+                return (
+                  <Pressable
+                    key={type.id}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      setSelectedProjectType(
+                        isSelected ? null : (type.slug as ProjectType)
+                      );
+                    }}
                     style={[
-                      styles.projectTypeDot,
+                      styles.projectTypePill,
                       {
-                        backgroundColor: isSelected ? "#FFFFFF" : type.color,
+                        backgroundColor: isSelected
+                          ? type.color
+                          : isDark
+                            ? theme.backgroundSecondary
+                            : "#F5F5F5",
+                        borderColor: isSelected
+                          ? type.color
+                          : isDark
+                            ? theme.border
+                            : "#E5E7EB",
+                        borderWidth: 1,
                       },
                     ]}
-                  />
-                  <Text
-                    style={[
-                      styles.projectTypeLabel,
-                      { color: isSelected ? "#FFFFFF" : theme.text },
-                    ]}
                   >
-                    {type.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
+                    <View
+                      style={[
+                        styles.projectTypeDot,
+                        {
+                          backgroundColor: isSelected ? "#FFFFFF" : type.color,
+                        },
+                      ]}
+                    />
+                    <Text
+                      style={[
+                        styles.projectTypeLabel,
+                        { color: isSelected ? "#FFFFFF" : theme.text },
+                      ]}
+                    >
+                      {type.name}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          )}
         </Animated.View>
 
         {/* Event Date Selection */}
@@ -351,44 +381,114 @@ export function AddProjectScreen() {
           <ThemedText style={[styles.label, { color: theme.textSecondary }]}>
             EVENT DATE
           </ThemedText>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.dateScrollView}
-            contentContainerStyle={styles.dateScrollContent}
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setShowDatePicker(true);
+            }}
+            style={({ pressed }) => [
+              styles.dateSelector,
+              {
+                backgroundColor: isDark ? theme.backgroundSecondary : "#F5F5F5",
+                borderColor: isDark ? theme.border : "transparent",
+                borderWidth: isDark ? 1 : 0,
+              },
+              pressed && { opacity: 0.7 },
+            ]}
           >
-            {DATE_OPTIONS.slice(0, 30).map((item, index) => {
-              const isSelected = selectedDate === index;
-              return (
-                <Pressable
-                  key={index}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    setSelectedDate(isSelected ? null : index);
-                  }}
+            <Feather
+              name="calendar"
+              size={18}
+              color={eventDate ? BlysColors.primary : theme.textTertiary}
+              style={{ marginRight: Spacing.sm }}
+            />
+            <Text
+              style={[
+                styles.dateSelectorText,
+                {
+                  color: eventDate ? theme.text : theme.textTertiary,
+                },
+              ]}
+            >
+              {eventDate ? formatDateDisplay(eventDate) : "Select event date"}
+            </Text>
+            {eventDate && (
+              <Pressable
+                onPress={(e) => {
+                  e.stopPropagation();
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setEventDate(null);
+                }}
+                style={styles.clearDateButton}
+              >
+                <Feather name="x" size={16} color={theme.textTertiary} />
+              </Pressable>
+            )}
+          </Pressable>
+
+          {/* Date Picker Modal for iOS / Inline for Android */}
+          {Platform.OS === "ios" ? (
+            <Modal
+              visible={showDatePicker}
+              transparent
+              animationType="slide"
+              onRequestClose={() => setShowDatePicker(false)}
+            >
+              <View style={styles.datePickerModalOverlay}>
+                <View
                   style={[
-                    styles.dateOption,
-                    {
-                      backgroundColor: isSelected
-                        ? BlysColors.primary
-                        : isDark
-                          ? theme.backgroundSecondary
-                          : "#F5F5F5",
-                    },
+                    styles.datePickerModalContent,
+                    { backgroundColor: theme.backgroundSecondary },
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.dateOptionText,
-                      { color: isSelected ? "#FFFFFF" : theme.text },
-                    ]}
-                  >
-                    {item.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
+                  <View style={styles.datePickerHeader}>
+                    <Pressable onPress={() => setShowDatePicker(false)}>
+                      <Text style={[styles.datePickerCancel, { color: theme.textSecondary }]}>
+                        Cancel
+                      </Text>
+                    </Pressable>
+                    <ThemedText style={styles.datePickerTitle}>
+                      Select Date
+                    </ThemedText>
+                    <Pressable
+                      onPress={() => setShowDatePicker(false)}
+                    >
+                      <Text style={[styles.datePickerDone, { color: BlysColors.primary }]}>
+                        Done
+                      </Text>
+                    </Pressable>
+                  </View>
+                  <DateTimePicker
+                    value={eventDate || new Date()}
+                    mode="date"
+                    display="spinner"
+                    minimumDate={new Date()}
+                    onChange={(event: DateTimePickerEvent, date?: Date) => {
+                      if (date) {
+                        setEventDate(date);
+                      }
+                    }}
+                    style={styles.datePicker}
+                  />
+                </View>
+              </View>
+            </Modal>
+          ) : (
+            showDatePicker && (
+              <DateTimePicker
+                value={eventDate || new Date()}
+                mode="date"
+                display="default"
+                minimumDate={new Date()}
+                onChange={(event: DateTimePickerEvent, date?: Date) => {
+                  setShowDatePicker(false);
+                  if (event.type === "set" && date) {
+                    setEventDate(date);
+                  }
+                }}
+              />
+            )
+          )}
         </Animated.View>
 
         {/* Venue Input */}
@@ -577,21 +677,57 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginLeft: Spacing.md,
   },
-  dateScrollView: {
-    marginHorizontal: -Spacing.screenHorizontal,
-  },
-  dateScrollContent: {
-    paddingHorizontal: Spacing.screenHorizontal,
-    gap: Spacing.sm,
-  },
-  dateOption: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+  dateSelector: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: 52,
     borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.md,
   },
-  dateOptionText: {
-    fontSize: 14,
-    fontWeight: "500",
+  dateSelectorText: {
+    flex: 1,
+    fontSize: 15,
+  },
+  clearDateButton: {
+    padding: Spacing.xs,
+  },
+  datePickerModalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "flex-end",
+  },
+  datePickerModalContent: {
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingBottom: 34,
+  },
+  datePickerHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0,0,0,0.1)",
+  },
+  datePickerTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  datePickerCancel: {
+    fontSize: 16,
+  },
+  datePickerDone: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  datePicker: {
+    height: 200,
+  },
+  projectTypesLoading: {
+    height: 44,
+    justifyContent: "center",
+    alignItems: "center",
   },
   projectTypesContainer: {
     flexDirection: "row",

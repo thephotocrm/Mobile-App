@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -9,7 +9,12 @@ import {
 import * as Haptics from "expo-haptics";
 import { Feather } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import {
+  useNavigation,
+  useFocusEffect,
+  useRoute,
+  RouteProp,
+} from "@react-navigation/native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { ThemedText } from "@/components/ThemedText";
 import { Avatar } from "@/components/Avatar";
@@ -18,6 +23,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import { Spacing, Typography, BorderRadius } from "@/constants/theme";
 import { ToolsStackParamList } from "@/navigation/ToolsStackNavigator";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { contactsApi, Contact, createTenantContext } from "@/services/api";
 
 type ContactsScreenNavigationProp = NativeStackNavigationProp<
@@ -29,6 +35,7 @@ export default function ContactsScreen() {
   const { theme } = useTheme();
   const { token, user } = useAuth();
   const navigation = useNavigation<ContactsScreenNavigationProp>();
+  const route = useRoute<RouteProp<ToolsStackParamList, "Contacts">>();
   const tabBarHeight = useBottomTabBarHeight();
   const [searchQuery, setSearchQuery] = useState("");
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -59,11 +66,24 @@ export default function ContactsScreen() {
     }
   };
 
+  const silentRefreshContacts = useCallback(async () => {
+    if (!token) return;
+    try {
+      const tenant = createTenantContext(user);
+      const result = await contactsApi.getAll(token, tenant);
+      setContacts(result);
+    } catch (err) {
+      console.error("Silent refresh contacts error:", err);
+    }
+  }, [token, user]);
+
   useFocusEffect(
     React.useCallback(() => {
       loadContacts();
-    }, [token, user]),
+    }, [token, user, route.params?.refresh]),
   );
+
+  useAutoRefresh(silentRefreshContacts, 30000);
 
   const filteredContacts = contacts.filter((contact) => {
     if (!searchQuery.trim()) return true;

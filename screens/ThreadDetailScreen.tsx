@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useLayoutEffect,
+} from "react";
 import {
   View,
   StyleSheet,
@@ -15,7 +21,13 @@ import {
   NativeScrollEvent,
   ActionSheetIOS,
 } from "react-native";
-import { useRoute, RouteProp, useFocusEffect } from "@react-navigation/native";
+import {
+  useRoute,
+  RouteProp,
+  useFocusEffect,
+  useNavigation,
+} from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -23,6 +35,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import * as Haptics from "expo-haptics";
 import * as Clipboard from "expo-clipboard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { ThemedText } from "@/components/ThemedText";
 import { Avatar } from "@/components/Avatar";
 import { Skeleton } from "@/components/Skeleton";
@@ -32,9 +45,18 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useInbox } from "@/contexts/InboxContext";
 import { Spacing, GradientColors, MessagingColors } from "@/constants/theme";
 import { InboxStackParamList } from "@/navigation/InboxStackNavigator";
-import { inboxApi, createTenantContext } from "@/services/api";
+import {
+  inboxApi,
+  createTenantContext,
+  conversationRemindersApi,
+  ConversationReminder,
+} from "@/services/api";
 
 type ThreadDetailRouteProp = RouteProp<InboxStackParamList, "ThreadDetail">;
+type ThreadDetailNavigationProp = NativeStackNavigationProp<
+  InboxStackParamList,
+  "ThreadDetail"
+>;
 
 interface DisplayMessage {
   id: string;
@@ -132,6 +154,7 @@ export default function ThreadDetailScreen() {
   const { token, user } = useAuth();
   const { refreshUnreadCount } = useInbox();
   const route = useRoute<ThreadDetailRouteProp>();
+  const navigation = useNavigation<ThreadDetailNavigationProp>();
   const { conversationId, contactName } = route.params;
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
@@ -150,6 +173,8 @@ export default function ThreadDetailScreen() {
   const [draftLoaded, setDraftLoaded] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [reminder, setReminder] = useState<ConversationReminder | null>(null);
+  const [loadingReminder, setLoadingReminder] = useState(false);
 
   const flatListRef = useRef<FlatList>(null);
   const scrollButtonOpacity = useRef(new Animated.Value(0)).current;
@@ -327,6 +352,53 @@ export default function ThreadDetailScreen() {
     }
   };
 
+  // Silent refresh for polling (no loading spinner)
+  const silentRefreshMessages = useCallback(async () => {
+    if (!token) return;
+    try {
+      const tenant = createTenantContext(user);
+      const thread = await inboxApi.getThread(token, conversationId, tenant, {
+        limit: 50,
+        offset: 0,
+      });
+
+      const displayMessages: DisplayMessage[] = thread.messages
+        .map((msg: any) => {
+          const text = msg.content || msg.messageBody || "";
+          const msgTimestamp = msg.timestamp || msg.sentAt || "";
+          const createdAt = msgTimestamp
+            ? formatISOToTimestamp(msgTimestamp)
+            : 0;
+
+          let status: DisplayMessage["status"] = "sent";
+          if (msg.status === "delivered") status = "delivered";
+          else if (msg.status === "read") status = "read";
+
+          return {
+            id: msg.id,
+            text,
+            isSent: msg.direction === "OUTBOUND" || msg.isInbound === false,
+            timestamp: createdAt ? formatTimestamp(createdAt) : "",
+            createdAt,
+            status,
+            imageUrl: msg.imageUrl,
+          };
+        })
+        .filter(
+          (msg: DisplayMessage & { imageUrl?: string }) =>
+            msg.text.trim() !== "" || msg.imageUrl,
+        );
+
+      displayMessages.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+      setMessages(displayMessages);
+      setHasMore(thread.hasMore);
+    } catch (error) {
+      console.error("Silent refresh messages error:", error);
+    }
+  }, [token, user, conversationId]);
+
+  useAutoRefresh(silentRefreshMessages, 15000);
+
   const loadMoreMessages = async () => {
     if (loadingMore || !hasMore || !token) return;
 
@@ -401,9 +473,182 @@ export default function ThreadDetailScreen() {
     }
   };
 
+  // Load reminder status for this conversation
+  const loadReminder = async () => {
+    if (!token) return;
+
+    try {
+      setLoadingReminder(true);
+      const tenant = createTenantContext(user);
+      const reminderData = await conversationRemindersApi.getForContact(
+        token,
+        conversationId,
+        tenant,
+      );
+      setReminder(reminderData);
+    } catch (error) {
+      console.error("Error loading reminder:", error);
+      setReminder(null);
+    } finally {
+      setLoadingReminder(false);
+    }
+  };
+
+  // Create a new reminder
+  const handleCreateReminder = async (hoursFromNow: 1 | 6 | 24 | 72 | 168) => {
+    if (!token) return;
+
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      const tenant = createTenantContext(user);
+      const newReminder = await conversationRemindersApi.create(
+        token,
+        {
+          contactId: conversationId,
+          channel: "sms",
+          hoursFromNow,
+        },
+        tenant,
+      );
+      setReminder(newReminder);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (error) {
+      console.error("Error creating reminder:", error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert("Error", "Failed to set reminder. Please try again.");
+    }
+  };
+
+  // Cancel an existing reminder
+  const handleCancelReminder = async () => {
+    if (!token || !reminder) return;
+
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      const tenant = createTenantContext(user);
+      await conversationRemindersApi.delete(token, reminder.id, tenant);
+      setReminder(null);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (error) {
+      console.error("Error canceling reminder:", error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert("Error", "Failed to cancel reminder. Please try again.");
+    }
+  };
+
+  // Format reminder time for display
+  const formatReminderTime = (reminderAt: string): string => {
+    const date = new Date(reminderAt);
+    const now = new Date();
+    const diffMs = date.getTime() - now.getTime();
+    const diffHours = Math.round(diffMs / (1000 * 60 * 60));
+
+    if (diffHours < 1) return "in less than an hour";
+    if (diffHours === 1) return "in 1 hour";
+    if (diffHours < 24) return `in ${diffHours} hours`;
+    const diffDays = Math.round(diffHours / 24);
+    if (diffDays === 1) return "in 1 day";
+    return `in ${diffDays} days`;
+  };
+
+  // Show reminder options action sheet
+  const showReminderOptions = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    if (reminder) {
+      // Has existing reminder - show cancel option
+      const reminderTimeText = formatReminderTime(reminder.reminderAt);
+
+      if (Platform.OS === "ios") {
+        ActionSheetIOS.showActionSheetWithOptions(
+          {
+            options: ["Cancel", "Remove Reminder"],
+            cancelButtonIndex: 0,
+            destructiveButtonIndex: 1,
+            title: `Reminder set ${reminderTimeText}`,
+          },
+          (buttonIndex) => {
+            if (buttonIndex === 1) {
+              handleCancelReminder();
+            }
+          },
+        );
+      } else {
+        Alert.alert("Reply Reminder", `Reminder set ${reminderTimeText}`, [
+          { text: "Keep Reminder", style: "cancel" },
+          {
+            text: "Remove Reminder",
+            style: "destructive",
+            onPress: handleCancelReminder,
+          },
+        ]);
+      }
+    } else {
+      // No reminder - show time options
+      const options = [
+        { label: "1 hour", hours: 1 as const },
+        { label: "6 hours", hours: 6 as const },
+        { label: "1 day", hours: 24 as const },
+        { label: "3 days", hours: 72 as const },
+        { label: "7 days", hours: 168 as const },
+      ];
+
+      if (Platform.OS === "ios") {
+        ActionSheetIOS.showActionSheetWithOptions(
+          {
+            options: ["Cancel", ...options.map((o) => o.label)],
+            cancelButtonIndex: 0,
+            title: "Remind me to reply",
+          },
+          (buttonIndex) => {
+            if (buttonIndex > 0) {
+              handleCreateReminder(options[buttonIndex - 1].hours);
+            }
+          },
+        );
+      } else {
+        Alert.alert("Remind me to reply", "Choose when to be reminded", [
+          { text: "Cancel", style: "cancel" },
+          ...options.map((option) => ({
+            text: option.label,
+            onPress: () => handleCreateReminder(option.hours),
+          })),
+        ]);
+      }
+    }
+  };
+
   useEffect(() => {
     loadMessages();
+    loadReminder();
   }, [conversationId, token, user]);
+
+  // Set up dynamic header with reminder bell button
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={styles.headerRightContainer}>
+          <Pressable
+            onPress={showReminderOptions}
+            style={styles.headerRightButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            accessibilityRole="button"
+            accessibilityLabel={
+              reminder ? "Remove reply reminder" : "Set reply reminder"
+            }
+            accessibilityState={{ selected: !!reminder }}
+          >
+            <Feather
+              name="bell"
+              size={22}
+              color={reminder ? MessagingColors.primary : theme.text}
+            />
+            {reminder && <View style={styles.reminderDot} />}
+          </Pressable>
+        </View>
+      ),
+    });
+  }, [navigation, reminder, theme, loadingReminder]);
 
   // Mark messages as read when screen comes into focus
   useFocusEffect(
@@ -754,7 +999,7 @@ export default function ThreadDetailScreen() {
   );
 
   const renderEmptyState = () => (
-    <View style={styles.emptyContainer}>
+    <View style={[styles.emptyContainer, { transform: [{ scaleY: -1 }] }]}>
       <View
         style={[
           styles.emptyIconCircle,
@@ -1230,5 +1475,23 @@ const styles = StyleSheet.create({
   loadMoreText: {
     fontSize: 13,
     fontWeight: "500",
+  },
+  // Header reminder button styles
+  headerRightContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  headerRightButton: {
+    padding: Spacing.xs,
+    position: "relative",
+  },
+  reminderDot: {
+    position: "absolute",
+    top: 4,
+    right: 4,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: MessagingColors.primary,
   },
 });

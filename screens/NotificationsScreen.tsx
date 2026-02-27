@@ -13,6 +13,7 @@ import {
   useFocusEffect,
   NavigationProp,
 } from "@react-navigation/native";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { Spacing, BorderRadius, Typography } from "@/constants/theme";
@@ -26,6 +27,7 @@ import {
   Notification,
   NotificationType,
 } from "@/services/api";
+import { setBadgeCount } from "@/services/notifications";
 
 // Define the navigation types for tab navigator with nested stacks
 type RootTabParamList = {
@@ -119,11 +121,26 @@ export function NotificationsScreen() {
     }
   };
 
+  const silentRefreshNotifications = useCallback(async () => {
+    if (!token) return;
+    try {
+      const tenant = createTenantContext(user);
+      const data = await notificationsApi.getAll(token, tenant, 50);
+      if (Array.isArray(data)) {
+        setNotifications(data);
+      }
+    } catch (err) {
+      console.error("Silent refresh notifications error:", err);
+    }
+  }, [token, user]);
+
   useFocusEffect(
     useCallback(() => {
       loadNotifications();
     }, [token, user]),
   );
+
+  useAutoRefresh(silentRefreshNotifications, 30000);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -141,6 +158,14 @@ export function NotificationsScreen() {
       setNotifications((prev) =>
         prev.map((n) => (n.id === notification.id ? { ...n, read: true } : n)),
       );
+
+      // If this was the last unread notification, clear the badge
+      const remainingUnread = notifications.filter(
+        (n) => !n.read && n.id !== notification.id,
+      ).length;
+      if (remainingUnread === 0) {
+        await setBadgeCount(0);
+      }
     } catch (err) {
       console.error("Error marking notification as read:", err);
     }
@@ -155,6 +180,9 @@ export function NotificationsScreen() {
 
       // Update local state
       setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+
+      // Clear the app badge on home screen
+      await setBadgeCount(0);
     } catch (err) {
       console.error("Error marking all notifications as read:", err);
     }

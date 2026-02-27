@@ -8,7 +8,12 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import {
+  useNavigation,
+  useFocusEffect,
+  useRoute,
+  RouteProp,
+} from "@react-navigation/native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import * as Haptics from "expo-haptics";
@@ -18,6 +23,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { Input } from "@/components/Input";
 import { Skeleton } from "@/components/Skeleton";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
@@ -86,6 +92,7 @@ export default function ProjectsListScreen() {
   const { theme, isDark } = useTheme();
   const { token, user } = useAuth();
   const navigation = useNavigation<NavigationProp>();
+  const route = useRoute<RouteProp<ProjectsStackParamList, "ProjectsList">>();
   const tabBarHeight = useBottomTabBarHeight();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
@@ -117,11 +124,28 @@ export default function ProjectsListScreen() {
     }
   };
 
+  const refreshProjects = useCallback(async () => {
+    if (!token) return;
+    try {
+      const tenant = createTenantContext(user);
+      const [projectsResult, stagesResult] = await Promise.all([
+        projectsApi.getAll(token, tenant),
+        stagesApi.getAll(token, tenant),
+      ]);
+      setProjects(projectsResult);
+      setStages(stagesResult);
+    } catch (err) {
+      console.error("Silent refresh projects error:", err);
+    }
+  }, [token, user]);
+
   useFocusEffect(
     useCallback(() => {
       loadProjects();
-    }, [token, user]),
+    }, [token, user, route.params?.refresh]),
   );
+
+  useAutoRefresh(refreshProjects, 30000);
 
   // Pull-to-refresh handler
   const onRefresh = useCallback(async () => {

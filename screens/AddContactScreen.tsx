@@ -12,6 +12,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ToolsStackParamList } from "@/navigation/ToolsStackNavigator";
 import * as Haptics from "expo-haptics";
 import Animated, { FadeInUp, Easing } from "react-native-reanimated";
 import { ThemedText } from "@/components/ThemedText";
@@ -51,8 +53,13 @@ const generateDateOptions = () => {
 
 const DATE_OPTIONS = generateDateOptions();
 
+type AddContactNavigationProp = NativeStackNavigationProp<
+  ToolsStackParamList,
+  "AddContact"
+>;
+
 export function AddContactScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<AddContactNavigationProp>();
   const { theme, isDark } = useTheme();
   const insets = useSafeAreaInsets();
   const { token, user } = useAuth();
@@ -116,7 +123,7 @@ export function AddContactScreen() {
       await contactsApi.create(token, contactData, tenant);
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      navigation.goBack();
+      navigation.navigate("Contacts", { refresh: Date.now() });
     } catch (err) {
       console.error("Failed to create contact:", err);
       Alert.alert("Error", "Failed to create contact. Please try again.");

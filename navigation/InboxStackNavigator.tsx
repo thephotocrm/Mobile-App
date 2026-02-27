@@ -115,7 +115,7 @@ export default function InboxStackNavigator() {
       <Stack.Screen
         name="ThreadDetail"
         component={ThreadDetailScreen}
-        options={({ route, navigation }) => ({
+        options={({ route }) => ({
           headerTitle: () => (
             <ThreadDetailHeader
               contactName={route.params.contactName}
@@ -128,18 +128,7 @@ export default function InboxStackNavigator() {
           headerStyle: {
             backgroundColor: theme.backgroundRoot,
           },
-          headerRight: () => (
-            <Pressable
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                // More options functionality
-              }}
-              style={styles.headerRightButton}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Feather name="more-vertical" size={22} color={theme.text} />
-            </Pressable>
-          ),
+          // headerRight is set dynamically by ThreadDetailScreen
         })}
       />
     </Stack.Navigator>
@@ -170,8 +159,5 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: 12,
     fontWeight: "400",
-  },
-  headerRightButton: {
-    padding: Spacing.xs,
   },
 });

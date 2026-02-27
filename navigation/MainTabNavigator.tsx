@@ -59,7 +59,7 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export default function MainTabNavigator() {
   const { theme, isDark } = useTheme();
-  const { unreadCount } = useInbox();
+  const { unreadCount, notificationUnreadCount } = useInbox();
 
   return (
     <Tab.Navigator
@@ -155,6 +155,7 @@ export default function MainTabNavigator() {
               size={size}
               focused={focused}
               inactiveColor={theme.tabIconDefault}
+              badge={notificationUnreadCount}
             />
           ),
         }}

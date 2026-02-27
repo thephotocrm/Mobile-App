@@ -12,6 +12,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { ConversationCard } from "@/components/ConversationCard";
 import { ContactPickerModal } from "@/components/ContactPickerModal";
 import { ThemedText } from "@/components/ThemedText";
@@ -34,7 +35,7 @@ type NavigationProp = NativeStackNavigationProp<
   "InboxList"
 >;
 
-type FilterTab = "all" | "unread" | "archived";
+type FilterTab = "recent" | "awaiting" | "unread";
 
 interface ConversationItem {
   contactId: string;
@@ -110,7 +111,7 @@ const ConversationSkeleton = () => {
 };
 
 // Filter tab component
-const FilterTabs = ({
+const FilterTabs = React.memo(function FilterTabs({
   activeTab,
   onTabChange,
   unreadCount,
@@ -118,17 +119,17 @@ const FilterTabs = ({
   activeTab: FilterTab;
   onTabChange: (tab: FilterTab) => void;
   unreadCount: number;
-}) => {
+}) {
   const { theme, isDark } = useTheme();
 
   const tabs: { key: FilterTab; label: string; badge?: number }[] = [
-    { key: "all", label: "All" },
+    { key: "recent", label: "Recent" },
+    { key: "awaiting", label: "Awaiting Reply" },
     {
       key: "unread",
       label: "Unread",
       badge: unreadCount > 0 ? unreadCount : undefined,
     },
-    { key: "archived", label: "Archived" },
   ];
 
   return (
@@ -181,10 +182,109 @@ const FilterTabs = ({
       })}
     </View>
   );
-};
+});
+
+// Memoized header component with local search state to prevent keyboard dismissal
+const InboxHeader = React.memo(function InboxHeader({
+  initialSearchQuery,
+  onDebouncedSearchChange,
+  onClearSearch,
+  searchInputRef,
+  activeTab,
+  onTabChange,
+  totalUnreadCount,
+}: {
+  initialSearchQuery: string;
+  onDebouncedSearchChange: (query: string) => void;
+  onClearSearch: () => void;
+  searchInputRef: React.RefObject<TextInput | null>;
+  activeTab: FilterTab;
+  onTabChange: (tab: FilterTab) => void;
+  totalUnreadCount: number;
+}) {
+  const { theme, isDark } = useTheme();
+
+  // Local state for search - prevents parent re-renders during typing
+  const [localSearchQuery, setLocalSearchQuery] = useState(initialSearchQuery);
+
+  // Sync local state when parent clears search
+  useEffect(() => {
+    setLocalSearchQuery(initialSearchQuery);
+  }, [initialSearchQuery]);
+
+  // Debounce and report to parent
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onDebouncedSearchChange(localSearchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [localSearchQuery, onDebouncedSearchChange]);
+
+  const handleClear = useCallback(() => {
+    setLocalSearchQuery("");
+    onClearSearch();
+  }, [onClearSearch]);
+
+  return (
+    <View style={styles.headerContainer}>
+      {/* Search bar */}
+      <View
+        style={[
+          styles.searchWrapper,
+          {
+            backgroundColor: isDark
+              ? MessagingColors.searchBgDark
+              : MessagingColors.searchBg,
+          },
+        ]}
+      >
+        <Feather
+          name="search"
+          size={18}
+          color={theme.textSecondary}
+          style={styles.searchIcon}
+        />
+        <TextInput
+          ref={searchInputRef}
+          placeholder="Search"
+          placeholderTextColor={theme.textSecondary}
+          value={localSearchQuery}
+          onChangeText={setLocalSearchQuery}
+          style={[styles.searchInput, { color: theme.text }]}
+          returnKeyType="search"
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+        {localSearchQuery.length > 0 && (
+          <Pressable
+            onPress={handleClear}
+            style={styles.clearButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <View
+              style={[
+                styles.clearButtonCircle,
+                { backgroundColor: theme.textSecondary },
+              ]}
+            >
+              <Feather name="x" size={10} color={isDark ? "#000" : "#FFF"} />
+            </View>
+          </Pressable>
+        )}
+      </View>
+
+      {/* Filter tabs */}
+      <FilterTabs
+        activeTab={activeTab}
+        onTabChange={onTabChange}
+        unreadCount={totalUnreadCount}
+      />
+    </View>
+  );
+});
 
 export default function InboxScreen() {
-  const { theme, isDark } = useTheme();
+  const { theme } = useTheme();
   const { token, user } = useAuth();
   const { decrementUnreadCount, refreshUnreadCount } = useInbox();
   const navigation = useNavigation<NavigationProp>();
@@ -198,33 +298,33 @@ export default function InboxScreen() {
   const [archivedConversations, setArchivedConversations] = useState<
     Set<string>
   >(new Set());
-  const [searchQuery, setSearchQuery] = useState("");
+  // Only store the debounced search query - local state lives in InboxHeader
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<FilterTab>("all");
+  // Used to signal InboxHeader to clear its local state
+  const [initialSearchQuery, setInitialSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<FilterTab>("recent");
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showContactPicker, setShowContactPicker] = useState(false);
 
   const searchInputRef = useRef<TextInput>(null);
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasLoadedOnce = useRef(false);
 
-  // Debounce search query
+  // Reload conversations when switching between "recent" and "awaiting" tabs
+  // These require different API sort parameters, while "unread" is a client-side filter
+  const prevTabRef = useRef<FilterTab>(activeTab);
   useEffect(() => {
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-    }
-    debounceTimerRef.current = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 300);
+    const prevTab = prevTabRef.current;
+    const needsReload =
+      (prevTab === "awaiting" && activeTab !== "awaiting") ||
+      (prevTab !== "awaiting" && activeTab === "awaiting");
 
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
-  }, [searchQuery]);
+    if (needsReload && hasLoadedOnce.current) {
+      loadConversations(true, activeTab);
+    }
+    prevTabRef.current = activeTab;
+  }, [activeTab, token, user]);
 
   // Calculate total unread count
   const totalUnreadCount = React.useMemo(() => {
@@ -242,16 +342,14 @@ export default function InboxScreen() {
 
     // Filter by tab
     if (activeTab === "unread") {
+      // Show only conversations with unread messages (excluding archived)
       result = result.filter(
         (conv) =>
           conv.unreadCount > 0 && !archivedConversations.has(conv.contactId),
       );
-    } else if (activeTab === "archived") {
-      result = result.filter((conv) =>
-        archivedConversations.has(conv.contactId),
-      );
     } else {
-      // "all" tab - exclude archived
+      // "recent" and "awaiting" tabs - exclude archived
+      // (these tabs show all conversations, just sorted differently via API)
       result = result.filter(
         (conv) => !archivedConversations.has(conv.contactId),
       );
@@ -275,7 +373,7 @@ export default function InboxScreen() {
     archivedConversations,
   ]);
 
-  const loadConversations = async (isRefresh = false) => {
+  const loadConversations = async (isRefresh = false, tab?: FilterTab) => {
     if (!token) {
       setLoading(false);
       return;
@@ -291,8 +389,17 @@ export default function InboxScreen() {
       // Create tenant context for multi-tenant routing
       const tenant = createTenantContext(user);
 
-      // Use the correct inbox API endpoint
-      const apiConversations = await inboxApi.getConversations(token, tenant);
+      // Determine sortBy based on active tab - "awaiting" uses lastReply to surface
+      // conversations where clients replied most recently
+      const currentTab = tab ?? activeTab;
+      const sortBy = currentTab === "awaiting" ? "lastReply" : "recent";
+
+      // Use the correct inbox API endpoint with sortBy parameter
+      const apiConversations = await inboxApi.getConversations(
+        token,
+        tenant,
+        sortBy,
+      );
 
       // Transform API response to UI format
       const result: ConversationItem[] = apiConversations.map((conv) => {
@@ -333,13 +440,22 @@ export default function InboxScreen() {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    loadConversations(true);
-  }, [token, user]);
+    loadConversations(true, activeTab);
+  }, [token, user, activeTab]);
 
-  const handleClearSearch = () => {
-    setSearchQuery("");
+  const handleClearSearch = useCallback(() => {
+    setInitialSearchQuery("");
+    setDebouncedSearchQuery("");
     searchInputRef.current?.focus();
-  };
+  }, []);
+
+  const handleDebouncedSearchChange = useCallback((query: string) => {
+    setDebouncedSearchQuery(query);
+  }, []);
+
+  const handleTabChange = useCallback((tab: FilterTab) => {
+    setActiveTab(tab);
+  }, []);
 
   const handleConversationPress = (conversation: ConversationItem) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -411,6 +527,42 @@ export default function InboxScreen() {
     setShowContactPicker(true);
   };
 
+  const silentRefreshConversations = useCallback(async () => {
+    if (!token) return;
+    try {
+      const tenant = createTenantContext(user);
+      const currentTab = activeTab;
+      const sortBy = currentTab === "awaiting" ? "lastReply" : "recent";
+      const apiConversations = await inboxApi.getConversations(
+        token,
+        tenant,
+        sortBy,
+      );
+
+      const result: ConversationItem[] = apiConversations.map((conv) => {
+        const firstName = conv.contact?.firstName || "";
+        const lastName = conv.contact?.lastName || "";
+        const contactName = `${firstName} ${lastName}`.trim() || "Unknown";
+        const isYou = conv.lastMessageDirection === "OUTBOUND";
+
+        return {
+          contactId: conv.contact?.id || "",
+          contactName,
+          lastMessage: conv.lastMessage || "No messages yet",
+          timestamp: formatTimestamp(conv.lastMessageAt),
+          unreadCount: conv.unreadCount || 0,
+          channel: "SMS" as const,
+          isYou,
+        };
+      });
+
+      setAllConversations(result);
+      refreshUnreadCount();
+    } catch (err) {
+      console.error("Silent refresh conversations error:", err);
+    }
+  }, [token, user, activeTab, refreshUnreadCount]);
+
   useFocusEffect(
     useCallback(() => {
       loadConversations();
@@ -418,6 +570,8 @@ export default function InboxScreen() {
       refreshUnreadCount();
     }, [token, user]),
   );
+
+  useAutoRefresh(silentRefreshConversations, 30000);
 
   const renderConversation = useCallback(
     ({ item, index }: { item: ConversationItem; index: number }) => {
@@ -446,111 +600,64 @@ export default function InboxScreen() {
     [filteredConversations.length, archivedConversations],
   );
 
-  const renderHeader = () => (
-    <View style={styles.headerContainer}>
-      {/* Search bar */}
-      <View
-        style={[
-          styles.searchWrapper,
-          {
-            backgroundColor: isDark
-              ? MessagingColors.searchBgDark
-              : MessagingColors.searchBg,
-          },
-        ]}
-      >
-        <Feather
-          name="search"
-          size={18}
-          color={theme.textSecondary}
-          style={styles.searchIcon}
-        />
-        <TextInput
-          ref={searchInputRef}
-          placeholder="Search"
-          placeholderTextColor={theme.textSecondary}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          style={[styles.searchInput, { color: theme.text }]}
-          returnKeyType="search"
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-        {searchQuery.length > 0 && (
+  const renderEmpty = () => {
+    const getEmptyIcon = () => {
+      if (activeTab === "awaiting") return "check-circle";
+      return "inbox";
+    };
+
+    const getEmptyTitle = () => {
+      if (debouncedSearchQuery) return "No results found";
+      if (activeTab === "unread") return "All caught up!";
+      if (activeTab === "awaiting") return "All caught up!";
+      return "No conversations yet";
+    };
+
+    const getEmptyText = () => {
+      if (debouncedSearchQuery)
+        return `No conversations match "${debouncedSearchQuery}"`;
+      if (activeTab === "unread") return "You have no unread messages";
+      if (activeTab === "awaiting") return "No clients are waiting for a reply";
+      return "Start messaging your clients to stay connected";
+    };
+
+    return (
+      <View style={styles.emptyContainer}>
+        <View
+          style={[
+            styles.emptyIconCircle,
+            { backgroundColor: `${MessagingColors.primary}15` },
+          ]}
+        >
+          <Feather
+            name={getEmptyIcon()}
+            size={36}
+            color={MessagingColors.primary}
+          />
+        </View>
+        <ThemedText style={[styles.emptyTitle, { color: theme.text }]}>
+          {getEmptyTitle()}
+        </ThemedText>
+        <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
+          {getEmptyText()}
+        </ThemedText>
+        {!debouncedSearchQuery && activeTab === "recent" && (
           <Pressable
-            onPress={handleClearSearch}
-            style={styles.clearButton}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            onPress={handleStartConversation}
+            style={[
+              styles.emptyButton,
+              { backgroundColor: MessagingColors.primary },
+            ]}
           >
-            <View
-              style={[
-                styles.clearButtonCircle,
-                { backgroundColor: theme.textSecondary },
-              ]}
-            >
-              <Feather name="x" size={10} color={isDark ? "#000" : "#FFF"} />
-            </View>
+            <Feather name="message-circle" size={18} color="#FFFFFF" />
+            <ThemedText style={styles.emptyButtonText}>
+              Start a Conversation
+            </ThemedText>
           </Pressable>
         )}
       </View>
-
-      {/* Filter tabs */}
-      <FilterTabs
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        unreadCount={totalUnreadCount}
-      />
-    </View>
-  );
-
-  const renderEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <View
-        style={[
-          styles.emptyIconCircle,
-          { backgroundColor: `${MessagingColors.primary}15` },
-        ]}
-      >
-        <Feather
-          name={activeTab === "archived" ? "archive" : "inbox"}
-          size={36}
-          color={MessagingColors.primary}
-        />
-      </View>
-      <ThemedText style={[styles.emptyTitle, { color: theme.text }]}>
-        {debouncedSearchQuery
-          ? "No results found"
-          : activeTab === "archived"
-            ? "No archived conversations"
-            : activeTab === "unread"
-              ? "All caught up!"
-              : "No conversations yet"}
-      </ThemedText>
-      <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
-        {debouncedSearchQuery
-          ? `No conversations match "${debouncedSearchQuery}"`
-          : activeTab === "archived"
-            ? "Archived conversations will appear here"
-            : activeTab === "unread"
-              ? "You have no unread messages"
-              : "Start messaging your clients to stay connected"}
-      </ThemedText>
-      {!debouncedSearchQuery && activeTab === "all" && (
-        <Pressable
-          onPress={handleStartConversation}
-          style={[
-            styles.emptyButton,
-            { backgroundColor: MessagingColors.primary },
-          ]}
-        >
-          <Feather name="message-circle" size={18} color="#FFFFFF" />
-          <ThemedText style={styles.emptyButtonText}>
-            Start a Conversation
-          </ThemedText>
-        </Pressable>
-      )}
-    </View>
-  );
+    );
+  };
 
   const renderError = () => (
     <View style={styles.errorContainer}>
@@ -577,7 +684,6 @@ export default function InboxScreen() {
 
   const renderSkeleton = () => (
     <View>
-      {renderHeader()}
       {[1, 2, 3, 4, 5].map((i) => (
         <ConversationSkeleton key={i} />
       ))}
@@ -592,6 +698,15 @@ export default function InboxScreen() {
           { backgroundColor: theme.backgroundRoot, paddingTop },
         ]}
       >
+        <InboxHeader
+          initialSearchQuery={initialSearchQuery}
+          onDebouncedSearchChange={handleDebouncedSearchChange}
+          onClearSearch={handleClearSearch}
+          searchInputRef={searchInputRef}
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+          totalUnreadCount={totalUnreadCount}
+        />
         {renderSkeleton()}
       </View>
     );
@@ -605,23 +720,45 @@ export default function InboxScreen() {
           { backgroundColor: theme.backgroundRoot, paddingTop },
         ]}
       >
-        {renderHeader()}
+        <InboxHeader
+          initialSearchQuery={initialSearchQuery}
+          onDebouncedSearchChange={handleDebouncedSearchChange}
+          onClearSearch={handleClearSearch}
+          searchInputRef={searchInputRef}
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+          totalUnreadCount={totalUnreadCount}
+        />
         {renderError()}
       </View>
     );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.backgroundRoot }]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.backgroundRoot, paddingTop },
+      ]}
+    >
+      {/* Header outside FlatList to prevent keyboard dismiss on search */}
+      <InboxHeader
+        initialSearchQuery={initialSearchQuery}
+        onDebouncedSearchChange={handleDebouncedSearchChange}
+        onClearSearch={handleClearSearch}
+        searchInputRef={searchInputRef}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        totalUnreadCount={totalUnreadCount}
+      />
       <FlatList
         data={filteredConversations}
         renderItem={renderConversation}
         keyExtractor={(item) => item.contactId}
-        ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmpty}
         contentContainerStyle={[
           styles.listContent,
-          { paddingTop, paddingBottom },
+          { paddingBottom },
           filteredConversations.length === 0 && styles.emptyListContent,
         ]}
         refreshControl={
@@ -630,7 +767,6 @@ export default function InboxScreen() {
             onRefresh={onRefresh}
             colors={[MessagingColors.primary]}
             tintColor={MessagingColors.primary}
-            progressViewOffset={paddingTop}
           />
         }
         showsVerticalScrollIndicator={false}

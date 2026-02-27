@@ -1,4 +1,10 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+  useEffect,
+} from "react";
 import {
   View,
   StyleSheet,
@@ -10,6 +16,7 @@ import {
   Alert,
 } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ToolsStackParamList } from "@/navigation/ToolsStackNavigator";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -156,6 +163,9 @@ export function AutomationsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [currentStageIndex, setCurrentStageIndex] = useState(0);
 
+  // Track if initial load has completed
+  const hasLoadedOnce = useRef(false);
+
   // Load data from API
   const loadData = useCallback(async () => {
     if (!token) return;
@@ -169,6 +179,7 @@ export function AutomationsScreen() {
       setAutomations(automationsResult);
       // Filter stages by project type if available
       setStages(stagesResult);
+      hasLoadedOnce.current = true;
     } catch (err) {
       console.error("Failed to load automations:", err);
       setError("Failed to load automations");
@@ -180,6 +191,21 @@ export function AutomationsScreen() {
     }
   }, [token, user, selectedProjectType]);
 
+  const silentRefreshAutomations = useCallback(async () => {
+    if (!token) return;
+    try {
+      const tenant = createTenantContext(user);
+      const [automationsResult, stagesResult] = await Promise.all([
+        automationsApi.getAll(token, tenant, selectedProjectType),
+        stagesApi.getAll(token, tenant),
+      ]);
+      setAutomations(automationsResult);
+      setStages(stagesResult);
+    } catch (err) {
+      console.error("Silent refresh automations error:", err);
+    }
+  }, [token, user, selectedProjectType]);
+
   // Load data on focus
   useFocusEffect(
     useCallback(() => {
@@ -187,6 +213,16 @@ export function AutomationsScreen() {
       loadData();
     }, [loadData]),
   );
+
+  useAutoRefresh(silentRefreshAutomations, 30000);
+
+  // Reload data when project type changes (after initial load)
+  useEffect(() => {
+    if (hasLoadedOnce.current) {
+      setLoading(true);
+      loadData();
+    }
+  }, [selectedProjectType, loadData]);
 
   // Handle refresh
   const onRefresh = useCallback(() => {
@@ -199,7 +235,6 @@ export function AutomationsScreen() {
   const handleProjectTypeChange = (projectType: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedProjectType(projectType);
-    setLoading(true);
   };
 
   // Toggle automation enabled/disabled
@@ -217,14 +252,40 @@ export function AutomationsScreen() {
     }
   };
 
-  // Group automations by stage
+  // Get sort priority for automations (immediate first, pipeline moves last)
+  const getAutomationSortValue = (automation: Automation): number => {
+    // Pipeline moves (trigger-based) go at the bottom
+    if (automation.automationType === "STAGE_CHANGE") {
+      return Number.MAX_SAFE_INTEGER;
+    }
+    // Time-based automations sorted by delay
+    if (automation.steps && automation.steps.length > 0) {
+      const step = automation.steps[0];
+      if (step.delayDays && step.delayDays > 0) {
+        return step.delayDays * 24 * 60;
+      }
+      if (step.delayMinutes && step.delayMinutes > 0) {
+        return step.delayMinutes;
+      }
+    }
+    if (automation.daysBefore && automation.daysBefore > 0) {
+      return automation.daysBefore * 24 * 60;
+    }
+    return 0; // Immediate
+  };
+
+  // Group automations by stage, sorted by delay (immediate first)
   const automationsByStage = useMemo(() => {
     const grouped: Record<string, Automation[]> = {};
     stages.forEach((stage) => {
-      grouped[stage.id] = automations.filter((a) => a.stageId === stage.id);
+      grouped[stage.id] = automations
+        .filter((a) => a.stageId === stage.id)
+        .sort((a, b) => getAutomationSortValue(a) - getAutomationSortValue(b));
     });
     // Add "No Stage" group for automations without stageId
-    const noStageAutomations = automations.filter((a) => !a.stageId);
+    const noStageAutomations = automations
+      .filter((a) => !a.stageId)
+      .sort((a, b) => getAutomationSortValue(a) - getAutomationSortValue(b));
     if (noStageAutomations.length > 0) {
       grouped["no-stage"] = noStageAutomations;
     }

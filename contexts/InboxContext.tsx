@@ -7,10 +7,15 @@ import React, {
   useRef,
 } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { inboxApi, createTenantContext } from "@/services/api";
+import {
+  inboxApi,
+  notificationsApi,
+  createTenantContext,
+} from "@/services/api";
 
 interface InboxContextType {
   unreadCount: number;
+  notificationUnreadCount: number;
   refreshUnreadCount: () => Promise<void>;
   decrementUnreadCount: (amount?: number) => void;
 }
@@ -23,6 +28,7 @@ const UNREAD_COUNT_POLL_INTERVAL = 30000;
 export function InboxProvider({ children }: { children: React.ReactNode }) {
   const { token, user } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
+  const [notificationUnreadCount, setNotificationUnreadCount] = useState(0);
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const refreshUnreadCount = useCallback(async () => {
@@ -30,7 +36,10 @@ export function InboxProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const tenant = createTenantContext(user);
-      const conversations = await inboxApi.getConversations(token, tenant);
+      const [conversations, notifications] = await Promise.all([
+        inboxApi.getConversations(token, tenant),
+        notificationsApi.getAll(token, tenant, 50).catch(() => []),
+      ]);
 
       // Sum up all unread counts from conversations
       const total = conversations.reduce(
@@ -38,6 +47,12 @@ export function InboxProvider({ children }: { children: React.ReactNode }) {
         0,
       );
       setUnreadCount(total);
+
+      // Count unread notifications
+      if (Array.isArray(notifications)) {
+        const unreadNotifs = notifications.filter((n) => !n.read).length;
+        setNotificationUnreadCount(unreadNotifs);
+      }
     } catch (error) {
       console.error("Error fetching unread count:", error);
     }
@@ -69,7 +84,12 @@ export function InboxProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <InboxContext.Provider
-      value={{ unreadCount, refreshUnreadCount, decrementUnreadCount }}
+      value={{
+        unreadCount,
+        notificationUnreadCount,
+        refreshUnreadCount,
+        decrementUnreadCount,
+      }}
     >
       {children}
     </InboxContext.Provider>
